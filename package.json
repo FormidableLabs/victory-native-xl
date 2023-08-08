@@ -9,13 +9,20 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@shopify/react-native-skia": "0.1.196",
+    "@types/react": "~18.2.14",
+    "d3-scale": "^4.0.2",
     "expo": "~49.0.6",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
-    "react-native": "0.72.3"
+    "react-native": "0.72.3",
+    "react-native-reanimated": "~3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/d3-scale": "^4.0.3",
+    "prettier": "^3.0.1",
+    "typescript": "^5.1.6"
   },
   "private": true
 }
