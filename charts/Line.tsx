@@ -1,20 +1,28 @@
+import { Path, Skia } from "@shopify/react-native-skia";
 import * as React from "react";
-import { Point, Scales } from "./types";
-import { DEFAULT_SCALES } from "./consts";
-import { Circle, Path, Skia } from "@shopify/react-native-skia";
+import { useDerivedValue } from "react-native-reanimated";
+import { map } from "./interpolaters";
+import { IncomingProps } from "./types";
 
-type Props<T> = {
-  data?: T[];
-  scales?: Scales;
-};
-
-export function Line<T extends Point>({
+export function Line({
   data,
-  scales: { x, y } = DEFAULT_SCALES,
-}: Props<T>) {
-  const path = React.useMemo(() => {
+  ixmin,
+  ixmax,
+  oxmin,
+  oxmax,
+  iymin,
+  iymax,
+  oymin,
+  oymax,
+}: IncomingProps) {
+  const path = useDerivedValue(() => {
     const path = Skia.Path.Make();
     if (!data?.length) return path;
+
+    const x = (d: number) =>
+      map(d, ixmin.value, ixmax.value, oxmin.value, oxmax.value);
+    const y = (d: number) =>
+      map(d, iymin.value, iymax.value, oymin.value, oymax.value);
 
     path.moveTo(x(data[0].x), y(data[0].y));
     data.forEach((el) => {
@@ -22,20 +30,18 @@ export function Line<T extends Point>({
     });
 
     return path;
-  }, [data, x, y]);
+  }, [data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax]);
 
   return (
     <>
-      {data?.map((el) => (
-        <Circle
-          key={`${el.x}-${el.y}`}
-          cx={x(el.x)}
-          cy={y(el.y)}
-          r={5}
-          color="red"
-        />
-      ))}
-      <Path path={path} style="stroke" color="blue" strokeWidth={2} />
+      <Path
+        path={path}
+        style="stroke"
+        color="red"
+        strokeWidth={8}
+        strokeCap="round"
+        strokeJoin="round"
+      />
     </>
   );
 }

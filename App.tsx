@@ -12,7 +12,7 @@ export default function App() {
   const addPoint = () => {
     setdata((oldData) => [
       ...oldData,
-      { x: oldData.at(-1).x + 1, y: Math.round(-10 + 20 * Math.random()) },
+      { x: oldData.at(-1).x + 1, y: Math.round(10 * Math.random()) },
     ]);
   };
 
@@ -23,8 +23,8 @@ export default function App() {
         <StatusBar style="auto" />
         <View style={{ flex: 1, width: "100%", backgroundColor: "pink" }}>
           <CartesianChart data={data}>
-            <Line />
             <Bar />
+            <Line />
           </CartesianChart>
         </View>
         <View style={{ flex: 1 }}>
@@ -45,9 +45,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const DATA = [
-  { x: 0, y: 2 },
-  { x: 1, y: -5 },
-  { x: 2, y: 3 },
-  { x: 3, y: 4 },
-];
+const DATA = Array.from({ length: 10 })
+  .fill(null)
+  .map((_, i) => ({ x: i, y: Math.round(10 * Math.random()) }));
