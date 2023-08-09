@@ -1,36 +1,56 @@
 import { LinearGradient, Path, Skia, vec } from "@shopify/react-native-skia";
 import * as React from "react";
-import { useDerivedValue } from "react-native-reanimated";
+import {
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { BAR_WIDTH } from "../consts";
 import { map } from "../interpolaters";
+import { Point } from "../types";
 import { useCartesianContext } from "./CartesianContext";
 
 export function Bar() {
-  const { data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax } =
+  const { data } = useCartesianContext();
+
+  return (
+    <>
+      {data.map((el, i) => (
+        <BarLine {...el} key={i} />
+      ))}
+    </>
+  );
+}
+
+function BarLine({ x, y }: Point) {
+  const { ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax } =
     useCartesianContext();
 
-  const path = useDerivedValue(() => {
-    const path = Skia.Path.Make();
-    if (!data?.length) return path;
+  const $x = useSharedValue(0);
+  const $y = useSharedValue(0);
 
-    const x = (d: number) =>
-      map(d, ixmin.value, ixmax.value, oxmin.value, oxmax.value);
-    const y = (d: number) =>
+  React.useEffect(() => {
+    // $y.value = y;
+    $y.value = withTiming(y, { duration: 300 });
+  }, [y]);
+
+  const path = useDerivedValue(() => {
+    const mapY = (d: number) =>
       map(d, iymin.value, iymax.value, oymin.value, oymax.value);
 
-    data.forEach((el) => {
-      path.addRect(
-        Skia.XYWHRect(
-          x(el.x) - BAR_WIDTH / 2,
-          y(el.y),
-          BAR_WIDTH,
-          y(0) - y(el.y),
-        ),
-      );
-    });
+    const path = Skia.Path.Make();
+    path.addRect(
+      Skia.XYWHRect(
+        map(x, ixmin.value, ixmax.value, oxmin.value, oxmax.value) -
+          BAR_WIDTH / 2,
+        mapY(0),
+        BAR_WIDTH,
+        mapY($y.value) - mapY(0),
+      ),
+    );
 
     return path;
-  }, [data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax]);
+  }, [x, $y, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax]);
 
   return (
     <Path path={path} style="fill" color="blue" strokeWidth={2}>

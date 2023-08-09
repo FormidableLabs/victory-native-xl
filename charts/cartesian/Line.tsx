@@ -26,15 +26,13 @@ export function Line() {
   }, [data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax]);
 
   return (
-    <>
-      <Path
-        path={path}
-        style="stroke"
-        color="red"
-        strokeWidth={8}
-        strokeCap="round"
-        strokeJoin="round"
-      />
-    </>
+    <Path
+      path={path}
+      style="stroke"
+      color="red"
+      strokeWidth={8}
+      strokeCap="round"
+      strokeJoin="round"
+    />
   );
 }
