@@ -14,7 +14,7 @@ export function SimpleData({
   const addPoint = () => {
     setdata((oldData) => [
       ...oldData,
-      { x: oldData.at(-1).x + 1, y: Math.round(10 * Math.random()) },
+      { x: oldData.at(-1).x + 1, y: -5 + Math.round(10 * Math.random()) },
     ]);
   };
 
@@ -32,7 +32,10 @@ export function SimpleData({
           title="Shuffle y values"
           onPress={() =>
             setdata((old) =>
-              old.map(({ x }) => ({ x, y: Math.round(10 * Math.random()) })),
+              old.map(({ x }) => ({
+                x,
+                y: -5 + Math.round(10 * Math.random()),
+              })),
             )
           }
         />
@@ -44,4 +47,4 @@ export function SimpleData({
 
 const DATA = Array.from({ length: 10 })
   .fill(null)
-  .map((_, i) => ({ x: i, y: Math.round(10 * Math.random()) }));
+  .map((_, i) => ({ x: i, y: -5 + Math.round(10 * Math.random()) }));

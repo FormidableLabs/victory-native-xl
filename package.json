@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/slider": "^4.4.2",
     "@shopify/react-native-skia": "0.1.196",
     "@types/react": "~18.2.14",
     "d3-scale": "^4.0.2",
