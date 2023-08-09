@@ -1,26 +1,14 @@
-import * as React from "react";
-import { IncomingProps, Point, Scales } from "./types";
 import { LinearGradient, Path, Skia, vec } from "@shopify/react-native-skia";
-import { BAR_WIDTH, DEFAULT_SCALES } from "./consts";
+import * as React from "react";
 import { useDerivedValue } from "react-native-reanimated";
-import { map } from "./interpolaters";
+import { BAR_WIDTH } from "../consts";
+import { map } from "../interpolaters";
+import { useCartesianContext } from "./CartesianContext";
 
-type Props<T> = {
-  data?: T[];
-  scales?: Scales;
-};
+export function Bar() {
+  const { data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax } =
+    useCartesianContext();
 
-export function Bar({
-  data,
-  ixmin,
-  ixmax,
-  oxmin,
-  oxmax,
-  iymin,
-  iymax,
-  oymin,
-  oymax,
-}: IncomingProps) {
   const path = useDerivedValue(() => {
     const path = Skia.Path.Make();
     if (!data?.length) return path;

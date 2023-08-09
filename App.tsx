@@ -1,10 +1,9 @@
-import * as React from "react";
 import { StatusBar } from "expo-status-bar";
+import * as React from "react";
 import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { Canvas, Circle } from "@shopify/react-native-skia";
-import { CartesianChart } from "./charts/CartesianChart";
-import { Line } from "./charts/Line";
-import { Bar } from "./charts/Bar";
+import { Bar } from "./charts/cartesian/Bar";
+import { CartesianChart } from "./charts/cartesian/CartesianChart";
+import { Line } from "./charts/cartesian/Line";
 
 export default function App() {
   const [data, setdata] = React.useState(DATA);
@@ -30,6 +29,14 @@ export default function App() {
         <View style={{ flex: 1 }}>
           <Button title="Add point" onPress={addPoint} />
           <Button title="Reset" onPress={() => setdata(DATA)} />
+          <Button
+            title="Shuffle y values"
+            onPress={() =>
+              setdata((old) =>
+                old.map(({ x }) => ({ x, y: Math.round(10 * Math.random()) })),
+              )
+            }
+          />
         </View>
       </View>
     </SafeAreaView>

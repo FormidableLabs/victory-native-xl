@@ -1,20 +1,13 @@
 import { Path, Skia } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useDerivedValue } from "react-native-reanimated";
-import { map } from "./interpolaters";
-import { IncomingProps } from "./types";
+import { map } from "../interpolaters";
+import { useCartesianContext } from "./CartesianContext";
 
-export function Line({
-  data,
-  ixmin,
-  ixmax,
-  oxmin,
-  oxmax,
-  iymin,
-  iymax,
-  oymin,
-  oymax,
-}: IncomingProps) {
+export function Line() {
+  const { data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax } =
+    useCartesianContext();
+
   const path = useDerivedValue(() => {
     const path = Skia.Path.Make();
     if (!data?.length) return path;

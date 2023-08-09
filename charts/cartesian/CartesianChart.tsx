@@ -1,22 +1,15 @@
+import { Canvas } from "@shopify/react-native-skia";
 import * as React from "react";
-import { LayoutChangeEvent, Text, View } from "react-native";
 import { PropsWithChildren } from "react";
-import { scaleLinear, scalePoint } from "d3-scale";
-import { Point, Scales } from "./types";
-import {
-  Canvas,
-  Group,
-  Rect,
-  rect,
-  useValue,
-  mix,
-} from "@shopify/react-native-skia";
-import { CHART_HORIZONTAL_PADDING, CHART_VERTICAL_PADDING } from "./consts";
+import { LayoutChangeEvent } from "react-native";
 import {
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { CHART_HORIZONTAL_PADDING, CHART_VERTICAL_PADDING } from "../consts";
+import { Point } from "../types";
+import { CartesianContext } from "./CartesianContext";
 
 type Props<T extends Point> = {
   data: T[];
@@ -70,7 +63,11 @@ export function CartesianChart<T extends Point>({
 
   const c = React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return null;
-    return React.cloneElement(child, {
+    return React.cloneElement(child, {});
+  });
+
+  const value = React.useMemo(
+    () => ({
       data,
       ixmin,
       ixmax,
@@ -80,12 +77,15 @@ export function CartesianChart<T extends Point>({
       oxmax,
       oymin,
       oymax,
-    });
-  });
+    }),
+    [data],
+  );
 
   return (
     <Canvas style={{ flex: 1 }} onLayout={onLayout} onSize={size}>
-      {c}
+      <CartesianContext.Provider value={value}>
+        {children}
+      </CartesianContext.Provider>
     </Canvas>
   );
 }
