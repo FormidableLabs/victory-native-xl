@@ -1,4 +1,4 @@
-import { Canvas } from "@shopify/react-native-skia";
+import { Canvas, clamp } from "@shopify/react-native-skia";
 import * as React from "react";
 import { PropsWithChildren } from "react";
 import { LayoutChangeEvent } from "react-native";
@@ -128,15 +128,23 @@ export function CartesianChart<T extends Point>({
       pinchFocal.value.relLeft = e.focalX / (oxmax.value - oxmin.value);
     })
     .onUpdate((e) => {
-      const s = Math.max(1, savedScale.value * e.scale);
-      scale.value = s;
+      scale.value = Math.max(1, savedScale.value * e.scale);
 
-      // const dx =
-      //   pinchFocal.value.relLeft * (ixmax.value - ixmin.value) -
-      //   pinchFocal.value.x;
-      // tx.value = savedTx.value - dx;
+      const newTx =
+        _ixmax.value -
+        _ixmin.value -
+        (ixmax.value - ixmin.value) -
+        (_ixmax.value - pinchFocal.value.x) +
+        (1 - pinchFocal.value.relLeft) * (ixmax.value - ixmin.value);
+
+      tx.value = clamp(
+        newTx,
+        0,
+        _ixmax.value - _ixmin.value - (ixmax.value - ixmin.value),
+      );
     })
     .onEnd(() => {
+      savedTx.value = tx.value;
       savedScale.value = scale.value;
     });
 
@@ -145,7 +153,14 @@ export function CartesianChart<T extends Point>({
       const dx =
         ((ixmax.value - ixmin.value) / (oxmax.value - oxmin.value)) *
         e.translationX;
-      tx.value = savedTx.value - dx;
+
+      tx.value = clamp(
+        savedTx.value - dx,
+        0,
+        _ixmax.value - _ixmin.value - (ixmax.value - ixmin.value),
+      );
+
+      console.log(tx.value);
     })
     .onEnd(() => {
       savedTx.value = tx.value;
