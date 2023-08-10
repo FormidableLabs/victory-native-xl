@@ -38,7 +38,14 @@ export function CartesianChart<T extends Point>({
   const tx = useSharedValue(0);
   const savedTx = useSharedValue(0);
 
-  const size = useSharedValue({ width: 0, height: 0 });
+  const [size, setSize] = React.useState({ width: 0, height: 0 });
+  const onLayout = React.useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      setSize(layout);
+    },
+    [],
+  );
+
   const _ixmin = useSharedValue(Math.min(...data.map((d) => d.x)));
   const _ixmax = useSharedValue(Math.max(...data.map((d) => d.x)));
   const ixmin = useDerivedValue(
@@ -57,12 +64,12 @@ export function CartesianChart<T extends Point>({
     [padding],
   );
   const oxmax = useDerivedValue(
-    () => size.value.width - valueFromPadding(padding, "right"),
-    [size.value.width, padding],
+    () => size.width - valueFromPadding(padding, "right"),
+    [size.width, padding],
   );
   const oymin = useDerivedValue(
-    () => size.value.height - valueFromPadding(padding, "bottom"),
-    [size.value.height, padding],
+    () => size.height - valueFromPadding(padding, "bottom"),
+    [size.height, padding],
   );
   const oymax = useDerivedValue(
     () => valueFromPadding(padding, "top"),
@@ -134,7 +141,7 @@ export function CartesianChart<T extends Point>({
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={g}>
-        <Canvas style={{ flex: 1 }} onSize={size}>
+        <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           <CartesianContext.Provider value={value}>
             {children}
           </CartesianContext.Provider>
