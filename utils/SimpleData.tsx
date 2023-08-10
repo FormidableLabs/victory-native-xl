@@ -47,4 +47,4 @@ export function SimpleData({
 
 const DATA = Array.from({ length: 10 })
   .fill(null)
-  .map((_, i) => ({ x: i, y: -5 + Math.round(10 * Math.random()) }));
+  .map((_, i) => ({ x: i, y: -5 + 10 * Math.random() }));

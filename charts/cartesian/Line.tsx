@@ -8,6 +8,8 @@ import {
 import { map, mapPointX, mapPointY } from "../interpolaters";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
+import { makeCubicPath, makeLinearPath } from "../makeLinePath";
+import { makeNaturalCurve } from "../curves/natural";
 
 export function Line() {
   const { data, inputWindow, outputWindow } = useCartesianContext();
@@ -23,36 +25,40 @@ export function Line() {
     const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
     const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
 
-    const makePath = (_data: typeof data) => {
-      const path = Skia.Path.Make();
-      if (!_data?.length) return path;
-
-      path.moveTo(x(_data[0].x), y(_data[0].y));
-      _data.forEach((el) => {
-        path.lineTo(x(el.x), y(el.y));
-      });
-
-      return path;
-    };
-
-    const newPath = makePath(data);
+    const newPath = makeNaturalCurve(data, x, y);
     if (data.length !== prevData.length) return newPath;
 
-    const oldPath = makePath(prevData);
-
+    const oldPath = makeNaturalCurve(prevData, x, y);
     return newPath.isInterpolatable(oldPath)
       ? newPath.interpolate(oldPath, animProgress.value)
       : newPath;
   }, [data, prevData]);
 
+  const altPath = useDerivedValue(() => {
+    const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
+    const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
+
+    return makeLinearPath(data, x, y);
+  }, [data]);
+
   return (
-    <Path
-      path={path}
-      style="stroke"
-      color="red"
-      strokeWidth={8}
-      strokeCap="round"
-      strokeJoin="round"
-    />
+    <>
+      <Path
+        path={path}
+        style="stroke"
+        color="red"
+        strokeWidth={8}
+        strokeCap="round"
+        strokeJoin="round"
+      />
+      <Path
+        path={altPath}
+        style="stroke"
+        color="blue"
+        strokeWidth={8}
+        strokeCap="round"
+        strokeJoin="round"
+      />
+    </>
   );
 }
