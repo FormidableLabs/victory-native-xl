@@ -1,6 +1,7 @@
 import { Circle, Path, Rect, Skia, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
+  useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
   withTiming,
@@ -40,16 +41,34 @@ export function Line({ hasTracking = true }: LineProps) {
       : newPath;
   }, [data, prevData]);
 
-  const trackingPoint = useDerivedValue(() => {
-    if (!hasTracking || !tracking.isActive) return vec(-5, -5);
+  // Our tracking point, but we won't use this directly in drawing
+  const _trackingPoint = useDerivedValue(() => {
+    if (!hasTracking || !tracking.isActive) return null;
 
     const closestPoint = findClosestPoint(data, tracking.x.value);
-    if (!closestPoint) return vec(-5, -5);
+    if (!closestPoint) return null;
 
     return vec(
       ...mapPoint([closestPoint.x, closestPoint.y], inputWindow, outputWindow),
     );
   });
+
+  // We'll animate x/y values on tracking point changes for a smoother feel
+  const trackingX = useSharedValue(_trackingPoint.value?.x || 0);
+  const trackingY = useSharedValue(_trackingPoint.value?.y || 0);
+  useAnimatedReaction(
+    () => _trackingPoint.value,
+    (cur, prev) => {
+      if (!cur) return;
+      if (!prev) {
+        trackingX.value = cur.x;
+        trackingY.value = cur.y;
+      } else if (cur.x !== prev?.x) {
+        trackingX.value = withTiming(cur.x, { duration: 150 });
+        trackingY.value = withTiming(cur.y, { duration: 150 });
+      }
+    },
+  );
 
   return (
     <>
@@ -62,7 +81,7 @@ export function Line({ hasTracking = true }: LineProps) {
         strokeJoin="round"
       />
       {hasTracking && tracking.isActive && (
-        <Circle c={trackingPoint} r={10} color="purple" />
+        <Circle cx={trackingX} cy={trackingY} r={10} color="purple" />
       )}
     </>
   );
