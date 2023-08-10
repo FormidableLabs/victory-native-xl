@@ -1,10 +1,4 @@
-import {
-  LinearGradient,
-  Path,
-  PathOp,
-  Skia,
-  vec,
-} from "@shopify/react-native-skia";
+import { LinearGradient, Path, Skia, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
   useDerivedValue,
@@ -13,12 +7,11 @@ import {
 } from "react-native-reanimated";
 import { usePrevious } from "../../utils/usePrevious";
 import { BAR_WIDTH } from "../consts";
-import { map } from "../interpolaters";
+import { mapPointX, mapPointY } from "../interpolaters";
 import { useCartesianContext } from "./CartesianContext";
 
 export function Bar() {
-  const { data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax } =
-    useCartesianContext();
+  const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
 
   const animProgress = useSharedValue(0);
@@ -29,17 +22,14 @@ export function Bar() {
   }, [data]);
 
   const path = useDerivedValue(() => {
-    // TODO: Abstract out the shared logic here...
-    const newPath = (() => {
+    const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
+    const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
+
+    const makePath = (_data: typeof data) => {
       const path = Skia.Path.Make();
-      if (!data?.length) return path;
+      if (!_data?.length) return path;
 
-      const x = (d: number) =>
-        map(d, ixmin.value, ixmax.value, oxmin.value, oxmax.value);
-      const y = (d: number) =>
-        map(d, iymin.value, iymax.value, oymin.value, oymax.value);
-
-      data.forEach((el, i) => {
+      _data.forEach((el, i) => {
         path.addRect(
           Skia.XYWHRect(
             x(el.x) - BAR_WIDTH / 2,
@@ -51,36 +41,16 @@ export function Bar() {
       });
 
       return path;
-    })();
+    };
+
+    const newPath = makePath(data);
     if (data.length !== prevData.length) return newPath;
 
-    const oldPath = (() => {
-      const path = Skia.Path.Make();
-      if (!prevData?.length) return path;
-
-      const x = (d: number) =>
-        map(d, ixmin.value, ixmax.value, oxmin.value, oxmax.value);
-      const y = (d: number) =>
-        map(d, iymin.value, iymax.value, oymin.value, oymax.value);
-
-      prevData.forEach((el, i) => {
-        path.addRect(
-          Skia.XYWHRect(
-            x(el.x) - BAR_WIDTH / 2,
-            y(0),
-            BAR_WIDTH,
-            y(el.y) - y(0),
-          ),
-        );
-      });
-
-      return path;
-    })();
-
+    const oldPath = makePath(prevData);
     return newPath.isInterpolatable(oldPath)
       ? newPath.interpolate(oldPath, animProgress.value)
       : newPath;
-  }, [data, ixmin, ixmax, oxmin, oxmax, iymin, iymax, oymin, oymax]);
+  }, [data, prevData]);
 
   return (
     <>
