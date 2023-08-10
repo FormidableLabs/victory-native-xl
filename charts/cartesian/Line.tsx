@@ -1,18 +1,24 @@
-import { Path, Rect, Skia } from "@shopify/react-native-skia";
+import { Circle, Path, Rect, Skia, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { map, mapPointX, mapPointY } from "../interpolaters";
+import { map, mapPoint, mapPointX, mapPointY } from "../interpolaters";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
 import { makeCubicPath, makeLinearPath } from "../makeLinePath";
 import { makeNaturalCurve } from "../curves/natural";
+import { findClosestPoint } from "../findClosestPoint";
 
-export function Line() {
-  const { data, inputWindow, outputWindow } = useCartesianContext();
+type LineProps = {
+  hasTracking?: boolean; // TODO: this needs a real name
+};
+
+export function Line({ hasTracking = true }: LineProps) {
+  const { data, inputWindow, outputWindow, tracking } = useCartesianContext();
+
   const prevData = usePrevious(data);
   const animProgress = useSharedValue(0);
 
@@ -25,21 +31,25 @@ export function Line() {
     const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
     const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
 
-    const newPath = makeNaturalCurve(data, x, y);
+    const newPath = makeLinearPath(data, x, y);
     if (data.length !== prevData.length) return newPath;
 
-    const oldPath = makeNaturalCurve(prevData, x, y);
+    const oldPath = makeLinearPath(prevData, x, y);
     return newPath.isInterpolatable(oldPath)
       ? newPath.interpolate(oldPath, animProgress.value)
       : newPath;
   }, [data, prevData]);
 
-  const altPath = useDerivedValue(() => {
-    const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
-    const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
+  const trackingPoint = useDerivedValue(() => {
+    if (!hasTracking || !tracking.isActive) return vec(-5, -5);
 
-    return makeLinearPath(data, x, y);
-  }, [data]);
+    const closestPoint = findClosestPoint(data, tracking.x.value);
+    if (!closestPoint) return vec(-5, -5);
+
+    return vec(
+      ...mapPoint([closestPoint.x, closestPoint.y], inputWindow, outputWindow),
+    );
+  });
 
   return (
     <>
@@ -51,14 +61,9 @@ export function Line() {
         strokeCap="round"
         strokeJoin="round"
       />
-      <Path
-        path={altPath}
-        style="stroke"
-        color="blue"
-        strokeWidth={8}
-        strokeCap="round"
-        strokeJoin="round"
-      />
+      {hasTracking && tracking.isActive && (
+        <Circle c={trackingPoint} r={10} color="purple" />
+      )}
     </>
   );
 }

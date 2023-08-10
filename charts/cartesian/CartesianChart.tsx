@@ -1,8 +1,9 @@
-import { Canvas, clamp } from "@shopify/react-native-skia";
+import { Canvas, Circle, clamp } from "@shopify/react-native-skia";
 import * as React from "react";
 import { PropsWithChildren } from "react";
 import { LayoutChangeEvent } from "react-native";
 import {
+  runOnJS,
   useDerivedValue,
   useSharedValue,
   withTiming,
@@ -37,6 +38,7 @@ export function CartesianChart<T extends Point>({
   const tx = useSharedValue(0);
   const savedTx = useSharedValue(0);
 
+  // Track canvas size
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -45,6 +47,11 @@ export function CartesianChart<T extends Point>({
     [],
   );
 
+  // Track tooltip state
+  const [isTracking, setIsTracking] = React.useState(false);
+  const trackingX = useSharedValue(0);
+
+  // View windows
   const _ixmin = useSharedValue(Math.min(...data.map((d) => d.x)));
   const _ixmax = useSharedValue(Math.max(...data.map((d) => d.x)));
   const _width = useDerivedValue(
@@ -79,6 +86,7 @@ export function CartesianChart<T extends Point>({
     [padding],
   );
 
+  // When the data changes, we need to update our raw input window
   React.useEffect(() => {
     _ixmin.value = withTiming(Math.min(...data.map((d) => d.x)), {
       duration: 300,
@@ -96,6 +104,7 @@ export function CartesianChart<T extends Point>({
 
   const value = React.useMemo<CartesianContextValue>(
     () => ({
+      // TODO: We should sort the data here so we have order guarantees, helps with perf.
       data,
       inputWindow: {
         xMin: ixmin,
@@ -109,10 +118,17 @@ export function CartesianChart<T extends Point>({
         yMin: oymin,
         yMax: oymax,
       },
+      tracking: {
+        isActive: isTracking,
+        x: trackingX,
+      },
     }),
-    [data],
+    [data, isTracking],
   );
 
+  /**
+   * Pinch to zoom
+   */
   const pinchFocal = useSharedValue({ x: 0, relLeft: 0 });
   const pinch = Gesture.Pinch()
     .onBegin((e) => {
@@ -148,7 +164,10 @@ export function CartesianChart<T extends Point>({
       savedScale.value = newScale;
     });
 
-  const pan = Gesture.Pan()
+  /**
+   * Two-finger panning
+   */
+  const twoFingerDrag = Gesture.Pan()
     .onUpdate((e) => {
       const dx =
         ((ixmax.value - ixmin.value) / (oxmax.value - oxmin.value)) *
@@ -166,11 +185,39 @@ export function CartesianChart<T extends Point>({
     .minPointers(2)
     .minDistance(5);
 
-  const g = Gesture.Race(pan, pinch);
+  /**
+   * Single finger pan for tool-tipping
+   * TODO: Disable when scrolling vertically
+   */
+  const highlightPan = Gesture.Pan()
+    .onBegin((evt) => {
+      trackingX.value = map(
+        evt.x + oxmin.value,
+        oxmin.value,
+        oxmax.value,
+        ixmin.value,
+        ixmax.value,
+      );
+      runOnJS(setIsTracking)(true);
+    })
+    .onUpdate((evt) => {
+      trackingX.value = map(
+        evt.x + oxmin.value,
+        oxmin.value,
+        oxmax.value,
+        ixmin.value,
+        ixmax.value,
+      );
+    })
+    .onEnd(() => {
+      runOnJS(setIsTracking)(false);
+    });
+
+  const combinedGesture = Gesture.Race(twoFingerDrag, pinch, highlightPan);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={g}>
+      <GestureDetector gesture={combinedGesture}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           <CartesianContext.Provider value={value}>
             {children}
