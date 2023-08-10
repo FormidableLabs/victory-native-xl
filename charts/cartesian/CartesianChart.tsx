@@ -128,7 +128,7 @@ export function CartesianChart<T extends Point>({
       pinchFocal.value.relLeft = e.focalX / (oxmax.value - oxmin.value);
     })
     .onUpdate((e) => {
-      const s = Math.max(1, savedScale.value * e.scale);
+      const s = savedScale.value * e.scale;
       scale.value = s;
 
       tx.value =
@@ -137,15 +137,15 @@ export function CartesianChart<T extends Point>({
         (1 - pinchFocal.value.relLeft) * (_width.value / s);
     })
     .onEnd(() => {
-      const newTx = clamp(
-        tx.value,
-        0,
-        _width.value - _width.value / scale.value,
-      );
-      if (newTx !== tx.value) tx.value = withTiming(newTx, { duration: 300 });
-      savedTx.value = newTx;
+      const newScale = Math.max(1, scale.value);
+      if (newScale !== scale.value)
+        scale.value = withTiming(newScale, { duration: 300 });
 
-      savedScale.value = scale.value;
+      const newTx = clamp(tx.value, 0, _width.value - _width.value / newScale);
+      if (newTx !== tx.value) tx.value = withTiming(newTx, { duration: 300 });
+
+      savedTx.value = newTx;
+      savedScale.value = newScale;
     });
 
   const pan = Gesture.Pan()
