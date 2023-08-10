@@ -1,24 +1,21 @@
 import { useCartesianContext } from "./CartesianContext";
 import { useDerivedValue } from "react-native-reanimated";
 import { Path, Skia } from "@shopify/react-native-skia";
-import { map } from "../interpolaters";
+import { mapPointX, mapPointY } from "../interpolaters";
 
 type XAxisProps = {};
 
 export function XAxis(props: XAxisProps) {
-  const { data, ixmin, ixmax, iymin, iymax, oxmin, oxmax, oymin, oymax } =
-    useCartesianContext();
+  const { data, inputWindow, outputWindow } = useCartesianContext();
 
   const path = useDerivedValue(() => {
     const path = Skia.Path.Make();
-    const x = (v: number) =>
-      map(v, ixmin.value, ixmax.value, oxmin.value, oxmax.value);
-    const y = (v: number) =>
-      map(v, iymin.value, iymax.value, oymin.value, oymax.value);
+    const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
+    const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
 
-    const xStart = oxmin.value;
-    const xEnd = oxmax.value;
-    const axisY = map(0, iymin.value, iymax.value, oymin.value, oymax.value);
+    const xStart = outputWindow.xMin.value;
+    const xEnd = outputWindow.xMax.value;
+    const axisY = mapPointY(0, inputWindow, outputWindow);
 
     // Baseline
     path.moveTo(xStart, axisY);
@@ -38,7 +35,7 @@ export function XAxis(props: XAxisProps) {
     });
 
     return path;
-  }, [data, iymin, iymax, oymin, oymax, ixmin, ixmax, iymin, iymax]);
+  }, [data]);
 
   return (
     <Path

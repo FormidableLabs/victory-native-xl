@@ -3,18 +3,16 @@ import * as React from "react";
 import { PropsWithChildren } from "react";
 import { LayoutChangeEvent } from "react-native";
 import {
-  useAnimatedGestureHandler,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { CHART_VERTICAL_PADDING } from "../consts";
 import { Point } from "../types";
-import { CartesianContext } from "./CartesianContext";
+import { CartesianContext, CartesianContextValue } from "./CartesianContext";
 import {
-  GestureHandlerRootView,
   Gesture,
   GestureDetector,
+  GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import { map } from "../interpolaters";
 
@@ -35,6 +33,7 @@ export function CartesianChart<T extends Point>({
   // Gestures?
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
+  // translateX is in terms of _input coords_
   const tx = useSharedValue(0);
   const savedTx = useSharedValue(0);
 
@@ -96,29 +95,46 @@ export function CartesianChart<T extends Point>({
     return React.cloneElement(child, {});
   });
 
-  const value = React.useMemo(
+  const value = React.useMemo<CartesianContextValue>(
     () => ({
       data,
-      ixmin,
-      ixmax,
-      iymin,
-      iymax,
-      oxmin,
-      oxmax,
-      oymin,
-      oymax,
+      inputWindow: {
+        xMin: ixmin,
+        xMax: ixmax,
+        yMin: iymin,
+        yMax: iymax,
+      },
+      outputWindow: {
+        xMin: oxmin,
+        xMax: oxmax,
+        yMin: oymin,
+        yMax: oymax,
+      },
     }),
     [data],
   );
 
   // TODO: Need to map this so we keep focal point
-  const pinchFocal = useSharedValue(0);
+  const pinchFocal = useSharedValue({ x: 0, relLeft: 0 });
   const pinch = Gesture.Pinch()
     .onBegin((e) => {
-      // e.focalX
+      pinchFocal.value.x = map(
+        e.focalX,
+        oxmin.value,
+        oxmax.value,
+        ixmin.value,
+        ixmax.value,
+      );
+      pinchFocal.value.relLeft = e.focalX / (oxmax.value - oxmin.value);
     })
     .onUpdate((e) => {
-      scale.value = Math.max(1, savedScale.value * e.scale);
+      const s = Math.max(1, savedScale.value * e.scale);
+      scale.value = s;
+
+      // const dx =
+      //   pinchFocal.value.relLeft * (ixmax.value - ixmin.value) -
+      //   pinchFocal.value.x;
+      // tx.value = savedTx.value - dx;
     })
     .onEnd(() => {
       savedScale.value = scale.value;
@@ -134,9 +150,10 @@ export function CartesianChart<T extends Point>({
     .onEnd(() => {
       savedTx.value = tx.value;
     })
-    .minDistance(1);
+    .minPointers(2)
+    .minDistance(5);
 
-  const g = Gesture.Simultaneous(pinch, pan);
+  const g = Gesture.Race(pan, pinch);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
