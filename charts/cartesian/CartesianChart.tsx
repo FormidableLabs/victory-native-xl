@@ -47,6 +47,10 @@ export function CartesianChart<T extends Point>({
 
   const _ixmin = useSharedValue(Math.min(...data.map((d) => d.x)));
   const _ixmax = useSharedValue(Math.max(...data.map((d) => d.x)));
+  const _width = useDerivedValue(
+    () => _ixmax.value - _ixmin.value,
+    [_ixmin, _ixmax],
+  );
   const ixmin = useDerivedValue(
     () => _ixmin.value / scale.value + tx.value,
     [_ixmin, scale, tx],
@@ -90,11 +94,6 @@ export function CartesianChart<T extends Point>({
     });
   }, [data]);
 
-  const c = React.Children.map(children, (child) => {
-    if (!React.isValidElement(child)) return null;
-    return React.cloneElement(child, {});
-  });
-
   const value = React.useMemo<CartesianContextValue>(
     () => ({
       data,
@@ -114,37 +113,38 @@ export function CartesianChart<T extends Point>({
     [data],
   );
 
-  // TODO: Need to map this so we keep focal point
   const pinchFocal = useSharedValue({ x: 0, relLeft: 0 });
   const pinch = Gesture.Pinch()
     .onBegin((e) => {
+      // Where does our focal point map to in input coords?
       pinchFocal.value.x = map(
-        e.focalX,
+        e.focalX + oxmin.value, // take into account the padding
         oxmin.value,
         oxmax.value,
         ixmin.value,
         ixmax.value,
       );
+      // Focal point started at what % from left of window?
       pinchFocal.value.relLeft = e.focalX / (oxmax.value - oxmin.value);
     })
     .onUpdate((e) => {
-      scale.value = Math.max(1, savedScale.value * e.scale);
+      const s = Math.max(1, savedScale.value * e.scale);
+      scale.value = s;
 
-      const newTx =
-        _ixmax.value -
-        _ixmin.value -
-        (ixmax.value - ixmin.value) -
+      tx.value =
+        _width.value * (1 - 1 / s) -
         (_ixmax.value - pinchFocal.value.x) +
-        (1 - pinchFocal.value.relLeft) * (ixmax.value - ixmin.value);
-
-      tx.value = clamp(
-        newTx,
-        0,
-        _ixmax.value - _ixmin.value - (ixmax.value - ixmin.value),
-      );
+        (1 - pinchFocal.value.relLeft) * (_width.value / s);
     })
     .onEnd(() => {
-      savedTx.value = tx.value;
+      const newTx = clamp(
+        tx.value,
+        0,
+        _width.value - _width.value / scale.value,
+      );
+      if (newTx !== tx.value) tx.value = withTiming(newTx, { duration: 300 });
+      savedTx.value = newTx;
+
       savedScale.value = scale.value;
     });
 
@@ -159,8 +159,6 @@ export function CartesianChart<T extends Point>({
         0,
         _ixmax.value - _ixmin.value - (ixmax.value - ixmin.value),
       );
-
-      console.log(tx.value);
     })
     .onEnd(() => {
       savedTx.value = tx.value;
