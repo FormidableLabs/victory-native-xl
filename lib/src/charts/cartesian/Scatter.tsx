@@ -13,14 +13,14 @@ import { defaultBaseCartesianChartProps } from "../../consts";
 import { PathFill } from "./PathFill";
 
 export type ScatterProps = BaseCartesianChartProps<{
-  radius?: number;
+  radius: number;
 }>;
 
 export function Scatter({
   dataKey,
   animationDuration,
   fillColor,
-  radius = 10,
+  radius,
 }: ScatterProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
@@ -64,4 +64,4 @@ export function Scatter({
   );
 }
 
-Scatter.defaultProps = defaultBaseCartesianChartProps;
+Scatter.defaultProps = { ...defaultBaseCartesianChartProps, radius: 10 };
