@@ -22,3 +22,14 @@ export type MassagedData = {
 export type SidedNumber =
   | number
   | { left?: number; right?: number; top?: number; bottom?: number };
+
+/**
+ * Used as a baseline for Cartesian chart types
+ */
+export type BaseCartesianChartProps<T = Record<string, unknown>> = {
+  [K in keyof T]: T[K];
+} & {
+  animationDuration: number;
+  dataKey: string;
+  fillColor: string | string[];
+};
