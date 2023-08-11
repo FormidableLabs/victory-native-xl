@@ -46,19 +46,15 @@ export function CartesianChart<T extends InputDatum>({
   const savedTx = useSharedValue(0);
 
   // Collect data keys... Is there a better way to do this?
-  // TODO: Do this in less shitty way
-  // const [dataKeys, setDataKeys] = React.useState(new Set<string>());
-  const dataKeys = new Set<string>();
+  // TODO: Performance-optimize this?
+  const _dataKeys = new Set<string>();
   React.Children.forEach(children, (child) => {
     if (React.isValidElement(child)) {
-      dataKeys.add(child.props.dataKey || "y");
+      _dataKeys.add(child.props.dataKey || "y");
     }
   });
-  // if (dataKeys.join(",") !== _dataKeys.join(",")) setDataKeys(_dataKeys);
 
-  const massagedData = React.useMemo(() => {
-    return massageInputData(data, xKey, Array.from(dataKeys));
-  }, [data, xKey, dataKeys]);
+  const massagedData = massageInputData(data, xKey, Array.from(_dataKeys));
 
   // Track canvas size
   const [size, setSize] = React.useState({ width: 0, height: 0 });
