@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "dev:lib": "yarn workspace victory-native-skia dev",
     "dev:example": "yarn workspace example start",
-    "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\""
+    "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
+    "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\""
   },
   "devDependencies": {
     "@types/node": "^20.4.9",
