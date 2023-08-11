@@ -147,7 +147,7 @@ export function CartesianChart<T extends InputDatum>({
    */
   const pinchFocal = useSharedValue({ x: 0, relLeft: 0 });
   const pinch = Gesture.Pinch()
-    .onBegin((e) => {
+    .onStart((e) => {
       // Where does our focal point map to in input coords?
       pinchFocal.value.x = map(
         e.focalX + oxmin.value, // take into account the padding
@@ -206,7 +206,7 @@ export function CartesianChart<T extends InputDatum>({
    * TODO: Disable when scrolling vertically
    */
   const highlightPan = Gesture.Pan()
-    .onBegin((evt) => {
+    .onStart((evt) => {
       trackingX.value = map(
         evt.x + oxmin.value,
         oxmin.value,
