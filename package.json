@@ -11,12 +11,16 @@
   "react-native": "src/index",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:lib": "yarn workspace victory-native-skia dev",
+    "dev:example": "yarn workspace example start",
+    "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\""
   },
   "devDependencies": {
     "@types/node": "^20.4.9",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
+    "concurrently": "^8.2.0",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
