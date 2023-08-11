@@ -1,6 +1,6 @@
 import * as React from "react";
 import { KeyedData } from "../components/KeyedData";
-import { CartesianChart, Bar } from "victory-native-skia";
+import { CartesianChart, Bar, Line } from "victory-native-skia";
 
 export default function KeyedDataView() {
   return (
@@ -8,7 +8,7 @@ export default function KeyedDataView() {
       renderChart={({ data }) => (
         <CartesianChart data={data} xKey="quarter">
           <Bar dataKey="earnings" color="red" />
-          <Bar dataKey="spend" color="blue" />
+          <Line dataKey="spend" />
         </CartesianChart>
       )}
     />

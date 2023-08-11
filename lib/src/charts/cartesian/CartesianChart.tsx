@@ -1,4 +1,4 @@
-import { Canvas, clamp } from "@shopify/react-native-skia";
+import { Canvas, clamp, Group, rect } from "@shopify/react-native-skia";
 import * as React from "react";
 import { type PropsWithChildren } from "react";
 import { type LayoutChangeEvent } from "react-native";
@@ -80,14 +80,16 @@ export function CartesianChart<T extends InputDatum>({
     [_ixmin, _ixmax],
   );
   const ixmin = useDerivedValue(
-    () => _ixmin.value / scale.value + tx.value,
+    () => _ixmin.value + tx.value,
     [_ixmin, scale, tx],
   );
   const ixmax = useDerivedValue(
-    () => _ixmax.value / scale.value + tx.value,
+    () => ixmin.value + _width.value / scale.value,
     [_ixmax, scale, tx],
   );
-  const iymin = useSharedValue(getMinYFromMassagedData(massagedData));
+  const iymin = useSharedValue(
+    Math.min(0, getMinYFromMassagedData(massagedData)),
+  );
   // const iymin = useSharedValue(0);
   const iymax = useSharedValue(getMaxYFromMassagedData(massagedData));
   const oxmin = useDerivedValue(
@@ -111,9 +113,12 @@ export function CartesianChart<T extends InputDatum>({
   React.useEffect(() => {
     _ixmin.value = withTiming(massagedData.x.at(0) || 0);
     _ixmax.value = withTiming(massagedData.x.at(-1) || 0);
-    iymin.value = withTiming(getMinYFromMassagedData(massagedData), {
-      duration: 300,
-    });
+    iymin.value = withTiming(
+      Math.min(0, getMinYFromMassagedData(massagedData)),
+      {
+        duration: 300,
+      },
+    );
     iymax.value = withTiming(getMaxYFromMassagedData(massagedData), {
       duration: 300,
     });
@@ -144,6 +149,7 @@ export function CartesianChart<T extends InputDatum>({
 
   /**
    * Pinch to zoom
+   * TODO: This gets borked with negative values, must be some math wrong here!
    */
   const pinchFocal = useSharedValue({ x: 0, relLeft: 0 });
   const pinch = Gesture.Pinch()
@@ -228,15 +234,43 @@ export function CartesianChart<T extends InputDatum>({
     .onEnd(() => {
       runOnJS(setIsTracking)(false);
     });
+  // .activateAfterLongPress(200);
 
   const combinedGesture = Gesture.Race(twoFingerDrag, pinch, highlightPan);
+
+  const clipRect = React.useMemo(() => {
+    return rect(
+      valueFromPadding(padding, "left"),
+      valueFromPadding(padding, "left"),
+      size.width -
+        valueFromPadding(padding, "left") -
+        valueFromPadding(padding, "right"),
+      size.height -
+        valueFromPadding(padding, "top") -
+        valueFromPadding(padding, "bottom"),
+    );
+  }, [padding, size]);
+
+  const clippedChildren: React.ReactElement[] = [],
+    unclippedChildren: React.ReactElement[] = [];
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child)) {
+      // @ts-expect-error Escape hatch that TS doesn't know about.
+      if (child.type["__ESCAPE_CLIP"]) {
+        unclippedChildren.push(child);
+      } else {
+        clippedChildren.push(child);
+      }
+    }
+  });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={combinedGesture}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           <CartesianContext.Provider value={value}>
-            {children}
+            <Group clip={clipRect}>{clippedChildren}</Group>
+            {unclippedChildren}
           </CartesianContext.Provider>
         </Canvas>
       </GestureDetector>

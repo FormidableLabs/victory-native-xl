@@ -26,19 +26,27 @@ export function SimpleData({
         {renderChart({ data })}
       </View>
       <View style={{ flex: 1 }}>
-        <Button title="Add point" onPress={addPoint} />
-        <Button title="Reset" onPress={() => setData(DATA)} />
-        <Button
-          title="Shuffle y values"
-          onPress={() =>
-            setData((old) =>
-              old.map(({ x }) => ({
-                x,
-                y: -5 + 10 * Math.random(),
-              })),
-            )
-          }
-        />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <Button title="Add point" onPress={addPoint} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Button title="Reset" onPress={() => setData(DATA)} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Button
+              title="Shuffle"
+              onPress={() =>
+                setData((old) =>
+                  old.map(({ x }) => ({
+                    x,
+                    y: -5 + 10 * Math.random(),
+                  })),
+                )
+              }
+            />
+          </View>
+        </View>
         {controls?.()}
       </View>
     </View>
@@ -47,4 +55,4 @@ export function SimpleData({
 
 const DATA = Array.from({ length: 10 })
   .fill(null)
-  .map((_, i) => ({ x: i, y: -5 + 10 * Math.random() }));
+  .map((_, i) => ({ x: -5 + i, y: -5 + 10 * Math.random() }));

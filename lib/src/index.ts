@@ -3,5 +3,6 @@ export { Line } from "./charts/cartesian/Line";
 export { Bar } from "./charts/cartesian/Bar";
 export { Scatter } from "./charts/cartesian/Scatter";
 export { XAxis } from "./charts/cartesian/XAxis";
+export { YAxis } from "./charts/cartesian/YAxis";
 
 export { type InputDatum } from "./types";
