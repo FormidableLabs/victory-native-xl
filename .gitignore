@@ -4,7 +4,7 @@
 node_modules/
 
 # Expo
-.expo/
+example/.expo/
 dist/
 web-build/
 
