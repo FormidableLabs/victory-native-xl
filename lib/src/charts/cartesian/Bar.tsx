@@ -9,8 +9,8 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { usePrevious } from "../../utils/usePrevious";
-import { BAR_WIDTH } from "../consts";
-import { mapPointX, mapPointY } from "../interpolaters";
+import { BAR_WIDTH } from "../../consts";
+import { mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
 
 type BarProps = {

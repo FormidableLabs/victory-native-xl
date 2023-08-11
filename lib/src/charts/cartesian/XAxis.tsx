@@ -2,7 +2,7 @@ import * as React from "react";
 import { useCartesianContext } from "./CartesianContext";
 import { useDerivedValue } from "react-native-reanimated";
 import { Path, Skia } from "@shopify/react-native-skia";
-import { mapPointX, mapPointY } from "../interpolaters";
+import { mapPointX, mapPointY } from "../../utils/mapping";
 
 export function XAxis() {
   const { data, inputWindow, outputWindow } = useCartesianContext();

@@ -8,10 +8,10 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { mapPointX, mapPointY } from "../interpolaters";
+import { mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
-import { makeLinearPath } from "../makeLinePath";
+import { makeLinearPath } from "../curves/linear";
 
 type LineProps = {
   dataKey?: string;

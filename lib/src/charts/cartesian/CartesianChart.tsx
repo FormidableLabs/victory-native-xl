@@ -17,7 +17,7 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import { map } from "../interpolaters";
+import { map } from "../../utils/mapping";
 import {
   getMaxYFromMassagedData,
   getMinYFromMassagedData,

@@ -10,7 +10,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { mapPointX, mapPointY } from "../interpolaters";
+import { mapPointX, mapPointY } from "../../utils/mapping";
 
 export type ScatterProps = {
   radius?: number;
