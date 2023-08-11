@@ -1,22 +1,24 @@
-import { Path } from "@shopify/react-native-skia";
+import { Circle, Path, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
+  useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { mapPointX, mapPointY } from "../../utils/mapping";
+import { mapPoint, mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
 import { makeLinearPath } from "../curves/linear";
+import { findClosestPoint } from "../../utils/findClosestPoint";
 
 type LineProps = {
   dataKey?: string;
   hasTracking?: boolean; // TODO: this needs a real name
 };
 
-export function Line({ dataKey = "y" }: LineProps) {
-  const { data, inputWindow, outputWindow } = useCartesianContext();
+export function Line({ dataKey = "y", hasTracking = true }: LineProps) {
+  const { data, inputWindow, outputWindow, tracking } = useCartesianContext();
 
   const prevData = usePrevious(data);
   const animProgress = useSharedValue(0);
@@ -41,33 +43,37 @@ export function Line({ dataKey = "y" }: LineProps) {
 
   // TODO: Re-enable tracking at some point...
   // Our tracking point, but we won't use this directly in drawing
-  // const _trackingPoint = useDerivedValue(() => {
-  //   if (!hasTracking || !tracking.isActive) return null;
-  //
-  //   const closestPoint = findClosestPoint(data, tracking.x.value);
-  //   if (!closestPoint) return null;
-  //
-  //   return vec(
-  //     ...mapPoint([closestPoint.x, closestPoint.y], inputWindow, outputWindow),
-  //   );
-  // });
-  //
-  // // We'll animate x/y values on tracking point changes for a smoother feel
-  // const trackingX = useSharedValue(_trackingPoint.value?.x || 0);
-  // const trackingY = useSharedValue(_trackingPoint.value?.y || 0);
-  // useAnimatedReaction(
-  //   () => _trackingPoint.value,
-  //   (cur, prev) => {
-  //     if (!cur) return;
-  //     if (!prev) {
-  //       trackingX.value = cur.x;
-  //       trackingY.value = cur.y;
-  //     } else if (cur.x !== prev?.x) {
-  //       trackingX.value = withTiming(cur.x, { duration: 150 });
-  //       trackingY.value = withTiming(cur.y, { duration: 150 });
-  //     }
-  //   },
-  // );
+  const _trackingPoint = useDerivedValue(() => {
+    if (!hasTracking || !tracking.isActive) return null;
+
+    const closestIdx = findClosestPoint(data.x, tracking.x.value);
+    if (closestIdx === null) return null;
+
+    const closestX = data.x[closestIdx];
+    const closestY = data.y[dataKey]?.[closestIdx];
+    if (closestX === undefined || closestY === undefined) return null;
+
+    const closestPoint = [closestX, closestY] as [number, number];
+
+    return vec(...mapPoint(closestPoint, inputWindow, outputWindow));
+  });
+
+  // We'll animate x/y values on tracking point changes for a smoother feel
+  const trackingX = useSharedValue(_trackingPoint.value?.x || 0);
+  const trackingY = useSharedValue(_trackingPoint.value?.y || 0);
+  useAnimatedReaction(
+    () => _trackingPoint.value,
+    (cur, prev) => {
+      if (!cur) return;
+      if (!prev) {
+        trackingX.value = cur.x;
+        trackingY.value = cur.y;
+      } else if (cur.x !== prev?.x) {
+        trackingX.value = withTiming(cur.x, { duration: 150 });
+        trackingY.value = withTiming(cur.y, { duration: 150 });
+      }
+    },
+  );
 
   return (
     <>
@@ -79,9 +85,9 @@ export function Line({ dataKey = "y" }: LineProps) {
         strokeCap="round"
         strokeJoin="round"
       />
-      {/*{hasTracking && tracking.isActive && (*/}
-      {/*  <Circle cx={trackingX} cy={trackingY} r={10} color="purple" />*/}
-      {/*)}*/}
+      {hasTracking && tracking.isActive && (
+        <Circle cx={trackingX} cy={trackingY} r={10} color="purple" />
+      )}
     </>
   );
 }

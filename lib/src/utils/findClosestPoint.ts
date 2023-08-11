@@ -1,47 +1,62 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { Point } from "../types";
-
-const getClosest = (val1: Point, val2: Point, targetX: number) => {
+const getClosest = (
+  [idx1, val1]: [number, number],
+  [idx2, val2]: [number, number],
+  targetX: number,
+) => {
   "worklet";
-  return targetX - val1.x >= val2.x - targetX ? val2 : val1;
+  return targetX - val1 >= val2 - targetX ? idx2 : idx1;
 };
 
-export function findClosestPoint(data: Point[], targetX: number): Point | null {
+/**
+ * Takes in x/y arrays and a targetX and returns the _index_ of closest point
+ */
+export function findClosestPoint(
+  xValues: number[],
+  targetX: number,
+): number | null {
   "worklet";
 
-  const n = data.length;
-  if (targetX <= data[0].x) return data[0];
-  if (targetX >= data[n - 1].x) return data[n - 1];
+  const n = xValues.length;
+  if (!n) return null;
 
-  // Doing binary search
+  const firstX = xValues[0],
+    lastX = xValues[n - 1];
+  if (firstX !== undefined && targetX <= firstX) return 0;
+  if (lastX !== undefined && targetX >= lastX) return n - 1;
+
+  // binary search
   let i = 0,
     j = n,
     mid = 0;
   while (i < j) {
     mid = Math.floor((i + j) / 2);
 
-    if (data[mid].x === targetX) return data[mid];
+    if (xValues[mid] === targetX) return mid;
 
     // search left
-    if (targetX < data[mid].x) {
-      // If targetX is greater than previous
-      // to mid, return closest of two
-      if (mid > 0 && targetX > data[mid - 1].x)
-        return getClosest(data[mid - 1], data[mid], targetX);
+    if (targetX < xValues[mid]!) {
+      if (mid > 0 && targetX > xValues[mid - 1]!)
+        return getClosest(
+          [mid - 1, xValues[mid - 1]!],
+          [mid, xValues[mid]!],
+          targetX,
+        );
 
       // Repeat for left half
       j = mid;
     }
 
-    // If target is greater than mid
+    // search right
     else {
-      if (mid < n - 1 && targetX < data[mid + 1].x)
-        return getClosest(data[mid], data[mid + 1], targetX);
-      i = mid + 1; // update i
+      if (mid < n - 1 && targetX < xValues[mid + 1]!)
+        return getClosest(
+          [mid, xValues[mid]!],
+          [mid + 1, xValues[mid + 1]!],
+          targetX,
+        );
+      i = mid + 1;
     }
   }
 
-  // Only single element left after search
-  return data[mid];
+  return mid;
 }

@@ -3,6 +3,7 @@ import * as React from "react";
 import { type PropsWithChildren } from "react";
 import { type LayoutChangeEvent } from "react-native";
 import {
+  runOnJS,
   useDerivedValue,
   useSharedValue,
   withTiming,
@@ -68,7 +69,7 @@ export function CartesianChart<T extends InputDatum>({
   );
 
   // Track tooltip state
-  const [isTracking] = React.useState(false);
+  const [isTracking, setIsTracking] = React.useState(false);
   const trackingX = useSharedValue(0);
 
   // View windows
@@ -204,31 +205,31 @@ export function CartesianChart<T extends InputDatum>({
    * Single finger pan for tool-tipping
    * TODO: Disable when scrolling vertically
    */
-  // const highlightPan = Gesture.Pan()
-  //   .onBegin((evt) => {
-  //     trackingX.value = map(
-  //       evt.x + oxmin.value,
-  //       oxmin.value,
-  //       oxmax.value,
-  //       ixmin.value,
-  //       ixmax.value,
-  //     );
-  //     runOnJS(setIsTracking)(true);
-  //   })
-  //   .onUpdate((evt) => {
-  //     trackingX.value = map(
-  //       evt.x + oxmin.value,
-  //       oxmin.value,
-  //       oxmax.value,
-  //       ixmin.value,
-  //       ixmax.value,
-  //     );
-  //   })
-  //   .onEnd(() => {
-  //     runOnJS(setIsTracking)(false);
-  //   });
+  const highlightPan = Gesture.Pan()
+    .onBegin((evt) => {
+      trackingX.value = map(
+        evt.x + oxmin.value,
+        oxmin.value,
+        oxmax.value,
+        ixmin.value,
+        ixmax.value,
+      );
+      runOnJS(setIsTracking)(true);
+    })
+    .onUpdate((evt) => {
+      trackingX.value = map(
+        evt.x + oxmin.value,
+        oxmin.value,
+        oxmax.value,
+        ixmin.value,
+        ixmax.value,
+      );
+    })
+    .onEnd(() => {
+      runOnJS(setIsTracking)(false);
+    });
 
-  const combinedGesture = Gesture.Race(twoFingerDrag, pinch);
+  const combinedGesture = Gesture.Race(twoFingerDrag, pinch, highlightPan);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
