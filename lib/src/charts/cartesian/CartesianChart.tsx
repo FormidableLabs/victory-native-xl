@@ -21,8 +21,8 @@ import { map } from "../../utils/mapping";
 import {
   getMaxYFromMassagedData,
   getMinYFromMassagedData,
-  massageInputData,
-} from "../../utils/massageInputData";
+  transformInputData,
+} from "../../utils/transformInputData";
 
 type CartesianChartProps<T extends InputDatum> = {
   data: T[];
@@ -56,7 +56,7 @@ export function CartesianChart<T extends InputDatum>({
     }
   });
 
-  const massagedData = massageInputData(data, xKey, Array.from(_dataKeys));
+  const massagedData = transformInputData(data, xKey, Array.from(_dataKeys));
 
   // Track canvas size
   const [size, setSize] = React.useState({ width: 0, height: 0 });

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import { Path, Skia } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
@@ -37,15 +34,19 @@ export function Bar({ dataKey = "y", color = "red" }: BarProps) {
       const path = Skia.Path.Make();
       if (!_data?.x.length) return path;
 
+      let yVal: number | undefined;
       _data.x.forEach((val, i) => {
-        path.addRect(
-          Skia.XYWHRect(
-            x(val) - BAR_WIDTH / 2,
-            y(0),
-            BAR_WIDTH,
-            y(_data.y[dataKey][i]) - y(0),
-          ),
-        );
+        yVal = _data.y[dataKey]?.[i];
+
+        yVal !== undefined &&
+          path.addRect(
+            Skia.XYWHRect(
+              x(val) - BAR_WIDTH / 2,
+              y(0),
+              BAR_WIDTH,
+              y(yVal) - y(0),
+            ),
+          );
       });
 
       return path;
@@ -56,7 +57,7 @@ export function Bar({ dataKey = "y", color = "red" }: BarProps) {
 
     const oldPath = makePath(prevData);
     return newPath.isInterpolatable(oldPath)
-      ? newPath.interpolate(oldPath, animProgress.value)
+      ? newPath.interpolate(oldPath, animProgress.value)!
       : newPath;
   }, [data, prevData]);
 

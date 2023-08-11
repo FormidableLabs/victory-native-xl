@@ -1,7 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
-import { useEffect } from "react";
+import * as React from "react";
 import { LinearGradient, Path, Skia, vec } from "@shopify/react-native-skia";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
@@ -31,7 +28,7 @@ export function Scatter({
   const prevData = usePrevious(data);
   const animationProgress = useSharedValue(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     animationProgress.value = 0;
     animationProgress.value = withTiming(1, { duration: animationDuration });
   }, [data]);
@@ -44,9 +41,11 @@ export function Scatter({
       const path = Skia.Path.Make();
       if (!_data.x.length) return path;
 
-      _data.x.forEach((val, i) =>
-        path.addCircle(x(val), y(_data.y[dataKey][i]), radius),
-      );
+      let yVal: number | undefined;
+      _data.x.forEach((val, i) => {
+        yVal = _data.y[dataKey]?.[i];
+        yVal !== undefined && path.addCircle(x(val), y(yVal), radius);
+      });
 
       return path;
     };
@@ -54,7 +53,7 @@ export function Scatter({
     const newPath = makePath(data);
     const oldPath = makePath(prevData);
     return newPath.isInterpolatable(oldPath)
-      ? newPath.interpolate(oldPath, animationProgress.value)
+      ? newPath.interpolate(oldPath, animationProgress.value)!
       : newPath;
   }, [data, prevData]);
 

@@ -1,8 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import type { InputDatum, MassagedData } from "../types";
 
-export const massageInputData = (
+/**
+ * TODO: Do we discard entries that don't contain all the required data, or what?
+ */
+export const transformInputData = (
   data: InputDatum[],
   xKey: string,
   yKeys: string[],
@@ -13,7 +14,7 @@ export const massageInputData = (
 
   if (!data.length) return { x, y, _x };
 
-  const firstX = data[0][xKey];
+  const firstX = data[0]?.[xKey];
 
   // TODO: Going to need more sophisticated sorting logic for e.g. dates.
   const sortedData = Array.from(data);
@@ -24,11 +25,11 @@ export const massageInputData = (
   // Input data is numbers
   if (typeof firstX === "number") {
     sortedData.forEach((datum) => {
-      const xVal = datum[xKey] as number;
+      const xVal = Number(datum[xKey]);
       x.push(xVal);
       yKeys.forEach((key) => {
-        if (!y[key]) y[key] = [];
-        y[key].push(datum[key] as number);
+        y[key] ||= [];
+        y[key]!.push(datum[key] as number);
       });
     });
   }
@@ -39,8 +40,8 @@ export const massageInputData = (
       x.push(i);
       _x.push(datum[xKey] as string);
       yKeys.forEach((key) => {
-        if (!y[key]) y[key] = [];
-        y[key].push(datum[key] as number);
+        y[key]! ||= [];
+        y[key]!.push(datum[key] as number);
       });
     });
   }

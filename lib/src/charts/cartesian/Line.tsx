@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import { Path } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
@@ -33,12 +30,12 @@ export function Line({ dataKey = "y" }: LineProps) {
     const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
     const y = (d: number) => mapPointY(d, inputWindow, outputWindow);
 
-    const newPath = makeLinearPath(data.x, data.y[dataKey], x, y);
+    const newPath = makeLinearPath(data.x, data.y[dataKey] || [], x, y);
     if (data.x.length !== prevData.x.length) return newPath;
 
-    const oldPath = makeLinearPath(prevData.x, prevData.y[dataKey], x, y);
+    const oldPath = makeLinearPath(prevData.x, prevData.y[dataKey] || [], x, y);
     return newPath.isInterpolatable(oldPath)
-      ? newPath.interpolate(oldPath, animProgress.value)
+      ? newPath.interpolate(oldPath, animProgress.value)!
       : newPath;
   }, [data, prevData]);
 

@@ -1,9 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import * as React from "react";
-import { SharedValue } from "react-native-reanimated";
-import { MassagedData, ViewWindow } from "../../types";
+import { type SharedValue } from "react-native-reanimated";
+import type { MassagedData, ViewWindow } from "../../types";
 
 export type CartesianContextValue = {
   data: MassagedData;
@@ -20,7 +17,7 @@ export const CartesianContext = React.createContext<CartesianContextValue>({
   outputWindow: {} as ViewWindow,
   tracking: {
     isActive: false,
-    x: null as SharedValue<number>,
+    x: null as unknown as SharedValue<number>,
   },
 });
 
