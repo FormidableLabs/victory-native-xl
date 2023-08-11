@@ -12,9 +12,10 @@ import { useCartesianContext } from "./CartesianContext";
 
 type BarProps = {
   dataKey?: string;
+  color?: string;
 };
 
-export function Bar({ dataKey = "y" }: BarProps) {
+export function Bar({ dataKey = "y", color = "red" }: BarProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
 
@@ -58,13 +59,7 @@ export function Bar({ dataKey = "y" }: BarProps) {
 
   return (
     <>
-      <Path path={path} style="fill" color="blue" strokeWidth={2}>
-        <LinearGradient
-          start={vec(0, 0)}
-          end={vec(0, 256)}
-          colors={["blue", "yellow"]}
-        />
-      </Path>
+      <Path path={path} style="fill" color={color} strokeWidth={2}></Path>
     </>
   );
 }

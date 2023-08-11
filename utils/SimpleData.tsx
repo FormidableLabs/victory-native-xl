@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Button, View } from "react-native";
-import { Point } from "../charts/types";
+import { InputDatum, Point } from "../charts/types";
 
 export function SimpleData({
   renderChart,
   controls,
 }: {
-  renderChart: ({ data }: { data: Point[] }) => JSX.Element;
+  renderChart: ({ data }: { data: InputDatum[] }) => JSX.Element;
   controls?: () => JSX.Element;
 }) {
   const [data, setdata] = React.useState(DATA);

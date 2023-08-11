@@ -24,7 +24,7 @@ import {
 
 type CartesianChartProps<T extends InputDatum> = {
   data: T[];
-  xKey: string;
+  xKey?: string;
 
   // TODO: Improve this. With axes, i don't know if this is right.
   padding?:
@@ -110,10 +110,6 @@ export function CartesianChart<T extends InputDatum>({
 
   // When the data changes, we need to update our raw input window
   React.useEffect(() => {
-    console.log(
-      getMinYFromMassagedData(massagedData),
-      getMaxYFromMassagedData(massagedData),
-    );
     _ixmin.value = withTiming(massagedData.x.at(0) || 0);
     _ixmax.value = withTiming(massagedData.x.at(-1) || 0);
     iymin.value = withTiming(getMinYFromMassagedData(massagedData), {
@@ -234,7 +230,7 @@ export function CartesianChart<T extends InputDatum>({
       runOnJS(setIsTracking)(false);
     });
 
-  const combinedGesture = Gesture.Race(twoFingerDrag, pinch, highlightPan);
+  const combinedGesture = Gesture.Race(twoFingerDrag, pinch);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -250,8 +246,8 @@ export function CartesianChart<T extends InputDatum>({
 }
 
 const valueFromPadding = (
-  padding: CartesianChartProps<any>["padding"],
-  side: keyof Exclude<CartesianChartProps<any>["padding"], number>,
+  padding: CartesianChartProps<InputDatum>["padding"],
+  side: keyof Exclude<CartesianChartProps<InputDatum>["padding"], number>,
 ) => {
   "worklet";
   return typeof padding === "number" ? padding : padding[side] || 0;

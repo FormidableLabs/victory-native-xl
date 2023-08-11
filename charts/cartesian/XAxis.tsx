@@ -5,7 +5,7 @@ import { mapPointX, mapPointY } from "../interpolaters";
 
 type XAxisProps = {};
 
-export function XAxis(props: XAxisProps) {
+export function XAxis({}: XAxisProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
 
   const path = useDerivedValue(() => {
@@ -23,10 +23,10 @@ export function XAxis(props: XAxisProps) {
 
     // TODO: Ticks...
     // For now, just put a tick at each data value – but eventually probably needs to be smarter than this.
-    data.forEach((el) => {
+    data.x.forEach((val) => {
       path.addRect(
         Skia.XYWHRect(
-          x(el.x) - STROKE_WIDTH / 2,
+          x(val) - STROKE_WIDTH / 2,
           y(0),
           STROKE_WIDTH,
           TICK_LENGTH,

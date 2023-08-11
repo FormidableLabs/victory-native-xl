@@ -7,8 +7,8 @@ export default function KeyedDataView() {
     <KeyedData
       renderChart={({ data }) => (
         <CartesianChart data={data} xKey="quarter">
-          <Bar dataKey="earnings" />
-          <Bar dataKey="spend" />
+          <Bar dataKey="earnings" color="red" />
+          <Bar dataKey="spend" color="blue" />
         </CartesianChart>
       )}
     />

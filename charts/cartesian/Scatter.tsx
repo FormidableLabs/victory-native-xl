@@ -12,6 +12,7 @@ import { mapPointX, mapPointY } from "../interpolaters";
 
 export type ScatterProps = {
   radius?: number;
+  dataKey?: string;
   animationDuration?: number;
   fillColors?: string[];
   strokeColor?: string;
@@ -19,6 +20,7 @@ export type ScatterProps = {
 };
 
 export function Scatter({
+  dataKey = "y",
   radius = 10,
   animationDuration = 300,
   fillColors = ["yellow", "purple"],
@@ -38,10 +40,10 @@ export function Scatter({
 
     const makePath = (_data: typeof data) => {
       const path = Skia.Path.Make();
-      if (!_data?.length) return path;
+      if (!_data.x.length) return path;
 
-      _data.forEach((point: Point) =>
-        path.addCircle(x(point.x), y(point.y), radius),
+      _data.x.forEach((val, i) =>
+        path.addCircle(x(val), y(_data.y[dataKey][i]), radius),
       );
 
       return path;
