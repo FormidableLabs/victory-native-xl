@@ -8,7 +8,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { type InputDatum, SidedNumber } from "../../types";
+import { type InputDatum, type SidedNumber } from "../../types";
 import {
   CartesianContext,
   type CartesianContextValue,
@@ -93,20 +93,26 @@ export function CartesianChart<T extends InputDatum>({
   // const iymin = useSharedValue(0);
   const iymax = useSharedValue(getMaxYFromMassagedData(massagedData));
   const oxmin = useDerivedValue(
-    () => valueFromSidedNumber(padding, "left"),
-    [padding],
+    () =>
+      valueFromSidedNumber(padding, "left") +
+      valueFromSidedNumber(domainPadding, "left"),
   );
   const oxmax = useDerivedValue(
-    () => size.width - valueFromSidedNumber(padding, "right"),
-    [size.width, padding],
+    () =>
+      size.width -
+      valueFromSidedNumber(padding, "right") -
+      valueFromSidedNumber(domainPadding, "right"),
   );
   const oymin = useDerivedValue(
-    () => size.height - valueFromSidedNumber(padding, "bottom"),
-    [size.height, padding],
+    () =>
+      size.height -
+      valueFromSidedNumber(padding, "bottom") -
+      valueFromSidedNumber(domainPadding, "bottom"),
   );
   const oymax = useDerivedValue(
-    () => valueFromSidedNumber(padding, "top"),
-    [padding],
+    () =>
+      valueFromSidedNumber(padding, "top") +
+      valueFromSidedNumber(domainPadding, "top"),
   );
 
   // When the data changes, we need to update our raw input window
@@ -143,8 +149,9 @@ export function CartesianChart<T extends InputDatum>({
         isActive: isTracking,
         x: trackingX,
       },
+      domainPadding,
     }),
-    [data, isTracking],
+    [data, isTracking, domainPadding],
   );
 
   /**

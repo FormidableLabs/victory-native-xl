@@ -2,20 +2,28 @@ import * as React from "react";
 import { useCartesianContext } from "./CartesianContext";
 import { useDerivedValue } from "react-native-reanimated";
 import { clamp, Path, Skia } from "@shopify/react-native-skia";
-import { mapPointX, mapPointY } from "../../utils/mapping";
+import { mapPointY } from "../../utils/mapping";
+import { valueFromSidedNumber } from "../../utils/valueFromSidedNumber";
 
 type XAxisProps = {
   mode?: "zero" | "fix-bottom" | "fix-top";
 };
 
 export const XAxis = ({ mode = "zero" }: XAxisProps) => {
-  const { data, inputWindow, outputWindow } = useCartesianContext();
+  const { domainPadding, inputWindow, outputWindow } = useCartesianContext();
 
   const path = useDerivedValue(() => {
     const path = Skia.Path.Make();
 
-    const xStart = outputWindow.xMin.value;
-    const xEnd = outputWindow.xMax.value;
+    /**
+     * Axes are special in the sense that they break out of the output window based
+     *  on domainPadding. It's easier to have two components "break out" than
+     *  have every other component "nudge in".
+     */
+    const xStart =
+      outputWindow.xMin.value - valueFromSidedNumber(domainPadding, "left");
+    const xEnd =
+      outputWindow.xMax.value + valueFromSidedNumber(domainPadding, "right");
 
     let axisY = 0;
     if (mode === "zero") {
@@ -55,7 +63,7 @@ export const XAxis = ({ mode = "zero" }: XAxisProps) => {
   return (
     <Path
       path={path}
-      color="gray"
+      color="black"
       style="stroke"
       strokeWidth={2 * STROKE_WIDTH}
     />

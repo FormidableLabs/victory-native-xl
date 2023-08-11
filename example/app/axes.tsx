@@ -14,7 +14,7 @@ export default function AxesPage() {
   return (
     <SimpleData
       renderChart={({ data }) => (
-        <CartesianChart data={data} padding={20} domainPadding={20}>
+        <CartesianChart data={data} padding={10} domainPadding={20}>
           <XAxis mode={xAxisMode} />
           <YAxis mode={yAxisMode} />
           <Line />

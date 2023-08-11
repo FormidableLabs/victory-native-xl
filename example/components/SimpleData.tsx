@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 import { type InputDatum } from "victory-native-skia";
 
 export function SimpleData({
@@ -21,7 +21,12 @@ export function SimpleData({
   return (
     <View style={{ flex: 1 }}>
       <View
-        style={{ flex: 1, width: "100%", backgroundColor: "rgb(240,240,240)" }}
+        style={{
+          flex: 1,
+          width: "100%",
+          backgroundColor: "rgb(240,240,240)",
+          borderBottomWidth: StyleSheet.hairlineWidth,
+        }}
       >
         {renderChart({ data })}
       </View>

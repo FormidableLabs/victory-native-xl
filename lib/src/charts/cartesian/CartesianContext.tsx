@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type SharedValue } from "react-native-reanimated";
-import type { MassagedData, ViewWindow } from "../../types";
+import type { MassagedData, SidedNumber, ViewWindow } from "../../types";
 
 export type CartesianContextValue = {
   data: MassagedData;
@@ -10,6 +10,7 @@ export type CartesianContextValue = {
     isActive: boolean;
     x: SharedValue<number>;
   };
+  domainPadding?: SidedNumber;
 };
 export const CartesianContext = React.createContext<CartesianContextValue>({
   data: { x: [], y: {} },
