@@ -39,6 +39,7 @@ const EXAMPLES: { title: string; path: string }[] = [
   { title: "Plain Bar", path: "/bar" },
   { title: "Plain Line", path: "/line" },
   { title: "Axes", path: "/axes" },
+  { title: "Scatter", path: "/scatter" },
   { title: "Cartesian Padding", path: "/cartesian-padding" },
 ];
 
