@@ -10,7 +10,11 @@ import { BAR_WIDTH } from "../consts";
 import { mapPointX, mapPointY } from "../interpolaters";
 import { useCartesianContext } from "./CartesianContext";
 
-export function Bar() {
+type BarProps = {
+  dataKey?: string;
+};
+
+export function Bar({ dataKey = "y" }: BarProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
 
@@ -27,15 +31,15 @@ export function Bar() {
 
     const makePath = (_data: typeof data) => {
       const path = Skia.Path.Make();
-      if (!_data?.length) return path;
+      if (!_data?.x.length) return path;
 
-      _data.forEach((el, i) => {
+      _data.x.forEach((val, i) => {
         path.addRect(
           Skia.XYWHRect(
-            x(el.x) - BAR_WIDTH / 2,
+            x(val) - BAR_WIDTH / 2,
             y(0),
             BAR_WIDTH,
-            y(el.y) - y(0),
+            y(_data.y[dataKey][i]) - y(0),
           ),
         );
       });
@@ -44,7 +48,7 @@ export function Bar() {
     };
 
     const newPath = makePath(data);
-    if (data.length !== prevData.length) return newPath;
+    if (data.x.length !== prevData.x.length) return newPath;
 
     const oldPath = makePath(prevData);
     return newPath.isInterpolatable(oldPath)

@@ -1,4 +1,4 @@
-import { Canvas, Circle, clamp } from "@shopify/react-native-skia";
+import { Canvas, clamp } from "@shopify/react-native-skia";
 import * as React from "react";
 import { PropsWithChildren } from "react";
 import { LayoutChangeEvent } from "react-native";
@@ -8,7 +8,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { Point } from "../types";
+import { InputDatum } from "../types";
 import { CartesianContext, CartesianContextValue } from "./CartesianContext";
 import {
   Gesture,
@@ -16,9 +16,15 @@ import {
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import { map } from "../interpolaters";
+import {
+  getMaxYFromMassagedData,
+  getMinYFromMassagedData,
+  massageInputData,
+} from "../../utils/massageInputData";
 
-type CartesianChartProps<T extends Record<any, any>> = {
+type CartesianChartProps<T extends InputDatum> = {
   data: T[];
+  xKey: string;
 
   // TODO: Improve this. With axes, i don't know if this is right.
   padding?:
@@ -26,8 +32,9 @@ type CartesianChartProps<T extends Record<any, any>> = {
     | { left?: number; right?: number; top?: number; bottom?: number };
 };
 
-export function CartesianChart<T extends Point>({
+export function CartesianChart<T extends InputDatum>({
   data,
+  xKey = "x",
   padding = 20,
   children,
 }: PropsWithChildren<CartesianChartProps<T>>) {
@@ -37,6 +44,21 @@ export function CartesianChart<T extends Point>({
   // translateX is in terms of _input coords_
   const tx = useSharedValue(0);
   const savedTx = useSharedValue(0);
+
+  // Collect data keys... Is there a better way to do this?
+  // TODO: Do this in less shitty way
+  // const [dataKeys, setDataKeys] = React.useState(new Set<string>());
+  const dataKeys = new Set<string>();
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child)) {
+      dataKeys.add(child.props.dataKey || "y");
+    }
+  });
+  // if (dataKeys.join(",") !== _dataKeys.join(",")) setDataKeys(_dataKeys);
+
+  const massagedData = React.useMemo(() => {
+    return massageInputData(data, xKey, Array.from(dataKeys));
+  }, [data, xKey, dataKeys]);
 
   // Track canvas size
   const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -52,8 +74,8 @@ export function CartesianChart<T extends Point>({
   const trackingX = useSharedValue(0);
 
   // View windows
-  const _ixmin = useSharedValue(Math.min(...data.map((d) => d.x)));
-  const _ixmax = useSharedValue(Math.max(...data.map((d) => d.x)));
+  const _ixmin = useSharedValue(massagedData.x.at(0) || 0);
+  const _ixmax = useSharedValue(massagedData.x.at(-1) || 0);
   const _width = useDerivedValue(
     () => _ixmax.value - _ixmin.value,
     [_ixmin, _ixmax],
@@ -66,9 +88,9 @@ export function CartesianChart<T extends Point>({
     () => _ixmax.value / scale.value + tx.value,
     [_ixmax, scale, tx],
   );
-  const iymin = useSharedValue(Math.min(...data.map((d) => d.y)));
+  const iymin = useSharedValue(getMinYFromMassagedData(massagedData));
   // const iymin = useSharedValue(0);
-  const iymax = useSharedValue(Math.max(...data.map((d) => d.y)));
+  const iymax = useSharedValue(getMaxYFromMassagedData(massagedData));
   const oxmin = useDerivedValue(
     () => valueFromPadding(padding, "left"),
     [padding],
@@ -88,24 +110,23 @@ export function CartesianChart<T extends Point>({
 
   // When the data changes, we need to update our raw input window
   React.useEffect(() => {
-    _ixmin.value = withTiming(Math.min(...data.map((d) => d.x)), {
+    console.log(
+      getMinYFromMassagedData(massagedData),
+      getMaxYFromMassagedData(massagedData),
+    );
+    _ixmin.value = withTiming(massagedData.x.at(0) || 0);
+    _ixmax.value = withTiming(massagedData.x.at(-1) || 0);
+    iymin.value = withTiming(getMinYFromMassagedData(massagedData), {
       duration: 300,
     });
-    _ixmax.value = withTiming(Math.max(...data.map((d) => d.x)), {
+    iymax.value = withTiming(getMaxYFromMassagedData(massagedData), {
       duration: 300,
     });
-    iymin.value = withTiming(Math.min(...data.map((d) => d.y)), {
-      duration: 300,
-    });
-    iymax.value = withTiming(Math.max(...data.map((d) => d.y)), {
-      duration: 300,
-    });
-  }, [data]);
+  }, [massagedData]);
 
   const value = React.useMemo<CartesianContextValue>(
     () => ({
-      // TODO: We should sort the data here so we have order guarantees, helps with perf.
-      data,
+      data: massagedData,
       inputWindow: {
         xMin: ixmin,
         xMax: ixmax,

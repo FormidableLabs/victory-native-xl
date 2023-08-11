@@ -1,9 +1,9 @@
 import * as React from "react";
 import { SharedValue } from "react-native-reanimated";
-import { Point, ViewWindow } from "../types";
+import { MassagedData, Point, ViewWindow } from "../types";
 
 export type CartesianContextValue = {
-  data: Point[]; // TODO: needs to be dynamic?
+  data: MassagedData;
   inputWindow: ViewWindow;
   outputWindow: ViewWindow;
   tracking: {
@@ -12,7 +12,7 @@ export type CartesianContextValue = {
   };
 };
 export const CartesianContext = React.createContext<CartesianContextValue>({
-  data: [],
+  data: { x: [], y: {} },
   inputWindow: {} as ViewWindow,
   outputWindow: {} as ViewWindow,
   tracking: {

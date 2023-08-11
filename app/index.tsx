@@ -9,7 +9,7 @@ export default function LandingPage() {
         options={{
           title: "VN Skia",
           headerLargeTitle: true,
-          headerTintColor: "#f04d21"
+          headerTintColor: "#f04d21",
         }}
       />
       <FlatList
@@ -41,6 +41,7 @@ const EXAMPLES: { title: string; path: string }[] = [
   { title: "Axes", path: "/axes" },
   { title: "Scatter", path: "/scatter" },
   { title: "Cartesian Padding", path: "/cartesian-padding" },
+  { title: "Keyed Data", path: "/keyed-data" },
 ];
 
 const Separator = () => <View style={{ height: 12 }} />;

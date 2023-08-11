@@ -8,3 +8,10 @@ export type ViewWindow = {
   yMin: SharedValue<number>;
   yMax: SharedValue<number>;
 };
+
+export type InputDatum = Record<string, string | number>;
+export type MassagedData = {
+  x: number[];
+  _x?: (number | string)[];
+  y: Record<string, number[]>;
+};

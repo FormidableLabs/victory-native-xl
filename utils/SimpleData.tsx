@@ -14,7 +14,7 @@ export function SimpleData({
   const addPoint = () => {
     setdata((oldData) => [
       ...oldData,
-      { x: oldData.at(-1).x + 1, y: -5 + Math.round(10 * Math.random()) },
+      { x: oldData.at(-1).x + 1, y: -5 + 10 * Math.random() },
     ]);
   };
 
@@ -34,7 +34,7 @@ export function SimpleData({
             setdata((old) =>
               old.map(({ x }) => ({
                 x,
-                y: -5 + Math.round(10 * Math.random()),
+                y: -5 + 10 * Math.random(),
               })),
             )
           }
