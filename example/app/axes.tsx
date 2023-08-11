@@ -1,12 +1,12 @@
 import * as React from "react";
 import { SimpleData } from "../components/SimpleData";
-import { CartesianChart, Line, XAxis, YAxis } from "victory-native-skia";
+import { Bar, CartesianChart, Line, XAxis, YAxis } from "victory-native-skia";
 import { Button, View } from "react-native";
 
 export default function AxesPage() {
   const [yAxisMode, setYAxisMode] = React.useState<
     "zero" | "fix-left" | "fix-right"
-  >("zero");
+  >("fix-left");
   const [xAxisMode, setXAxisMode] = React.useState<
     "zero" | "fix-bottom" | "fix-top"
   >("zero");
@@ -14,10 +14,11 @@ export default function AxesPage() {
   return (
     <SimpleData
       renderChart={({ data }) => (
-        <CartesianChart data={data} padding={40}>
+        <CartesianChart data={data} padding={20} domainPadding={20}>
           <XAxis mode={xAxisMode} />
           <YAxis mode={yAxisMode} />
           <Line />
+          <Bar color="blue" />
         </CartesianChart>
       )}
       controls={() => (

@@ -8,7 +8,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { type InputDatum } from "../../types";
+import { type InputDatum, SidedNumber } from "../../types";
 import {
   CartesianContext,
   type CartesianContextValue,
@@ -24,21 +24,21 @@ import {
   getMinYFromMassagedData,
   transformInputData,
 } from "../../utils/transformInputData";
+import { valueFromSidedNumber } from "../../utils/valueFromSidedNumber";
 
 type CartesianChartProps<T extends InputDatum> = {
   data: T[];
   xKey?: string;
 
-  // TODO: Improve this. With axes, i don't know if this is right.
-  padding?:
-    | number
-    | { left?: number; right?: number; top?: number; bottom?: number };
+  padding?: SidedNumber;
+  domainPadding?: SidedNumber;
 };
 
 export function CartesianChart<T extends InputDatum>({
   data,
   xKey = "x",
   padding = 20,
+  domainPadding,
   children,
 }: PropsWithChildren<CartesianChartProps<T>>) {
   // Gestures?
@@ -93,19 +93,19 @@ export function CartesianChart<T extends InputDatum>({
   // const iymin = useSharedValue(0);
   const iymax = useSharedValue(getMaxYFromMassagedData(massagedData));
   const oxmin = useDerivedValue(
-    () => valueFromPadding(padding, "left"),
+    () => valueFromSidedNumber(padding, "left"),
     [padding],
   );
   const oxmax = useDerivedValue(
-    () => size.width - valueFromPadding(padding, "right"),
+    () => size.width - valueFromSidedNumber(padding, "right"),
     [size.width, padding],
   );
   const oymin = useDerivedValue(
-    () => size.height - valueFromPadding(padding, "bottom"),
+    () => size.height - valueFromSidedNumber(padding, "bottom"),
     [size.height, padding],
   );
   const oymax = useDerivedValue(
-    () => valueFromPadding(padding, "top"),
+    () => valueFromSidedNumber(padding, "top"),
     [padding],
   );
 
@@ -240,14 +240,14 @@ export function CartesianChart<T extends InputDatum>({
 
   const clipRect = React.useMemo(() => {
     return rect(
-      valueFromPadding(padding, "left"),
-      valueFromPadding(padding, "left"),
+      valueFromSidedNumber(padding, "left"),
+      valueFromSidedNumber(padding, "top"),
       size.width -
-        valueFromPadding(padding, "left") -
-        valueFromPadding(padding, "right"),
+        valueFromSidedNumber(padding, "left") -
+        valueFromSidedNumber(padding, "right"),
       size.height -
-        valueFromPadding(padding, "top") -
-        valueFromPadding(padding, "bottom"),
+        valueFromSidedNumber(padding, "top") -
+        valueFromSidedNumber(padding, "bottom"),
     );
   }, [padding, size]);
 
@@ -277,14 +277,3 @@ export function CartesianChart<T extends InputDatum>({
     </GestureHandlerRootView>
   );
 }
-
-const valueFromPadding = (
-  padding: CartesianChartProps<InputDatum>["padding"],
-  side: keyof Exclude<
-    CartesianChartProps<InputDatum>["padding"],
-    number | undefined
-  >,
-) => {
-  "worklet";
-  return typeof padding === "number" ? padding : padding?.[side] || 0;
-};

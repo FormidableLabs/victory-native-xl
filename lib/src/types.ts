@@ -15,3 +15,10 @@ export type MassagedData = {
   _x?: (number | string)[];
   y: Record<string, number[]>;
 };
+
+/**
+ * Used for e.g. padding where you can pass a single value or a sided object
+ */
+export type SidedNumber =
+  | number
+  | { left?: number; right?: number; top?: number; bottom?: number };
