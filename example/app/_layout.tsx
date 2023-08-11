@@ -1,4 +1,4 @@
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as React from "react";
 import { SafeAreaView } from "react-native";
 

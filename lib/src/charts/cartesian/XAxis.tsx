@@ -4,9 +4,7 @@ import { useDerivedValue } from "react-native-reanimated";
 import { Path, Skia } from "@shopify/react-native-skia";
 import { mapPointX, mapPointY } from "../interpolaters";
 
-type XAxisProps = {};
-
-export function XAxis({}: XAxisProps) {
+export function XAxis() {
   const { data, inputWindow, outputWindow } = useCartesianContext();
 
   const path = useDerivedValue(() => {
