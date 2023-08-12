@@ -8,19 +8,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { mapPointX, mapPointY } from "../../utils/mapping";
-import { type BaseCartesianChartProps } from "../../types";
-import { defaultBaseCartesianChartProps } from "../../consts";
+import { type BaseFillChartProps } from "../../types";
+import { defaultBaseFillChartProps } from "../../consts";
 import { PathFill } from "./PathFill";
 
-export type ScatterProps = BaseCartesianChartProps<{
+export type ScatterProps = BaseFillChartProps & {
   radius: number;
-}>;
+};
 
 export function Scatter({
   dataKey,
   animationDuration,
   fillColor,
   radius,
+  gradientVectors,
 }: ScatterProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
@@ -59,9 +60,9 @@ export function Scatter({
 
   return (
     <Path path={path} style="fill" color={pathColor} strokeWidth={0}>
-      <PathFill fillColor={fillColor} />
+      <PathFill fillColor={fillColor} gradientVectors={gradientVectors} />
     </Path>
   );
 }
 
-Scatter.defaultProps = { ...defaultBaseCartesianChartProps, radius: 10 };
+Scatter.defaultProps = { ...defaultBaseFillChartProps, radius: 10 };

@@ -1,13 +1,21 @@
 import * as React from "react";
-import { Fill, LinearGradient, vec } from "@shopify/react-native-skia";
-import type { BaseCartesianChartProps } from "lib/src/types";
+import { Fill, LinearGradient } from "@shopify/react-native-skia";
+import type { BaseFillChartProps } from "lib/src/types";
 
-export type PathFillProps = Pick<BaseCartesianChartProps, "fillColor">;
+export type PathFillProps = Pick<
+  BaseFillChartProps,
+  "fillColor" | "gradientVectors"
+>;
 
-export function PathFill({ fillColor }: PathFillProps) {
-  return Array.isArray(fillColor) ? (
-    <LinearGradient start={vec(0, 0)} end={vec(0, 256)} colors={fillColor} />
-  ) : (
-    <Fill color={fillColor} />
-  );
+export function PathFill({ fillColor, gradientVectors }: PathFillProps) {
+  if (Array.isArray(fillColor))
+    return (
+      <LinearGradient
+        start={gradientVectors.start}
+        end={gradientVectors.end}
+        colors={fillColor}
+      />
+    );
+  else if (typeof fillColor === "string") return <Fill color={"fillColor"} />;
+  return null;
 }

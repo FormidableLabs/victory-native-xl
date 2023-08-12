@@ -6,15 +6,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { usePrevious } from "../../utils/usePrevious";
-import { BAR_WIDTH, defaultBaseCartesianChartProps } from "../../consts";
+import { BAR_WIDTH, defaultBaseFillChartProps } from "../../consts";
 import { mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
-import type { BaseCartesianChartProps } from "lib/src/types";
+import type { BaseFillChartProps } from "lib/src/types";
 import { PathFill } from "./PathFill";
 
-export type BarProps = BaseCartesianChartProps;
+export type BarProps = BaseFillChartProps;
 
-export function Bar({ dataKey, fillColor, animationDuration }: BarProps) {
+export function Bar({
+  dataKey,
+  fillColor,
+  animationDuration,
+  gradientVectors,
+}: BarProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
 
@@ -64,9 +69,9 @@ export function Bar({ dataKey, fillColor, animationDuration }: BarProps) {
 
   return (
     <Path path={path} style="fill" color={pathColor} strokeWidth={0}>
-      <PathFill fillColor={fillColor} />
+      <PathFill fillColor={fillColor} gradientVectors={gradientVectors} />
     </Path>
   );
 }
 
-Bar.defaultProps = defaultBaseCartesianChartProps;
+Bar.defaultProps = defaultBaseFillChartProps;
