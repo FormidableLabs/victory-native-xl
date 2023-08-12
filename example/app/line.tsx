@@ -6,7 +6,7 @@ import { useChartOptionsContext } from "../components/OptionsProvider";
 
 export default function LinePage() {
   const { state } = useChartOptionsContext();
-  useChartOptions();
+  useChartOptions({ type: "stroke" });
 
   return (
     <SimpleData

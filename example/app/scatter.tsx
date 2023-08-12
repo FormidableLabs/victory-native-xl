@@ -6,7 +6,8 @@ import { useChartOptions } from "example/components/useChartOptions";
 
 export default function ScatterPage() {
   const { state } = useChartOptionsContext();
-  useChartOptions();
+  useChartOptions({ type: "fill" });
+
   return (
     <SimpleData
       renderChart={({ data }) => (

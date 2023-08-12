@@ -6,7 +6,7 @@ import { useChartOptions } from "example/components/useChartOptions";
 
 export default function BarPage() {
   const { state } = useChartOptionsContext();
-  useChartOptions();
+  useChartOptions({ type: "fill" });
 
   return (
     <SimpleData
