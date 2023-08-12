@@ -1,29 +1,12 @@
-import React, { useLayoutEffect } from "react";
-import { Button } from "react-native";
+import React from "react";
 import { CartesianChart, Line } from "victory-native-skia";
 import { SimpleData } from "../components/SimpleData";
-import { useNavigation } from "expo-router";
-import {
-  type OptionsNavigationProp,
-  useChartOptionsContext,
-} from "../components/OptionsProvider";
+import { useChartOptions } from "../components/useChartOptions";
+import { useChartOptionsContext } from "../components/OptionsProvider";
 
 export default function LinePage() {
   const { state } = useChartOptionsContext();
-  const navigation = useNavigation<OptionsNavigationProp>();
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Options"
-          onPress={() =>
-            navigation.navigate("chart-options-modal", { type: "stroke" })
-          }
-        />
-      ),
-    });
-  }, [navigation]);
+  useChartOptions();
 
   return (
     <SimpleData
