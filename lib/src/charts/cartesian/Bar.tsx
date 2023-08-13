@@ -6,16 +6,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { usePrevious } from "../../utils/usePrevious";
-import { BAR_WIDTH } from "../../consts";
+import { BAR_WIDTH, defaultBaseFillChartProps } from "../../consts";
 import { mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
+import type { BaseFillChartProps } from "lib/src/types";
+import { PathFill } from "./PathFill";
 
-type BarProps = {
-  dataKey?: string;
-  color?: string;
-};
+export type BarProps = BaseFillChartProps;
 
-export function Bar({ dataKey = "y", color = "red" }: BarProps) {
+export function Bar({
+  dataKey,
+  fillColor,
+  animationDuration,
+  gradientVectors,
+}: BarProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
 
@@ -23,7 +27,7 @@ export function Bar({ dataKey = "y", color = "red" }: BarProps) {
 
   React.useEffect(() => {
     animProgress.value = 0;
-    animProgress.value = withTiming(1, { duration: 300 });
+    animProgress.value = withTiming(1, { duration: animationDuration });
   }, [data]);
 
   const path = useDerivedValue(() => {
@@ -61,9 +65,13 @@ export function Bar({ dataKey = "y", color = "red" }: BarProps) {
       : newPath;
   }, [data, prevData]);
 
+  const pathColor = Array.isArray(fillColor) ? fillColor[0] : fillColor;
+
   return (
-    <>
-      <Path path={path} style="fill" color={color} strokeWidth={2}></Path>
-    </>
+    <Path path={path} style="fill" color={pathColor} strokeWidth={0}>
+      <PathFill fillColor={fillColor} gradientVectors={gradientVectors} />
+    </Path>
   );
 }
+
+Bar.defaultProps = defaultBaseFillChartProps;

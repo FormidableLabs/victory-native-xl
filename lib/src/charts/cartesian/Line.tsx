@@ -11,13 +11,20 @@ import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
 import { makeLinearPath } from "../curves/linear";
 import { findClosestPoint } from "../../utils/findClosestPoint";
+import type { BaseStrokeChartProps } from "lib/src/types";
+import { defaultBaseStrokeChartProps } from "../../consts";
 
-type LineProps = {
-  dataKey?: string;
-  hasTracking?: boolean; // TODO: this needs a real name
+type LineProps = BaseStrokeChartProps & {
+  hasTracking?: boolean;
 };
 
-export function Line({ dataKey = "y", hasTracking = true }: LineProps) {
+export function Line({
+  dataKey = "y",
+  hasTracking = true,
+  animationDuration,
+  strokeColor,
+  strokeWidth,
+}: LineProps) {
   const { data, inputWindow, outputWindow, tracking } = useCartesianContext();
 
   const prevData = usePrevious(data);
@@ -25,7 +32,7 @@ export function Line({ dataKey = "y", hasTracking = true }: LineProps) {
 
   React.useEffect(() => {
     animProgress.value = 0;
-    animProgress.value = withTiming(1, { duration: 300 });
+    animProgress.value = withTiming(1, { duration: animationDuration });
   }, [data]);
 
   const path = useDerivedValue(() => {
@@ -80,8 +87,8 @@ export function Line({ dataKey = "y", hasTracking = true }: LineProps) {
       <Path
         path={path}
         style="stroke"
-        color="red"
-        strokeWidth={8}
+        color={strokeColor}
+        strokeWidth={strokeWidth}
         strokeCap="round"
         strokeJoin="round"
       />
@@ -91,3 +98,5 @@ export function Line({ dataKey = "y", hasTracking = true }: LineProps) {
     </>
   );
 }
+
+Line.defaultProps = defaultBaseStrokeChartProps;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LinearGradient, Path, Skia, vec } from "@shopify/react-native-skia";
+import { Path, Skia } from "@shopify/react-native-skia";
 import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
 import {
@@ -8,21 +8,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { mapPointX, mapPointY } from "../../utils/mapping";
+import { type BaseFillChartProps } from "../../types";
+import { defaultBaseFillChartProps } from "../../consts";
+import { PathFill } from "./PathFill";
 
-export type ScatterProps = {
-  radius?: number;
-  dataKey?: string;
-  animationDuration?: number;
-  fillColors?: string[];
-  strokeColor?: string;
-  strokeWidth?: number;
+export type ScatterProps = BaseFillChartProps & {
+  radius: number;
 };
 
 export function Scatter({
-  dataKey = "y",
-  radius = 10,
-  animationDuration = 300,
-  fillColors = ["yellow", "purple"],
+  dataKey,
+  animationDuration,
+  fillColor,
+  radius,
+  gradientVectors,
 }: ScatterProps) {
   const { data, inputWindow, outputWindow } = useCartesianContext();
   const prevData = usePrevious(data);
@@ -57,9 +56,13 @@ export function Scatter({
       : newPath;
   }, [data, prevData]);
 
+  const pathColor = Array.isArray(fillColor) ? fillColor[0] : fillColor;
+
   return (
-    <Path path={path} style="fill" color={fillColors[0]} strokeWidth={0}>
-      <LinearGradient start={vec(0, 0)} end={vec(0, 256)} colors={fillColors} />
+    <Path path={path} style="fill" color={pathColor} strokeWidth={0}>
+      <PathFill fillColor={fillColor} gradientVectors={gradientVectors} />
     </Path>
   );
 }
+
+Scatter.defaultProps = { ...defaultBaseFillChartProps, radius: 10 };
