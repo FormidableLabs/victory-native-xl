@@ -9,7 +9,7 @@ import { usePrevious } from "../../utils/usePrevious";
 import { BAR_WIDTH, defaultBaseFillChartProps } from "../../consts";
 import { mapPointX, mapPointY } from "../../utils/mapping";
 import { useCartesianContext } from "./CartesianContext";
-import type { BaseFillChartProps } from "lib/src/types";
+import type { BaseFillChartProps } from "../../types";
 import { PathFill } from "./PathFill";
 
 export type BarProps = BaseFillChartProps;

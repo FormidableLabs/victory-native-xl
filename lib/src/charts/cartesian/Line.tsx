@@ -11,8 +11,9 @@ import { useCartesianContext } from "./CartesianContext";
 import { usePrevious } from "../../utils/usePrevious";
 import { makeLinearPath } from "../curves/linear";
 import { findClosestPoint } from "../../utils/findClosestPoint";
-import type { BaseStrokeChartProps } from "lib/src/types";
+import type { BaseStrokeChartProps } from "../../types";
 import { defaultBaseStrokeChartProps } from "../../consts";
+import { scaleLinear } from "../../vendor/d3-scale";
 
 type LineProps = BaseStrokeChartProps & {
   hasTracking?: boolean;
@@ -34,6 +35,15 @@ export function Line({
     animProgress.value = 0;
     animProgress.value = withTiming(1, { duration: animationDuration });
   }, [data]);
+
+  const foo = useDerivedValue(() => {
+    try {
+      const x = scaleLinear([0, 1], [10, 0]);
+      return x(3);
+    } catch {
+      return 0;
+    }
+  });
 
   const path = useDerivedValue(() => {
     const x = (d: number) => mapPointX(d, inputWindow, outputWindow);
@@ -95,6 +105,7 @@ export function Line({
       {hasTracking && tracking.isActive && (
         <Circle cx={trackingX} cy={trackingY} r={10} color="purple" />
       )}
+      <Circle cx={foo} cy={50} r={20} color="red" />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Fill, LinearGradient } from "@shopify/react-native-skia";
-import type { BaseFillChartProps } from "lib/src/types";
+import type { BaseFillChartProps } from "../../types";
 
 export type PathFillProps = Pick<
   BaseFillChartProps,
