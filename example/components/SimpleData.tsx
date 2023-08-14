@@ -5,16 +5,30 @@ import { type InputDatum } from "victory-native-skia";
 export function SimpleData({
   renderChart,
   controls,
+  isPositiveX = false,
+  isPositiveY,
 }: {
   renderChart: ({ data }: { data: InputDatum[] }) => JSX.Element;
   controls?: () => JSX.Element;
+  isPositiveX?: boolean;
+  isPositiveY?: boolean;
 }) {
-  const [data, setData] = React.useState(DATA);
+  const [data, setData] = React.useState(() =>
+    Array.from({ length: 10 })
+      .fill(null)
+      .map((_, i) => ({
+        x: (isPositiveX ? 0 : -5) + i,
+        y: (isPositiveY ? 0 : -5) + 10 * Math.random(),
+      })),
+  );
 
   const addPoint = () => {
     setData((oldData) => [
       ...oldData,
-      { x: (oldData.at(-1)?.x || 0) + 1, y: -5 + 10 * Math.random() },
+      {
+        x: (oldData.at(-1)?.x || 0) + 1,
+        y: (isPositiveY ? 0 : -5) + 10 * Math.random(),
+      },
     ]);
   };
 
@@ -36,7 +50,17 @@ export function SimpleData({
             <Button title="Add point" onPress={addPoint} />
           </View>
           <View style={{ flex: 1 }}>
-            <Button title="Reset" onPress={() => setData(DATA)} />
+            <Button
+              title="Reset"
+              onPress={() =>
+                Array.from({ length: 10 })
+                  .fill(null)
+                  .map((_, i) => ({
+                    x: (isPositiveX ? 0 : -5) + i,
+                    y: (isPositiveY ? 0 : -5) + 10 * Math.random(),
+                  }))
+              }
+            />
           </View>
           <View style={{ flex: 1 }}>
             <Button
@@ -45,7 +69,7 @@ export function SimpleData({
                 setData((old) =>
                   old.map(({ x }) => ({
                     x,
-                    y: -5 + 10 * Math.random(),
+                    y: (isPositiveY ? 0 : -5) + 10 * Math.random(),
                   })),
                 )
               }
@@ -57,7 +81,3 @@ export function SimpleData({
     </View>
   );
 }
-
-const DATA = Array.from({ length: 10 })
-  .fill(null)
-  .map((_, i) => ({ x: -5 + i, y: -5 + 10 * Math.random() }));

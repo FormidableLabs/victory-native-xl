@@ -10,6 +10,8 @@ export default function BarPage() {
 
   return (
     <SimpleData
+      isPositiveX
+      isPositiveY
       renderChart={({ data }) => (
         <CartesianChart data={data}>
           <Bar fillColor={[state.color1, state.color2]} />
