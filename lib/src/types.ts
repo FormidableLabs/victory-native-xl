@@ -3,6 +3,13 @@ import { type SharedValue } from "react-native-reanimated";
 
 export type Point = { x: number; y: number };
 
+export type PrimitiveViewWindow = {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+};
+
 export type ViewWindow = {
   xMin: SharedValue<number>;
   xMax: SharedValue<number>;
@@ -10,11 +17,18 @@ export type ViewWindow = {
   yMax: SharedValue<number>;
 };
 
-export type InputDatum = Record<string, string | number>;
+export type InputDatum = Record<string, string | number | Date>;
 export type MassagedData = {
   x: number[];
   _x?: (number | string)[];
   y: Record<string, number[]>;
+};
+
+export type ValueOf<T> = T[keyof T];
+export type TransformedData = {
+  ix: ValueOf<InputDatum>[];
+  ox: number[];
+  y: { i: ValueOf<InputDatum>[]; o: number[] }[];
 };
 
 /**

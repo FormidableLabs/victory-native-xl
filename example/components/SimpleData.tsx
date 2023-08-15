@@ -14,7 +14,7 @@ export function SimpleData({
   isPositiveY?: boolean;
 }) {
   const [data, setData] = React.useState(() =>
-    Array.from({ length: 10 })
+    Array.from({ length: 20 })
       .fill(null)
       .map((_, i) => ({
         x: (isPositiveX ? 0 : -5) + i,

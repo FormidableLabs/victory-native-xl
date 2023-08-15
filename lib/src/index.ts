@@ -6,3 +6,8 @@ export { XAxis } from "./charts/cartesian/XAxis";
 export { YAxis } from "./charts/cartesian/YAxis";
 
 export { type InputDatum } from "./types";
+
+/**
+ * V0.0.2 exports.
+ */
+export { LineChart } from "./charts/line/LineChart";
