@@ -32,12 +32,19 @@ type LineChartProps<
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
+  activePressX?: {
+    value?: SharedValue<T[XK]>;
+    position?: SharedValue<number>;
+  };
+  activePressY?: {
+    [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
+  };
   children: (args: {
     paths: { [K in YK]: string };
     isPressActive: boolean;
-    activePressX: { value: SharedValue<number>; position: SharedValue<number> };
+    activePressX: { value: SharedValue<T[XK]>; position: SharedValue<number> };
     activePressY: {
-      [K in YK]: { value: SharedValue<number>; position: SharedValue<number> };
+      [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
     };
   }) => React.ReactNode;
 };
@@ -53,6 +60,8 @@ export function LineChart<
   curve = "linear",
   padding,
   domainPadding,
+  activePressX: incomingActivePressX,
+  activePressY: incomingActivePressY,
   children,
 }: LineChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -112,11 +121,17 @@ export function LineChart<
   }, [data, xKey, yKeys, size, curve]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
-  const activePressX = React.useRef({
-    value: makeMutable(0),
+  const internalActivePressX = React.useRef({
+    value: makeMutable(0 as T[XK]),
     position: makeMutable(0),
   });
-  const activePressY = React.useRef(
+  const activePressX = {
+    value: incomingActivePressX?.value || internalActivePressX.current.value,
+    position:
+      incomingActivePressX?.position || internalActivePressX.current.position,
+  };
+
+  const internalActivePressY = React.useRef(
     yKeys.reduce(
       (acc, key) => {
         acc[key] = { value: makeMutable(0), position: makeMutable(0) };
@@ -126,6 +141,20 @@ export function LineChart<
         LineChartProps<T, XK, YK>["children"]
       >[0]["activePressY"],
     ),
+  );
+  const activePressY = yKeys.reduce(
+    (acc, key) => {
+      acc[key] = {
+        value:
+          incomingActivePressY?.[key]?.value ||
+          internalActivePressY.current[key].value,
+        position:
+          incomingActivePressY?.[key]?.position ||
+          internalActivePressY.current[key].position,
+      };
+      return acc;
+    },
+    {} as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["activePressY"],
   );
 
   const pan = Gesture.Pan()
@@ -137,14 +166,12 @@ export function LineChart<
       if (typeof idx !== "number") return;
 
       // TODO: Types, add safety checks
-      activePressX.current.value.value = tData.value.ix[idx] as number;
-      activePressX.current.position.value = tData.value.ox[idx]!;
+      activePressX.value.value = tData.value.ix[idx];
+      activePressX.position.value = tData.value.ox[idx]!;
 
       yKeys.forEach((key) => {
-        activePressY.current[key].value.value = tData.value.y[key].i[
-          idx
-        ] as number; // TODO: Don't cast to number here
-        activePressY.current[key].position.value = tData.value.y[key].o[idx]!;
+        activePressY[key].value.value = tData.value.y[key].i[idx] as number; // TODO: Don't cast to number here
+        activePressY[key].position.value = tData.value.y[key].o[idx]!;
       });
     })
     .onEnd(() => {
@@ -161,8 +188,8 @@ export function LineChart<
           {children({
             paths,
             isPressActive: isPressActive,
-            activePressX: activePressX.current,
-            activePressY: activePressY.current,
+            activePressX: activePressX,
+            activePressY: activePressY,
           })}
           {/* Throw in some dummy axes */}
           <Line
