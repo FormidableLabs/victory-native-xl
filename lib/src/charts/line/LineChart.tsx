@@ -23,28 +23,27 @@ type LineChartProps<T extends InputDatum> = {
   data: T[];
   xKey: string;
   yKeys: string[];
-  renderPaths: (args: { paths: SkPath[] }) => React.ReactNode;
-  renderTooltip?: (args: {
+  // TODO: xScale, yScale
+  // TODO: Axes
+  padding?: SidedNumber;
+  domainPadding?: SidedNumber;
+  children: (args: {
+    paths: SkPath[];
     isActive: boolean;
     xValue: SharedValue<ValueOf<InputDatum>>;
     xPosition: SharedValue<number>;
     yValues: SharedValue<ValueOf<InputDatum>>[];
     yPositions: SharedValue<number>[];
   }) => React.ReactNode;
-  // TODO: xScale, yScale
-  // TODO: Axes
-  padding?: SidedNumber;
-  domainPadding?: SidedNumber;
 };
 
 export function LineChart<T extends InputDatum>({
   data,
   xKey,
   yKeys,
-  renderPaths,
-  renderTooltip,
   padding,
   domainPadding,
+  children,
 }: LineChartProps<T>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback(
@@ -121,8 +120,8 @@ export function LineChart<T extends InputDatum>({
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={pan}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-          {renderPaths({ paths })}
-          {renderTooltip?.({
+          {children({
+            paths,
             isActive: isTooltipActive,
             xValue: tooltipXValue,
             xPosition: tooltipXPosition,
