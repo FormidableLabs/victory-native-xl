@@ -2,7 +2,7 @@ import * as React from "react";
 import type { InputDatum } from "victory-native-skia";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Line, vec } from "@shopify/react-native-skia";
+import { Canvas, Line, Text, useFont, vec } from "@shopify/react-native-skia";
 import { type CurveType, makeLinePath } from "./makeLinePath";
 import {
   makeMutable,
@@ -95,7 +95,8 @@ export function LineChart<
       outputWindow: {
         xMin:
           valueFromSidedNumber(padding, "left") +
-          valueFromSidedNumber(domainPadding, "left"),
+          valueFromSidedNumber(domainPadding, "left") +
+          20, // TODO: Make this configurable for axis labels
         xMax:
           size.width -
           (valueFromSidedNumber(padding, "right") +
@@ -193,6 +194,11 @@ export function LineChart<
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
 
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const xFont = useFont(require("../fonts/inter-medium.ttf"), 16);
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const yFont = useFont(require("../fonts/inter-medium.ttf"), 12);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={pan}>
@@ -208,6 +214,42 @@ export function LineChart<
             p1={vec(xScale(x1!), yScale(y1!))}
             p2={vec(xScale(x1!), yScale(y2!))}
           />
+          {xScale.ticks(10).map((tick) => {
+            if (tick === 0) return null;
+            return (
+              <>
+                <Line
+                  key={`x-tick-${tick}`}
+                  p1={vec(xScale(tick), yScale(y2!))}
+                  p2={vec(xScale(tick), yScale(y2!) - 10)}
+                />
+                <Text
+                  text={String(tick)}
+                  font={xFont}
+                  y={yScale(y2!) + 18}
+                  x={xScale(tick) - String(tick).length * 4}
+                />
+              </>
+            );
+          })}
+          {yScale.ticks(10).map((tick) => {
+            if (tick === 0) return null;
+            return (
+              <>
+                <Line
+                  key={`y-tick-${tick}`}
+                  p1={vec(xScale(x1!), yScale(tick))}
+                  p2={vec(xScale(x1!) + 10, yScale(tick))}
+                />
+                <Text
+                  text={String(tick)}
+                  font={yFont}
+                  y={yScale(tick) + 4}
+                  x={xScale(x1!) - String(tick).length * 9}
+                />
+              </>
+            );
+          })}
           <Line
             p1={vec(xScale(x1!), yScale(y2!))}
             p2={vec(xScale(x2!), yScale(y2!))}
