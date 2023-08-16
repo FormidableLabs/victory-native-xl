@@ -25,10 +25,14 @@ export type MassagedData = {
 };
 
 export type ValueOf<T> = T[keyof T];
-export type TransformedData = {
-  ix: ValueOf<InputDatum>[];
+export type TransformedData<
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+> = {
+  ix: T[XK][];
   ox: number[];
-  y: { i: ValueOf<InputDatum>[]; o: number[] }[];
+  y: { [K in YK]: { i: T[K][]; o: number[] } };
 };
 
 /**

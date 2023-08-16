@@ -10,7 +10,7 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import type { SidedNumber, TransformedData, ValueOf } from "../../types";
+import type { SidedNumber, TransformedData } from "../../types";
 import {
   Gesture,
   GestureDetector,
@@ -19,32 +19,40 @@ import {
 import { findClosestPoint } from "../../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../../utils/valueFromSidedNumber";
 
-type LineChartProps<T extends InputDatum> = {
+type LineChartProps<
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+> = {
   data: T[];
-  xKey: string;
-  yKeys: string[];
+  xKey: XK;
+  yKeys: YK[];
   // TODO: xScale, yScale
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   children: (args: {
-    paths: SkPath[];
-    isActive: boolean;
-    xValue: SharedValue<ValueOf<InputDatum>>;
-    xPosition: SharedValue<number>;
-    yValues: SharedValue<ValueOf<InputDatum>>[];
-    yPositions: SharedValue<number>[];
+    paths: { [K in YK]: SkPath };
+    isPressActive: boolean;
+    activePressX: { value: SharedValue<number>; position: SharedValue<number> };
+    activePressY: {
+      [K in YK]: { value: SharedValue<number>; position: SharedValue<number> };
+    };
   }) => React.ReactNode;
 };
 
-export function LineChart<T extends InputDatum>({
+export function LineChart<
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+>({
   data,
   xKey,
   yKeys,
   padding,
   domainPadding,
   children,
-}: LineChartProps<T>) {
+}: LineChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -53,7 +61,17 @@ export function LineChart<T extends InputDatum>({
     [],
   );
 
-  const tData = useSharedValue<TransformedData>({ ix: [], ox: [], y: [] });
+  const tData = useSharedValue<TransformedData<T, XK, YK>>({
+    ix: [],
+    ox: [],
+    y: yKeys.reduce(
+      (acc, key) => {
+        acc[key] = { i: [], o: [] };
+        return acc;
+      },
+      {} as TransformedData<T, XK, YK>["y"],
+    ),
+  });
   const { paths, xScale, yScale } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
@@ -80,37 +98,55 @@ export function LineChart<T extends InputDatum>({
     });
     tData.value = _tData;
 
-    const paths = yKeys.map((_, i) => {
-      return makeLinearPath(_tData.ox, _tData.y[i]?.o || []);
-    });
+    const paths = yKeys.reduce(
+      (acc, key) => {
+        acc[key] = makeLinearPath(_tData.ox, _tData.y[key].o);
+        return acc;
+      },
+      {} as { [K in YK]: SkPath },
+    );
 
     return { tData, paths, xScale, yScale };
   }, [data, xKey, yKeys, size]);
 
-  const [isTooltipActive, setIsTooltipActive] = React.useState(false);
-  const tooltipXValue = useSharedValue<ValueOf<InputDatum>>(0);
-  const tooltipXPosition = useSharedValue(0);
-  const tooltipYValues = React.useRef(yKeys.map(() => makeMutable(0)));
-  const tooltipYPositions = React.useRef(yKeys.map(() => makeMutable(0)));
+  const [isPressActive, setIsPressActive] = React.useState(false);
+  const activePressX = React.useRef({
+    value: makeMutable(0),
+    position: makeMutable(0),
+  });
+  const activePressY = React.useRef(
+    yKeys.reduce(
+      (acc, key) => {
+        acc[key] = { value: makeMutable(0), position: makeMutable(0) };
+        return acc;
+      },
+      {} as Parameters<
+        LineChartProps<T, XK, YK>["children"]
+      >[0]["activePressY"],
+    ),
+  );
 
   const pan = Gesture.Pan()
     .onStart(() => {
-      runOnJS(setIsTooltipActive)(true);
+      runOnJS(setIsPressActive)(true);
     })
     .onUpdate((evt) => {
       const idx = findClosestPoint(tData.value.ox, evt.x);
       if (typeof idx !== "number") return;
 
-      tooltipXValue.value = tData.value.ix[idx];
-      tooltipXPosition.value = tData.value.ox[idx]!; // TODO: Missing values?
+      // TODO: Types, add safety checks
+      activePressX.current.value.value = tData.value.ix[idx] as number;
+      activePressX.current.position.value = tData.value.ox[idx]!;
 
-      yKeys.forEach((_, i) => {
-        tooltipYValues.current[i]!.value = tData.value.y[i]!.i[idx]!;
-        tooltipYPositions.current[i]!.value = tData.value.y[i]!.o[idx]!;
+      yKeys.forEach((key) => {
+        activePressY.current[key].value.value = tData.value.y[key].i[
+          idx
+        ] as number; // TODO: Don't cast to number here
+        activePressY.current[key].position.value = tData.value.y[key].o[idx]!;
       });
     })
     .onEnd(() => {
-      runOnJS(setIsTooltipActive)(false);
+      runOnJS(setIsPressActive)(false);
     });
 
   const [x1, x2] = xScale.domain();
@@ -122,11 +158,9 @@ export function LineChart<T extends InputDatum>({
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           {children({
             paths,
-            isActive: isTooltipActive,
-            xValue: tooltipXValue,
-            xPosition: tooltipXPosition,
-            yValues: tooltipYValues.current,
-            yPositions: tooltipYPositions.current,
+            isPressActive: isPressActive,
+            activePressX: activePressX.current,
+            activePressY: activePressY.current,
           })}
           {/* Throw in some dummy axes */}
           <Line
