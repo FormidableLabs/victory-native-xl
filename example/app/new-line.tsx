@@ -7,13 +7,9 @@ export default function NewLinePage() {
   return (
     <SimpleData
       renderChart={({ data }) => (
-        <LineChart
-          data={data}
-          xKey="x"
-          yKeys={["y"]}
-          padding={20}
-          renderPaths={({ paths }) => (
-            <React.Fragment>
+        <LineChart data={data} xKey="x" yKeys={["y"]} padding={20}>
+          {({ paths, isActive, xPosition, yPositions }) => (
+            <>
               {paths.map((path, i) => (
                 <Path
                   key={i}
@@ -23,14 +19,12 @@ export default function NewLinePage() {
                   strokeWidth={4}
                 />
               ))}
-            </React.Fragment>
+              {isActive && (
+                <Circle cx={xPosition} cy={yPositions[0]} r={5} color="red" />
+              )}
+            </>
           )}
-          renderTooltip={({ isActive, xPosition, yPositions }) =>
-            isActive && (
-              <Circle cx={xPosition} cy={yPositions[0]} r={5} color="red" />
-            )
-          }
-        />
+        </LineChart>
       )}
     ></SimpleData>
   );
