@@ -13,10 +13,13 @@ const AnimatedText = Reanimated.createAnimatedComponent(TextInput);
 export default function NewLinePage() {
   const activeX = useSharedValue(0);
   const activeProfit = useSharedValue(0);
+  const [isActive, setIsActive] = React.useState(false);
 
   const textProps = useAnimatedProps(() => {
     return {
-      text: `${activeX.value.toFixed(2)}, ${activeProfit.value.toFixed(2)}`,
+      text: isActive
+        ? `${activeX.value.toFixed(2)}, ${activeProfit.value.toFixed(2)}`
+        : "",
     };
   });
 
@@ -34,6 +37,7 @@ export default function NewLinePage() {
           yKeys={["revenue", "profit"]}
           padding={20}
           curve="natural"
+          onPressActiveChange={setIsActive}
           activePressX={{ value: activeX }}
           activePressY={{ profit: { value: activeProfit } }}
         >

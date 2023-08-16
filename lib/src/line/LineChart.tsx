@@ -32,6 +32,7 @@ type LineChartProps<
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
+  onPressActiveChange?: (isPressActive: boolean) => void;
   activePressX?: {
     value?: SharedValue<T[XK]>;
     position?: SharedValue<number>;
@@ -60,6 +61,7 @@ export function LineChart<
   curve = "linear",
   padding,
   domainPadding,
+  onPressActiveChange,
   activePressX: incomingActivePressX,
   activePressY: incomingActivePressY,
   children,
@@ -121,6 +123,13 @@ export function LineChart<
   }, [data, xKey, yKeys, size, curve]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
+  const changePressActive = React.useCallback(
+    (val: boolean) => {
+      setIsPressActive(val);
+      onPressActiveChange?.(val);
+    },
+    [onPressActiveChange],
+  );
   const internalActivePressX = React.useRef({
     value: makeMutable(0 as T[XK]),
     position: makeMutable(0),
@@ -159,7 +168,7 @@ export function LineChart<
 
   const pan = Gesture.Pan()
     .onStart(() => {
-      runOnJS(setIsPressActive)(true);
+      runOnJS(changePressActive)(true);
     })
     .onUpdate((evt) => {
       const idx = findClosestPoint(tData.value.ox, evt.x);
@@ -175,7 +184,7 @@ export function LineChart<
       });
     })
     .onEnd(() => {
-      runOnJS(setIsPressActive)(false);
+      runOnJS(changePressActive)(false);
     });
 
   const [x1, x2] = xScale.domain();
