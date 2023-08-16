@@ -4,6 +4,7 @@ import { Circle, Path } from "@shopify/react-native-skia";
 import { TextInput, View } from "react-native";
 import Reanimated, {
   useAnimatedProps,
+  useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
 
@@ -11,11 +12,11 @@ const AnimatedText = Reanimated.createAnimatedComponent(TextInput);
 
 export default function NewLinePage() {
   const activeX = useSharedValue(0);
-  const profit = useSharedValue(0);
+  const activeProfit = useSharedValue(0);
 
-  const p = useAnimatedProps(() => {
+  const textProps = useAnimatedProps(() => {
     return {
-      text: `${activeX.value.toFixed(2)}, ${profit.value.toFixed(2)}`,
+      text: `${activeX.value.toFixed(2)}, ${activeProfit.value.toFixed(2)}`,
     };
   });
 
@@ -23,7 +24,7 @@ export default function NewLinePage() {
     <View>
       <AnimatedText
         editable={false}
-        animatedProps={p}
+        animatedProps={textProps}
         style={{ fontSize: 24, padding: 12 }}
       />
       <View style={{ height: 400 }}>
@@ -34,7 +35,7 @@ export default function NewLinePage() {
           padding={20}
           curve="natural"
           activePressX={{ value: activeX }}
-          activePressY={{ profit: { value: profit } }}
+          activePressY={{ profit: { value: activeProfit } }}
         >
           {({ paths, isPressActive, activePressX, activePressY }) => (
             <>
