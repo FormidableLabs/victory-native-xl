@@ -29,7 +29,7 @@ export const Grid = ({
   labelBackgroundColor,
   lineColor,
   axisColor,
-}: AxisProps) => {
+}: GridProps) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
   const font = useFont(interMediumTTF, fontSize);
