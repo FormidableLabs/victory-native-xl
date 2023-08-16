@@ -1,9 +1,9 @@
 import * as React from "react";
 import type { InputDatum } from "victory-native-skia";
-import { transformInputData } from "../utils/transformInputData2";
+import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, type SkPath, vec, Line } from "@shopify/react-native-skia";
-import { makeLinearPath } from "./linearPath";
+import { Canvas, Line, vec } from "@shopify/react-native-skia";
+import { type CurveType, makeLinePath } from "./makeLinePath";
 import {
   makeMutable,
   runOnJS,
@@ -27,12 +27,13 @@ type LineChartProps<
   data: T[];
   xKey: XK;
   yKeys: YK[];
+  curve?: CurveType;
   // TODO: xScale, yScale
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   children: (args: {
-    paths: { [K in YK]: SkPath };
+    paths: { [K in YK]: string };
     isPressActive: boolean;
     activePressX: { value: SharedValue<number>; position: SharedValue<number> };
     activePressY: {
@@ -49,6 +50,7 @@ export function LineChart<
   data,
   xKey,
   yKeys,
+  curve = "linear",
   padding,
   domainPadding,
   children,
@@ -100,14 +102,14 @@ export function LineChart<
 
     const paths = yKeys.reduce(
       (acc, key) => {
-        acc[key] = makeLinearPath(_tData.ox, _tData.y[key].o);
+        acc[key] = makeLinePath(curve, _tData.ox, _tData.y[key].o);
         return acc;
       },
-      {} as { [K in YK]: SkPath },
+      {} as { [K in YK]: string },
     );
 
     return { tData, paths, xScale, yScale };
-  }, [data, xKey, yKeys, size]);
+  }, [data, xKey, yKeys, size, curve]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
   const activePressX = React.useRef({

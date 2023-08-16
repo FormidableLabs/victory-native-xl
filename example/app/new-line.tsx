@@ -11,6 +11,7 @@ export default function NewLinePage() {
         xKey="month"
         yKeys={["revenue", "profit"]}
         padding={20}
+        curve="natural"
       >
         {({ paths, isPressActive, activePressX, activePressY }) => (
           <>

@@ -1,59 +1,63 @@
-import type { InputDatum, MassagedData } from "../types";
+import type {
+  InputDatum,
+  PrimitiveViewWindow,
+  TransformedData,
+} from "../types";
+import { type ScaleLinear, scaleLinear } from "d3-scale";
 
-/**
- * TODO: Do we discard entries that don't contain all the required data, or what?
- */
-export const transformInputData = (
-  data: InputDatum[],
-  xKey: string,
-  yKeys: string[],
-): MassagedData => {
-  const x: number[] = [];
-  const y: Record<string, number[]> = {};
-  const _x: (number | string)[] = [];
+export const transformInputData = <
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+>({
+  data,
+  xKey,
+  yKeys,
+  outputWindow,
+}: {
+  data: T[];
+  xKey: XK;
+  yKeys: YK[];
+  outputWindow: PrimitiveViewWindow;
+}): TransformedData<T, XK, YK> & {
+  xScale: ScaleLinear<number, number>;
+  yScale: ScaleLinear<number, number>;
+} => {
+  const ix = data.map((datum) => datum[xKey]);
+  const xScale = scaleLinear()
+    .domain([ix.at(0), ix.at(-1)])
+    .range([outputWindow.xMin, outputWindow.xMax]);
+  const ox = ix.map((x) => xScale(x));
 
-  if (!data.length) return { x, y, _x };
+  const y = yKeys.reduce(
+    (acc, k) => {
+      acc[k] = { i: [], o: [] };
+      return acc;
+    },
+    {} as TransformedData<T, XK, YK>["y"],
+  );
 
-  const firstX = data[0]?.[xKey];
+  // TODO: These ain't right...
+  const yMin = Math.min(
+    ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
+  );
+  const yMax = Math.max(
+    ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
+  );
+  const yScale = scaleLinear()
+    .domain([yMin, yMax])
+    .range([outputWindow.yMin, outputWindow.yMax]);
 
-  // TODO: Going to need more sophisticated sorting logic for e.g. dates.
-  const sortedData = Array.from(data);
-  if (typeof firstX === "number") {
-    sortedData.sort((a, b) => (a[xKey] as number) - (b[xKey] as number));
-  }
+  yKeys.forEach((yKey) => {
+    y[yKey].i = data.map((datum) => datum[yKey]);
+    y[yKey].o = data.map((datum) => yScale(datum[yKey]));
+  });
 
-  // Input data is numbers
-  if (typeof firstX === "number") {
-    sortedData.forEach((datum) => {
-      const xVal = Number(datum[xKey]);
-      x.push(xVal);
-      yKeys.forEach((key) => {
-        y[key] ||= [];
-        y[key]!.push(datum[key] as number);
-      });
-    });
-  }
-
-  // Input data is string
-  if (typeof firstX === "string") {
-    sortedData.forEach((datum, i) => {
-      x.push(i);
-      _x.push(datum[xKey] as string);
-      yKeys.forEach((key) => {
-        y[key]! ||= [];
-        y[key]!.push(datum[key] as number);
-      });
-    });
-  }
-
-  // TODO: Drop _x if it's not used?
-  return { x, y, _x };
-};
-
-export const getMinYFromMassagedData = (data: MassagedData): number => {
-  return Math.min(...Object.values(data.y).map((arr) => Math.min(...arr)));
-};
-
-export const getMaxYFromMassagedData = (data: MassagedData): number => {
-  return Math.max(...Object.values(data.y).map((arr) => Math.max(...arr)));
+  return {
+    ix,
+    ox,
+    y,
+    xScale,
+    yScale,
+  };
 };

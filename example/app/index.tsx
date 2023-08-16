@@ -38,12 +38,6 @@ export default function LandingPage() {
 
 const EXAMPLES: { title: string; path: string }[] = [
   { title: "New Line", path: "/new-line" },
-  { title: "Plain Bar", path: "/bar" },
-  { title: "Plain Line", path: "/line" },
-  { title: "Axes", path: "/axes" },
-  { title: "Scatter", path: "/scatter" },
-  { title: "Cartesian Padding", path: "/cartesian-padding" },
-  { title: "Keyed Data", path: "/keyed-data" },
 ];
 
 const Separator = () => <View style={{ height: 12 }} />;
