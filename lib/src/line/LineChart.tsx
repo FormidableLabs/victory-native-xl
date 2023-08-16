@@ -143,7 +143,10 @@ export function LineChart<
   const internalActivePressY = React.useRef(
     yKeys.reduce(
       (acc, key) => {
-        acc[key] = { value: makeMutable(0), position: makeMutable(0) };
+        acc[key] = {
+          value: makeMutable(0 as T[YK]),
+          position: makeMutable(0),
+        };
         return acc;
       },
       {} as Parameters<
@@ -175,11 +178,11 @@ export function LineChart<
       if (typeof idx !== "number") return;
 
       // TODO: Types, add safety checks
-      activePressX.value.value = tData.value.ix[idx];
+      activePressX.value.value = tData.value.ix[idx] as T[XK];
       activePressX.position.value = tData.value.ox[idx]!;
 
       yKeys.forEach((key) => {
-        activePressY[key].value.value = tData.value.y[key].i[idx] as number; // TODO: Don't cast to number here
+        activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
         activePressY[key].position.value = tData.value.y[key].o[idx]!;
       });
     })
