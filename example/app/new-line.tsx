@@ -41,40 +41,38 @@ export default function NewLinePage() {
           activePressX={{ value: activeX }}
           activePressY={{ profit: { value: activeProfit } }}
         >
-          {({ paths, isPressActive, activePressX, activePressY }) => {
-            return (
-              <>
-                <Path
-                  path={paths.profit}
-                  style="stroke"
-                  color="black"
-                  strokeWidth={4}
-                />
-                <Path
-                  path={paths.revenue}
-                  style="stroke"
-                  color="blue"
-                  strokeWidth={4}
-                />
-                {isPressActive && (
-                  <>
-                    <Circle
-                      cx={activePressX.position}
-                      cy={activePressY.profit.position}
-                      r={5}
-                      color="red"
-                    />
-                    <Circle
-                      cx={activePressX.position}
-                      cy={activePressY.revenue.position}
-                      r={5}
-                      color="red"
-                    />
-                  </>
-                )}
-              </>
-            );
-          }}
+          {({ paths, isPressActive, activePressX, activePressY }) => (
+            <>
+              <Path
+                path={paths.profit}
+                style="stroke"
+                color="black"
+                strokeWidth={4}
+              />
+              <Path
+                path={paths.revenue}
+                style="stroke"
+                color="blue"
+                strokeWidth={4}
+              />
+              {isPressActive && (
+                <>
+                  <Circle
+                    cx={activePressX.position}
+                    cy={activePressY.profit.position}
+                    r={5}
+                    color="red"
+                  />
+                  <Circle
+                    cx={activePressX.position}
+                    cy={activePressY.revenue.position}
+                    r={5}
+                    color="red"
+                  />
+                </>
+              )}
+            </>
+          )}
         </LineChart>
       </View>
     </View>
