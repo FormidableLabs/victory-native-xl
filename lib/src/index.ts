@@ -5,3 +5,4 @@ export { type InputDatum } from "./types";
  */
 export { LineChart } from "./line/LineChart";
 export type { CurveType } from "./line/makeLinePath";
+export { Grid, type GridProps } from "./grid/Grid";
