@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { InputDatum } from "victory-native-skia";
-import { transformInputData } from "../../utils/transformInputData2";
+import { transformInputData } from "../utils/transformInputData2";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, type SkPath, vec, Line } from "@shopify/react-native-skia";
 import { makeLinearPath } from "./linearPath";
@@ -10,14 +10,14 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import type { SidedNumber, TransformedData } from "../../types";
+import type { SidedNumber, TransformedData } from "../types";
 import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import { findClosestPoint } from "../../utils/findClosestPoint";
-import { valueFromSidedNumber } from "../../utils/valueFromSidedNumber";
+import { findClosestPoint } from "../utils/findClosestPoint";
+import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 
 type LineChartProps<
   T extends InputDatum,
