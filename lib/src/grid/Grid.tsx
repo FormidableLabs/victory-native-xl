@@ -1,15 +1,15 @@
 import * as React from "react";
 import { type ScaleLinear } from "d3-scale";
-import interMediumTTF from "../fonts/inter-medium.ttf";
 import {
   Line,
   Text,
   RoundedRect,
-  useFont,
   vec,
+  type SkFont,
 } from "@shopify/react-native-skia";
 
 export type GridProps = {
+  font?: SkFont | null;
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   labelOffset: number;
@@ -28,14 +28,13 @@ export const Grid = ({
   labelOffset,
   labelBackgroundColor,
   lineColor,
+  font,
   axisColor,
 }: GridProps) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
-  const font = useFont(interMediumTTF, fontSize);
 
   if (
-    !font ||
     typeof x1 === "undefined" ||
     typeof x2 === "undefined" ||
     typeof y1 === "undefined" ||
@@ -57,20 +56,24 @@ export const Grid = ({
               p2={vec(xScale(tick), yScale(y1))}
               color={lineColor}
             />
-            <RoundedRect
-              x={xScale(tick) - font.getTextWidth(tick.toFixed(0))}
-              y={yScale(y2) - labelOffset - fontSize}
-              width={font.getTextWidth(tick.toFixed(0)) * 2}
-              height={fontSize + 4}
-              r={4}
-              color={labelBackgroundColor}
-            />
-            <Text
-              text={String(tick)}
-              font={font}
-              y={yScale(y2) - labelOffset}
-              x={xScale(tick) - font.getTextWidth(tick.toFixed(0)) / 2}
-            />
+            {font ? (
+              <>
+                <RoundedRect
+                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0))}
+                  y={yScale(y2) - labelOffset - fontSize}
+                  width={font.getTextWidth(tick.toFixed(0)) * 2}
+                  height={fontSize + 4}
+                  r={4}
+                  color={labelBackgroundColor}
+                />
+                <Text
+                  text={String(tick)}
+                  font={font}
+                  y={yScale(y2) - labelOffset}
+                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0)) / 2}
+                />
+              </>
+            ) : null}
           </React.Fragment>
         );
       })}
@@ -85,22 +88,26 @@ export const Grid = ({
               p2={vec(xScale(x2), yScale(tick))}
               color={lineColor}
             />
-            <RoundedRect
-              x={xScale(x1) + 2}
-              y={yScale(tick) - (fontSize + 4) / 2}
-              width={
-                font.getTextWidth(reverseTick.toFixed(0)) + labelOffset + 4
-              }
-              height={fontSize + 4}
-              r={4}
-              color={labelBackgroundColor}
-            />
-            <Text
-              text={String(reverseTick)}
-              font={font}
-              y={yScale(tick) + fontSize / 3}
-              x={xScale(x1) + labelOffset}
-            />
+            {font ? (
+              <>
+                <RoundedRect
+                  x={xScale(x1) + 2}
+                  y={yScale(tick) - (fontSize + 4) / 2}
+                  width={
+                    font.getTextWidth(reverseTick.toFixed(0)) + labelOffset + 4
+                  }
+                  height={fontSize + 4}
+                  r={4}
+                  color={labelBackgroundColor}
+                />
+                <Text
+                  text={String(reverseTick)}
+                  font={font}
+                  y={yScale(tick) + fontSize / 3}
+                  x={xScale(x1) + labelOffset}
+                />
+              </>
+            ) : null}
           </React.Fragment>
         );
       })}

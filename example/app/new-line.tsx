@@ -1,17 +1,25 @@
 import React from "react";
 import { LineChart, Grid } from "victory-native-skia";
-import { Circle, LinearGradient, Path, vec } from "@shopify/react-native-skia";
+import {
+  Circle,
+  LinearGradient,
+  Path,
+  useFont,
+  vec,
+} from "@shopify/react-native-skia";
 import { Text, TextInput, View } from "react-native";
 import Reanimated, {
   useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import inter from "../assets/inter-medium.ttf";
 
 const AnimatedText = Reanimated.createAnimatedComponent(TextInput);
 
 export default function NewLinePage() {
   const activeX = useSharedValue(0);
+  const font = useFont(inter, 12);
   const activeProfit = useSharedValue(0);
   const [isActive, setIsActive] = React.useState(false);
   const [activePoint, setActivePoint] = React.useState([0, 0] as [
@@ -98,7 +106,7 @@ export default function NewLinePage() {
                   />
                 </>
               )}
-              <Grid xScale={xScale} yScale={yScale} />
+              <Grid font={font} xScale={xScale} yScale={yScale} />
             </>
           )}
         </LineChart>
