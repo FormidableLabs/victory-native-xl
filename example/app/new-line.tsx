@@ -36,7 +36,7 @@ export default function NewLinePage() {
           xKey="month"
           yKeys={["revenue", "profit"]}
           padding={10}
-          curve={{ revenue: "step", profit: "linear" }}
+          curve={{ revenue: "catmullRom", profit: "linear" }}
           chartType={{ revenue: "area", profit: "line" }}
           onPressActiveChange={setIsActive}
           activePressX={{ value: activeX }}
