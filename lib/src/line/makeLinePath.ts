@@ -1,4 +1,4 @@
-import { curveLinear, curveNatural, line } from "d3-shape";
+import { area, curveLinear, curveNatural, line } from "d3-shape";
 import { stitch } from "../utils/stitch";
 
 /**
@@ -16,6 +16,9 @@ export const makeLinePath = (
   curveType: CurveType,
   ox: number[],
   oy: number[],
+  { type, y0 }: { type: "line" | "area"; y0: number },
 ) => {
-  return line().curve(CURVES[curveType])(stitch(ox, oy))!;
+  return (type === "line" ? line() : area().y0(y0)).curve(CURVES[curveType])(
+    stitch(ox, oy),
+  )!;
 };
