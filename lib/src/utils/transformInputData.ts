@@ -3,7 +3,7 @@ import type {
   PrimitiveViewWindow,
   TransformedData,
 } from "../types";
-import { type ScaleLinear, scaleLinear } from "d3-scale";
+import { type ScaleLinear, scaleLinear, type NumberValue } from "d3-scale";
 
 export const transformInputData = <
   T extends InputDatum,
@@ -25,9 +25,9 @@ export const transformInputData = <
 } => {
   const ix = data.map((datum) => datum[xKey]);
   const xScale = scaleLinear()
-    .domain([ix.at(0), ix.at(-1)])
+    .domain(<NumberValue[]>[ix.at(0) ?? 0, ix.at(-1) ?? 0])
     .range([outputWindow.xMin, outputWindow.xMax]);
-  const ox = ix.map((x) => xScale(x));
+  const ox = ix.map((x) => xScale(<number>x));
 
   const y = yKeys.reduce(
     (acc, k) => {
@@ -39,10 +39,10 @@ export const transformInputData = <
 
   // TODO: These ain't right...
   const yMin = Math.min(
-    ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
+    ...yKeys.map((key) => Math.min(...data.map((datum) => <number>datum[key]))),
   );
   const yMax = Math.max(
-    ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
+    ...yKeys.map((key) => Math.max(...data.map((datum) => <number>datum[key]))),
   );
   const yScale = scaleLinear()
     .domain([yMin, yMax])
@@ -50,7 +50,7 @@ export const transformInputData = <
 
   yKeys.forEach((yKey) => {
     y[yKey].i = data.map((datum) => datum[yKey]);
-    y[yKey].o = data.map((datum) => yScale(datum[yKey]));
+    y[yKey].o = data.map((datum) => yScale(<number>datum[yKey]));
   });
 
   return {
