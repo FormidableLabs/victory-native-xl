@@ -34,6 +34,10 @@ type LineChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   onPressActiveChange?: (isPressActive: boolean) => void;
+  onPressValueChange?: (args: {
+    x: { value: T[XK]; position: number };
+    y: { [K in YK]: { value: T[K]; position: number } };
+  }) => void;
   activePressX?: {
     value?: SharedValue<T[XK]>;
     position?: SharedValue<number>;
@@ -65,6 +69,7 @@ export function LineChart<
   padding,
   domainPadding,
   onPressActiveChange,
+  onPressValueChange,
   activePressX: incomingActivePressX,
   activePressY: incomingActivePressY,
   children,
@@ -172,6 +177,7 @@ export function LineChart<
     {} as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["activePressY"],
   );
 
+  const lastIdx = useSharedValue(null as null | number);
   const pan = Gesture.Pan()
     .onStart(() => {
       runOnJS(changePressActive)(true);
@@ -188,6 +194,27 @@ export function LineChart<
         activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
         activePressY[key].position.value = tData.value.y[key].o[idx]!;
       });
+
+      onPressValueChange &&
+        lastIdx.value !== idx &&
+        runOnJS(onPressValueChange)({
+          x: {
+            value: activePressX.value.value,
+            position: activePressX.position.value,
+          },
+          y: yKeys.reduce(
+            (acc, key) => {
+              acc[key] = {
+                value: activePressY[key].value.value,
+                position: activePressY[key].position.value,
+              };
+              return acc;
+            },
+            {} as { [K in YK]: { value: T[K]; position: number } },
+          ),
+        });
+
+      lastIdx.value = idx;
     })
     .onEnd(() => {
       runOnJS(changePressActive)(false);
