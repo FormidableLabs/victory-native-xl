@@ -1,6 +1,6 @@
 import React from "react";
 import { LineChart, Grid } from "victory-native-skia";
-import { Circle, Path } from "@shopify/react-native-skia";
+import { Circle, LinearGradient, Path, vec } from "@shopify/react-native-skia";
 import { Text, TextInput, View } from "react-native";
 import Reanimated, {
   useAnimatedProps,
@@ -43,7 +43,8 @@ export default function NewLinePage() {
           xKey="month"
           yKeys={["revenue", "profit"]}
           padding={10}
-          curve="natural"
+          curve={{ revenue: "catmullRom", profit: "linear" }}
+          chartType={{ revenue: "area", profit: "line" }}
           onPressActiveChange={setIsActive}
           activePressX={{ value: activeX }}
           activePressY={{ profit: { value: activeProfit } }}
@@ -71,10 +72,16 @@ export default function NewLinePage() {
               />
               <Path
                 path={paths.revenue}
-                style="stroke"
+                style="fill"
                 color="blue"
                 strokeWidth={4}
-              />
+              >
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(0, 500)}
+                  colors={["blue", "white"]}
+                />
+              </Path>
               {isPressActive && (
                 <>
                   <Circle
@@ -91,7 +98,7 @@ export default function NewLinePage() {
                   />
                 </>
               )}
-              <Grid ticks={4} xScale={xScale} yScale={yScale} />
+              <Grid xScale={xScale} yScale={yScale} />
             </>
           )}
         </LineChart>

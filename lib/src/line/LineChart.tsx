@@ -28,7 +28,8 @@ type LineChartProps<
   data: T[];
   xKey: XK;
   yKeys: YK[];
-  curve?: CurveType;
+  curve: CurveType | { [K in YK]: CurveType };
+  chartType: "line" | "area" | { [K in YK]: "line" | "area" };
   // TODO: xScale, yScale
   // TODO: Axes
   padding?: SidedNumber;
@@ -65,7 +66,8 @@ export function LineChart<
   data,
   xKey,
   yKeys,
-  curve = "linear",
+  curve,
+  chartType,
   padding,
   domainPadding,
   onPressActiveChange,
@@ -121,7 +123,18 @@ export function LineChart<
 
     const paths = yKeys.reduce(
       (acc, key) => {
-        acc[key] = makeLinePath(curve, _tData.ox, _tData.y[key].o);
+        acc[key] = makeLinePath(
+          typeof curve === "string" ? curve : curve[key] || "linear",
+          _tData.ox,
+          _tData.y[key].o,
+          {
+            type:
+              typeof chartType === "string"
+                ? chartType
+                : chartType[key] || "line",
+            y0: yScale.range()[1] || 0,
+          },
+        );
         return acc;
       },
       {} as { [K in YK]: string },
@@ -237,3 +250,8 @@ export function LineChart<
     </GestureHandlerRootView>
   );
 }
+
+LineChart.defaultProps = {
+  curve: "linear",
+  chartType: "line",
+};
