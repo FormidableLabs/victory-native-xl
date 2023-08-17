@@ -78,7 +78,7 @@ export default function NewLinePage() {
                   />
                 </>
               )}
-              <Grid ticks={4} xScale={xScale} yScale={yScale} />
+              <Grid xScale={xScale} yScale={yScale} />
             </>
           )}
         </LineChart>
