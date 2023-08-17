@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { ScaleLinear } from "d3-scale";
+import { type ScaleLinear } from "d3-scale";
 import interMediumTTF from "../fonts/inter-medium.ttf";
 import {
   Line,
@@ -43,9 +43,12 @@ export const Grid = ({
   )
     return null;
 
+  const xTicks = xScale.ticks(ticks);
+  const yTicks = yScale.ticks(ticks);
+
   return (
     <>
-      {xScale.ticks(ticks).map((tick) => {
+      {xTicks.map((tick) => {
         if (tick === 0) return null;
         return (
           <React.Fragment key={`x-tick-${tick}`}>
@@ -71,8 +74,10 @@ export const Grid = ({
           </React.Fragment>
         );
       })}
-      {yScale.ticks(ticks).map((tick) => {
-        if (tick === 0) return null;
+      {yTicks.map((tick, index) => {
+        const reverseTick = yTicks[-1 - index + yTicks.length];
+        if (tick === 0 || !reverseTick) return null;
+
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -82,14 +87,16 @@ export const Grid = ({
             />
             <RoundedRect
               x={xScale(x1) + 2}
-              y={yScale(tick) - font.getTextWidth(tick.toFixed(0)) / 3}
-              width={font.getTextWidth(tick.toFixed(0)) * 1.5}
+              y={yScale(tick) - (fontSize + 4) / 2}
+              width={
+                font.getTextWidth(reverseTick.toFixed(0)) + labelOffset + 4
+              }
               height={fontSize + 4}
               r={4}
               color={labelBackgroundColor}
             />
             <Text
-              text={String(tick)}
+              text={String(reverseTick)}
               font={font}
               y={yScale(tick) + fontSize / 3}
               x={xScale(x1) + labelOffset}
@@ -114,7 +121,7 @@ export const Grid = ({
 Grid.defaultProps = {
   fontSize: 12,
   labelOffset: 6,
-  ticks: 4,
+  ticks: 10,
   labelBackgroundColor: "hsla(0, 0%, 100%, 0.9)",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   axisColor: "black",
