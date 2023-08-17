@@ -1,7 +1,7 @@
 import React from "react";
 import { LineChart, Grid } from "victory-native-skia";
 import { Circle, LinearGradient, Path, vec } from "@shopify/react-native-skia";
-import { TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import Reanimated, {
   useAnimatedProps,
   useAnimatedStyle,
@@ -14,6 +14,10 @@ export default function NewLinePage() {
   const activeX = useSharedValue(0);
   const activeProfit = useSharedValue(0);
   const [isActive, setIsActive] = React.useState(false);
+  const [activePoint, setActivePoint] = React.useState([0, 0] as [
+    number,
+    number,
+  ]);
 
   const textProps = useAnimatedProps(() => {
     return {
@@ -30,6 +34,9 @@ export default function NewLinePage() {
         animatedProps={textProps}
         style={{ fontSize: 24, padding: 12 }}
       />
+      <Text style={{ fontSize: 24, padding: 12 }}>
+        {`${activePoint[0]}, ${activePoint[1]}`}
+      </Text>
       <View style={{ height: 400 }}>
         <LineChart
           data={DATA}
@@ -41,6 +48,12 @@ export default function NewLinePage() {
           onPressActiveChange={setIsActive}
           activePressX={{ value: activeX }}
           activePressY={{ profit: { value: activeProfit } }}
+          onPressValueChange={({
+            x: { value: x },
+            y: {
+              revenue: { value: revenue },
+            },
+          }) => setActivePoint([x, revenue])}
         >
           {({
             paths,
