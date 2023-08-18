@@ -269,15 +269,17 @@ export function LineChart<
     })
     .minDistance(0);
 
+  console.log("ACTIVE X", typeof activePressX);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={pan}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           {children({
             paths,
-            isPressActive: isPressActive,
-            activePressX: activePressX,
-            activePressY: activePressY,
+            isPressActive,
+            activePressX,
+            activePressY,
             xScale,
             yScale,
             chartBounds,
