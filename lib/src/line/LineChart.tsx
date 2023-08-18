@@ -101,7 +101,6 @@ export function LineChart<
   });
 
   const { hasGrid, font } = useHasGrid(children);
-  console.log(hasGrid);
 
   const { paths, xScale, yScale } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
@@ -131,8 +130,6 @@ export function LineChart<
       },
     });
     tData.value = _tData;
-
-    console.log(_tData);
 
     const paths = yKeys.reduce(
       (acc, key) => {
