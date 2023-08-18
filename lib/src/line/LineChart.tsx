@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { InputDatum } from "victory-native-skia";
+import { type InputDatum } from "victory-native-skia";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas } from "@shopify/react-native-skia";
@@ -19,6 +19,7 @@ import {
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import type { ScaleLinear } from "d3-scale";
+import { useHasGrid } from "../utils/useHasGrid";
 
 type LineChartProps<
   T extends InputDatum,
@@ -98,6 +99,9 @@ export function LineChart<
       {} as TransformedData<T, XK, YK>["y"],
     ),
   });
+
+  const { hasGrid, font, labelOffset, formatYLabel } = useHasGrid(children);
+
   const { paths, xScale, yScale } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
@@ -105,6 +109,7 @@ export function LineChart<
       yKeys,
       xScaleType,
       yScaleType,
+      gridMetrics: { hasGrid, font, labelOffset, formatYLabel },
       // TODO: These are likely going to need to change.
       // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {

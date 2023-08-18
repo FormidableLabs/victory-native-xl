@@ -10,6 +10,7 @@ import {
 } from "@shopify/react-native-skia";
 import { View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
+import { format } from "date-fns";
 
 const DATA = data
   .slice(0, 15)
@@ -67,7 +68,15 @@ export default function TimeScale() {
                   />
                 </>
               )}
-              <Grid font={font} xScale={xScale} yScale={yScale} ticks={4} />
+              <Grid
+                font={font}
+                xScale={xScale}
+                yScale={yScale}
+                ticks={4}
+                formatXLabel={(s) =>
+                  typeof s === "number" ? format(s, "MMM-dd") : s
+                }
+              />
             </>
           )}
         </LineChart>

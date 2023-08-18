@@ -1,20 +1,17 @@
 import * as React from "react";
 import { type ScaleLinear } from "d3-scale";
-import {
-  Line,
-  Text,
-  RoundedRect,
-  vec,
-  type SkFont,
-} from "@shopify/react-native-skia";
+import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
+import type { InputDatum } from "../types";
+import type { ValueOf } from "../types";
 
 export type GridProps = {
   font?: SkFont | null;
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   labelOffset: number;
-  fontSize: number;
   ticks: number;
+  formatXLabel: (label: ValueOf<InputDatum>) => string;
+  formatYLabel: (label: ValueOf<InputDatum>) => string;
   labelBackgroundColor: string;
   lineColor: string;
   axisColor: string;
@@ -23,16 +20,17 @@ export type GridProps = {
 export const Grid = ({
   xScale,
   yScale,
-  fontSize,
   ticks,
   labelOffset,
-  labelBackgroundColor,
   lineColor,
   font,
   axisColor,
+  formatXLabel,
+  formatYLabel,
 }: GridProps) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
+  const fontSize = font?.getSize() ?? 0;
 
   if (
     typeof x1 === "undefined" ||
@@ -58,19 +56,11 @@ export const Grid = ({
             />
             {font ? (
               <>
-                <RoundedRect
-                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0))}
-                  y={yScale(y2) - labelOffset - fontSize}
-                  width={font.getTextWidth(tick.toFixed(0)) * 2}
-                  height={fontSize + 4}
-                  r={4}
-                  color={labelBackgroundColor}
-                />
                 <Text
-                  text={String(tick)}
+                  text={formatXLabel(tick)}
                   font={font}
-                  y={yScale(y2) - labelOffset}
-                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0)) / 2}
+                  y={yScale(y2) + labelOffset + fontSize}
+                  x={xScale(tick) - font.getTextWidth(formatXLabel(tick)) / 2}
                 />
               </>
             ) : null}
@@ -86,32 +76,24 @@ export const Grid = ({
           />
           {font ? (
             <>
-              <RoundedRect
-                x={xScale(x1) + 2}
-                y={yScale(tick) - (fontSize + 4) / 2}
-                width={font.getTextWidth(tick.toFixed(0)) + labelOffset + 4}
-                height={fontSize + 4}
-                r={4}
-                color={labelBackgroundColor}
-              />
               <Text
-                text={String(tick)}
+                text={formatYLabel(tick)}
                 font={font}
                 y={yScale(tick) + fontSize / 3}
-                x={xScale(x1) + labelOffset}
+                x={
+                  xScale(x1) -
+                  font.getTextWidth(formatYLabel(tick) + labelOffset)
+                }
               />
             </>
           ) : null}
         </React.Fragment>
       ))}
-      <Line
-        p1={vec(xScale(x1), yScale(y1))}
-        p2={vec(xScale(x1), yScale(y2))}
-        color={axisColor}
-      />
+
       <Line
         p1={vec(xScale(x1), yScale(y2))}
         p2={vec(xScale(x2), yScale(y2))}
+        strokeWidth={2}
         color={axisColor}
       />
     </>
@@ -119,9 +101,10 @@ export const Grid = ({
 };
 
 Grid.defaultProps = {
-  fontSize: 12,
   labelOffset: 6,
   ticks: 10,
+  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+  formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelBackgroundColor: "hsla(0, 0%, 100%, 0.9)",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   axisColor: "black",

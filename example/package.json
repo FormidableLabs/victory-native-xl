@@ -11,6 +11,7 @@
     "@react-native-community/slider": "4.4.2",
     "@react-native-segmented-control/segmented-control": "^2.4.2",
     "@shopify/react-native-skia": "0.1.196",
+    "date-fns": "^2.30.0",
     "expo": "~49.0.6",
     "expo-constants": "~14.4.2",
     "expo-linking": "~5.0.2",
