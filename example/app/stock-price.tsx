@@ -1,11 +1,13 @@
 import React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { Grid, LineChart } from "victory-native-skia";
+import { ChartBounds, Grid, LineChart } from "victory-native-skia";
 import {
   Circle,
+  Group,
   Line,
   LinearGradient,
   Path,
+  Skia,
   Text as SkiaText,
   useFont,
   vec,
@@ -19,6 +21,7 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import { AnimatedText } from "../components/AnimatedText";
+import * as Haptics from "expo-haptics";
 
 const DATA = data
   .slice(400, 450)
@@ -55,12 +58,13 @@ export default function StockPriceScreen() {
         <LineChart
           data={DATA}
           xKey="date"
-          yKeys={["high", "low"]}
+          yKeys={["high"]}
           padding={{ left: 20 }}
           curve="linear"
           activePressX={{ value: activeDateMS }}
           activePressY={{ high: { value: activeHigh } }}
           onPressActiveChange={setIsPressActive}
+          onPressActiveStart={() => Haptics.selectionAsync()}
         >
           {({
             paths,
@@ -72,30 +76,18 @@ export default function StockPriceScreen() {
             chartBounds,
           }) => (
             <>
+              <StockArea
+                xPosition={activePressX.position}
+                path={paths["high.area"]}
+                isPressActive={isPressActive}
+                {...chartBounds}
+              />
               <Path
                 path={paths["high.line"]}
                 style="stroke"
                 color="blue"
-                strokeWidth={6}
+                strokeWidth={4}
               />
-              <Path
-                path={paths["high.area"]}
-                style="fill"
-                color="blue"
-                strokeWidth={8}
-              >
-                <LinearGradient
-                  start={vec(0, 0)}
-                  end={vec(chartBounds.top, chartBounds.bottom)}
-                  colors={["blue", "white"]}
-                />
-              </Path>
-              {/*<Path*/}
-              {/*  path={paths["low.line"]}*/}
-              {/*  style="stroke"*/}
-              {/*  color="black"*/}
-              {/*  strokeWidth={1}*/}
-              {/*/>*/}
               {isPressActive && (
                 <>
                   <ActiveValueIndicator
@@ -122,6 +114,44 @@ export default function StockPriceScreen() {
     </View>
   );
 }
+
+const StockArea = ({
+  path,
+  xPosition,
+  isPressActive,
+  left,
+  right,
+  bottom,
+  top,
+}: {
+  path: string;
+  xPosition: SharedValue<number>;
+  isPressActive: boolean;
+} & ChartBounds) => {
+  const leftRect = useDerivedValue(() => {
+    const path = Skia.Path.Make();
+    if (isPressActive) {
+      path.addRect(
+        Skia.XYWHRect(left, top, xPosition.value - left, bottom - top),
+      );
+    } else {
+      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
+    }
+    return path;
+  });
+
+  return (
+    <Group clip={leftRect}>
+      <Path path={path} style="fill" strokeWidth={4}>
+        <LinearGradient
+          start={vec(0, 0)}
+          end={vec(top, bottom)}
+          colors={["blue", "white"]}
+        />
+      </Path>
+    </Group>
+  );
+};
 
 const ActiveValueIndicator = ({
   xPosition,

@@ -40,6 +40,12 @@ export type ScaleType = "linear" | "log" | "band";
 /**
  * Render arg for our line chart.
  */
+export type ChartBounds = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+};
 export type LineChartRenderArg<
   T extends InputDatum,
   XK extends keyof T,
@@ -56,5 +62,5 @@ export type LineChartRenderArg<
   activePressY: {
     [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
   };
-  chartBounds: { left: number; right: number; top: number; bottom: number };
+  chartBounds: ChartBounds;
 };

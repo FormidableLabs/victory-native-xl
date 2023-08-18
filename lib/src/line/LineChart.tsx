@@ -38,6 +38,8 @@ type LineChartProps<
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
+  onPressActiveStart?: () => void;
+  onPressActiveEnd?: () => void;
   onPressActiveChange?: (isPressActive: boolean) => void;
   onPressValueChange?: (args: {
     x: { value: T[XK]; position: number };
@@ -68,6 +70,8 @@ export function LineChart<
   domainPadding,
   onPressActiveChange,
   onPressValueChange,
+  onPressActiveStart,
+  onPressActiveEnd,
   activePressX: incomingActivePressX,
   activePressY: incomingActivePressY,
   children,
@@ -216,6 +220,7 @@ export function LineChart<
   const lastIdx = useSharedValue(null as null | number);
   const pan = Gesture.Pan()
     .onStart(() => {
+      onPressActiveStart && runOnJS(onPressActiveStart)();
       runOnJS(changePressActive)(true);
     })
     .onUpdate((evt) => {
@@ -253,9 +258,10 @@ export function LineChart<
       lastIdx.value = idx;
     })
     .onEnd(() => {
-      // TODO: reset rest of keys?
+      onPressActiveEnd && runOnJS(onPressActiveEnd)();
       runOnJS(changePressActive)(false);
-    });
+    })
+    .minDistance(0);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
