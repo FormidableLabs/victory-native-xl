@@ -66,6 +66,16 @@ export default function StockPriceScreen() {
           activePressY={{ high: { value: activeHigh } }}
           onPressActiveChange={setIsPressActive}
           onPressActiveStart={() => Haptics.selectionAsync()}
+          renderOutside={({ xScale, yScale }) => (
+            <Grid
+              font={font}
+              xScale={xScale}
+              yScale={yScale}
+              ticks={4}
+              formatXLabel={(ms) => format(new Date(ms), "MM-dd")}
+              labelBackgroundColor="transparent"
+            />
+          )}
         >
           {({
             paths,
@@ -101,14 +111,6 @@ export default function StockPriceScreen() {
                   />
                 </>
               )}
-              <Grid
-                font={font}
-                xScale={xScale}
-                yScale={yScale}
-                ticks={4}
-                formatXLabel={(ms) => format(new Date(ms), "MM-dd")}
-                labelBackgroundColor="transparent"
-              />
             </>
           )}
         </LineChart>

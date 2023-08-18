@@ -2,7 +2,7 @@ import * as React from "react";
 import { type InputDatum } from "victory-native-skia";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas } from "@shopify/react-native-skia";
+import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import { type CurveType, makeLinePath } from "./makeLinePath";
 import {
   makeMutable,
@@ -55,6 +55,7 @@ type LineChartProps<
     [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
   };
   children: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
+  renderOutside: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
 };
 
 export function LineChart<
@@ -77,6 +78,7 @@ export function LineChart<
   activePressX: incomingActivePressX,
   activePressY: incomingActivePressY,
   children,
+  renderOutside,
 }: LineChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback(
@@ -98,7 +100,8 @@ export function LineChart<
     ),
   });
 
-  const { hasGrid, font, labelOffset, formatYLabel } = useHasGrid(children);
+  const { hasGrid, font, labelOffset, formatYLabel } =
+    useHasGrid(renderOutside);
 
   const { paths, xScale, yScale, chartBounds } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
@@ -274,21 +277,27 @@ export function LineChart<
     })
     .minDistance(0);
 
-  console.log("ACTIVE X", typeof activePressX);
-
+  const renderArg = {
+    paths,
+    isPressActive,
+    activePressX,
+    activePressY,
+    xScale,
+    yScale,
+    chartBounds,
+  };
+  const clipRect = rect(
+    chartBounds.left,
+    chartBounds.top,
+    chartBounds.right - chartBounds.left,
+    chartBounds.bottom - chartBounds.top,
+  );
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={pan}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-          {children({
-            paths,
-            isPressActive,
-            activePressX,
-            activePressY,
-            xScale,
-            yScale,
-            chartBounds,
-          })}
+          {renderOutside?.(renderArg)}
+          <Group clip={clipRect}>{children(renderArg)}</Group>
         </Canvas>
       </GestureDetector>
     </GestureHandlerRootView>
@@ -300,4 +309,5 @@ LineChart.defaultProps = {
   chartType: "line",
   xScaleType: "linear",
   yScaleType: "linear",
+  renderOutside: () => null,
 };
