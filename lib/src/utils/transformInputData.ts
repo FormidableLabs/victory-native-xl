@@ -1,3 +1,4 @@
+import type { SkFont } from "@shopify/react-native-skia";
 import type {
   InputDatum,
   PrimitiveViewWindow,
@@ -17,6 +18,7 @@ export const transformInputData = <
   outputWindow,
   xScaleType,
   yScaleType,
+  gridMetrics,
 }: {
   data: T[];
   xKey: XK;
@@ -24,14 +26,30 @@ export const transformInputData = <
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
+  gridMetrics: { hasGrid: boolean; font?: SkFont };
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
   const ix = data.map((datum) => datum[xKey]);
+
+  const yMin = Math.min(
+    ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
+  );
+  const yMax = Math.max(
+    ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
+  );
+
+  const xMinGridCompensation =
+    (gridMetrics.font?.getTextWidth(yMax.toFixed(0)) ?? 0) * 1.5;
+  const xMaxGridCompensation = -(gridMetrics.font?.getSize() ?? 0);
+
   const ixMin = ix.at(0),
     ixMax = ix.at(-1),
-    oRange = [outputWindow.xMin, outputWindow.xMax];
+    oRange = [
+      outputWindow.xMin + xMinGridCompensation,
+      outputWindow.xMax + xMaxGridCompensation,
+    ];
 
   // TODO: Types...
   const xScale =
@@ -50,14 +68,18 @@ export const transformInputData = <
     {} as TransformedData<T, XK, YK>["y"],
   );
 
-  const yMin = Math.min(
-    ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
-  );
-  const yMax = Math.max(
-    ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
-  );
+  const yMinGridCompensation = -(gridMetrics.hasGrid
+    ? gridMetrics.font?.getSize?.() ?? 0
+    : 0);
+  const yMaxGridCompensation = -(gridMetrics.hasGrid
+    ? (gridMetrics.font?.getSize?.() ?? 0) * 1.5
+    : 0);
+
   const yScaleDomain = [yMax, yMin],
-    yScaleRange = [outputWindow.yMin, outputWindow.yMax];
+    yScaleRange = [
+      outputWindow.yMin - yMinGridCompensation,
+      outputWindow.yMax + yMaxGridCompensation,
+    ];
   const yScale =
     yScaleType === "linear"
       ? scaleLinear().domain(yScaleDomain).range(yScaleRange)
