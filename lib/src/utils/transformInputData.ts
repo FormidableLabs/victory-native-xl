@@ -26,7 +26,7 @@ export const transformInputData = <
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
-  gridMetrics: { hasGrid: boolean; font?: SkFont };
+  gridMetrics: { hasGrid: boolean; font?: SkFont; labelOffset: number };
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -41,7 +41,8 @@ export const transformInputData = <
   );
 
   const xMinGridCompensation =
-    (gridMetrics.font?.getTextWidth(yMax.toFixed(0)) ?? 0) * 1.5;
+    (gridMetrics.font?.getTextWidth(yMax.toFixed(0)) ?? 0) +
+    gridMetrics.labelOffset;
   const xMaxGridCompensation = -(gridMetrics.font?.getSize() ?? 0);
 
   const ixMin = ix.at(0),
@@ -72,7 +73,7 @@ export const transformInputData = <
     ? gridMetrics.font?.getSize?.() ?? 0
     : 0);
   const yMaxGridCompensation = -(gridMetrics.hasGrid
-    ? (gridMetrics.font?.getSize?.() ?? 0) * 1.5
+    ? (gridMetrics.font?.getSize?.() ?? 0) + gridMetrics.labelOffset
     : 0);
 
   const yScaleDomain = [yMax, yMin],

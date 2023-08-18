@@ -14,5 +14,6 @@ export const useHasGrid = (children: (args: never) => React.ReactNode) => {
   return {
     hasGrid: Boolean(grid),
     font: grid?.props?.font,
+    labelOffset: grid?.props?.labelOffset ?? 0,
   };
 };

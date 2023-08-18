@@ -5,14 +5,13 @@ import { Grid, LineChart } from "victory-native-skia";
 import inter from "../assets/inter-medium.ttf";
 
 export default function SimpleLinePage() {
-  const font = useFont(inter, 18);
+  const font = useFont(inter, 12);
 
   return (
     <>
       <View style={{ height: 400 }}>
         <LineChart
           xKey="day"
-          padding={10}
           yKeys={["sales"]}
           data={[
             { sales: 5, day: 1 },
