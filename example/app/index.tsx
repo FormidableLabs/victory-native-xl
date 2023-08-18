@@ -38,6 +38,7 @@ export default function LandingPage() {
 
 const EXAMPLES: { title: string; path: string }[] = [
   { title: "New Line", path: "/new-line" },
+  { title: "Time Scale", path: "/time-scale" },
 ];
 
 const Separator = () => <View style={{ height: 12 }} />;

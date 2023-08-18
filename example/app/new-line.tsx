@@ -49,7 +49,7 @@ export default function NewLinePage() {
         <LineChart
           data={DATA}
           xKey="month"
-          yKeys={["revenue", "profit"]}
+          yKeys={["profit", "revenue"]}
           padding={10}
           curve={{ revenue: "catmullRom", profit: "linear" }}
           chartType={{ revenue: "area", profit: "line" }}

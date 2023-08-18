@@ -1,7 +1,4 @@
-import type { SkPoint } from "@shopify/react-native-skia";
 import { type SharedValue } from "react-native-reanimated";
-
-export type Point = { x: number; y: number };
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -17,12 +14,7 @@ export type ViewWindow = {
   yMax: SharedValue<number>;
 };
 
-export type InputDatum = Record<string, string | number | Date>;
-export type MassagedData = {
-  x: number[];
-  _x?: (number | string)[];
-  y: Record<string, number[]>;
-};
+export type InputDatum = Record<string, string | number>;
 
 export type ValueOf<T> = T[keyof T];
 export type TransformedData<
@@ -42,29 +34,4 @@ export type SidedNumber =
   | number
   | { left?: number; right?: number; top?: number; bottom?: number };
 
-/**
- * Used as a baseline for Cartesian chart types
- */
-export type BaseChartProps = {
-  animationDuration: number;
-  dataKey: string;
-};
-
-/**
- * Base chart type for those that are drawn as shapes with a solid or gradient fill
- */
-export type BaseFillChartProps = BaseChartProps & {
-  fillColor: string | string[];
-  gradientVectors: {
-    start: SkPoint;
-    end: SkPoint;
-  };
-};
-
-/**
- * Base chart type for those that are drawn as a path with a stroke
- */
-export type BaseStrokeChartProps = BaseChartProps & {
-  strokeColor: string;
-  strokeWidth: number;
-};
+export type ScaleType = "linear" | "log" | "band";

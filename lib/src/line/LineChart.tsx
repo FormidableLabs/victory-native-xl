@@ -10,7 +10,7 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import type { SidedNumber, TransformedData } from "../types";
+import type { ScaleType, SidedNumber, TransformedData } from "../types";
 import {
   Gesture,
   GestureDetector,
@@ -30,6 +30,8 @@ type LineChartProps<
   yKeys: YK[];
   curve: CurveType | { [K in YK]: CurveType };
   chartType: "line" | "area" | { [K in YK]: "line" | "area" };
+  xScaleType: ScaleType;
+  yScaleType: ScaleType;
   // TODO: xScale, yScale
   // TODO: Axes
   padding?: SidedNumber;
@@ -66,6 +68,8 @@ export function LineChart<
   data,
   xKey,
   yKeys,
+  xScaleType,
+  yScaleType,
   curve,
   chartType,
   padding,
@@ -100,6 +104,8 @@ export function LineChart<
       data,
       xKey,
       yKeys,
+      xScaleType,
+      yScaleType,
       // TODO: These are likely going to need to change.
       // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {
@@ -254,4 +260,6 @@ export function LineChart<
 LineChart.defaultProps = {
   curve: "linear",
   chartType: "line",
+  xScaleType: "linear",
+  yScaleType: "linear",
 };
