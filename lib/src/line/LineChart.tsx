@@ -48,7 +48,7 @@ type LineChartProps<
     [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
   };
   children: (args: {
-    paths: { [K in YK]: string };
+    paths: { [K in YK as `${K & string}.${"line" | "area"}`]: string };
     xScale: ScaleLinear<number, number, never>;
     yScale: ScaleLinear<number, number, never>;
     isPressActive: boolean;
@@ -126,24 +126,39 @@ export function LineChart<
     });
     tData.value = _tData;
 
-    const paths = yKeys.reduce(
-      (acc, key) => {
-        acc[key] = makeLinePath(
-          typeof curve === "string" ? curve : curve[key] || "linear",
-          _tData.ox,
-          _tData.y[key].o,
-          {
-            type:
-              typeof chartType === "string"
-                ? chartType
-                : chartType[key] || "line",
-            y0: yScale.range()[1] || 0,
+    const makePaths = () => {
+      const cache = {} as Record<string, string>;
+      return new Proxy(
+        {},
+        {
+          get(_, property: string) {
+            const [key, chartType] = property.split(".") as [
+              YK,
+              "line" | "area",
+            ];
+            if (!yKeys.includes(key) || !["line", "area"].includes(chartType))
+              return "";
+
+            if (cache[property]) return cache[property];
+
+            const path = makeLinePath(
+              typeof curve === "string" ? curve : curve[key] || "linear",
+              _tData.ox,
+              _tData.y[key].o,
+              {
+                type: chartType,
+                y0: yScale.range()[1] || 0,
+              },
+            );
+
+            cache[property] = path;
+            return path;
           },
-        );
-        return acc;
-      },
-      {} as { [K in YK]: string },
-    );
+        },
+      ) as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["paths"];
+    };
+
+    const paths = makePaths();
 
     return { tData, paths, xScale, yScale };
   }, [data, xKey, yKeys, size, curve]);

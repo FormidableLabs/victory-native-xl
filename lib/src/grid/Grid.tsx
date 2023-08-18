@@ -18,6 +18,7 @@ export type GridProps = {
   labelBackgroundColor: string;
   lineColor: string;
   axisColor: string;
+  formatXLabel?: (value: number | string) => string;
 };
 
 export const Grid = ({
@@ -30,6 +31,7 @@ export const Grid = ({
   lineColor,
   font,
   axisColor,
+  formatXLabel,
 }: GridProps) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
@@ -49,6 +51,8 @@ export const Grid = ({
     <>
       {xTicks.map((tick) => {
         if (tick === 0) return null;
+        const label = formatXLabel?.(tick) || String(tick.toFixed(2));
+
         return (
           <React.Fragment key={`x-tick-${tick}`}>
             <Line
@@ -59,18 +63,18 @@ export const Grid = ({
             {font ? (
               <>
                 <RoundedRect
-                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0))}
+                  x={xScale(tick) - font.getTextWidth(label)}
                   y={yScale(y2) - labelOffset - fontSize}
-                  width={font.getTextWidth(tick.toFixed(0)) * 2}
+                  width={font.getTextWidth(label) * 2}
                   height={fontSize + 4}
                   r={4}
                   color={labelBackgroundColor}
                 />
                 <Text
-                  text={String(tick)}
+                  text={label}
                   font={font}
                   y={yScale(y2) - labelOffset}
-                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0)) / 2}
+                  x={xScale(tick) - font.getTextWidth(label) / 2}
                 />
               </>
             ) : null}
