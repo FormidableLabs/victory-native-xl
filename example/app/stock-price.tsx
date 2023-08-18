@@ -78,7 +78,8 @@ export default function StockPriceScreen() {
           }) => (
             <>
               <StockArea
-                xPosition={activePressX.position}
+                // TODO: Remove optional chain, accessing this shouldn't crash stuff
+                xPosition={activePressX?.position}
                 path={paths["high.area"]}
                 isPressActive={isPressActive}
                 {...chartBounds}
@@ -100,14 +101,14 @@ export default function StockPriceScreen() {
                   />
                 </>
               )}
-              {/*<Grid*/}
-              {/*  font={font}*/}
-              {/*  xScale={xScale}*/}
-              {/*  yScale={yScale}*/}
-              {/*  ticks={4}*/}
-              {/*  formatXLabel={(ms) => format(new Date(ms), "MM-dd")}*/}
-              {/*  labelBackgroundColor="transparent"*/}
-              {/*/>*/}
+              <Grid
+                font={font}
+                xScale={xScale}
+                yScale={yScale}
+                ticks={4}
+                formatXLabel={(ms) => format(new Date(ms), "MM-dd")}
+                labelBackgroundColor="transparent"
+              />
             </>
           )}
         </LineChart>
