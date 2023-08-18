@@ -10,7 +10,12 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import type { ScaleType, SidedNumber, TransformedData } from "../types";
+import type {
+  LineChartRenderArg,
+  ScaleType,
+  SidedNumber,
+  TransformedData,
+} from "../types";
 import {
   Gesture,
   GestureDetector,
@@ -18,7 +23,6 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import type { ScaleLinear } from "d3-scale";
 
 type LineChartProps<
   T extends InputDatum,
@@ -29,7 +33,6 @@ type LineChartProps<
   xKey: XK;
   yKeys: YK[];
   curve: CurveType | { [K in YK]: CurveType };
-  chartType: "line" | "area" | { [K in YK]: "line" | "area" };
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   // TODO: Axes
@@ -47,16 +50,7 @@ type LineChartProps<
   activePressY?: {
     [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
   };
-  children: (args: {
-    paths: { [K in YK as `${K & string}.${"line" | "area"}`]: string };
-    xScale: ScaleLinear<number, number, never>;
-    yScale: ScaleLinear<number, number, never>;
-    isPressActive: boolean;
-    activePressX: { value: SharedValue<T[XK]>; position: SharedValue<number> };
-    activePressY: {
-      [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
-    };
-  }) => React.ReactNode;
+  children: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
 };
 
 export function LineChart<
@@ -70,7 +64,6 @@ export function LineChart<
   xScaleType,
   yScaleType,
   curve,
-  chartType,
   padding,
   domainPadding,
   onPressActiveChange,
@@ -98,7 +91,7 @@ export function LineChart<
       {} as TransformedData<T, XK, YK>["y"],
     ),
   });
-  const { paths, xScale, yScale } = React.useMemo(() => {
+  const { paths, xScale, yScale, chartBounds } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
       xKey,
@@ -160,7 +153,14 @@ export function LineChart<
 
     const paths = makePaths();
 
-    return { tData, paths, xScale, yScale };
+    const chartBounds = {
+      left: xScale(xScale.domain().at(0) || 0),
+      right: xScale(xScale.domain().at(-1) || 0),
+      top: yScale(yScale.domain().at(0) || 0),
+      bottom: yScale(yScale.domain().at(-1) || 0),
+    };
+
+    return { tData, paths, xScale, yScale, chartBounds };
   }, [data, xKey, yKeys, size, curve]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
@@ -173,7 +173,7 @@ export function LineChart<
   );
   const internalActivePressX = React.useRef({
     value: makeMutable(0 as T[XK]),
-    position: makeMutable(0),
+    position: makeMutable(0 as number),
   });
   const activePressX = {
     value: incomingActivePressX?.value || internalActivePressX.current.value,
@@ -210,6 +210,9 @@ export function LineChart<
     {} as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["activePressY"],
   );
 
+  /**
+   * Pan gesture handling
+   */
   const lastIdx = useSharedValue(null as null | number);
   const pan = Gesture.Pan()
     .onStart(() => {
@@ -250,6 +253,7 @@ export function LineChart<
       lastIdx.value = idx;
     })
     .onEnd(() => {
+      // TODO: reset rest of keys?
       runOnJS(changePressActive)(false);
     });
 
@@ -264,6 +268,7 @@ export function LineChart<
             activePressY: activePressY,
             xScale,
             yScale,
+            chartBounds,
           })}
         </Canvas>
       </GestureDetector>

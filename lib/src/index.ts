@@ -1,4 +1,4 @@
-export { type InputDatum } from "./types";
+export { type InputDatum, type LineChartRenderArg } from "./types";
 
 /**
  * V0.0.2 exports.
