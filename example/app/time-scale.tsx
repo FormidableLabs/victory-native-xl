@@ -28,15 +28,14 @@ export default function TimeScale() {
           yKeys={["high", "low"]}
           padding={10}
           curve="cardinal"
+          gridOptions={{
+            font,
+            formatXLabel: (s) => format(s, "MMM-dd"),
+            labelOffset: 6,
+            xTicks: 5,
+          }}
         >
-          {({
-            paths,
-            isPressActive,
-            activePressX,
-            activePressY,
-            xScale,
-            yScale,
-          }) => (
+          {({ paths, isPressActive, activePressX, activePressY }) => (
             <>
               <Path
                 path={paths["high.area"]}
@@ -72,15 +71,6 @@ export default function TimeScale() {
                   />
                 </>
               )}
-              <Grid
-                font={font}
-                xScale={xScale}
-                yScale={yScale}
-                ticks={4}
-                formatXLabel={(s) =>
-                  typeof s === "number" ? format(s, "MMM-dd") : s
-                }
-              />
             </>
           )}
         </LineChart>

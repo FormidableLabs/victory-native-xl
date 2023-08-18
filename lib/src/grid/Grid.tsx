@@ -4,30 +4,39 @@ import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
 import type { InputDatum } from "../types";
 import type { ValueOf } from "../types";
 
-export type GridProps = {
+export type GridProps<
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+> = {
   font?: SkFont | null;
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   labelOffset: number;
-  ticks: number;
-  formatXLabel: (label: ValueOf<InputDatum>) => string;
-  formatYLabel: (label: ValueOf<InputDatum>) => string;
-  labelBackgroundColor: string;
+  xTicks: number;
+  yTicks: number;
   lineColor: string;
   axisColor: string;
+  formatXLabel: (label: T[XK]) => string;
+  formatYLabel: (label: T[YK]) => string;
 };
 
-export const Grid = ({
+export const Grid = <
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+>({
   xScale,
   yScale,
-  ticks,
+  xTicks,
+  yTicks,
   labelOffset,
   lineColor,
   font,
   axisColor,
   formatXLabel,
   formatYLabel,
-}: GridProps) => {
+}: GridProps<T, XK, YK>) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
@@ -40,12 +49,9 @@ export const Grid = ({
   )
     return null;
 
-  const xTicks = xScale.ticks(ticks);
-  const yTicks = yScale.ticks(ticks);
-
   return (
     <>
-      {xTicks.map((tick) => {
+      {xScale.ticks(xTicks).map((tick) => {
         if (tick === 0) return null;
         return (
           <React.Fragment key={`x-tick-${tick}`}>
@@ -57,17 +63,20 @@ export const Grid = ({
             {font ? (
               <>
                 <Text
-                  text={formatXLabel(tick)}
+                  text={formatXLabel(tick as never)}
                   font={font}
                   y={yScale(y2) + labelOffset + fontSize}
-                  x={xScale(tick) - font.getTextWidth(formatXLabel(tick)) / 2}
+                  x={
+                    xScale(tick) -
+                    font.getTextWidth(formatXLabel(tick as never)) / 2
+                  }
                 />
               </>
             ) : null}
           </React.Fragment>
         );
       })}
-      {yTicks.map((tick) => (
+      {yScale.ticks(yTicks).map((tick) => (
         <React.Fragment key={`y-tick-${tick}`}>
           <Line
             p1={vec(xScale(x1), yScale(tick))}
@@ -77,12 +86,12 @@ export const Grid = ({
           {font ? (
             <>
               <Text
-                text={formatYLabel(tick)}
+                text={formatYLabel(tick as never)}
                 font={font}
                 y={yScale(tick) + fontSize / 3}
                 x={
                   xScale(x1) -
-                  font.getTextWidth(formatYLabel(tick) + labelOffset)
+                  (font.getTextWidth(formatYLabel(tick as never)) + labelOffset)
                 }
               />
             </>
@@ -101,8 +110,9 @@ export const Grid = ({
 };
 
 Grid.defaultProps = {
-  labelOffset: 6,
-  ticks: 10,
+  labelOffset: 0,
+  xTicks: 10,
+  yTicks: 10,
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelBackgroundColor: "hsla(0, 0%, 100%, 0.9)",

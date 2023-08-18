@@ -1,6 +1,6 @@
 import React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { ChartBounds, Grid, LineChart } from "victory-native-skia";
+import { ChartBounds, LineChart } from "victory-native-skia";
 import {
   Circle,
   Group,
@@ -60,30 +60,24 @@ export default function StockPriceScreen() {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          padding={{ left: 20 }}
+          padding={{ left: 10, top: 10, right: 10 }}
           curve="linear"
           activePressX={{ value: activeDateMS }}
           activePressY={{ high: { value: activeHigh } }}
           onPressActiveChange={setIsPressActive}
           onPressActiveStart={() => Haptics.selectionAsync()}
-          renderOutside={({ xScale, yScale }) => (
-            <Grid
-              font={font}
-              xScale={xScale}
-              yScale={yScale}
-              ticks={4}
-              formatXLabel={(ms) => format(new Date(ms), "MM-dd")}
-              labelBackgroundColor="transparent"
-            />
-          )}
+          gridOptions={{
+            font,
+            xTicks: 4,
+            labelOffset: 4,
+            formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
+          }}
         >
           {({
             paths,
             isPressActive,
             activePressX,
             activePressY,
-            xScale,
-            yScale,
             chartBounds,
           }) => (
             <>

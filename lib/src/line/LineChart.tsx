@@ -1,8 +1,8 @@
 import * as React from "react";
-import { type InputDatum } from "victory-native-skia";
+import { Grid, type InputDatum } from "victory-native-skia";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect } from "@shopify/react-native-skia";
+import { Canvas, Group, rect, type SkFont } from "@shopify/react-native-skia";
 import { type CurveType, makeLinePath } from "./makeLinePath";
 import {
   makeMutable,
@@ -23,8 +23,6 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import type { ScaleLinear } from "d3-scale";
-import { useHasGrid } from "../utils/useHasGrid";
 
 type LineChartProps<
   T extends InputDatum,
@@ -56,6 +54,17 @@ type LineChartProps<
   };
   children: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
   renderOutside: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
+  /** Grid props */
+  gridOptions?: {
+    font?: SkFont | null;
+    labelOffset?: number;
+    xTicks?: number;
+    yTicks?: number;
+    lineColor?: string;
+    axisColor?: string;
+    formatXLabel?: (label: T[XK]) => string;
+    formatYLabel?: (label: T[YK]) => string;
+  };
 };
 
 export function LineChart<
@@ -79,6 +88,7 @@ export function LineChart<
   activePressY: incomingActivePressY,
   children,
   renderOutside,
+  gridOptions,
 }: LineChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback(
@@ -100,9 +110,6 @@ export function LineChart<
     ),
   });
 
-  const { hasGrid, font, labelOffset, formatYLabel } =
-    useHasGrid(renderOutside);
-
   const { paths, xScale, yScale, chartBounds } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
@@ -110,7 +117,11 @@ export function LineChart<
       yKeys,
       xScaleType,
       yScaleType,
-      gridMetrics: { hasGrid, font, labelOffset, formatYLabel },
+      gridOptions: {
+        ...gridOptions,
+        formatYLabel:
+          gridOptions?.formatYLabel ?? ((s: T[YK]): string => String(s)),
+      },
       // TODO: These are likely going to need to change.
       // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {
@@ -298,6 +309,9 @@ export function LineChart<
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
           {renderOutside?.(renderArg)}
           <Group clip={clipRect}>{children(renderArg)}</Group>
+          {gridOptions && (
+            <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
+          )}
         </Canvas>
       </GestureDetector>
     </GestureHandlerRootView>
