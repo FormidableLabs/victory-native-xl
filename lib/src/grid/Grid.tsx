@@ -1,6 +1,8 @@
 import * as React from "react";
 import { type ScaleLinear } from "d3-scale";
 import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
+import type { InputDatum } from "../types";
+import type { ValueOf } from "../types";
 
 export type GridProps = {
   font?: SkFont | null;
@@ -8,6 +10,8 @@ export type GridProps = {
   yScale: ScaleLinear<number, number, never>;
   labelOffset: number;
   ticks: number;
+  formatXLabel: (label: ValueOf<InputDatum>) => string;
+  formatYLabel: (label: ValueOf<InputDatum>) => string;
   labelBackgroundColor: string;
   lineColor: string;
   axisColor: string;
@@ -21,6 +25,8 @@ export const Grid = ({
   lineColor,
   font,
   axisColor,
+  formatXLabel,
+  formatYLabel,
 }: GridProps) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
@@ -51,10 +57,10 @@ export const Grid = ({
             {font ? (
               <>
                 <Text
-                  text={String(tick)}
+                  text={formatXLabel(tick)}
                   font={font}
                   y={yScale(y2) + labelOffset + fontSize}
-                  x={xScale(tick) - font.getTextWidth(tick.toFixed(0)) / 2}
+                  x={xScale(tick) - font.getTextWidth(formatXLabel(tick)) / 2}
                 />
               </>
             ) : null}
@@ -71,11 +77,12 @@ export const Grid = ({
           {font ? (
             <>
               <Text
-                text={String(tick)}
+                text={formatYLabel(tick)}
                 font={font}
                 y={yScale(tick) + fontSize / 3}
                 x={
-                  xScale(x1) - font.getTextWidth(tick.toFixed(0) + labelOffset)
+                  xScale(x1) -
+                  font.getTextWidth(formatYLabel(tick) + labelOffset)
                 }
               />
             </>
@@ -96,6 +103,8 @@ export const Grid = ({
 Grid.defaultProps = {
   labelOffset: 6,
   ticks: 10,
+  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+  formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelBackgroundColor: "hsla(0, 0%, 100%, 0.9)",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   axisColor: "black",
