@@ -40,6 +40,7 @@ const EXAMPLES: { title: string; path: string }[] = [
   { title: "New Line", path: "/new-line" },
   { title: "Time Scale", path: "/time-scale" },
   { title: "Simple Line", path: "/simple-line" },
+  { title: "Stock Price", path: "/stock-price" },
 ];
 
 const Separator = () => <View style={{ height: 12 }} />;

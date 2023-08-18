@@ -1,4 +1,5 @@
 import { type SharedValue } from "react-native-reanimated";
+import { type ScaleLinear } from "d3-scale";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -35,3 +36,31 @@ export type SidedNumber =
   | { left?: number; right?: number; top?: number; bottom?: number };
 
 export type ScaleType = "linear" | "log" | "band";
+
+/**
+ * Render arg for our line chart.
+ */
+export type ChartBounds = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+};
+export type LineChartRenderArg<
+  T extends InputDatum,
+  XK extends keyof T,
+  YK extends keyof T,
+> = {
+  paths: { [K in YK as `${K & string}.${"line" | "area"}`]: string };
+  xScale: ScaleLinear<number, number, never>;
+  yScale: ScaleLinear<number, number, never>;
+  isPressActive: boolean;
+  activePressX: {
+    value: SharedValue<T[XK] | null>;
+    position: SharedValue<number>;
+  };
+  activePressY: {
+    [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
+  };
+  chartBounds: ChartBounds;
+};

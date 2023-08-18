@@ -28,7 +28,6 @@ export default function TimeScale() {
           yKeys={["high", "low"]}
           padding={10}
           curve="cardinal"
-          chartType={{ high: "area", low: "line" }}
         >
           {({
             paths,
@@ -39,7 +38,12 @@ export default function TimeScale() {
             yScale,
           }) => (
             <>
-              <Path path={paths.high} style="fill" color="blue" strokeWidth={4}>
+              <Path
+                path={paths["high.area"]}
+                style="fill"
+                color="blue"
+                strokeWidth={4}
+              >
                 <LinearGradient
                   start={vec(0, 0)}
                   end={vec(0, 500)}
@@ -47,7 +51,7 @@ export default function TimeScale() {
                 />
               </Path>
               <Path
-                path={paths.low}
+                path={paths["low.line"]}
                 style="stroke"
                 color="black"
                 strokeWidth={1}

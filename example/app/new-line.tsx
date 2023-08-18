@@ -1,5 +1,5 @@
 import React from "react";
-import { LineChart, Grid } from "victory-native-skia";
+import { Grid, LineChart } from "victory-native-skia";
 import {
   Circle,
   LinearGradient,
@@ -7,42 +7,21 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { Text, TextInput, View } from "react-native";
-import Reanimated, {
-  useAnimatedProps,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import { Text, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
-
-const AnimatedText = Reanimated.createAnimatedComponent(TextInput);
 
 export default function NewLinePage() {
   const activeX = useSharedValue(0);
   const font = useFont(inter, 12);
   const activeProfit = useSharedValue(0);
-  const [isActive, setIsActive] = React.useState(false);
   const [activePoint, setActivePoint] = React.useState([0, 0] as [
     number,
     number,
   ]);
 
-  const textProps = useAnimatedProps(() => {
-    return {
-      text: isActive
-        ? `${activeX.value.toFixed(2)}, ${activeProfit.value.toFixed(2)}`
-        : "",
-    };
-  });
-
   return (
     <View>
-      <AnimatedText
-        editable={false}
-        // @ts-ignore
-        animatedProps={textProps}
-        style={{ fontSize: 24, padding: 12 }}
-      />
       <Text style={{ fontSize: 24, padding: 12 }}>
         {`${activePoint[0]}, ${activePoint[1]}`}
       </Text>
@@ -53,8 +32,6 @@ export default function NewLinePage() {
           yKeys={["profit", "revenue"]}
           padding={10}
           curve={{ revenue: "catmullRom", profit: "linear" }}
-          chartType={{ revenue: "area", profit: "line" }}
-          onPressActiveChange={setIsActive}
           activePressX={{ value: activeX }}
           activePressY={{ profit: { value: activeProfit } }}
           onPressValueChange={({
@@ -74,13 +51,7 @@ export default function NewLinePage() {
           }) => (
             <>
               <Path
-                path={paths.profit}
-                style="stroke"
-                color="black"
-                strokeWidth={4}
-              />
-              <Path
-                path={paths.revenue}
+                path={paths["revenue.area"]}
                 style="fill"
                 color="blue"
                 strokeWidth={4}
@@ -91,6 +62,12 @@ export default function NewLinePage() {
                   colors={["blue", "white"]}
                 />
               </Path>
+              <Path
+                path={paths["profit.line"]}
+                style="stroke"
+                color="black"
+                strokeWidth={4}
+              />
               {isPressActive && (
                 <>
                   <Circle

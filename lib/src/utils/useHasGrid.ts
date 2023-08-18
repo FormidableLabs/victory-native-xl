@@ -3,7 +3,7 @@ import { Grid } from "../grid/Grid";
 import type { InputDatum, ValueOf } from "../types";
 
 export const useHasGrid = (children: (args: never) => React.ReactNode) => {
-  const chartNodes = children({ paths: [] } as never) as React.ReactElement;
+  const chartNodes = children({ paths: {} } as never) as React.ReactElement;
   const grid = React.useMemo(
     () =>
       chartNodes?.props?.children

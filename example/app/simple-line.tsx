@@ -25,7 +25,7 @@ export default function SimpleLinePage() {
             return (
               <>
                 <Path
-                  path={paths.sales}
+                  path={paths["sales.line"]}
                   style="stroke"
                   color="black"
                   strokeWidth={4}

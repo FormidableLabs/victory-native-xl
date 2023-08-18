@@ -89,7 +89,7 @@ export const transformInputData = <
     ];
   const yScale =
     yScaleType === "linear"
-      ? scaleLinear().domain(yScaleDomain).range(yScaleRange)
+      ? scaleLinear().domain(yScaleDomain).range(yScaleRange).nice()
       : scaleLog().domain(yScaleDomain).range(yScaleRange);
 
   yKeys.forEach((yKey) => {
