@@ -129,6 +129,11 @@ export function LineChart<
     });
     tData.value = _tData;
 
+    /**
+     * Creates a proxy object that will lazily create paths.
+     * Consumer accesses e.g. paths["high.line"] or paths["low.area"]
+     * and the proxy will create the path if it doesn't exist.
+     */
     const makePaths = () => {
       const cache = {} as Record<string, string>;
       return new Proxy(
