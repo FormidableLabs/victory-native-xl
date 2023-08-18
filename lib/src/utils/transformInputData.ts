@@ -4,6 +4,7 @@ import type {
   PrimitiveViewWindow,
   ScaleType,
   TransformedData,
+  ValueOf,
 } from "../types";
 import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
 
@@ -26,7 +27,12 @@ export const transformInputData = <
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
-  gridMetrics: { hasGrid: boolean; font?: SkFont; labelOffset: number };
+  gridMetrics: {
+    hasGrid: boolean;
+    font?: SkFont;
+    labelOffset: number;
+    formatYLabel: (label: ValueOf<InputDatum>) => string;
+  };
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -41,7 +47,7 @@ export const transformInputData = <
   );
 
   const xMinGridCompensation =
-    (gridMetrics.font?.getTextWidth(yMax.toFixed(0)) ?? 0) +
+    (gridMetrics.font?.getTextWidth(gridMetrics.formatYLabel(yMax)) ?? 0) +
     gridMetrics.labelOffset;
   const xMaxGridCompensation = -(gridMetrics.font?.getSize() ?? 0);
 

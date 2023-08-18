@@ -100,7 +100,7 @@ export function LineChart<
     ),
   });
 
-  const { hasGrid, font, labelOffset } = useHasGrid(children);
+  const { hasGrid, font, labelOffset, formatYLabel } = useHasGrid(children);
 
   const { paths, xScale, yScale } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
@@ -109,7 +109,7 @@ export function LineChart<
       yKeys,
       xScaleType,
       yScaleType,
-      gridMetrics: { hasGrid, font, labelOffset },
+      gridMetrics: { hasGrid, font, labelOffset, formatYLabel },
       // TODO: These are likely going to need to change.
       // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {
