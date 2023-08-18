@@ -8,7 +8,7 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useAnimatedProps, useSharedValue } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 
@@ -83,7 +83,7 @@ export default function TimeScale() {
                   />
                 </>
               )}
-              <Grid font={font} xScale={xScale} yScale={yScale} />
+              <Grid font={font} xScale={xScale} yScale={yScale} ticks={4} />
             </>
           )}
         </LineChart>
