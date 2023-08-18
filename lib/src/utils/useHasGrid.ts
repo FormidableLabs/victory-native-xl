@@ -15,7 +15,7 @@ export const useHasGrid = (children: (args: never) => React.ReactNode) => {
   return {
     hasGrid: Boolean(grid),
     font: grid?.props?.font,
-    formatYLabel: grid?.props?.formatXLabel ?? ((s: ValueOf<InputDatum>) => s),
+    formatYLabel: grid?.props?.formatYLabel ?? ((s: ValueOf<InputDatum>) => s),
     labelOffset: grid?.props?.labelOffset ?? 0,
   };
 };

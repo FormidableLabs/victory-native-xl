@@ -107,7 +107,12 @@ export default function NewLinePage() {
                   />
                 </>
               )}
-              <Grid font={font} xScale={xScale} yScale={yScale} />
+              <Grid
+                font={font}
+                xScale={xScale}
+                yScale={yScale}
+                formatYLabel={(s) => (typeof s === "number" ? s.toFixed(0) : s)}
+              />
             </>
           )}
         </LineChart>
