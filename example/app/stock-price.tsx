@@ -19,6 +19,7 @@ import {
   type SharedValue,
   useDerivedValue,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { AnimatedText } from "../components/AnimatedText";
 import * as Haptics from "expo-haptics";
@@ -86,7 +87,7 @@ export default function StockPriceScreen() {
                 path={paths["high.line"]}
                 style="stroke"
                 color="blue"
-                strokeWidth={4}
+                strokeWidth={2}
               />
               {isPressActive && (
                 <>
@@ -128,21 +129,35 @@ const StockArea = ({
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
+  const clipRectRight = useSharedValue(right);
+  React.useEffect(() => {
+    clipRectRight.value = right;
+  }, [right]);
+
+  React.useEffect(() => {
+    if (!isPressActive) {
+      clipRectRight.value = xPosition.value;
+      clipRectRight.value = withTiming(right, { duration: 200 });
+    }
+  }, [isPressActive]);
+
   const leftRect = useDerivedValue(() => {
     const path = Skia.Path.Make();
-    if (isPressActive) {
-      path.addRect(
-        Skia.XYWHRect(left, top, xPosition.value - left, bottom - top),
-      );
-    } else {
-      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
-    }
+    path.addRect(
+      Skia.XYWHRect(
+        left,
+        top,
+        (isPressActive ? xPosition.value : clipRectRight.value) - left,
+        bottom - top,
+      ),
+    );
+
     return path;
   });
 
   return (
     <Group clip={leftRect}>
-      <Path path={path} style="fill" strokeWidth={4}>
+      <Path path={path} style="fill">
         <LinearGradient
           start={vec(0, 0)}
           end={vec(top, bottom)}
