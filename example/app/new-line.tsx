@@ -39,6 +39,7 @@ export default function NewLinePage() {
     <View>
       <AnimatedText
         editable={false}
+        // @ts-ignore
         animatedProps={textProps}
         style={{ fontSize: 24, padding: 12 }}
       />

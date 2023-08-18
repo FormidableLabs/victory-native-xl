@@ -32,7 +32,6 @@ type LineChartProps<
   chartType: "line" | "area" | { [K in YK]: "line" | "area" };
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
-  // TODO: xScale, yScale
   // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
@@ -126,8 +125,6 @@ export function LineChart<
       },
     });
     tData.value = _tData;
-    console.log("HIGH!", _tData.y?.high);
-    console.log("LOW!", _tData.y?.low);
 
     const paths = yKeys.reduce(
       (acc, key) => {

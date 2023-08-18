@@ -29,11 +29,11 @@ export const transformInputData = <
   yScale: ScaleLinear<number, number>;
 } => {
   const ix = data.map((datum) => datum[xKey]);
-  // TODO: Actually implement based on scale type
   const ixMin = ix.at(0),
     ixMax = ix.at(-1),
     oRange = [outputWindow.xMin, outputWindow.xMax];
 
+  // TODO: Types...
   const xScale =
     xScaleType === "linear"
       ? scaleLinear().domain([ixMin, ixMax]).range(oRange)
@@ -50,14 +50,12 @@ export const transformInputData = <
     {} as TransformedData<T, XK, YK>["y"],
   );
 
-  // TODO: These ain't right...
   const yMin = Math.min(
     ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
   );
   const yMax = Math.max(
     ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
   );
-  // TODO: Actually implement based on scale type
   const yScaleDomain = [yMax, yMin],
     yScaleRange = [outputWindow.yMin, outputWindow.yMax];
   const yScale =

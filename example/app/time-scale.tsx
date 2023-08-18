@@ -9,7 +9,6 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import { View } from "react-native";
-import { useAnimatedProps, useSharedValue } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 
 const DATA = data
@@ -17,22 +16,7 @@ const DATA = data
   .map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function TimeScale() {
-  const activeX = useSharedValue(0);
   const font = useFont(inter, 12);
-  const activeProfit = useSharedValue(0);
-  const [isActive, setIsActive] = React.useState(false);
-  const [activePoint, setActivePoint] = React.useState([0, 0] as [
-    number,
-    number,
-  ]);
-
-  const textProps = useAnimatedProps(() => {
-    return {
-      text: isActive
-        ? `${activeX.value.toFixed(2)}, ${activeProfit.value.toFixed(2)}`
-        : "",
-    };
-  });
 
   return (
     <View>
@@ -42,7 +26,7 @@ export default function TimeScale() {
           xKey="date"
           yKeys={["high", "low"]}
           padding={10}
-          curve="catmullRom"
+          curve="cardinal"
           chartType={{ high: "area", low: "line" }}
         >
           {({
