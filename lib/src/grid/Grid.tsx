@@ -77,40 +77,33 @@ export const Grid = ({
           </React.Fragment>
         );
       })}
-      {yTicks.map((tick, index) => {
-        const reverseTick = yTicks[-1 - index + yTicks.length];
-        if (tick === 0 || !reverseTick) return null;
-
-        return (
-          <React.Fragment key={`y-tick-${tick}`}>
-            <Line
-              p1={vec(xScale(x1), yScale(tick))}
-              p2={vec(xScale(x2), yScale(tick))}
-              color={lineColor}
-            />
-            {font ? (
-              <>
-                <RoundedRect
-                  x={xScale(x1) + 2}
-                  y={yScale(tick) - (fontSize + 4) / 2}
-                  width={
-                    font.getTextWidth(reverseTick.toFixed(0)) + labelOffset + 4
-                  }
-                  height={fontSize + 4}
-                  r={4}
-                  color={labelBackgroundColor}
-                />
-                <Text
-                  text={String(reverseTick)}
-                  font={font}
-                  y={yScale(tick) + fontSize / 3}
-                  x={xScale(x1) + labelOffset}
-                />
-              </>
-            ) : null}
-          </React.Fragment>
-        );
-      })}
+      {yTicks.map((tick) => (
+        <React.Fragment key={`y-tick-${tick}`}>
+          <Line
+            p1={vec(xScale(x1), yScale(tick))}
+            p2={vec(xScale(x2), yScale(tick))}
+            color={lineColor}
+          />
+          {font ? (
+            <>
+              <RoundedRect
+                x={xScale(x1) + 2}
+                y={yScale(tick) - (fontSize + 4) / 2}
+                width={font.getTextWidth(tick.toFixed(0)) + labelOffset + 4}
+                height={fontSize + 4}
+                r={4}
+                color={labelBackgroundColor}
+              />
+              <Text
+                text={String(tick)}
+                font={font}
+                y={yScale(tick) + fontSize / 3}
+                x={xScale(x1) + labelOffset}
+              />
+            </>
+          ) : null}
+        </React.Fragment>
+      ))}
       <Line
         p1={vec(xScale(x1), yScale(y1))}
         p2={vec(xScale(x1), yScale(y2))}

@@ -1,9 +1,10 @@
 import type {
   InputDatum,
   PrimitiveViewWindow,
+  ScaleType,
   TransformedData,
 } from "../types";
-import { type ScaleLinear, scaleLinear } from "d3-scale";
+import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
 
 export const transformInputData = <
   T extends InputDatum,
@@ -14,19 +15,31 @@ export const transformInputData = <
   xKey,
   yKeys,
   outputWindow,
+  xScaleType,
+  yScaleType,
 }: {
   data: T[];
   xKey: XK;
   yKeys: YK[];
+  xScaleType: ScaleType;
+  yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
   const ix = data.map((datum) => datum[xKey]);
-  const xScale = scaleLinear()
-    .domain([ix.at(0), ix.at(-1)])
-    .range([outputWindow.xMin, outputWindow.xMax]);
+  const ixMin = ix.at(0),
+    ixMax = ix.at(-1),
+    oRange = [outputWindow.xMin, outputWindow.xMax];
+
+  // TODO: Types...
+  const xScale =
+    xScaleType === "linear"
+      ? scaleLinear().domain([ixMin, ixMax]).range(oRange)
+      : xScaleType === "log"
+      ? scaleLog().domain([ixMin, ixMax]).range(oRange)
+      : scaleBand().domain(ix).range(oRange);
   const ox = ix.map((x) => xScale(x));
 
   const y = yKeys.reduce(
@@ -37,16 +50,18 @@ export const transformInputData = <
     {} as TransformedData<T, XK, YK>["y"],
   );
 
-  // TODO: These ain't right...
   const yMin = Math.min(
     ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
   );
   const yMax = Math.max(
     ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
   );
-  const yScale = scaleLinear()
-    .domain([yMin, yMax])
-    .range([outputWindow.yMin, outputWindow.yMax]);
+  const yScaleDomain = [yMax, yMin],
+    yScaleRange = [outputWindow.yMin, outputWindow.yMax];
+  const yScale =
+    yScaleType === "linear"
+      ? scaleLinear().domain(yScaleDomain).range(yScaleRange)
+      : scaleLog().domain(yScaleDomain).range(yScaleRange);
 
   yKeys.forEach((yKey) => {
     y[yKey].i = data.map((datum) => datum[yKey]);
