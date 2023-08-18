@@ -78,8 +78,8 @@ export const Grid = ({
         );
       })}
       {yTicks.map((tick, index) => {
-        const reverseTick = yTicks[-1 - index + yTicks.length];
-        if (tick === 0 || !reverseTick) return null;
+        // const reverseTick = yTicks[-1 - index + yTicks.length];
+        // if (tick === 0 || !reverseTick) return null;
 
         return (
           <React.Fragment key={`y-tick-${tick}`}>
@@ -93,15 +93,13 @@ export const Grid = ({
                 <RoundedRect
                   x={xScale(x1) + 2}
                   y={yScale(tick) - (fontSize + 4) / 2}
-                  width={
-                    font.getTextWidth(reverseTick.toFixed(0)) + labelOffset + 4
-                  }
+                  width={font.getTextWidth(tick.toFixed(0)) + labelOffset + 4}
                   height={fontSize + 4}
                   r={4}
                   color={labelBackgroundColor}
                 />
                 <Text
-                  text={String(reverseTick)}
+                  text={String(tick)}
                   font={font}
                   y={yScale(tick) + fontSize / 3}
                   x={xScale(x1) + labelOffset}

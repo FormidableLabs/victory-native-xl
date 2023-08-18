@@ -37,7 +37,14 @@ export default function TimeScale() {
   return (
     <View>
       <View style={{ height: 400 }}>
-        <LineChart data={DATA} xKey="date" yKeys={["high", "low"]} padding={10}>
+        <LineChart
+          data={DATA}
+          xKey="date"
+          yKeys={["high", "low"]}
+          padding={10}
+          curve="catmullRom"
+          chartType={{ high: "area", low: "line" }}
+        >
           {({
             paths,
             isPressActive,
@@ -47,35 +54,35 @@ export default function TimeScale() {
             yScale,
           }) => (
             <>
-              <Path
-                path={paths.high}
-                style="stroke"
-                color="black"
-                strokeWidth={1}
-              />
-              <Path path={paths.low} style="fill" color="blue" strokeWidth={4}>
+              <Path path={paths.high} style="fill" color="blue" strokeWidth={4}>
                 <LinearGradient
                   start={vec(0, 0)}
                   end={vec(0, 500)}
                   colors={["blue", "white"]}
                 />
               </Path>
-              {/*{isPressActive && (*/}
-              {/*  <>*/}
-              {/*    <Circle*/}
-              {/*      cx={activePressX.position}*/}
-              {/*      cy={activePressY.profit.position}*/}
-              {/*      r={5}*/}
-              {/*      color="red"*/}
-              {/*    />*/}
-              {/*    <Circle*/}
-              {/*      cx={activePressX.position}*/}
-              {/*      cy={activePressY.revenue.position}*/}
-              {/*      r={5}*/}
-              {/*      color="red"*/}
-              {/*    />*/}
-              {/*  </>*/}
-              {/*)}*/}
+              <Path
+                path={paths.low}
+                style="stroke"
+                color="black"
+                strokeWidth={1}
+              />
+              {isPressActive && (
+                <>
+                  <Circle
+                    cx={activePressX.position}
+                    cy={activePressY.high.position}
+                    r={5}
+                    color="red"
+                  />
+                  <Circle
+                    cx={activePressX.position}
+                    cy={activePressY.low.position}
+                    r={5}
+                    color="red"
+                  />
+                </>
+              )}
               <Grid font={font} xScale={xScale} yScale={yScale} />
             </>
           )}
