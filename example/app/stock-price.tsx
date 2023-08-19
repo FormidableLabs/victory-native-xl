@@ -1,6 +1,6 @@
 import React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { ChartBounds, LineChart } from "victory-native-skia";
+import { type ChartBounds, LineChart } from "victory-native-skia";
 import {
   Circle,
   Group,
@@ -25,7 +25,7 @@ import { AnimatedText } from "../components/AnimatedText";
 import * as Haptics from "expo-haptics";
 
 const DATA = data
-  .slice(400, 450)
+  .slice(400, 650)
   .map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function StockPriceScreen() {
@@ -40,7 +40,8 @@ export default function StockPriceScreen() {
     const date = new Date(activeDateMS.value);
     const M = MONTHS[date.getMonth()];
     const D = date.getDate();
-    return `${M} ${D}`;
+    const Y = date.getFullYear();
+    return `${M} ${D}, ${Y}`;
   });
   const activeHighDisplay = useDerivedValue(() =>
     isPressActive ? activeHigh.value.toFixed(2) : "",
@@ -60,7 +61,7 @@ export default function StockPriceScreen() {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          padding={{ left: 10, top: 10, right: 10 }}
+          padding={{ left: 10 }}
           curve="linear"
           activePressX={{ value: activeDateMS }}
           activePressY={{ high: { value: activeHigh } }}
@@ -68,8 +69,9 @@ export default function StockPriceScreen() {
           onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
             font,
-            xTicks: 4,
-            labelOffset: 4,
+            xTicks: 5,
+            yTicks: 5,
+            labelOffset: 12,
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
         >

@@ -8,7 +8,6 @@ const here = new URL(".", import.meta.url).pathname;
 
 const main = async () => {
   let records = [];
-  console.log(here);
 
   await new Promise((res, rej) => {
     pipeline(
