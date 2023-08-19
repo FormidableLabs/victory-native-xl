@@ -24,9 +24,7 @@ import {
 import { AnimatedText } from "../components/AnimatedText";
 import * as Haptics from "expo-haptics";
 
-const DATA = data
-  .slice(400, 650)
-  .map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
+const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function StockPriceScreen() {
   const font = useFont(inter, 12);
@@ -74,6 +72,24 @@ export default function StockPriceScreen() {
             labelOffset: 12,
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
+          renderOutside={({
+            isPressActive,
+            activePressX,
+            activePressY,
+            chartBounds,
+          }) =>
+            isPressActive && (
+              <>
+                <ActiveValueIndicator
+                  xPosition={activePressX.position}
+                  yPosition={activePressY.high.position}
+                  bottom={chartBounds.bottom}
+                  top={chartBounds.top}
+                  activeValue={activePressY.high.value}
+                />
+              </>
+            )
+          }
         >
           {({
             paths,
@@ -96,17 +112,6 @@ export default function StockPriceScreen() {
                 color="blue"
                 strokeWidth={2}
               />
-              {isPressActive && (
-                <>
-                  <ActiveValueIndicator
-                    xPosition={activePressX.position}
-                    yPosition={activePressY.high.position}
-                    bottom={chartBounds.bottom}
-                    top={chartBounds.top}
-                    activeValue={activePressY.high.value}
-                  />
-                </>
-              )}
             </>
           )}
         </LineChart>
@@ -160,7 +165,7 @@ const StockArea = ({
         <LinearGradient
           start={vec(0, 0)}
           end={vec(top, bottom)}
-          colors={["blue", "white"]}
+          colors={["blue", "#0000ff33"]}
         />
       </Path>
     </Group>

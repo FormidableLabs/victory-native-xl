@@ -90,7 +90,10 @@ export const transformInputData = <
 
   // Measure our top-most y-label if we have grid options so we can
   //  compensate for it in our x-scale.
-  const topYLabel = gridOptions?.formatYLabel?.(yScale.domain().at(-1)) || "";
+  const topYLabel =
+    gridOptions?.formatYLabel?.(yScale.domain().at(0)) ||
+    String(yScale.domain().at(0));
+
   const xMinGridCompensation =
     (gridOptions?.font?.getTextWidth(topYLabel) ?? 0) +
     (gridOptions?.labelOffset ?? 0);
