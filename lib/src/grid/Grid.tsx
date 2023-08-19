@@ -51,53 +51,60 @@ export const Grid = <
 
   return (
     <>
-      {xScale.ticks(xTicks).map((tick) => {
-        if (tick === 0) return null;
-        return (
-          <React.Fragment key={`x-tick-${tick}`}>
+      {xScale
+        .ticks(xTicks)
+        .slice(0, -1)
+        .map((tick) => {
+          if (tick === 0) return null;
+          return (
+            <React.Fragment key={`x-tick-${tick}`}>
+              <Line
+                p1={vec(xScale(tick), yScale(y2))}
+                p2={vec(xScale(tick), yScale(y1))}
+                color={lineColor}
+              />
+              {font ? (
+                <>
+                  <Text
+                    text={formatXLabel(tick as never)}
+                    font={font}
+                    y={yScale(y2) + labelOffset + fontSize}
+                    x={
+                      xScale(tick) -
+                      font.getTextWidth(formatXLabel(tick as never)) / 2
+                    }
+                  />
+                </>
+              ) : null}
+            </React.Fragment>
+          );
+        })}
+      {yScale
+        .ticks(yTicks)
+        .slice(1)
+        .map((tick) => (
+          <React.Fragment key={`y-tick-${tick}`}>
             <Line
-              p1={vec(xScale(tick), yScale(y2))}
-              p2={vec(xScale(tick), yScale(y1))}
+              p1={vec(xScale(x1), yScale(tick))}
+              p2={vec(xScale(x2), yScale(tick))}
               color={lineColor}
             />
             {font ? (
               <>
                 <Text
-                  text={formatXLabel(tick as never)}
+                  text={formatYLabel(tick as never)}
                   font={font}
-                  y={yScale(y2) + labelOffset + fontSize}
+                  y={yScale(tick) + fontSize / 3}
                   x={
-                    xScale(tick) -
-                    font.getTextWidth(formatXLabel(tick as never)) / 2
+                    xScale(x1) -
+                    (font.getTextWidth(formatYLabel(tick as never)) +
+                      labelOffset)
                   }
                 />
               </>
             ) : null}
           </React.Fragment>
-        );
-      })}
-      {yScale.ticks(yTicks).map((tick) => (
-        <React.Fragment key={`y-tick-${tick}`}>
-          <Line
-            p1={vec(xScale(x1), yScale(tick))}
-            p2={vec(xScale(x2), yScale(tick))}
-            color={lineColor}
-          />
-          {font ? (
-            <>
-              <Text
-                text={formatYLabel(tick as never)}
-                font={font}
-                y={yScale(tick) + fontSize / 3}
-                x={
-                  xScale(x1) -
-                  (font.getTextWidth(formatYLabel(tick as never)) + labelOffset)
-                }
-              />
-            </>
-          ) : null}
-        </React.Fragment>
-      ))}
+        ))}
 
       <Line
         p1={vec(xScale(x1), yScale(y2))}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Grid, type InputDatum } from "victory-native-skia";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect, type SkFont } from "@shopify/react-native-skia";
@@ -11,6 +10,7 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import type {
+  InputDatum,
   LineChartRenderArg,
   ScaleType,
   SidedNumber,
@@ -23,6 +23,7 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
+import { Grid } from "../grid/Grid";
 
 type LineChartProps<
   T extends InputDatum,
