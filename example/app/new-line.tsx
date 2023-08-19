@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, LineChart } from "victory-native-skia";
+import { LineChart } from "victory-native-skia";
 import {
   Circle,
   LinearGradient,
@@ -27,6 +27,11 @@ export default function NewLinePage() {
       </Text>
       <View style={{ height: 400 }}>
         <LineChart
+          gridOptions={{
+            font,
+            formatYLabel: (n) => n.toFixed(0),
+            labelOffset: 4,
+          }}
           data={DATA}
           xKey="month"
           yKeys={["profit", "revenue"]}
@@ -41,14 +46,7 @@ export default function NewLinePage() {
             },
           }) => setActivePoint([x, revenue])}
         >
-          {({
-            paths,
-            isPressActive,
-            activePressX,
-            activePressY,
-            xScale,
-            yScale,
-          }) => (
+          {({ paths, isPressActive, activePressX, activePressY }) => (
             <>
               <Path
                 path={paths["revenue.area"]}
@@ -84,12 +82,6 @@ export default function NewLinePage() {
                   />
                 </>
               )}
-              <Grid
-                font={font}
-                xScale={xScale}
-                yScale={yScale}
-                formatYLabel={(s) => (typeof s === "number" ? s.toFixed(0) : s)}
-              />
             </>
           )}
         </LineChart>

@@ -1,7 +1,7 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { View } from "react-native";
-import { Grid, LineChart } from "victory-native-skia";
+import { LineChart } from "victory-native-skia";
 import inter from "../assets/inter-medium.ttf";
 
 export default function SimpleLinePage() {
@@ -13,6 +13,11 @@ export default function SimpleLinePage() {
         <LineChart
           xKey="day"
           yKeys={["sales"]}
+          gridOptions={{
+            font,
+            labelOffset: 4,
+            formatXLabel: (n) => String(n) + "!",
+          }}
           data={[
             { sales: 5, day: 1 },
             { sales: 8, day: 2 },
@@ -21,17 +26,14 @@ export default function SimpleLinePage() {
             { sales: 7, day: 5 },
           ]}
         >
-          {({ paths, xScale, yScale }) => {
+          {({ paths }) => {
             return (
-              <>
-                <Path
-                  path={paths["sales.line"]}
-                  style="stroke"
-                  color="black"
-                  strokeWidth={4}
-                />
-                <Grid font={font} xScale={xScale} yScale={yScale} />
-              </>
+              <Path
+                path={paths["sales.line"]}
+                style="stroke"
+                color="black"
+                strokeWidth={4}
+              />
             );
           }}
         </LineChart>

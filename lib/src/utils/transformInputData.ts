@@ -4,7 +4,6 @@ import type {
   PrimitiveViewWindow,
   ScaleType,
   TransformedData,
-  ValueOf,
 } from "../types";
 import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
 
@@ -19,7 +18,7 @@ export const transformInputData = <
   outputWindow,
   xScaleType,
   yScaleType,
-  gridMetrics,
+  gridOptions,
 }: {
   data: T[];
   xKey: XK;
@@ -27,11 +26,10 @@ export const transformInputData = <
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
-  gridMetrics: {
-    hasGrid: boolean;
-    font?: SkFont;
-    labelOffset: number;
-    formatYLabel: (label: ValueOf<InputDatum>) => string;
+  gridOptions?: {
+    font?: SkFont | null;
+    labelOffset?: number;
+    formatYLabel?: (label: T[YK]) => string;
   };
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
@@ -47,16 +45,12 @@ export const transformInputData = <
   );
 
   const xMinGridCompensation =
-    (gridMetrics.font?.getTextWidth(gridMetrics.formatYLabel(yMax)) ?? 0) +
-    gridMetrics.labelOffset;
-  const xMaxGridCompensation = -(gridMetrics.font?.getSize() ?? 0);
+    (gridOptions?.font?.getTextWidth(gridOptions.formatYLabel?.(yMax) ?? "") ??
+      0) + (gridOptions?.labelOffset ?? 0);
 
   const ixMin = ix.at(0),
     ixMax = ix.at(-1),
-    oRange = [
-      outputWindow.xMin + xMinGridCompensation,
-      outputWindow.xMax + xMaxGridCompensation,
-    ];
+    oRange = [outputWindow.xMin + xMinGridCompensation, outputWindow.xMax];
 
   // TODO: Types...
   const xScale =
@@ -75,18 +69,12 @@ export const transformInputData = <
     {} as TransformedData<T, XK, YK>["y"],
   );
 
-  const yMinGridCompensation = -(gridMetrics.hasGrid
-    ? gridMetrics.font?.getSize?.() ?? 0
-    : 0);
-  const yMaxGridCompensation = -(gridMetrics.hasGrid
-    ? (gridMetrics.font?.getSize?.() ?? 0) + gridMetrics.labelOffset
-    : 0);
+  const yMaxGridCompensation =
+    -(gridOptions?.font?.getSize?.() ?? 0) -
+    (gridOptions?.labelOffset ?? 0) * 2;
 
   const yScaleDomain = [yMax, yMin],
-    yScaleRange = [
-      outputWindow.yMin - yMinGridCompensation,
-      outputWindow.yMax + yMaxGridCompensation,
-    ];
+    yScaleRange = [outputWindow.yMin, outputWindow.yMax + yMaxGridCompensation];
   const yScale =
     yScaleType === "linear"
       ? scaleLinear().domain(yScaleDomain).range(yScaleRange).nice()
