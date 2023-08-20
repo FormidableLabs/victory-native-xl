@@ -60,7 +60,7 @@ export const Grid = <
         const contentX = formatXLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
         const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
-        const overflowCondition =
+        const canFitLabelContent =
           yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
         return (
           <React.Fragment key={`x-tick-${tick}`}>
@@ -69,7 +69,7 @@ export const Grid = <
               p2={vec(xScale(tick), yScale(y1))}
               color={lineColor}
             />
-            {font && labelWidth && overflowCondition ? (
+            {font && labelWidth && canFitLabelContent ? (
               <Text
                 text={contentX}
                 font={font}
