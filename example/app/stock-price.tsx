@@ -59,7 +59,7 @@ export default function StockPriceScreen() {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          padding={{ left: 10, right: 10 }}
+          // padding={{ left: 10, right: 10 }}
           curve="linear"
           activePressX={{ value: activeDateMS }}
           activePressY={{ high: { value: activeHigh } }}
@@ -70,9 +70,9 @@ export default function StockPriceScreen() {
             xTicks: 5,
             yTicks: 5,
             xLabelOffset: 12,
-            yLabelOffset: 2,
+            yLabelOffset: 8,
             yAxisPosition: "left",
-            yLabelPosition: "inset",
+            yLabelPosition: "outset",
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
           renderOutside={({

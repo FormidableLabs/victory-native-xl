@@ -105,10 +105,9 @@ export const Grid = <
           // right, inset
           return xScale(x2) - (labelWidth + yLabelOffset);
         })();
-        // const labelX =
-        //   yAxisPosition === "left"
-        //     ? xScale(x1) - (labelWidth + yLabelOffset)
-        //     : xScale(x2) + yLabelOffset;
+
+        const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
+
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -117,7 +116,7 @@ export const Grid = <
               color={lineColor}
             />
             {font
-              ? labelY > fontSize && (
+              ? canFitLabelContent && (
                   <Text text={contentY} font={font} y={labelY} x={labelX} />
                 )
               : null}
