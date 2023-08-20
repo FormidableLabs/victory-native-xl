@@ -10,10 +10,10 @@ import {
   line,
 } from "d3-shape";
 import { stitch } from "../utils/stitch";
+import { Skia } from "@shopify/react-native-skia";
 
 /**
- * TODO: add more from here https://d3js.org/d3-shape/curve
- *  Might stick to only curves that pass thru points.
+ * Exposed curves from d3-shape.
  */
 const CURVES = {
   linear: curveLinear,
@@ -30,13 +30,23 @@ const CURVES = {
 
 export type CurveType = keyof typeof CURVES;
 
-export const makeLinePath = (
-  curveType: CurveType,
+/**
+ * Generates a path from the given points.
+ *  - Can be a line or area chart.
+ *  - Can use one of the d3 curves defined above.
+ */
+export const makeCartesianPath = (
   ox: number[],
   oy: number[],
-  { type, y0 }: { type: "line" | "area"; y0: number },
+  {
+    curveType,
+    pathType,
+    y0,
+  }: { curveType: CurveType; pathType: "line" | "area"; y0: number },
 ) => {
-  return (type === "line" ? line() : area().y0(y0)).curve(CURVES[curveType])(
-    stitch(ox, oy),
-  )!;
+  const svgPath = (pathType === "line" ? line() : area().y0(y0)).curve(
+    CURVES[curveType],
+  )(stitch(ox, oy))!;
+
+  return Skia.Path.MakeFromSVGString(svgPath)!;
 };
