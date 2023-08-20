@@ -4,10 +4,10 @@ import React, { useLayoutEffect } from "react";
 import { Button } from "react-native";
 
 type Props = {
-  type: "fill" | "stroke";
+  yKeys: string[];
 };
 
-export const useChartOptions = (props: Props) => {
+export const useChartOptions = ({ yKeys }: Props) => {
   const navigation = useNavigation<OptionsNavigationProp>();
 
   useLayoutEffect(() => {
@@ -15,9 +15,7 @@ export const useChartOptions = (props: Props) => {
       headerRight: () => (
         <Button
           title="Options"
-          onPress={() =>
-            navigation.navigate("chart-options-modal", { type: props.type })
-          }
+          onPress={() => navigation.navigate("chart-options-modal", { yKeys })}
         />
       ),
     });

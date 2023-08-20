@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import ColorPicker from "react-native-wheel-color-picker";
+// import ColorPicker from "react-native-wheel-color-picker";
 import { useChartOptionsContext } from "example/components/OptionsProvider";
 import { useRoute } from "@react-navigation/native";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
@@ -12,59 +12,124 @@ export default function ChartOptionsModal() {
   const { params } =
     useRoute<RouteProp<ParamListBase, "chart-options-modal">>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(0);
-  const type = (params as Record<string, "stroke" | "fill">).type ?? "stroke";
-  const segments =
-    type === "fill" ? ["Color 1", "Color 2"] : ["Stroke Color", "Stroke Width"];
+  const yKeys = (params as Record<"yKeys", string[]>).yKeys;
+  const segments = ["Metrics", "Colors"];
   const { state, dispatch } = useChartOptionsContext();
-  const showColorOne = selectedSegmentIndex === 0;
-  const showColorTwo = selectedSegmentIndex === 1 && type === "fill";
-  const showStrokeWidth = selectedSegmentIndex === 1 && type === "stroke";
 
   return (
-    <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={{ paddingHorizontal: 20, paddingVertical: 10, flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+        }}
+      >
         <StatusBar style="light" />
         <View style={{ flex: 1, flexDirection: "column" }}>
-          <SegmentedControl
-            values={segments}
-            selectedIndex={selectedSegmentIndex}
-            onChange={(event) => {
-              setSelectedSegmentIndex(event.nativeEvent.selectedSegmentIndex);
-            }}
-          />
-          {(showColorOne || showColorTwo) && (
-            <ColorPicker
-              color={showColorOne ? state.color1 : state.color2}
-              onColorChange={(color) =>
-                showColorOne
-                  ? dispatch({ type: "SET_COLOR1", color1: color })
-                  : dispatch({ type: "SET_COLOR2", color2: color })
-              }
+          <View>
+            <SegmentedControl
+              values={segments}
+              selectedIndex={selectedSegmentIndex}
+              onChange={(event) => {
+                setSelectedSegmentIndex(event.nativeEvent.selectedSegmentIndex);
+              }}
             />
-          )}
-          {showStrokeWidth && (
-            <View style={{ flex: 1, alignItems: "center" }}>
+          </View>
+
+          {selectedSegmentIndex === 0 && (
+            <View
+              style={{
+                flex: 1,
+                paddingVertical: 20,
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Text>Stroke Width: {state.strokeWidth}</Text>
               <Slider
-                style={{ width: 300, height: 40, margin: 20 }}
+                style={{ width: "100%", height: 40 }}
                 minimumValue={1}
+                maximumValue={32}
+                step={1}
                 value={state.strokeWidth}
                 onValueChange={(value) =>
-                  dispatch({ type: "SET_STROKE_WIDTH", strokeWidth: value })
+                  dispatch({ type: "SET_STROKE_WIDTH", payload: value })
                 }
-                maximumValue={20}
               />
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: "black",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  width: 300,
-                  height: 20,
-                }}
-              >
-                {state.strokeWidth.toFixed(0)}
-              </Text>
+
+              <Text>Font Size: {state.fontSize}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={8}
+                maximumValue={24}
+                step={1}
+                value={state.fontSize}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_FONT_SIZE", payload: value })
+                }
+              />
+
+              <Text>Label Offset X: {state.labelOffsetX}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                step={1}
+                minimumValue={0}
+                maximumValue={25}
+                value={state.labelOffsetX}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_LABEL_OFFSET_X", payload: value })
+                }
+              />
+
+              <Text>Label Offset Y: {state.labelOffsetY}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={0}
+                step={1}
+                maximumValue={25}
+                value={state.labelOffsetY}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_LABEL_OFFSET_Y", payload: value })
+                }
+              />
+
+              <Text>Tick Count X: {state.ticksCountX}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={0}
+                maximumValue={50}
+                step={5}
+                value={state.ticksCountX}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_TICKS_COUNT_X", payload: value })
+                }
+              />
+
+              <Text>Tick Count Y: {state.ticksCountY}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={0}
+                maximumValue={50}
+                step={5}
+                value={state.ticksCountY}
+                onValueChange={(value) =>
+                  dispatch({ type: "SET_TICKS_COUNT_Y", payload: value })
+                }
+              />
+            </View>
+          )}
+          {selectedSegmentIndex === 1 && (
+            <View
+              style={{
+                flex: 1,
+                paddingVertical: 20,
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Text>Not implemented yet</Text>
             </View>
           )}
         </View>

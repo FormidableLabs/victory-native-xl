@@ -3,9 +3,13 @@ import * as React from "react";
 import { View } from "react-native";
 import { LineChart } from "victory-native-skia";
 import inter from "../assets/inter-medium.ttf";
+import { useChartOptions } from "example/components/useChartOptions";
+import { useChartOptionsContext } from "example/components/OptionsProvider";
 
 export default function SimpleLinePage() {
-  const font = useFont(inter, 12);
+  const { state } = useChartOptionsContext();
+  const font = useFont(inter, state.fontSize);
+  useChartOptions({ yKeys: ["sales"] });
 
   return (
     <>
@@ -15,7 +19,9 @@ export default function SimpleLinePage() {
           yKeys={["sales"]}
           gridOptions={{
             font,
-            labelOffset: 4,
+            xTicks: state.ticksCountX,
+            yTicks: state.ticksCountY,
+            labelOffset: state.labelOffsetX,
             formatXLabel: (n) => String(n) + "!",
           }}
           data={[
@@ -32,7 +38,7 @@ export default function SimpleLinePage() {
                 path={paths["sales.line"]}
                 style="stroke"
                 color="black"
-                strokeWidth={4}
+                strokeWidth={state.strokeWidth}
               />
             );
           }}

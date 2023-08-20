@@ -7,49 +7,69 @@ import React, {
 import type { NavigationProp } from "@react-navigation/core";
 
 type State = {
-  color1: string;
-  color2: string;
   strokeWidth: number;
+  fontSize: number;
+  labelOffsetX: number;
+  labelOffsetY: number;
+  ticksCountX: number;
+  ticksCountY: number;
+  colors: Record<string, string>;
 };
 
 export type OptionsNavigationProp = NavigationProp<{
-  "chart-options-modal": { type: "fill" | "stroke" };
+  "chart-options-modal": { yKeys: string[] };
 }>;
 
-type Action =
-  | { type: "SET_COLOR1"; color1: string }
-  | { type: "SET_COLOR2"; color2: string }
-  | { type: "SET_STROKE_WIDTH"; strokeWidth: number };
+type ActionTypes =
+  | { type: "SET_STROKE_WIDTH"; payload: number }
+  | { type: "SET_FONT_SIZE"; payload: number }
+  | { type: "SET_LABEL_OFFSET_X"; payload: number }
+  | { type: "SET_LABEL_OFFSET_Y"; payload: number }
+  | { type: "SET_TICKS_COUNT_X"; payload: number }
+  | { type: "SET_TICKS_COUNT_Y"; payload: number }
+  | { type: "SET_COLORS"; payload: Record<string, string> };
 
-const defaultState: State = {
-  color1: "#4f46e5",
-  color2: "#0d9488",
-  strokeWidth: 8,
+const initialState: State = {
+  strokeWidth: 4,
+  fontSize: 12,
+  labelOffsetX: 4,
+  labelOffsetY: 4,
+  ticksCountX: 5,
+  ticksCountY: 10,
+  colors: {},
 };
 
 const ChartOptionsContext = createContext<{
   state: State;
-  dispatch: React.Dispatch<Action>;
+  dispatch: React.Dispatch<ActionTypes>;
 }>({
-  state: defaultState,
+  state: initialState,
   dispatch: () => {},
 });
 
-const chartOptionsReducer = (state: State, action: Action): State => {
+const chartOptionsReducer = (state: State, action: ActionTypes): State => {
   switch (action.type) {
-    case "SET_COLOR1":
-      return { ...state, color1: action.color1 };
-    case "SET_COLOR2":
-      return { ...state, color2: action.color2 };
     case "SET_STROKE_WIDTH":
-      return { ...state, strokeWidth: action.strokeWidth };
+      return { ...state, strokeWidth: action.payload };
+    case "SET_FONT_SIZE":
+      return { ...state, fontSize: action.payload };
+    case "SET_LABEL_OFFSET_X":
+      return { ...state, labelOffsetX: action.payload };
+    case "SET_LABEL_OFFSET_Y":
+      return { ...state, labelOffsetY: action.payload };
+    case "SET_TICKS_COUNT_X":
+      return { ...state, ticksCountX: action.payload };
+    case "SET_TICKS_COUNT_Y":
+      return { ...state, ticksCountY: action.payload };
+    case "SET_COLORS":
+      return { ...state, colors: action.payload };
     default:
-      throw new Error("Unsupported action type");
+      return state;
   }
 };
 
 export const ChartOptionsProvider = ({ children }: PropsWithChildren) => {
-  const [state, dispatch] = useReducer(chartOptionsReducer, defaultState);
+  const [state, dispatch] = useReducer(chartOptionsReducer, initialState);
   return (
     <ChartOptionsContext.Provider value={{ state, dispatch }}>
       {children}
