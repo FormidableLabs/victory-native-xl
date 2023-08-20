@@ -23,7 +23,7 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { Grid } from "../grid/Grid";
+import { Grid, type GridProps } from "../grid/Grid";
 
 type LineChartProps<
   T extends InputDatum,
@@ -56,16 +56,7 @@ type LineChartProps<
   children: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
   renderOutside: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
   /** Grid props */
-  gridOptions?: {
-    font?: SkFont | null;
-    labelOffset?: number;
-    xTicks?: number;
-    yTicks?: number;
-    lineColor?: string;
-    axisColor?: string;
-    formatXLabel?: (label: T[XK]) => string;
-    formatYLabel?: (label: T[YK]) => string;
-  };
+  gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
 };
 
 export function LineChart<
@@ -120,6 +111,7 @@ export function LineChart<
       yScaleType,
       gridOptions: {
         ...gridOptions,
+        yAxisPosition: gridOptions?.yAxisPosition ?? "left",
         formatYLabel:
           gridOptions?.formatYLabel ?? ((s: T[YK]): string => String(s)),
       },

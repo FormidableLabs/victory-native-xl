@@ -6,6 +6,7 @@ import type {
   TransformedData,
 } from "../types";
 import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
+import type { GridProps } from "../grid/Grid";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -40,11 +41,7 @@ export const transformInputData = <
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
-  gridOptions?: {
-    font?: SkFont | null;
-    labelOffset?: number;
-    formatYLabel?: (label: T[YK]) => string;
-  };
+  gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -94,14 +91,19 @@ export const transformInputData = <
     gridOptions?.formatYLabel?.(yScale.domain().at(0)) ||
     String(yScale.domain().at(0));
 
-  const xMinGridCompensation =
+  const xGridCompensation =
     (gridOptions?.font?.getTextWidth(topYLabel) ?? 0) +
     (gridOptions?.labelOffset ?? 0);
 
   // Generate our x-scale
   const ixMin = ix.at(0),
     ixMax = ix.at(-1),
-    oRange = [outputWindow.xMin + xMinGridCompensation, outputWindow.xMax];
+    oRange = [
+      outputWindow.xMin +
+        (gridOptions?.yAxisPosition === "left" ? xGridCompensation : 0),
+      outputWindow.xMax -
+        (gridOptions?.yAxisPosition === "right" ? xGridCompensation : 0),
+    ];
 
   const xScale =
     xScaleType === "linear"
