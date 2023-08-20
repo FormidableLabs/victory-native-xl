@@ -9,10 +9,11 @@ export type GridProps<
   XK extends keyof T,
   YK extends keyof T,
 > = {
-  font?: SkFont | null;
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
+  font?: SkFont | null;
   labelOffset: number;
+  yAxisPosition: "left" | "right";
   xTicks: number;
   yTicks: number;
   lineColor: string;
@@ -34,12 +35,13 @@ export const Grid = <
   lineColor,
   font,
   axisColor,
+  yAxisPosition,
   formatXLabel,
   formatYLabel,
 }: GridProps<T, XK, YK>) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
-  const [_, x2r] = xScale.range();
+  const [x1r, x2r] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
 
   if (
@@ -47,6 +49,7 @@ export const Grid = <
     typeof x2 === "undefined" ||
     typeof y1 === "undefined" ||
     typeof y2 === "undefined" ||
+    typeof x1r === "undefined" ||
     typeof x2r === "undefined"
   )
     return null;
@@ -57,6 +60,8 @@ export const Grid = <
         const contentX = formatXLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
         const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
+        const canFitLabelContent =
+          yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
         return (
           <React.Fragment key={`x-tick-${tick}`}>
             <Line
@@ -64,15 +69,13 @@ export const Grid = <
               p2={vec(xScale(tick), yScale(y1))}
               color={lineColor}
             />
-            {font && labelWidth && labelX + labelWidth < x2r ? (
-              <>
-                <Text
-                  text={contentX}
-                  font={font}
-                  y={yScale(y2) + labelOffset + fontSize}
-                  x={labelX}
-                />
-              </>
+            {font && labelWidth && canFitLabelContent ? (
+              <Text
+                text={contentX}
+                font={font}
+                y={yScale(y2) + labelOffset + fontSize}
+                x={labelX}
+              />
             ) : null}
           </React.Fragment>
         );
@@ -81,6 +84,10 @@ export const Grid = <
         const contentY = formatYLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
         const labelY = yScale(tick) + fontSize / 3;
+        const labelX =
+          yAxisPosition === "left"
+            ? xScale(x1) - (labelWidth + labelOffset)
+            : xScale(x2) + labelOffset;
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -90,14 +97,7 @@ export const Grid = <
             />
             {font
               ? labelY > fontSize && (
-                  <>
-                    <Text
-                      text={contentY}
-                      font={font}
-                      y={labelY}
-                      x={xScale(x1) - (labelWidth + labelOffset)}
-                    />
-                  </>
+                  <Text text={contentY} font={font} y={labelY} x={labelX} />
                 )
               : null}
           </React.Fragment>
@@ -118,9 +118,9 @@ Grid.defaultProps = {
   labelOffset: 0,
   xTicks: 10,
   yTicks: 10,
+  yAxisPosition: "left",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
-  labelBackgroundColor: "hsla(0, 0%, 100%, 0.9)",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   axisColor: "black",
-};
+} satisfies Partial<GridProps<never, never, never>>;
