@@ -15,6 +15,7 @@ export type GridProps<
   xLabelOffset: number;
   yLabelOffset: number;
   yAxisPosition: "left" | "right";
+  yLabelPosition: "inset" | "outset";
   xTicks: number;
   yTicks: number;
   lineColor: string;
@@ -38,6 +39,7 @@ export const Grid = <
   font,
   axisColor,
   yAxisPosition,
+  yLabelPosition,
   formatXLabel,
   formatYLabel,
 }: GridProps<T, XK, YK>) => {
@@ -82,14 +84,31 @@ export const Grid = <
           </React.Fragment>
         );
       })}
+      {/* y Ticks labels */}
       {yScale.ticks(yTicks).map((tick) => {
         const contentY = formatYLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
         const labelY = yScale(tick) + fontSize / 3;
-        const labelX =
-          yAxisPosition === "left"
-            ? xScale(x1) - (labelWidth + yLabelOffset)
-            : xScale(x2) + yLabelOffset;
+        const labelX = (() => {
+          // left, outset
+          if (yAxisPosition === "left" && yLabelPosition === "outset") {
+            return xScale(x1) - (labelWidth + yLabelOffset);
+          }
+          // left, inset
+          if (yAxisPosition === "left" && yLabelPosition === "inset") {
+            return xScale(x1) + yLabelOffset;
+          }
+          // right, outset
+          if (yAxisPosition === "right" && yLabelPosition === "outset") {
+            return xScale(x2) + yLabelOffset;
+          }
+          // right, inset
+          return xScale(x2) - (labelWidth + yLabelOffset);
+        })();
+        // const labelX =
+        //   yAxisPosition === "left"
+        //     ? xScale(x1) - (labelWidth + yLabelOffset)
+        //     : xScale(x2) + yLabelOffset;
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -122,6 +141,7 @@ Grid.defaultProps = {
   xTicks: 10,
   yTicks: 10,
   yAxisPosition: "left",
+  yLabelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   lineColor: "hsla(0, 0%, 0%, 0.25)",

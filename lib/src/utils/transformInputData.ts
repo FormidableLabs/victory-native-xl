@@ -7,6 +7,7 @@ import type {
 } from "../types";
 import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
 import type { GridProps } from "../grid/Grid";
+import { Grid } from "../grid/Grid";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -33,7 +34,7 @@ export const transformInputData = <
   outputWindow,
   xScaleType,
   yScaleType,
-  gridOptions,
+  gridOptions = Grid.defaultProps,
 }: {
   data: T[];
   xKey: XK;
@@ -46,6 +47,11 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
+  const _gridOptions = Object.assign(
+    {},
+    Grid.defaultProps,
+    gridOptions,
+  ) as typeof gridOptions;
   // Input x is just extracting the xKey from each datum
   const ix = data.map((datum) => datum[xKey]);
 
@@ -91,19 +97,30 @@ export const transformInputData = <
     gridOptions?.formatYLabel?.(yScale.domain().at(0)) ||
     String(yScale.domain().at(0));
 
-  const xGridCompensation =
-    (gridOptions?.font?.getTextWidth(topYLabel) ?? 0) +
-    (gridOptions?.yLabelOffset ?? 0);
-
   // Generate our x-scale
   const ixMin = ix.at(0),
-    ixMax = ix.at(-1),
-    oRange = [
-      outputWindow.xMin +
-        (gridOptions?.yAxisPosition === "left" ? xGridCompensation : 0),
-      outputWindow.xMax -
-        (gridOptions?.yAxisPosition === "right" ? xGridCompensation : 0),
-    ];
+    ixMax = ix.at(-1);
+  const topYLabelWidth = gridOptions?.font?.getTextWidth(topYLabel) ?? 0;
+  // Determine our x-output range based on yAxis/label options
+  const oRange = (() => {
+    const { yAxisPosition, yLabelPosition, yLabelOffset = 0 } = _gridOptions;
+    // Left axes, outset label
+    if (yAxisPosition === "left" && yLabelPosition === "outset") {
+      return [
+        outputWindow.xMin + topYLabelWidth + yLabelOffset,
+        outputWindow.xMax,
+      ];
+    }
+    // Right axes, outset label
+    if (yAxisPosition === "right" && yLabelPosition === "outset") {
+      return [
+        outputWindow.xMin,
+        outputWindow.xMax - topYLabelWidth - yLabelOffset,
+      ];
+    }
+    // Inset labels don't need added offsets
+    return [outputWindow.xMin, outputWindow.xMax];
+  })();
 
   const xScale =
     xScaleType === "linear"
