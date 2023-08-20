@@ -46,7 +46,8 @@ export const makeCartesianPath = (
 ) => {
   const svgPath = (pathType === "line" ? line() : area().y0(y0)).curve(
     CURVES[curveType],
-  )(stitch(ox, oy))!;
+  )(stitch(ox, oy));
+  if (!svgPath) return Skia.Path.Make();
 
-  return Skia.Path.MakeFromSVGString(svgPath)!;
+  return Skia.Path.MakeFromSVGString(svgPath) || Skia.Path.Make();
 };
