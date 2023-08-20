@@ -1,8 +1,14 @@
 import * as React from "react";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect, type SkFont } from "@shopify/react-native-skia";
-import { type CurveType, makeLinePath } from "./makeLinePath";
+import {
+  Canvas,
+  Group,
+  rect,
+  type SkFont,
+  type SkPath,
+} from "@shopify/react-native-skia";
+import { type CurveType, makeCartesianPath } from "./makeCartesianPath";
 import {
   makeMutable,
   runOnJS,
@@ -142,7 +148,7 @@ export function LineChart<
      * and the proxy will create the path if it doesn't exist.
      */
     const makePaths = () => {
-      const cache = {} as Record<string, string>;
+      const cache = {} as Record<string, SkPath>;
       return new Proxy(
         {},
         {
@@ -156,15 +162,12 @@ export function LineChart<
 
             if (cache[property]) return cache[property];
 
-            const path = makeLinePath(
-              typeof curve === "string" ? curve : curve[key] || "linear",
-              _tData.ox,
-              _tData.y[key].o,
-              {
-                type: chartType,
-                y0: yScale.range()[1] || 0,
-              },
-            );
+            const path = makeCartesianPath(_tData.ox, _tData.y[key].o, {
+              curveType:
+                typeof curve === "string" ? curve : curve[key] || "linear",
+              pathType: chartType,
+              y0: yScale.range()[1] || 0,
+            });
 
             cache[property] = path;
             return path;
