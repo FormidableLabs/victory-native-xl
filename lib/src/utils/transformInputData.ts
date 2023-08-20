@@ -69,7 +69,7 @@ export const transformInputData = <
   // If grid options present, we need to compensate for the grid labels
   const yMaxGridCompensation =
     -(gridOptions?.font?.getSize?.() ?? 0) -
-    (gridOptions?.labelOffset ?? 0) * 2;
+    (gridOptions?.xLabelOffset ?? 0) * 2;
 
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
@@ -93,7 +93,7 @@ export const transformInputData = <
 
   const xGridCompensation =
     (gridOptions?.font?.getTextWidth(topYLabel) ?? 0) +
-    (gridOptions?.labelOffset ?? 0);
+    (gridOptions?.yLabelOffset ?? 0);
 
   // Generate our x-scale
   const ixMin = ix.at(0),

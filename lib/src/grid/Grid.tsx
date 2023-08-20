@@ -12,7 +12,8 @@ export type GridProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  labelOffset: number;
+  xLabelOffset: number;
+  yLabelOffset: number;
   yAxisPosition: "left" | "right";
   xTicks: number;
   yTicks: number;
@@ -31,7 +32,8 @@ export const Grid = <
   yScale,
   xTicks,
   yTicks,
-  labelOffset,
+  xLabelOffset,
+  yLabelOffset,
   lineColor,
   font,
   axisColor,
@@ -73,7 +75,7 @@ export const Grid = <
               <Text
                 text={contentX}
                 font={font}
-                y={yScale(y2) + labelOffset + fontSize}
+                y={yScale(y2) + xLabelOffset + fontSize}
                 x={labelX}
               />
             ) : null}
@@ -86,8 +88,8 @@ export const Grid = <
         const labelY = yScale(tick) + fontSize / 3;
         const labelX =
           yAxisPosition === "left"
-            ? xScale(x1) - (labelWidth + labelOffset)
-            : xScale(x2) + labelOffset;
+            ? xScale(x1) - (labelWidth + yLabelOffset)
+            : xScale(x2) + yLabelOffset;
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -115,7 +117,8 @@ export const Grid = <
 };
 
 Grid.defaultProps = {
-  labelOffset: 0,
+  xLabelOffset: 0,
+  yLabelOffset: 0,
   xTicks: 10,
   yTicks: 10,
   yAxisPosition: "left",
