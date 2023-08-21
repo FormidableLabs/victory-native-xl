@@ -16,6 +16,7 @@ import type {
   SidedNumber,
   TransformedData,
   PathType,
+  ScatterOptions,
 } from "../types";
 import {
   Gesture,
@@ -169,7 +170,7 @@ export function CartesianChart<
             };
             switch (chartType) {
               case "scatter":
-                return (options: Record<string, unknown>) => getPath(options);
+                return (options: ScatterOptions) => getPath(options);
               default:
                 return getPath();
             }
