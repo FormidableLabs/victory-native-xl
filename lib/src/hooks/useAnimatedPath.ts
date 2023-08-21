@@ -6,6 +6,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { usePrevious } from "../utils/usePrevious";
+import { Skia } from "@shopify/react-native-skia";
 
 export const useAnimatedPath = (path: SkPath) => {
   const t = useSharedValue(0);
@@ -13,12 +14,12 @@ export const useAnimatedPath = (path: SkPath) => {
 
   React.useEffect(() => {
     t.value = 0;
-    t.value = withTiming(1, { duration: 1000 });
+    t.value = withTiming(1, { duration: 300 });
   }, [path]);
 
-  return useDerivedValue(() => {
+  return useDerivedValue<SkPath>(() => {
     if (t.value !== 1 && path.isInterpolatable(prevPath)) {
-      return path.interpolate(prevPath, t.value);
+      return path.interpolate(prevPath, t.value) || Skia.Path.Make();
     }
     return path;
   });
