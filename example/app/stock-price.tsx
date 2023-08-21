@@ -71,7 +71,7 @@ export default function StockPriceScreen() {
             yTicks: 5,
             xLabelOffset: 12,
             xAxisPosition: "bottom",
-            xLabelPosition: "inset",
+            xLabelPosition: "outset",
             yLabelOffset: 8,
             yAxisPosition: "left",
             yLabelPosition: "inset",

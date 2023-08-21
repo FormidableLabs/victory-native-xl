@@ -115,12 +115,7 @@ export function LineChart<
       yKeys,
       xScaleType,
       yScaleType,
-      gridOptions: {
-        ...gridOptions,
-        yAxisPosition: gridOptions?.yAxisPosition ?? "left",
-        formatYLabel:
-          gridOptions?.formatYLabel ?? ((s: T[YK]): string => String(s)),
-      },
+      gridOptions,
       // TODO: These are likely going to need to change.
       // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {
