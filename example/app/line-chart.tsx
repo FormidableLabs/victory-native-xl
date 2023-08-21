@@ -1,4 +1,4 @@
-import { Path, useFont } from "@shopify/react-native-skia";
+import { LinearGradient, Path, useFont, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
@@ -71,13 +71,27 @@ export default function LineChartPage() {
           >
             {({ paths }) => {
               return (
-                <Path
-                  path={paths["sales.line"]}
-                  style="stroke"
-                  color={colors.stroke}
-                  strokeCap="round"
-                  strokeWidth={strokeWidth}
-                />
+                <>
+                  <Path
+                    path={paths["sales.line"]}
+                    style="stroke"
+                    color={colors.stroke}
+                    strokeCap="round"
+                    strokeWidth={strokeWidth}
+                  />
+                  <Path
+                    path={paths["sales.scatter"]}
+                    style="fill"
+                    color="blue"
+                    strokeWidth={4}
+                  >
+                    <LinearGradient
+                      start={vec(0, 0)}
+                      end={vec(0, 500)}
+                      colors={["green", "white"]}
+                    />
+                  </Path>
+                </>
               );
             }}
           </CartesianChart>

@@ -10,7 +10,8 @@ import {
   line,
 } from "d3-shape";
 import { stitch } from "../utils/stitch";
-import { Skia } from "@shopify/react-native-skia";
+import { Skia, SkPath } from "@shopify/react-native-skia";
+import type { PathType } from "../types";
 
 /**
  * Exposed curves from d3-shape.
@@ -42,11 +43,24 @@ export const makeCartesianPath = (
     curveType,
     pathType,
     y0,
-  }: { curveType: CurveType; pathType: "line" | "area"; y0: number },
+  }: { curveType: CurveType; pathType: PathType; y0: number },
 ) => {
-  const svgPath = (pathType === "line" ? line() : area().y0(y0)).curve(
-    CURVES[curveType],
-  )(stitch(ox, oy));
+  let svgPath: string | null = null;
+
+  if (pathType === "line")
+    svgPath = line().curve?.(CURVES[curveType])(stitch(ox, oy));
+  else if (pathType === "area")
+    svgPath = area().y0(y0).curve?.(CURVES[curveType])(stitch(ox, oy));
+  else if (pathType === "scatter") {
+    const path = Skia.Path.Make();
+    for (let i = 0; i < Math.min(ox.length, oy.length); i++) {
+      const x = ox.at(i);
+      const y = oy.at(i);
+      y && x && path.addCircle(x, y, 10);
+    }
+    svgPath = path.toSVGString();
+  }
+
   if (!svgPath) return Skia.Path.Make();
 
   return Skia.Path.MakeFromSVGString(svgPath) || Skia.Path.Make();

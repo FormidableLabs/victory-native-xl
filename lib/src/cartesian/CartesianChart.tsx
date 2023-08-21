@@ -15,6 +15,7 @@ import type {
   ScaleType,
   SidedNumber,
   TransformedData,
+  PathType,
 } from "../types";
 import {
   Gesture,
@@ -24,6 +25,7 @@ import {
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
+import { pathTypes } from "../types";
 
 type CartesianChartProps<
   T extends InputDatum,
@@ -147,11 +149,8 @@ export function CartesianChart<
         {},
         {
           get(_, property: string) {
-            const [key, chartType] = property.split(".") as [
-              YK,
-              "line" | "area",
-            ];
-            if (!yKeys.includes(key) || !["line", "area"].includes(chartType))
+            const [key, chartType] = property.split(".") as [YK, PathType];
+            if (!yKeys.includes(key) || !pathTypes.includes(chartType))
               return "";
 
             if (cache[property]) return cache[property];
