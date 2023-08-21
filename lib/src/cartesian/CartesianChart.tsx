@@ -39,6 +39,7 @@ type CartesianChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
+  isPressEnabled?: boolean;
   onPressActiveStart?: () => void;
   onPressActiveEnd?: () => void;
   onPressActiveChange?: (isPressActive: boolean) => void;
@@ -72,6 +73,7 @@ export function CartesianChart<
   curve,
   padding,
   domainPadding,
+  isPressEnabled,
   onPressActiveChange,
   onPressValueChange,
   onPressActiveStart,
@@ -299,24 +301,30 @@ export function CartesianChart<
     chartBounds.right - chartBounds.left,
     chartBounds.bottom - chartBounds.top,
   );
-  return (
+
+  // Body of the chart.
+  const body = (
+    <Canvas style={{ flex: 1 }} onLayout={onLayout}>
+      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+      <Group clip={clipRect}>
+        {hasMeasuredLayoutSize && children(renderArg)}
+      </Group>
+      {gridOptions && <Grid xScale={xScale} yScale={yScale} {...gridOptions} />}
+    </Canvas>
+  );
+
+  // Conditionally wrap the body in gesture handler based on isPressEnabled
+  return isPressEnabled ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={pan}>
-        <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-          {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-          <Group clip={clipRect}>
-            {hasMeasuredLayoutSize && children(renderArg)}
-          </Group>
-          {gridOptions && (
-            <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
-          )}
-        </Canvas>
-      </GestureDetector>
+      <GestureDetector gesture={pan}>{body}</GestureDetector>
     </GestureHandlerRootView>
+  ) : (
+    body
   );
 }
 
 CartesianChart.defaultProps = {
+  isPressEnabled: false,
   curve: "linear",
   chartType: "line",
   xScaleType: "linear",

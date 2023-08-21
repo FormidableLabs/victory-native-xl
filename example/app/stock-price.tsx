@@ -73,6 +73,7 @@ export default function StockPriceScreen() {
           yKeys={["high"]}
           // padding={{ left: 10, right: 10 }}
           curve="linear"
+          isPressEnabled
           activePressX={{ value: activeDateMS }}
           activePressY={{ high: { value: activeHigh } }}
           onPressActiveChange={setIsPressActive}
