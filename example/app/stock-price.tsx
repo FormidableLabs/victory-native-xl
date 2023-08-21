@@ -48,12 +48,23 @@ export default function StockPriceScreen() {
 
   return (
     <View>
-      <View style={{ padding: 12, alignItems: "center" }}>
-        <AnimatedText
-          text={activeDate}
-          style={{ fontSize: 16, color: "gray" }}
-        />
-        <AnimatedText text={activeHighDisplay} style={{ fontSize: 24 }} />
+      <View
+        style={{
+          padding: 12,
+          alignItems: "center",
+          justifyContent: "center",
+          height: 80,
+        }}
+      >
+        {isPressActive && (
+          <>
+            <AnimatedText
+              text={activeDate}
+              style={{ fontSize: 16, color: "gray" }}
+            />
+            <AnimatedText text={activeHighDisplay} style={{ fontSize: 24 }} />
+          </>
+        )}
       </View>
       <View style={{ height: 300 }}>
         <CartesianChart

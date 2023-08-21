@@ -233,50 +233,55 @@ export function CartesianChart<
    * Pan gesture handling
    */
   const lastIdx = useSharedValue(null as null | number);
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      onPressActiveStart && runOnJS(onPressActiveStart)();
-      runOnJS(changePressActive)(true);
-    })
-    .onUpdate((evt) => {
-      const idx = findClosestPoint(tData.value.ox, evt.x);
-      if (typeof idx !== "number") return;
+  const handleTouch = (x: number) => {
+    "worklet";
+    const idx = findClosestPoint(tData.value.ox, x);
+    if (typeof idx !== "number") return;
 
-      // TODO: Types, add safety checks
-      activePressX.value.value = tData.value.ix[idx] as T[XK];
-      activePressX.position.value = tData.value.ox[idx]!;
+    // TODO: Types, add safety checks
+    activePressX.value.value = tData.value.ix[idx] as T[XK];
+    activePressX.position.value = tData.value.ox[idx]!;
 
-      yKeys.forEach((key) => {
-        activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
-        activePressY[key].position.value = tData.value.y[key].o[idx]!;
+    yKeys.forEach((key) => {
+      activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
+      activePressY[key].position.value = tData.value.y[key].o[idx]!;
+    });
+
+    onPressValueChange &&
+      lastIdx.value !== idx &&
+      runOnJS(onPressValueChange)({
+        x: {
+          value: activePressX.value.value,
+          position: activePressX.position.value,
+        },
+        y: yKeys.reduce(
+          (acc, key) => {
+            acc[key] = {
+              value: activePressY[key].value.value,
+              position: activePressY[key].position.value,
+            };
+            return acc;
+          },
+          {} as { [K in YK]: { value: T[K]; position: number } },
+        ),
       });
 
-      onPressValueChange &&
-        lastIdx.value !== idx &&
-        runOnJS(onPressValueChange)({
-          x: {
-            value: activePressX.value.value,
-            position: activePressX.position.value,
-          },
-          y: yKeys.reduce(
-            (acc, key) => {
-              acc[key] = {
-                value: activePressY[key].value.value,
-                position: activePressY[key].position.value,
-              };
-              return acc;
-            },
-            {} as { [K in YK]: { value: T[K]; position: number } },
-          ),
-        });
-
-      lastIdx.value = idx;
+    lastIdx.value = idx;
+  };
+  const pan = Gesture.Pan()
+    .onStart((evt) => {
+      onPressActiveStart && runOnJS(onPressActiveStart)();
+      runOnJS(changePressActive)(true);
+      handleTouch(evt.x);
+    })
+    .onUpdate((evt) => {
+      handleTouch(evt.x);
     })
     .onEnd(() => {
       onPressActiveEnd && runOnJS(onPressActiveEnd)();
       runOnJS(changePressActive)(false);
     })
-    .minDistance(0);
+    .activateAfterLongPress(100);
 
   const renderArg: CartesianChartRenderArg<T, XK, YK> = {
     paths,
