@@ -25,16 +25,14 @@ export type GridProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  xLabelOffset: number;
-  xAxisPosition: XAxisSide;
-  xLabelPosition: AxisLabelPosition;
-  yLabelOffset: number;
-  yAxisPosition: YAxisSide;
-  yLabelPosition: AxisLabelPosition;
-  xTicks: number;
-  yTicks: number;
   lineColor: string;
   labelColor: string | { x: string; y: string };
+  tickCount: number | { x: number; y: number };
+  labelOffset: number | { x: number; y: number };
+  labelPosition:
+    | AxisLabelPosition
+    | { x: AxisLabelPosition; y: AxisLabelPosition };
+  axisSide: { x: XAxisSide; y: YAxisSide };
   formatXLabel: (label: T[XK]) => string;
   formatYLabel: (label: T[YK]) => string;
 };
@@ -46,19 +44,15 @@ export const Grid = <
 >({
   xScale,
   yScale,
-  xTicks,
-  yTicks,
-  xLabelOffset,
-  xAxisPosition,
-  xLabelPosition,
-  yLabelOffset,
   lineColor,
   font,
   labelColor,
-  yAxisPosition,
-  yLabelPosition,
   formatXLabel,
   formatYLabel,
+  tickCount,
+  labelPosition,
+  axisSide,
+  labelOffset,
 }: GridProps<T, XK, YK>) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
@@ -87,6 +81,19 @@ export const Grid = <
     );
     return path;
   }, [x1, x2, y1, y2, xScale, yScale]);
+
+  const xTicks = typeof tickCount === "number" ? tickCount : tickCount.x;
+  const yTicks = typeof tickCount === "number" ? tickCount : tickCount.y;
+  const xLabelOffset =
+    typeof labelOffset === "number" ? labelOffset : labelOffset.x;
+  const yLabelOffset =
+    typeof labelOffset === "number" ? labelOffset : labelOffset.y;
+  const xAxisPosition = axisSide.x;
+  const yAxisPosition = axisSide.y;
+  const xLabelPosition =
+    typeof labelPosition === "string" ? labelPosition : labelPosition.x;
+  const yLabelPosition =
+    typeof labelPosition === "string" ? labelPosition : labelPosition.x;
 
   return (
     <>
@@ -189,14 +196,10 @@ export const Grid = <
 };
 
 Grid.defaultProps = {
-  xLabelOffset: 0,
-  xAxisPosition: "bottom",
-  xLabelPosition: "outset",
-  yLabelOffset: 0,
-  xTicks: 10,
-  yTicks: 10,
-  yAxisPosition: "left",
-  yLabelPosition: "outset",
+  tickCount: 10,
+  labelOffset: { x: 2, y: 4 },
+  axisSide: { x: "bottom", y: "left" },
+  labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",

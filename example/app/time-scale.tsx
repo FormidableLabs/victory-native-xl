@@ -31,9 +31,8 @@ export default function TimeScale() {
           gridOptions={{
             font,
             formatXLabel: (s) => format(s, "MMM-dd"),
-            xLabelOffset: 6,
-            yLabelOffset: 6,
-            xTicks: 5,
+            labelOffset: { x: 6, y: 6 },
+            tickCount: 5,
           }}
         >
           {({ paths, isPressActive, activePressX, activePressY }) => (

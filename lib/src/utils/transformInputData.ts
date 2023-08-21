@@ -86,18 +86,26 @@ export const transformInputData = <
   const fontHeight = gridOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
   const yScaleRange = (() => {
-    const { xAxisPosition, xLabelPosition, xLabelOffset = 0 } = _gridOptions;
+    const labelPosition =
+      typeof _gridOptions?.labelPosition === "string"
+        ? _gridOptions.labelPosition
+        : _gridOptions?.labelPosition?.y;
+    const axisSide = _gridOptions?.axisSide?.x;
+    const labelOffset =
+      (typeof _gridOptions?.labelOffset === "number"
+        ? _gridOptions.labelOffset
+        : _gridOptions?.labelOffset?.y) ?? 0;
     // bottom, outset
-    if (xAxisPosition === "bottom" && xLabelPosition === "outset") {
+    if (axisSide === "bottom" && labelPosition === "outset") {
       return [
         outputWindow.yMin,
-        outputWindow.yMax - fontHeight - xLabelOffset * 2,
+        outputWindow.yMax - fontHeight - labelOffset * 2,
       ];
     }
     // Top outset
-    if (xAxisPosition === "top" && xLabelPosition === "outset") {
+    if (axisSide === "top" && labelPosition === "outset") {
       return [
-        outputWindow.yMin + fontHeight + xLabelOffset * 2,
+        outputWindow.yMin + fontHeight + labelOffset * 2,
         outputWindow.yMax,
       ];
     }
@@ -127,19 +135,28 @@ export const transformInputData = <
   const topYLabelWidth = gridOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange = (() => {
-    const { yAxisPosition, yLabelPosition, yLabelOffset = 0 } = _gridOptions;
+    const labelPosition =
+      typeof _gridOptions?.labelPosition === "string"
+        ? _gridOptions.labelPosition
+        : _gridOptions?.labelPosition?.x;
+    const axisSide = _gridOptions?.axisSide?.y;
+    const labelOffset =
+      (typeof _gridOptions?.labelOffset === "number"
+        ? _gridOptions.labelOffset
+        : _gridOptions?.labelOffset?.x) ?? 0;
+
     // Left axes, outset label
-    if (yAxisPosition === "left" && yLabelPosition === "outset") {
+    if (axisSide === "left" && labelPosition === "outset") {
       return [
-        outputWindow.xMin + topYLabelWidth + yLabelOffset,
+        outputWindow.xMin + topYLabelWidth + labelOffset,
         outputWindow.xMax,
       ];
     }
     // Right axes, outset label
-    if (yAxisPosition === "right" && yLabelPosition === "outset") {
+    if (axisSide === "right" && labelPosition === "outset") {
       return [
         outputWindow.xMin,
-        outputWindow.xMax - topYLabelWidth - yLabelOffset,
+        outputWindow.xMax - topYLabelWidth - labelOffset,
       ];
     }
     // Inset labels don't need added offsets
