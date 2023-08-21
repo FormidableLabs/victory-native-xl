@@ -18,6 +18,10 @@ export type ViewWindow = {
 
 export type InputDatum = Record<string, string | number>;
 
+export type XAxisSide = "top" | "bottom";
+export type YAxisSide = "left" | "right";
+export type AxisLabelPosition = "inset" | "outset";
+
 export type ValueOf<T> = T[keyof T];
 export type TransformedData<
   T extends InputDatum,

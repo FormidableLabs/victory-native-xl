@@ -8,7 +8,7 @@ export default function LandingPage() {
     <View style={{ flex: 1 }}>
       <Stack.Screen
         options={{
-          title: "Victory Native XL Demo",
+          title: "Victory Native",
           headerLargeTitle: true,
           headerTintColor: "#f04d21",
         }}
@@ -37,9 +37,9 @@ export default function LandingPage() {
 }
 
 const EXAMPLES: { title: string; path: string }[] = [
+  { title: "Line Chart", path: "/line-chart" },
   { title: "New Line", path: "/new-line" },
   { title: "Time Scale", path: "/time-scale" },
-  { title: "Simple Line", path: "/simple-line" },
   { title: "Stock Price", path: "/stock-price" },
   { title: "Animated Path", path: "/animated-path" },
 ];

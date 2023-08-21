@@ -1,7 +1,12 @@
 import * as React from "react";
 import { type ScaleLinear } from "d3-scale";
 import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
-import type { InputDatum } from "../types";
+import type {
+  AxisLabelPosition,
+  InputDatum,
+  XAxisSide,
+  YAxisSide,
+} from "../types";
 import type { ValueOf } from "../types";
 
 export type GridProps<
@@ -13,11 +18,11 @@ export type GridProps<
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
   xLabelOffset: number;
-  xAxisPosition: "top" | "bottom";
-  xLabelPosition: "inset" | "outset";
+  xAxisPosition: XAxisSide;
+  xLabelPosition: AxisLabelPosition;
   yLabelOffset: number;
-  yAxisPosition: "left" | "right";
-  yLabelPosition: "inset" | "outset";
+  yAxisPosition: YAxisSide;
+  yLabelPosition: AxisLabelPosition;
   xTicks: number;
   yTicks: number;
   lineColor: string;
