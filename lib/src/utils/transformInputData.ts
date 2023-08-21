@@ -34,7 +34,7 @@ export const transformInputData = <
   outputWindow,
   xScaleType,
   yScaleType,
-  gridOptions = Grid.defaultProps,
+  gridOptions,
 }: {
   data: T[];
   xKey: XK;
@@ -47,6 +47,7 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
+  // Take into account Grid component defaultProps
   const _gridOptions = Object.assign(
     {},
     Grid.defaultProps,
