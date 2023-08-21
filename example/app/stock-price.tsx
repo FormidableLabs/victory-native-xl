@@ -8,6 +8,7 @@ import {
   LinearGradient,
   Path,
   Skia,
+  type SkPath,
   Text as SkiaText,
   useFont,
   vec,
@@ -96,13 +97,7 @@ export default function StockPriceScreen() {
             )
           }
         >
-          {({
-            paths,
-            isPressActive,
-            activePressX,
-            activePressY,
-            chartBounds,
-          }) => (
+          {({ paths, isPressActive, activePressX, chartBounds }) => (
             <>
               <StockArea
                 // TODO: Remove optional chain, accessing this shouldn't crash stuff
@@ -134,7 +129,7 @@ const StockArea = ({
   bottom,
   top,
 }: {
-  path: string;
+  path: SkPath;
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {

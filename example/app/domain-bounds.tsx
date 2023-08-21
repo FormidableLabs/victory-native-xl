@@ -22,7 +22,15 @@ export default function DomainBoundsScreen() {
           yKeys={["high"]}
           curve={{ high: "natural" }}
           padding={{ left: 10 }}
-          domain={{ y: [0] }}
+          domain={{
+            // Add 3-weeks to the ends of the domain
+            x: [
+              DATA.at(0)!.date - 3 * 7 * 24 * 60 * 60 * 1000,
+              DATA.at(-1)!.date + 3 * 7 * 24 * 60 * 60 * 1000,
+            ],
+            // Make y domain start at 0
+            y: [0],
+          }}
           gridOptions={{
             font,
             xTicks: 5,

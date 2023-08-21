@@ -122,8 +122,8 @@ export const transformInputData = <
     String(yScale.domain().at(0));
 
   // Generate our x-scale
-  const ixMin = ix.at(0),
-    ixMax = ix.at(-1);
+  const ixMin = domain?.x?.[0] ?? ix.at(0),
+    ixMax = domain?.x?.[1] ?? ix.at(-1);
   const topYLabelWidth = gridOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange = (() => {
