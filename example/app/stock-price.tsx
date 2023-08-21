@@ -80,14 +80,10 @@ export default function StockPriceScreen() {
           onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
             font,
-            xTicks: 5,
-            yTicks: 5,
-            xLabelOffset: 12,
-            xAxisPosition: "bottom",
-            xLabelPosition: "outset",
-            yLabelOffset: 8,
-            yAxisPosition: "left",
-            yLabelPosition: "inset",
+            tickCount: 5,
+            labelOffset: { x: 12, y: 8 },
+            labelPosition: { x: "outset", y: "inset" },
+            axisSide: { x: "bottom", y: "left" },
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
           renderOutside={({

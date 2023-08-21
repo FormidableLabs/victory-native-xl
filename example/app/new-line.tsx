@@ -30,8 +30,6 @@ export default function NewLinePage() {
           gridOptions={{
             font,
             formatYLabel: (n) => n.toFixed(0),
-            yLabelOffset: 4,
-            xLabelOffset: 4,
           }}
           data={DATA}
           xKey="month"

@@ -57,14 +57,6 @@ export default function LineChartPage() {
             yKeys={["sales"]}
             gridOptions={{
               font,
-              yLabelOffset,
-              xLabelOffset,
-              yTicks: yTickCount,
-              xTicks: xTickCount,
-              yAxisPosition: yAxisSide,
-              xAxisPosition: xAxisSide,
-              xLabelPosition: xAxisLabelPosition,
-              yLabelPosition: yAxisLabelPosition,
               lineColor: colors.line,
               labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             }}
