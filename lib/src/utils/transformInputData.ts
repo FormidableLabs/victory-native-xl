@@ -91,7 +91,7 @@ export const transformInputData = <
         ? _gridOptions.labelPosition
         : _gridOptions?.labelPosition?.x;
     const xAxisSide = _gridOptions?.axisSide?.x;
-    const xLabelOffset =
+    const yLabelOffset =
       (typeof _gridOptions?.labelOffset === "number"
         ? _gridOptions.labelOffset
         : _gridOptions?.labelOffset?.y) ?? 0;
@@ -99,13 +99,13 @@ export const transformInputData = <
     if (xAxisSide === "bottom" && yLabelPosition === "outset") {
       return [
         outputWindow.yMin,
-        outputWindow.yMax - fontHeight - xLabelOffset * 2,
+        outputWindow.yMax - fontHeight - yLabelOffset * 2,
       ];
     }
     // Top outset
     if (xAxisSide === "top" && yLabelPosition === "outset") {
       return [
-        outputWindow.yMin + fontHeight + xLabelOffset * 2,
+        outputWindow.yMin + fontHeight + yLabelOffset * 2,
         outputWindow.yMax,
       ];
     }
