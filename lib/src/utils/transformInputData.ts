@@ -1,4 +1,3 @@
-import type { SkFont } from "@shopify/react-native-skia";
 import type {
   InputDatum,
   PrimitiveViewWindow,
