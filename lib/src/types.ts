@@ -64,4 +64,5 @@ export type LineChartRenderArg<
     [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
   };
   chartBounds: ChartBounds;
+  chartSize: { width: number; height: number };
 };

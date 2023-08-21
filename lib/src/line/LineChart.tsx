@@ -281,7 +281,7 @@ export function LineChart<
     })
     .minDistance(0);
 
-  const renderArg = {
+  const renderArg: LineChartRenderArg<T, XK, YK> = {
     paths,
     isPressActive,
     activePressX,
@@ -289,6 +289,7 @@ export function LineChart<
     xScale,
     yScale,
     chartBounds,
+    chartSize: size,
   };
   const clipRect = rect(
     chartBounds.left,

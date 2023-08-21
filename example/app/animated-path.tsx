@@ -3,7 +3,7 @@ import data from "../data/stockprice/tesla_stock.json";
 import { Button, View } from "react-native";
 import { LineChart, useAnimatedPath } from "victory-native-skia";
 import type { SkPath } from "@shopify/react-native-skia";
-import { LinearGradient, Path, vec } from "@shopify/react-native-skia";
+import { LinearGradient, Path, vec, Fill } from "@shopify/react-native-skia";
 
 const DATA = data
   .slice(200, 300)
@@ -13,15 +13,22 @@ export default function AnimatedPathScreen() {
   const [data, setData] = React.useState(DATA);
   return (
     <View>
-      <View style={{ height: 400, backgroundColor: "black" }}>
+      <View style={{ height: 400 }}>
         <LineChart
           data={data}
           xKey="date"
           yKeys={["high"]}
           curve={{ high: "catmullRom" }}
         >
-          {({ paths, chartBounds }) => (
+          {({ paths, chartBounds, chartSize }) => (
             <>
+              <Fill>
+                <LinearGradient
+                  colors={["gray", "black"]}
+                  start={vec(0, 0)}
+                  end={vec(chartSize.width, chartSize.height)}
+                />
+              </Fill>
               <AreaPath
                 path={paths["high.area"]}
                 bottom={chartBounds.bottom}
@@ -53,7 +60,7 @@ const AreaPath = ({
   top: number;
   bottom: number;
 }) => {
-  const animPath = useAnimatedPath(path);
+  const animPath = useAnimatedPath(path, { type: "spring" });
 
   return (
     <Path path={animPath} style="fill">
@@ -67,7 +74,7 @@ const AreaPath = ({
 };
 
 const LinePath = ({ path }: { path: SkPath }) => {
-  const animPath = useAnimatedPath(path);
+  const animPath = useAnimatedPath(path, { type: "spring" });
 
   return <Path path={animPath} style="stroke" color="green" strokeWidth={3} />;
 };
