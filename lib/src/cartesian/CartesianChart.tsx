@@ -36,9 +36,9 @@ type CartesianChartProps<
   curve: CurveType | { [K in YK]: CurveType };
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
-  // TODO: Axes
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
+  domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   onPressActiveStart?: () => void;
   onPressActiveEnd?: () => void;
   onPressActiveChange?: (isPressActive: boolean) => void;
@@ -81,6 +81,7 @@ export function CartesianChart<
   children,
   renderOutside,
   gridOptions,
+  domain,
 }: CartesianChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -113,8 +114,6 @@ export function CartesianChart<
       xScaleType,
       yScaleType,
       gridOptions,
-      // TODO: These are likely going to need to change.
-      // TODO: domainPadding needs to get applied at the scale level i think?
       outputWindow: {
         xMin:
           valueFromSidedNumber(padding, "left") +
@@ -131,6 +130,7 @@ export function CartesianChart<
           (valueFromSidedNumber(padding, "bottom") +
             valueFromSidedNumber(domainPadding, "bottom")),
       },
+      domain,
     });
     tData.value = _tData;
 
@@ -178,7 +178,7 @@ export function CartesianChart<
     };
 
     return { tData, paths, xScale, yScale, chartBounds };
-  }, [data, xKey, yKeys, size, curve]);
+  }, [data, xKey, yKeys, size, curve, domain]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
   const changePressActive = React.useCallback(
@@ -286,7 +286,7 @@ export function CartesianChart<
     xScale,
     yScale,
     chartBounds,
-    chartSize: size,
+    canvasSize: size,
   };
   const clipRect = rect(
     chartBounds.left,

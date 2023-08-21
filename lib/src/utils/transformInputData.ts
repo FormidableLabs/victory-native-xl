@@ -35,6 +35,7 @@ export const transformInputData = <
   xScaleType,
   yScaleType,
   gridOptions,
+  domain,
 }: {
   data: T[];
   xKey: XK;
@@ -43,6 +44,7 @@ export const transformInputData = <
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
   gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
+  domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
 }): TransformedData<T, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -57,12 +59,17 @@ export const transformInputData = <
   const ix = data.map((datum) => datum[xKey]);
 
   // Then we find min/max of y values across all yKeys, use that for y range.
-  const yMin = Math.min(
-    ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
-  );
-  const yMax = Math.max(
-    ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
-  );
+  // (if user provided a domain, use that instead)
+  const yMin =
+    domain?.y?.[0] ??
+    Math.min(
+      ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
+    );
+  const yMax =
+    domain?.y?.[1] ??
+    Math.max(
+      ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
+    );
 
   // Set up our y-output data structure
   const y = yKeys.reduce(

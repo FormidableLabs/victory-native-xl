@@ -20,13 +20,13 @@ export default function AnimatedPathScreen() {
           yKeys={["high"]}
           curve={{ high: "catmullRom" }}
         >
-          {({ paths, chartBounds, chartSize }) => (
+          {({ paths, chartBounds, canvasSize }) => (
             <>
               <Fill>
                 <LinearGradient
                   colors={["gray", "black"]}
                   start={vec(0, 0)}
-                  end={vec(chartSize.width, chartSize.height)}
+                  end={vec(canvasSize.width, canvasSize.height)}
                 />
               </Fill>
               <AreaPath
