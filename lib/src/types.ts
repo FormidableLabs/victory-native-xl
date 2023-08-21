@@ -47,7 +47,7 @@ export type ChartBounds = {
   top: number;
   bottom: number;
 };
-export type LineChartRenderArg<
+export type CartesianChartRenderArg<
   T extends InputDatum,
   XK extends keyof T,
   YK extends keyof T,

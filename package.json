@@ -1,5 +1,5 @@
 {
-  "name": "victory-native-skia-monorepo",
+  "name": "victory-native-xl-monorepo",
   "version": "0.0.1",
   "private": true,
   "workspaces": [
@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx .",
     "typecheck": "tsc --noEmit",
-    "dev:lib": "yarn workspace victory-native-skia dev",
+    "dev:lib": "yarn workspace victory-native dev",
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
     "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\""

@@ -1,6 +1,6 @@
 import React from "react";
 import data from "../data/weather/austin_weather.json";
-import { Grid, LineChart } from "victory-native-skia";
+import { CartesianChart } from "victory-native";
 import {
   Circle,
   LinearGradient,
@@ -22,7 +22,7 @@ export default function TimeScale() {
   return (
     <View>
       <View style={{ height: 400 }}>
-        <LineChart
+        <CartesianChart
           data={DATA}
           xKey="date"
           yKeys={["high", "low"]}
@@ -31,7 +31,8 @@ export default function TimeScale() {
           gridOptions={{
             font,
             formatXLabel: (s) => format(s, "MMM-dd"),
-            labelOffset: 6,
+            xLabelOffset: 6,
+            yLabelOffset: 6,
             xTicks: 5,
           }}
         >
@@ -73,7 +74,7 @@ export default function TimeScale() {
               )}
             </>
           )}
-        </LineChart>
+        </CartesianChart>
       </View>
     </View>
   );

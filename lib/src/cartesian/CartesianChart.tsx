@@ -11,7 +11,7 @@ import {
 } from "react-native-reanimated";
 import type {
   InputDatum,
-  LineChartRenderArg,
+  CartesianChartRenderArg,
   ScaleType,
   SidedNumber,
   TransformedData,
@@ -25,7 +25,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 
-type LineChartProps<
+type CartesianChartProps<
   T extends InputDatum,
   XK extends keyof T,
   YK extends keyof T,
@@ -53,13 +53,13 @@ type LineChartProps<
   activePressY?: {
     [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
   };
-  children: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
-  renderOutside: (args: LineChartRenderArg<T, XK, YK>) => React.ReactNode;
+  children: (args: CartesianChartRenderArg<T, XK, YK>) => React.ReactNode;
+  renderOutside: (args: CartesianChartRenderArg<T, XK, YK>) => React.ReactNode;
   /** Grid props */
   gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
 };
 
-export function LineChart<
+export function CartesianChart<
   T extends InputDatum,
   XK extends keyof T,
   YK extends keyof T,
@@ -81,7 +81,7 @@ export function LineChart<
   children,
   renderOutside,
   gridOptions,
-}: LineChartProps<T, XK, YK>) {
+}: CartesianChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
@@ -165,7 +165,7 @@ export function LineChart<
             return path;
           },
         },
-      ) as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["paths"];
+      ) as Parameters<CartesianChartProps<T, XK, YK>["children"]>[0]["paths"];
     };
 
     const paths = makePaths();
@@ -208,7 +208,7 @@ export function LineChart<
         return acc;
       },
       {} as Parameters<
-        LineChartProps<T, XK, YK>["children"]
+        CartesianChartProps<T, XK, YK>["children"]
       >[0]["activePressY"],
     ),
   );
@@ -224,7 +224,9 @@ export function LineChart<
       };
       return acc;
     },
-    {} as Parameters<LineChartProps<T, XK, YK>["children"]>[0]["activePressY"],
+    {} as Parameters<
+      CartesianChartProps<T, XK, YK>["children"]
+    >[0]["activePressY"],
   );
 
   /**
@@ -276,7 +278,7 @@ export function LineChart<
     })
     .minDistance(0);
 
-  const renderArg: LineChartRenderArg<T, XK, YK> = {
+  const renderArg: CartesianChartRenderArg<T, XK, YK> = {
     paths,
     isPressActive,
     activePressX,
@@ -309,7 +311,7 @@ export function LineChart<
   );
 }
 
-LineChart.defaultProps = {
+CartesianChart.defaultProps = {
   curve: "linear",
   chartType: "line",
   xScaleType: "linear",

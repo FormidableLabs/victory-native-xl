@@ -1,11 +1,11 @@
 export {
   type InputDatum,
-  type LineChartRenderArg,
+  type CartesianChartRenderArg,
   type ChartBounds,
 } from "./types";
-export type { CurveType } from "./line/makeCartesianPath";
+export type { CurveType } from "./cartesian/makeCartesianPath";
 
-export { LineChart } from "./line/LineChart";
+export { CartesianChart } from "./cartesian/CartesianChart";
 
 /**
  * Utility hooks

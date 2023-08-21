@@ -1,6 +1,6 @@
 import React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { type ChartBounds, LineChart } from "victory-native-skia";
+import { type ChartBounds, CartesianChart } from "victory-native";
 import {
   Circle,
   Group,
@@ -55,7 +55,7 @@ export default function StockPriceScreen() {
         <AnimatedText text={activeHighDisplay} style={{ fontSize: 24 }} />
       </View>
       <View style={{ height: 300 }}>
-        <LineChart
+        <CartesianChart
           data={DATA}
           xKey="date"
           yKeys={["high"]}
@@ -119,7 +119,7 @@ export default function StockPriceScreen() {
               />
             </>
           )}
-        </LineChart>
+        </CartesianChart>
       </View>
     </View>
   );

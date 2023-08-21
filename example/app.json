@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "vn-skia",
-    "slug": "vn-skia",
+    "name": "victory-native-xl-demo",
+    "slug": "victory-native-xl-demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

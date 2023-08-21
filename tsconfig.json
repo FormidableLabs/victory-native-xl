@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "victory-native-skia": ["./lib/src/index"]
+      "victory-native": ["./lib/src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

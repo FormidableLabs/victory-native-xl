@@ -1,7 +1,7 @@
 import * as React from "react";
 import data from "../data/stockprice/tesla_stock.json";
 import { Button, View } from "react-native";
-import { LineChart, useAnimatedPath } from "victory-native-skia";
+import { CartesianChart, useAnimatedPath } from "victory-native";
 import type { SkPath } from "@shopify/react-native-skia";
 import { LinearGradient, Path, vec, Fill } from "@shopify/react-native-skia";
 
@@ -14,7 +14,7 @@ export default function AnimatedPathScreen() {
   return (
     <View>
       <View style={{ height: 400 }}>
-        <LineChart
+        <CartesianChart
           data={data}
           xKey="date"
           yKeys={["high"]}
@@ -37,7 +37,7 @@ export default function AnimatedPathScreen() {
               <LinePath path={paths["high.line"]} />
             </>
           )}
-        </LineChart>
+        </CartesianChart>
       </View>
       <View>
         <Button

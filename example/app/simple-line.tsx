@@ -1,7 +1,7 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { ScrollView, Text, View } from "react-native";
-import { LineChart } from "victory-native-skia";
+import { CartesianChart } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { InputSlider } from "example/components/InputSlider";
@@ -10,7 +10,8 @@ import SegmentedControl from "@react-native-segmented-control/segmented-control"
 export default function SimpleLinePage() {
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   const [strokeWidth, setStrokeWidth] = React.useState(1);
-  const [labelOffset, setLabelOffset] = React.useState(4);
+  const [xLabelOffset, setXLabelOffset] = React.useState(4);
+  const [yLabelOffset, setYLabelOffset] = React.useState(4);
   const [chartPadding, setChartPadding] = React.useState(4);
   const [fontSize, setFontSize] = React.useState(12);
   const [yTickCount, setYTickCount] = React.useState(10);
@@ -22,13 +23,14 @@ export default function SimpleLinePage() {
     <>
       <View style={{ flex: 1 }}>
         <View style={{ flex: 0.667 }}>
-          <LineChart
+          <CartesianChart
             xKey="day"
             padding={chartPadding}
             yKeys={["sales"]}
             gridOptions={{
               font,
-              labelOffset,
+              yLabelOffset,
+              xLabelOffset,
               yTicks: yTickCount,
               xTicks: xTickCount,
               yAxisPosition: axisSide,
@@ -52,7 +54,7 @@ export default function SimpleLinePage() {
                 />
               );
             }}
-          </LineChart>
+          </CartesianChart>
         </View>
         <BottomSheet ref={bottomSheetRef} index={1} snapPoints={["5%", "30%"]}>
           <ScrollView
@@ -75,12 +77,20 @@ export default function SimpleLinePage() {
               onChange={setStrokeWidth}
             />
             <InputSlider
-              label="Label Offset"
+              label="X-axis Label Offset"
               maxValue={12}
               minValue={0}
               step={1}
-              value={labelOffset}
-              onChange={setLabelOffset}
+              value={xLabelOffset}
+              onChange={setXLabelOffset}
+            />
+            <InputSlider
+              label="Y-axis Label Offset"
+              maxValue={12}
+              minValue={0}
+              step={1}
+              value={yLabelOffset}
+              onChange={setYLabelOffset}
             />
             <InputSlider
               label="Chart Padding"

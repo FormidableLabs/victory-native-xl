@@ -8,7 +8,7 @@ export default function LandingPage() {
     <View style={{ flex: 1 }}>
       <Stack.Screen
         options={{
-          title: "VN Skia",
+          title: "Victory Native XL Demo",
           headerLargeTitle: true,
           headerTintColor: "#f04d21",
         }}

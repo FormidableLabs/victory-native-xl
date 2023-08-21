@@ -1,5 +1,5 @@
 import React from "react";
-import { LineChart } from "victory-native-skia";
+import { CartesianChart } from "victory-native";
 import {
   Circle,
   LinearGradient,
@@ -26,11 +26,12 @@ export default function NewLinePage() {
         {`${activePoint[0]}, ${activePoint[1]}`}
       </Text>
       <View style={{ height: 400 }}>
-        <LineChart
+        <CartesianChart
           gridOptions={{
             font,
             formatYLabel: (n) => n.toFixed(0),
-            labelOffset: 4,
+            yLabelOffset: 4,
+            xLabelOffset: 4,
           }}
           data={DATA}
           xKey="month"
@@ -84,7 +85,7 @@ export default function NewLinePage() {
               )}
             </>
           )}
-        </LineChart>
+        </CartesianChart>
       </View>
     </View>
   );
