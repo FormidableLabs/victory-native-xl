@@ -3,9 +3,11 @@ export {
   type LineChartRenderArg,
   type ChartBounds,
 } from "./types";
+export type { CurveType } from "./line/makeCartesianPath";
+
+export { LineChart } from "./line/LineChart";
 
 /**
- * V0.0.2 exports.
+ * Utility hooks
  */
-export { LineChart } from "./line/LineChart";
-export type { CurveType } from "./line/makeCartesianPath";
+export { useAnimatedPath } from "./hooks/useAnimatedPath";

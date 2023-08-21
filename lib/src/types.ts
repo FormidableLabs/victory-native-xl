@@ -1,5 +1,6 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
+import type { SkPath } from "@shopify/react-native-skia";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -51,7 +52,7 @@ export type LineChartRenderArg<
   XK extends keyof T,
   YK extends keyof T,
 > = {
-  paths: { [K in YK as `${K & string}.${"line" | "area"}`]: string };
+  paths: { [K in YK as `${K & string}.${"line" | "area"}`]: SkPath };
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   isPressActive: boolean;
@@ -63,4 +64,5 @@ export type LineChartRenderArg<
     [K in YK]: { value: SharedValue<T[K]>; position: SharedValue<number> };
   };
   chartBounds: ChartBounds;
+  chartSize: { width: number; height: number };
 };

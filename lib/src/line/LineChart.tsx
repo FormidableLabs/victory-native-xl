@@ -1,13 +1,7 @@
 import * as React from "react";
 import { transformInputData } from "../utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import {
-  Canvas,
-  Group,
-  rect,
-  type SkFont,
-  type SkPath,
-} from "@shopify/react-native-skia";
+import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
 import { type CurveType, makeCartesianPath } from "./makeCartesianPath";
 import {
   makeMutable,
@@ -89,8 +83,11 @@ export function LineChart<
   gridOptions,
 }: LineChartProps<T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
+  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
+    React.useState(false);
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      setHasMeasuredLayoutSize(true);
       setSize(layout);
     },
     [],
@@ -279,7 +276,7 @@ export function LineChart<
     })
     .minDistance(0);
 
-  const renderArg = {
+  const renderArg: LineChartRenderArg<T, XK, YK> = {
     paths,
     isPressActive,
     activePressX,
@@ -287,6 +284,7 @@ export function LineChart<
     xScale,
     yScale,
     chartBounds,
+    chartSize: size,
   };
   const clipRect = rect(
     chartBounds.left,
@@ -298,8 +296,10 @@ export function LineChart<
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={pan}>
         <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-          {renderOutside?.(renderArg)}
-          <Group clip={clipRect}>{children(renderArg)}</Group>
+          {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+          <Group clip={clipRect}>
+            {hasMeasuredLayoutSize && children(renderArg)}
+          </Group>
           {gridOptions && (
             <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
           )}
