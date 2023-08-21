@@ -40,7 +40,6 @@ export default function LineChartPage() {
     ...optionsInitialState,
     colors: {
       stroke: "#000000",
-      axis: "#000000",
       line: "#878787",
       xLabel: "#000000",
       yLabel: "#000000",
@@ -66,7 +65,6 @@ export default function LineChartPage() {
               xAxisPosition: xAxisSide,
               xLabelPosition: xAxisLabelPosition,
               yLabelPosition: yAxisLabelPosition,
-              axisColor: colors.axis,
               lineColor: colors.line,
               labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             }}
@@ -97,13 +95,6 @@ export default function LineChartPage() {
               justifyContent: "flex-start",
             }}
           >
-            <InputColor
-              label="Axis Color"
-              color={colors.axis}
-              onChange={(val) =>
-                dispatch({ type: "SET_COLORS", payload: { axis: val } })
-              }
-            />
             <InputColor
               label="Line Color"
               color={colors.line}
