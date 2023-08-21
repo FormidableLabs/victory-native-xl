@@ -13,6 +13,8 @@ export type GridProps<
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
   xLabelOffset: number;
+  xAxisPosition: "top" | "bottom";
+  xLabelPosition: "inset" | "outset";
   yLabelOffset: number;
   yAxisPosition: "left" | "right";
   yLabelPosition: "inset" | "outset";
@@ -34,6 +36,8 @@ export const Grid = <
   xTicks,
   yTicks,
   xLabelOffset,
+  xAxisPosition,
+  xLabelPosition,
   yLabelOffset,
   lineColor,
   font,
@@ -60,12 +64,31 @@ export const Grid = <
 
   return (
     <>
+      {/* x-ticks */}
       {xScale.ticks(xTicks).map((tick) => {
         const contentX = formatXLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
         const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
         const canFitLabelContent =
           yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
+
+        const labelY = (() => {
+          // bottom, outset
+          if (xAxisPosition === "bottom" && xLabelPosition === "outset") {
+            return yScale(y2) + xLabelOffset + fontSize;
+          }
+          // bottom, inset
+          if (xAxisPosition === "bottom" && xLabelPosition === "inset") {
+            return yScale(y2) - xLabelOffset;
+          }
+          // top, outset
+          if (xAxisPosition === "top" && xLabelPosition === "outset") {
+            return yScale(y1) - xLabelOffset;
+          }
+          // top, inset
+          return yScale(y1) + fontSize + xLabelOffset;
+        })();
+
         return (
           <React.Fragment key={`x-tick-${tick}`}>
             <Line
@@ -74,12 +97,7 @@ export const Grid = <
               color={lineColor}
             />
             {font && labelWidth && canFitLabelContent ? (
-              <Text
-                text={contentX}
-                font={font}
-                y={yScale(y2) + xLabelOffset + fontSize}
-                x={labelX}
-              />
+              <Text text={contentX} font={font} y={labelY} x={labelX} />
             ) : null}
           </React.Fragment>
         );
@@ -136,6 +154,8 @@ export const Grid = <
 
 Grid.defaultProps = {
   xLabelOffset: 0,
+  xAxisPosition: "bottom",
+  xLabelPosition: "outset",
   yLabelOffset: 0,
   xTicks: 10,
   yTicks: 10,

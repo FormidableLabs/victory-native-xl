@@ -72,15 +72,31 @@ export const transformInputData = <
     {} as TransformedData<T, XK, YK>["y"],
   );
 
-  // If grid options present, we need to compensate for the grid labels
-  const yMaxGridCompensation =
-    -(gridOptions?.font?.getSize?.() ?? 0) -
-    (gridOptions?.xLabelOffset ?? 0) * 2;
-
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
-  const yScaleDomain = [yMax, yMin],
-    yScaleRange = [outputWindow.yMin, outputWindow.yMax + yMaxGridCompensation];
+  const yScaleDomain = [yMax, yMin];
+  const fontHeight = gridOptions?.font?.getSize?.() ?? 0;
+  // Our yScaleRange is impacted by our grid options
+  const yScaleRange = (() => {
+    const { xAxisPosition, xLabelPosition, xLabelOffset = 0 } = _gridOptions;
+    // bottom, outset
+    if (xAxisPosition === "bottom" && xLabelPosition === "outset") {
+      return [
+        outputWindow.yMin,
+        outputWindow.yMax - fontHeight - xLabelOffset * 2,
+      ];
+    }
+    // Top outset
+    if (xAxisPosition === "top" && xLabelPosition === "outset") {
+      return [
+        outputWindow.yMin + fontHeight + xLabelOffset * 2,
+        outputWindow.yMax,
+      ];
+    }
+    // Inset labels don't need added offsets
+    return [outputWindow.yMin, outputWindow.yMax];
+  })();
+
   const yScale =
     yScaleType === "linear"
       ? scaleLinear().domain(yScaleDomain).range(yScaleRange).nice()

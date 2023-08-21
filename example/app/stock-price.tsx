@@ -70,9 +70,11 @@ export default function StockPriceScreen() {
             xTicks: 5,
             yTicks: 5,
             xLabelOffset: 12,
+            xAxisPosition: "bottom",
+            xLabelPosition: "inset",
             yLabelOffset: 8,
             yAxisPosition: "left",
-            yLabelPosition: "outset",
+            yLabelPosition: "inset",
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
           renderOutside={({
