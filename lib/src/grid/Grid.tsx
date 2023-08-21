@@ -86,7 +86,7 @@ export const Grid = <
       ),
     );
     return path;
-  }, [x1, x2, y1, y2]);
+  }, [x1, x2, y1, y2, xScale, yScale]);
 
   return (
     <>
