@@ -12,8 +12,12 @@ export type GridProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  labelOffset: number;
+  xLabelOffset: number;
+  xAxisPosition: "top" | "bottom";
+  xLabelPosition: "inset" | "outset";
+  yLabelOffset: number;
   yAxisPosition: "left" | "right";
+  yLabelPosition: "inset" | "outset";
   xTicks: number;
   yTicks: number;
   lineColor: string;
@@ -31,11 +35,15 @@ export const Grid = <
   yScale,
   xTicks,
   yTicks,
-  labelOffset,
+  xLabelOffset,
+  xAxisPosition,
+  xLabelPosition,
+  yLabelOffset,
   lineColor,
   font,
   axisColor,
   yAxisPosition,
+  yLabelPosition,
   formatXLabel,
   formatYLabel,
 }: GridProps<T, XK, YK>) => {
@@ -56,12 +64,31 @@ export const Grid = <
 
   return (
     <>
+      {/* x-ticks */}
       {xScale.ticks(xTicks).map((tick) => {
         const contentX = formatXLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
         const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
         const canFitLabelContent =
           yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
+
+        const labelY = (() => {
+          // bottom, outset
+          if (xAxisPosition === "bottom" && xLabelPosition === "outset") {
+            return yScale(y2) + xLabelOffset + fontSize;
+          }
+          // bottom, inset
+          if (xAxisPosition === "bottom" && xLabelPosition === "inset") {
+            return yScale(y2) - xLabelOffset;
+          }
+          // top, outset
+          if (xAxisPosition === "top" && xLabelPosition === "outset") {
+            return yScale(y1) - xLabelOffset;
+          }
+          // top, inset
+          return yScale(y1) + fontSize + xLabelOffset;
+        })();
+
         return (
           <React.Fragment key={`x-tick-${tick}`}>
             <Line
@@ -70,24 +97,35 @@ export const Grid = <
               color={lineColor}
             />
             {font && labelWidth && canFitLabelContent ? (
-              <Text
-                text={contentX}
-                font={font}
-                y={yScale(y2) + labelOffset + fontSize}
-                x={labelX}
-              />
+              <Text text={contentX} font={font} y={labelY} x={labelX} />
             ) : null}
           </React.Fragment>
         );
       })}
+      {/* y Ticks labels */}
       {yScale.ticks(yTicks).map((tick) => {
         const contentY = formatYLabel(tick as never);
         const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
         const labelY = yScale(tick) + fontSize / 3;
-        const labelX =
-          yAxisPosition === "left"
-            ? xScale(x1) - (labelWidth + labelOffset)
-            : xScale(x2) + labelOffset;
+        const labelX = (() => {
+          // left, outset
+          if (yAxisPosition === "left" && yLabelPosition === "outset") {
+            return xScale(x1) - (labelWidth + yLabelOffset);
+          }
+          // left, inset
+          if (yAxisPosition === "left" && yLabelPosition === "inset") {
+            return xScale(x1) + yLabelOffset;
+          }
+          // right, outset
+          if (yAxisPosition === "right" && yLabelPosition === "outset") {
+            return xScale(x2) + yLabelOffset;
+          }
+          // right, inset
+          return xScale(x2) - (labelWidth + yLabelOffset);
+        })();
+
+        const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
+
         return (
           <React.Fragment key={`y-tick-${tick}`}>
             <Line
@@ -96,7 +134,7 @@ export const Grid = <
               color={lineColor}
             />
             {font
-              ? labelY > fontSize && (
+              ? canFitLabelContent && (
                   <Text text={contentY} font={font} y={labelY} x={labelX} />
                 )
               : null}
@@ -115,10 +153,14 @@ export const Grid = <
 };
 
 Grid.defaultProps = {
-  labelOffset: 0,
+  xLabelOffset: 0,
+  xAxisPosition: "bottom",
+  xLabelPosition: "outset",
+  yLabelOffset: 0,
   xTicks: 10,
   yTicks: 10,
   yAxisPosition: "left",
+  yLabelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   lineColor: "hsla(0, 0%, 0%, 0.25)",
