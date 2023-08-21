@@ -40,7 +40,7 @@ export default function LineChartPage() {
     ...optionsInitialState,
     colors: {
       stroke: "#000000",
-      axis: "#00000",
+      axis: "#000000",
       line: "#878787",
       xLabel: "#000000",
       yLabel: "#000000",
