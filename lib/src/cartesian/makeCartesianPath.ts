@@ -10,8 +10,8 @@ import {
   line,
 } from "d3-shape";
 import { stitch } from "../utils/stitch";
-import { Skia, SkPath } from "@shopify/react-native-skia";
-import type { PathType } from "../types";
+import { Skia } from "@shopify/react-native-skia";
+import type { PathType, ScatterOptions } from "../types";
 
 /**
  * Exposed curves from d3-shape.
@@ -40,10 +40,16 @@ export const makeCartesianPath = (
   ox: number[],
   oy: number[],
   {
+    options,
     curveType,
     pathType,
     y0,
-  }: { curveType: CurveType; pathType: PathType; y0: number },
+  }: {
+    options: Record<string, unknown>;
+    curveType: CurveType;
+    pathType: PathType;
+    y0: number;
+  },
 ) => {
   let svgPath: string | null = null;
 
@@ -56,7 +62,7 @@ export const makeCartesianPath = (
     for (let i = 0; i < Math.min(ox.length, oy.length); i++) {
       const x = ox.at(i);
       const y = oy.at(i);
-      y && x && path.addCircle(x, y, 10);
+      y && x && path.addCircle(x, y, (<ScatterOptions>options).radius);
     }
     svgPath = path.toSVGString();
   }

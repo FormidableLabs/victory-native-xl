@@ -25,6 +25,10 @@ export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
 
+export type ScatterOptions = {
+  radius: number;
+};
+
 export type ValueOf<T> = T[keyof T];
 export type TransformedData<
   T extends InputDatum,
@@ -59,7 +63,11 @@ export type CartesianChartRenderArg<
   XK extends keyof T,
   YK extends keyof T,
 > = {
-  paths: { [K in YK as `${K & string}.${PathType}`]: SkPath };
+  paths: {
+    [K in YK as `${K & string}.${Exclude<PathType, "scatter">}`]: SkPath;
+  } & {
+    [K in YK as `${K & string}.scatter`]: (options: ScatterOptions) => SkPath;
+  };
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   isPressActive: boolean;

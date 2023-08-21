@@ -80,7 +80,7 @@ export default function LineChartPage() {
                     strokeWidth={strokeWidth}
                   />
                   <Path
-                    path={paths["sales.scatter"]}
+                    path={paths["sales.scatter"]({ radius: 7 })}
                     style="fill"
                     color="blue"
                     strokeWidth={4}
@@ -88,7 +88,7 @@ export default function LineChartPage() {
                     <LinearGradient
                       start={vec(0, 0)}
                       end={vec(0, 500)}
-                      colors={["green", "white"]}
+                      colors={["yellow", "red"]}
                     />
                   </Path>
                 </>
