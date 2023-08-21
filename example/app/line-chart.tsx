@@ -59,6 +59,13 @@ export default function LineChartPage() {
               font,
               lineColor: colors.line,
               labelColor: { x: colors.xLabel!, y: colors.yLabel! },
+              labelOffset: { x: xLabelOffset, y: yLabelOffset },
+              tickCount: { x: xTickCount, y: yTickCount },
+              axisSide: { x: xAxisSide, y: yAxisSide },
+              labelPosition: {
+                x: xAxisLabelPosition,
+                y: yAxisLabelPosition,
+              },
             }}
             data={DATA}
           >
