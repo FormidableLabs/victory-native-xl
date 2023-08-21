@@ -1,6 +1,6 @@
 import Slider from "@react-native-community/slider";
 import * as React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Platform } from "react-native";
 
 type Props = {
   label: string;
@@ -29,6 +29,7 @@ export const InputSlider = ({
       }}
     >
       <Slider
+        onResponderGrant={() => Platform.select({ android: true, ios: false })}
         style={{ width: "90%", height: 40 }}
         minimumValue={minValue}
         maximumValue={maxValue}

@@ -13,6 +13,7 @@ type State = {
   yAxisSide: YAxisSide;
   xAxisLabelPosition: AxisLabelPosition;
   yAxisLabelPosition: AxisLabelPosition;
+  colors: Record<string, string>;
 };
 
 type Action =
@@ -26,7 +27,8 @@ type Action =
   | { type: "SET_X_AXIS_SIDE"; payload: XAxisSide }
   | { type: "SET_Y_AXIS_SIDE"; payload: YAxisSide }
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
-  | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition };
+  | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
+  | { type: "SET_COLORS"; payload: Record<string, string> };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -52,6 +54,9 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, xAxisLabelPosition: action.payload };
     case "SET_Y_AXIS_LABEL_POSITION":
       return { ...state, yAxisLabelPosition: action.payload };
+    case "SET_COLORS":
+      return { ...state, colors: { ...state.colors, ...action.payload } };
+
     default:
       throw new Error(`Unhandled action type`);
   }
@@ -69,4 +74,5 @@ export const optionsInitialState: State = {
   yAxisSide: "left",
   xAxisLabelPosition: "outset",
   yAxisLabelPosition: "outset",
+  colors: {},
 };

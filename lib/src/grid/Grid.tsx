@@ -1,6 +1,13 @@
 import * as React from "react";
 import { type ScaleLinear } from "d3-scale";
-import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
+import {
+  Line,
+  Text,
+  vec,
+  type SkFont,
+  Path,
+  Skia,
+} from "@shopify/react-native-skia";
 import type {
   AxisLabelPosition,
   InputDatum,
@@ -8,6 +15,7 @@ import type {
   YAxisSide,
 } from "../types";
 import type { ValueOf } from "../types";
+import { useMemo } from "react";
 
 export type GridProps<
   T extends InputDatum,
@@ -26,7 +34,7 @@ export type GridProps<
   xTicks: number;
   yTicks: number;
   lineColor: string;
-  axisColor: string;
+  labelColor: string | { x: string; y: string };
   formatXLabel: (label: T[XK]) => string;
   formatYLabel: (label: T[YK]) => string;
 };
@@ -46,7 +54,7 @@ export const Grid = <
   yLabelOffset,
   lineColor,
   font,
-  axisColor,
+  labelColor,
   yAxisPosition,
   yLabelPosition,
   formatXLabel,
@@ -66,6 +74,19 @@ export const Grid = <
     typeof x2r === "undefined"
   )
     return null;
+
+  const path = useMemo(() => {
+    const path = Skia.Path.Make();
+    path.addRect(
+      Skia.XYWHRect(
+        xScale(x1),
+        yScale(y1),
+        xScale(x2) - xScale(x1),
+        yScale(y2) - yScale(y1),
+      ),
+    );
+    return path;
+  }, [x1, x2, y1, y2, xScale, yScale]);
 
   return (
     <>
@@ -102,7 +123,15 @@ export const Grid = <
               color={lineColor}
             />
             {font && labelWidth && canFitLabelContent ? (
-              <Text text={contentX} font={font} y={labelY} x={labelX} />
+              <Text
+                color={
+                  typeof labelColor === "string" ? labelColor : labelColor.x
+                }
+                text={contentX}
+                font={font}
+                y={labelY}
+                x={labelX}
+              />
             ) : null}
           </React.Fragment>
         );
@@ -140,19 +169,21 @@ export const Grid = <
             />
             {font
               ? canFitLabelContent && (
-                  <Text text={contentY} font={font} y={labelY} x={labelX} />
+                  <Text
+                    color={
+                      typeof labelColor === "string" ? labelColor : labelColor.y
+                    }
+                    text={contentY}
+                    font={font}
+                    y={labelY}
+                    x={labelX}
+                  />
                 )
               : null}
           </React.Fragment>
         );
       })}
-
-      <Line
-        p1={vec(xScale(x1), yScale(y2))}
-        p2={vec(xScale(x2), yScale(y2))}
-        strokeWidth={2}
-        color={axisColor}
-      />
+      <Path path={path} strokeWidth={1} color={lineColor} style="stroke" />
     </>
   );
 };
@@ -168,6 +199,6 @@ Grid.defaultProps = {
   yLabelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+  labelColor: "#000000",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-  axisColor: "black",
 } satisfies Partial<GridProps<never, never, never>>;
