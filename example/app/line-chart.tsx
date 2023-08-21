@@ -1,4 +1,4 @@
-import { LinearGradient, Path, useFont, vec } from "@shopify/react-native-skia";
+import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
@@ -33,6 +33,7 @@ export default function LineChartPage() {
       yTickCount,
       xAxisLabelPosition,
       yAxisLabelPosition,
+      scatterRadius,
       colors,
     },
     dispatch,
@@ -43,6 +44,7 @@ export default function LineChartPage() {
       line: "#878787",
       xLabel: "#000000",
       yLabel: "#000000",
+      scatter: "#ffdc16",
     },
   });
   const font = useFont(inter, fontSize);
@@ -80,17 +82,11 @@ export default function LineChartPage() {
                     strokeWidth={strokeWidth}
                   />
                   <Path
-                    path={paths["sales.scatter"]({ radius: 7 })}
+                    path={paths["sales.scatter"]({ radius: scatterRadius })}
                     style="fill"
-                    color="blue"
+                    color={colors.scatter}
                     strokeWidth={4}
-                  >
-                    <LinearGradient
-                      start={vec(0, 0)}
-                      end={vec(0, 500)}
-                      colors={["yellow", "red"]}
-                    />
-                  </Path>
+                  />
                 </>
               );
             }}
@@ -113,6 +109,13 @@ export default function LineChartPage() {
               color={colors.line}
               onChange={(val) =>
                 dispatch({ type: "SET_COLORS", payload: { line: val } })
+              }
+            />
+            <InputColor
+              label="Scatter Color"
+              color={colors.scatter}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { scatter: val } })
               }
             />
             <InputColor
@@ -144,6 +147,16 @@ export default function LineChartPage() {
               value={strokeWidth}
               onChange={(val) =>
                 dispatch({ type: "SET_STROKE_WIDTH", payload: val })
+              }
+            />
+            <InputSlider
+              label="Scatter Radius"
+              maxValue={32}
+              minValue={2}
+              step={1}
+              value={scatterRadius}
+              onChange={(val) =>
+                dispatch({ type: "SET_SCATTER_RADIUS", payload: val })
               }
             />
             <InputSlider
