@@ -39,6 +39,7 @@ type CartesianChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
+  isPressEnabled?: boolean;
   onPressActiveStart?: () => void;
   onPressActiveEnd?: () => void;
   onPressActiveChange?: (isPressActive: boolean) => void;
@@ -72,6 +73,7 @@ export function CartesianChart<
   curve,
   padding,
   domainPadding,
+  isPressEnabled,
   onPressActiveChange,
   onPressValueChange,
   onPressActiveStart,
@@ -233,50 +235,55 @@ export function CartesianChart<
    * Pan gesture handling
    */
   const lastIdx = useSharedValue(null as null | number);
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      onPressActiveStart && runOnJS(onPressActiveStart)();
-      runOnJS(changePressActive)(true);
-    })
-    .onUpdate((evt) => {
-      const idx = findClosestPoint(tData.value.ox, evt.x);
-      if (typeof idx !== "number") return;
+  const handleTouch = (x: number) => {
+    "worklet";
+    const idx = findClosestPoint(tData.value.ox, x);
+    if (typeof idx !== "number") return;
 
-      // TODO: Types, add safety checks
-      activePressX.value.value = tData.value.ix[idx] as T[XK];
-      activePressX.position.value = tData.value.ox[idx]!;
+    // TODO: Types, add safety checks
+    activePressX.value.value = tData.value.ix[idx] as T[XK];
+    activePressX.position.value = tData.value.ox[idx]!;
 
-      yKeys.forEach((key) => {
-        activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
-        activePressY[key].position.value = tData.value.y[key].o[idx]!;
+    yKeys.forEach((key) => {
+      activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
+      activePressY[key].position.value = tData.value.y[key].o[idx]!;
+    });
+
+    onPressValueChange &&
+      lastIdx.value !== idx &&
+      runOnJS(onPressValueChange)({
+        x: {
+          value: activePressX.value.value,
+          position: activePressX.position.value,
+        },
+        y: yKeys.reduce(
+          (acc, key) => {
+            acc[key] = {
+              value: activePressY[key].value.value,
+              position: activePressY[key].position.value,
+            };
+            return acc;
+          },
+          {} as { [K in YK]: { value: T[K]; position: number } },
+        ),
       });
 
-      onPressValueChange &&
-        lastIdx.value !== idx &&
-        runOnJS(onPressValueChange)({
-          x: {
-            value: activePressX.value.value,
-            position: activePressX.position.value,
-          },
-          y: yKeys.reduce(
-            (acc, key) => {
-              acc[key] = {
-                value: activePressY[key].value.value,
-                position: activePressY[key].position.value,
-              };
-              return acc;
-            },
-            {} as { [K in YK]: { value: T[K]; position: number } },
-          ),
-        });
-
-      lastIdx.value = idx;
+    lastIdx.value = idx;
+  };
+  const pan = Gesture.Pan()
+    .onStart((evt) => {
+      onPressActiveStart && runOnJS(onPressActiveStart)();
+      runOnJS(changePressActive)(true);
+      handleTouch(evt.x);
+    })
+    .onUpdate((evt) => {
+      handleTouch(evt.x);
     })
     .onEnd(() => {
       onPressActiveEnd && runOnJS(onPressActiveEnd)();
       runOnJS(changePressActive)(false);
     })
-    .minDistance(0);
+    .activateAfterLongPress(100);
 
   const renderArg: CartesianChartRenderArg<T, XK, YK> = {
     paths,
@@ -294,24 +301,30 @@ export function CartesianChart<
     chartBounds.right - chartBounds.left,
     chartBounds.bottom - chartBounds.top,
   );
-  return (
+
+  // Body of the chart.
+  const body = (
+    <Canvas style={{ flex: 1 }} onLayout={onLayout}>
+      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+      <Group clip={clipRect}>
+        {hasMeasuredLayoutSize && children(renderArg)}
+      </Group>
+      {gridOptions && <Grid xScale={xScale} yScale={yScale} {...gridOptions} />}
+    </Canvas>
+  );
+
+  // Conditionally wrap the body in gesture handler based on isPressEnabled
+  return isPressEnabled ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={pan}>
-        <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-          {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-          <Group clip={clipRect}>
-            {hasMeasuredLayoutSize && children(renderArg)}
-          </Group>
-          {gridOptions && (
-            <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
-          )}
-        </Canvas>
-      </GestureDetector>
+      <GestureDetector gesture={pan}>{body}</GestureDetector>
     </GestureHandlerRootView>
+  ) : (
+    body
   );
 }
 
 CartesianChart.defaultProps = {
+  isPressEnabled: false,
   curve: "linear",
   chartType: "line",
   xScaleType: "linear",
