@@ -93,7 +93,7 @@ export const Grid = <
   const xLabelPosition =
     typeof labelPosition === "string" ? labelPosition : labelPosition.x;
   const yLabelPosition =
-    typeof labelPosition === "string" ? labelPosition : labelPosition.x;
+    typeof labelPosition === "string" ? labelPosition : labelPosition.y;
 
   return (
     <>
