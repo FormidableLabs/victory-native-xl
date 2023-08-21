@@ -1,9 +1,9 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
 import {
@@ -11,6 +11,7 @@ import {
   optionsReducer,
 } from "example/hooks/useOptionsReducer";
 import type { AxisLabelPosition } from "lib/src/types";
+import { InputColor } from "example/components/InputColor";
 
 const DATA = Array.from({ length: 10 }, (_, index) => ({
   day: index + 1,
@@ -32,9 +33,19 @@ export default function LineChartPage() {
       yTickCount,
       xAxisLabelPosition,
       yAxisLabelPosition,
+      colors,
     },
     dispatch,
-  ] = React.useReducer(optionsReducer, optionsInitialState);
+  ] = React.useReducer(optionsReducer, {
+    ...optionsInitialState,
+    colors: {
+      stroke: "#000000",
+      axis: "#00000",
+      line: "#878787",
+      xLabel: "#000000",
+      yLabel: "#000000",
+    },
+  });
   const font = useFont(inter, fontSize);
 
   return (
@@ -55,6 +66,9 @@ export default function LineChartPage() {
               xAxisPosition: xAxisSide,
               xLabelPosition: xAxisLabelPosition,
               yLabelPosition: yAxisLabelPosition,
+              axisColor: colors.axis,
+              lineColor: colors.line,
+              labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             }}
             data={DATA}
           >
@@ -63,7 +77,7 @@ export default function LineChartPage() {
                 <Path
                   path={paths["sales.line"]}
                   style="stroke"
-                  color="black"
+                  color={colors.stroke}
                   strokeCap="round"
                   strokeWidth={strokeWidth}
                 />
@@ -72,7 +86,7 @@ export default function LineChartPage() {
           </CartesianChart>
         </View>
         <BottomSheet ref={bottomSheetRef} index={0} snapPoints={["5%", "30%"]}>
-          <ScrollView
+          <BottomSheetScrollView
             style={{
               flex: 1,
             }}
@@ -83,6 +97,41 @@ export default function LineChartPage() {
               justifyContent: "flex-start",
             }}
           >
+            <InputColor
+              label="Axis Color"
+              color={colors.axis}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { axis: val } })
+              }
+            />
+            <InputColor
+              label="Line Color"
+              color={colors.line}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { line: val } })
+              }
+            />
+            <InputColor
+              label="Stroke Color"
+              color={colors.stroke}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { stroke: val } })
+              }
+            />
+            <InputColor
+              label="X-axis Label Color"
+              color={colors.xLabel}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { xLabel: val } })
+              }
+            />
+            <InputColor
+              label="Y-axis Label Color"
+              color={colors.yLabel}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { yLabel: val } })
+              }
+            />
             <InputSlider
               label="Stroke Width"
               maxValue={32}
@@ -185,7 +234,7 @@ export default function LineChartPage() {
               value={yAxisLabelPosition}
               values={["inset", "outset"]}
             />
-          </ScrollView>
+          </BottomSheetScrollView>
         </BottomSheet>
       </View>
     </>

@@ -29,6 +29,7 @@ export const InputSlider = ({
       }}
     >
       <Slider
+        onResponderGrant={() => true}
         style={{ width: "90%", height: 40 }}
         minimumValue={minValue}
         maximumValue={maxValue}

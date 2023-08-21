@@ -27,6 +27,7 @@ export type GridProps<
   yTicks: number;
   lineColor: string;
   axisColor: string;
+  labelColor: string | { x: string; y: string };
   formatXLabel: (label: T[XK]) => string;
   formatYLabel: (label: T[YK]) => string;
 };
@@ -47,6 +48,7 @@ export const Grid = <
   lineColor,
   font,
   axisColor,
+  labelColor,
   yAxisPosition,
   yLabelPosition,
   formatXLabel,
@@ -102,7 +104,15 @@ export const Grid = <
               color={lineColor}
             />
             {font && labelWidth && canFitLabelContent ? (
-              <Text text={contentX} font={font} y={labelY} x={labelX} />
+              <Text
+                color={
+                  typeof labelColor === "string" ? labelColor : labelColor.x
+                }
+                text={contentX}
+                font={font}
+                y={labelY}
+                x={labelX}
+              />
             ) : null}
           </React.Fragment>
         );
@@ -140,7 +150,15 @@ export const Grid = <
             />
             {font
               ? canFitLabelContent && (
-                  <Text text={contentY} font={font} y={labelY} x={labelX} />
+                  <Text
+                    color={
+                      typeof labelColor === "string" ? labelColor : labelColor.y
+                    }
+                    text={contentY}
+                    font={font}
+                    y={labelY}
+                    x={labelX}
+                  />
                 )
               : null}
           </React.Fragment>
@@ -168,6 +186,7 @@ Grid.defaultProps = {
   yLabelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+  labelColor: "#000000",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-  axisColor: "black",
+  axisColor: "#000000",
 } satisfies Partial<GridProps<never, never, never>>;
