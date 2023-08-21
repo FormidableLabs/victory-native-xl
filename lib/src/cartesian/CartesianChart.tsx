@@ -167,9 +167,12 @@ export function CartesianChart<
               cache[property] = path;
               return path;
             };
-            if (chartType === "scatter")
-              return (options: Record<string, unknown>) => getPath(options);
-            return getPath();
+            switch (chartType) {
+              case "scatter":
+                return (options: Record<string, unknown>) => getPath(options);
+              default:
+                return getPath();
+            }
           },
         },
       ) as Parameters<CartesianChartProps<T, XK, YK>["children"]>[0]["paths"];
