@@ -1,5 +1,5 @@
 import * as React from "react";
-import { transformInputData } from "../utils/transformInputData";
+import { transformInputData } from "./transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
 import { type CurveType, makeCartesianPath } from "./makeCartesianPath";
@@ -10,8 +10,8 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import type {
-  InputDatum,
   CartesianChartRenderArg,
+  NumericalFields,
   ScaleType,
   SidedNumber,
   TransformedData,
@@ -29,16 +29,17 @@ import { Grid, type GridProps } from "../grid/Grid";
 import { pathTypes } from "../types";
 
 type CartesianChartProps<
-  T extends InputDatum,
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
   XK extends keyof T,
   YK extends keyof T,
 > = {
-  data: T[];
+  data: RawData[];
   xKey: XK;
   yKeys: YK[];
   curve: CurveType | { [K in YK]: CurveType };
   xScaleType: ScaleType;
-  yScaleType: Omit<ScaleType, "band">;
+  yScaleType: ScaleType;
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
@@ -47,24 +48,29 @@ type CartesianChartProps<
   onPressActiveEnd?: () => void;
   onPressActiveChange?: (isPressActive: boolean) => void;
   onPressValueChange?: (args: {
-    x: { value: T[XK]; position: number };
-    y: { [K in YK]: { value: T[K]; position: number } };
+    x: { value: number; position: number };
+    y: { [K in YK]: { value: number; position: number } };
   }) => void;
   activePressX?: {
-    value?: SharedValue<T[XK]>;
+    value?: SharedValue<number>;
     position?: SharedValue<number>;
   };
   activePressY?: {
-    [K in YK]?: { value?: SharedValue<T[K]>; position?: SharedValue<number> };
+    [K in YK]?: { value?: SharedValue<number>; position?: SharedValue<number> };
   };
-  children: (args: CartesianChartRenderArg<T, XK, YK>) => React.ReactNode;
-  renderOutside: (args: CartesianChartRenderArg<T, XK, YK>) => React.ReactNode;
+  children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
+  renderOutside: (
+    args: CartesianChartRenderArg<RawData, T, YK>,
+  ) => React.ReactNode;
   /** Grid props */
-  gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
+  gridOptions?: Partial<
+    Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
+  >;
 };
 
 export function CartesianChart<
-  T extends InputDatum,
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
   XK extends keyof T,
   YK extends keyof T,
 >({
@@ -87,7 +93,7 @@ export function CartesianChart<
   renderOutside,
   gridOptions,
   domain,
-}: CartesianChartProps<T, XK, YK>) {
+}: CartesianChartProps<RawData, T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
@@ -99,7 +105,7 @@ export function CartesianChart<
     [],
   );
 
-  const tData = useSharedValue<TransformedData<T, XK, YK>>({
+  const tData = useSharedValue<TransformedData<RawData, T, YK>>({
     ix: [],
     ox: [],
     y: yKeys.reduce(
@@ -107,7 +113,7 @@ export function CartesianChart<
         acc[key] = { i: [], o: [] };
         return acc;
       },
-      {} as TransformedData<T, XK, YK>["y"],
+      {} as TransformedData<RawData, T, YK>["y"],
     ),
   });
 
@@ -120,22 +126,13 @@ export function CartesianChart<
       yScaleType,
       gridOptions,
       outputWindow: {
-        xMin:
-          valueFromSidedNumber(padding, "left") +
-          valueFromSidedNumber(domainPadding, "left"),
-        xMax:
-          size.width -
-          (valueFromSidedNumber(padding, "right") +
-            valueFromSidedNumber(domainPadding, "right")),
-        yMin:
-          valueFromSidedNumber(padding, "top") +
-          valueFromSidedNumber(domainPadding, "top"),
-        yMax:
-          size.height -
-          (valueFromSidedNumber(padding, "bottom") +
-            valueFromSidedNumber(domainPadding, "bottom")),
+        xMin: valueFromSidedNumber(padding, "left"),
+        xMax: size.width - valueFromSidedNumber(padding, "right"),
+        yMin: valueFromSidedNumber(padding, "top"),
+        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
       },
       domain,
+      domainPadding,
     });
     tData.value = _tData;
 
@@ -176,7 +173,7 @@ export function CartesianChart<
             }
           },
         },
-      ) as Parameters<CartesianChartProps<T, XK, YK>["children"]>[0]["paths"];
+      ) as CartesianChartRenderArg<RawData, T, YK>["paths"];
     };
 
     const paths = makePaths();
@@ -200,8 +197,8 @@ export function CartesianChart<
     [onPressActiveChange],
   );
   const internalActivePressX = React.useRef({
-    value: makeMutable(0 as T[XK]),
-    position: makeMutable(0 as number),
+    value: makeMutable(0),
+    position: makeMutable(0),
   });
   const activePressX = {
     value: incomingActivePressX?.value || internalActivePressX.current.value,
@@ -213,14 +210,12 @@ export function CartesianChart<
     yKeys.reduce(
       (acc, key) => {
         acc[key] = {
-          value: makeMutable(0 as T[YK]),
+          value: makeMutable(0),
           position: makeMutable(0),
         };
         return acc;
       },
-      {} as Parameters<
-        CartesianChartProps<T, XK, YK>["children"]
-      >[0]["activePressY"],
+      {} as CartesianChartRenderArg<RawData, T, YK>["activePressY"],
     ),
   );
   const activePressY = yKeys.reduce(
@@ -235,9 +230,7 @@ export function CartesianChart<
       };
       return acc;
     },
-    {} as Parameters<
-      CartesianChartProps<T, XK, YK>["children"]
-    >[0]["activePressY"],
+    {} as CartesianChartRenderArg<RawData, T, YK>["activePressY"],
   );
 
   /**
@@ -249,12 +242,11 @@ export function CartesianChart<
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
 
-    // TODO: Types, add safety checks
-    activePressX.value.value = tData.value.ix[idx] as T[XK];
+    activePressX.value.value = tData.value.ix[idx]!;
     activePressX.position.value = tData.value.ox[idx]!;
 
     yKeys.forEach((key) => {
-      activePressY[key].value.value = tData.value.y[key].i[idx] as T[YK];
+      activePressY[key].value.value = tData.value.y[key].i[idx]!;
       activePressY[key].position.value = tData.value.y[key].o[idx]!;
     });
 
@@ -273,7 +265,7 @@ export function CartesianChart<
             };
             return acc;
           },
-          {} as { [K in YK]: { value: T[K]; position: number } },
+          {} as { [K in YK]: { value: number; position: number } },
         ),
       });
 
@@ -294,7 +286,7 @@ export function CartesianChart<
     })
     .activateAfterLongPress(100);
 
-  const renderArg: CartesianChartRenderArg<T, XK, YK> = {
+  const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
     paths,
     isPressActive,
     activePressX,
@@ -318,7 +310,9 @@ export function CartesianChart<
       <Group clip={clipRect}>
         {hasMeasuredLayoutSize && children(renderArg)}
       </Group>
-      {gridOptions && <Grid xScale={xScale} yScale={yScale} {...gridOptions} />}
+      {gridOptions && hasMeasuredLayoutSize && (
+        <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
+      )}
     </Canvas>
   );
 

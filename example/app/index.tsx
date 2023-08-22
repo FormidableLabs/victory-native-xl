@@ -43,6 +43,7 @@ const EXAMPLES: { title: string; path: string }[] = [
   { title: "Stock Price", path: "/stock-price" },
   { title: "Animated Path", path: "/animated-path" },
   { title: "Domain Bounds", path: "/domain-bounds" },
+  { title: "Ordinal Data", path: "/ordinal-data" },
 ];
 
 const Separator = () => <View style={{ height: 12 }} />;

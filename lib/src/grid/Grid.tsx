@@ -16,9 +16,11 @@ import type {
 } from "../types";
 import type { ValueOf } from "../types";
 import { useMemo } from "react";
+import { type NumericalFields } from "../types";
 
 export type GridProps<
-  T extends InputDatum,
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
   XK extends keyof T,
   YK extends keyof T,
 > = {
@@ -38,7 +40,8 @@ export type GridProps<
 };
 
 export const Grid = <
-  T extends InputDatum,
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
   XK extends keyof T,
   YK extends keyof T,
 >({
@@ -53,7 +56,7 @@ export const Grid = <
   labelPosition,
   axisSide,
   labelOffset,
-}: GridProps<T, XK, YK>) => {
+}: GridProps<RawData, T, XK, YK>) => {
   const [x1, x2] = xScale.domain();
   const [y1, y2] = yScale.domain();
   const [x1r, x2r] = xScale.range();
@@ -204,4 +207,4 @@ Grid.defaultProps = {
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-} satisfies Partial<GridProps<never, never, never>>;
+} satisfies Partial<GridProps<never, never, never, never>>;
