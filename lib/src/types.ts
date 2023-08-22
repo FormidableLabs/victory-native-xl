@@ -80,6 +80,7 @@ export type CartesianChartRenderArg<
   };
   chartBounds: ChartBounds;
   canvasSize: { width: number; height: number };
+  transformedData: { x: number[]; y: { [K in YK]: number[] } };
 };
 
 export type NumericalFields<T> = {

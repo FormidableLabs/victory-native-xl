@@ -27,6 +27,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 import { pathTypes } from "../types";
+import { useMemo } from "react";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -117,7 +118,7 @@ export function CartesianChart<
     ),
   });
 
-  const { paths, xScale, yScale, chartBounds } = React.useMemo(() => {
+  const { paths, xScale, yScale, chartBounds, _tData } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
       xKey,
@@ -135,7 +136,6 @@ export function CartesianChart<
       domainPadding,
     });
     tData.value = _tData;
-
     /**
      * Creates a proxy object that will lazily create paths.
      * Consumer accesses e.g. paths["high.line"] or paths["low.area"]
@@ -185,7 +185,7 @@ export function CartesianChart<
       bottom: yScale(yScale.domain().at(-1) || 0),
     };
 
-    return { tData, paths, xScale, yScale, chartBounds };
+    return { tData, paths, xScale, yScale, chartBounds, _tData };
   }, [data, xKey, yKeys, size, curve, domain]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
@@ -286,6 +286,22 @@ export function CartesianChart<
     })
     .activateAfterLongPress(100);
 
+  const transformedData = useMemo(
+    () => ({
+      x: _tData.ox,
+      y: (Object.keys(_tData.y) as YK[]).reduce<{
+        [K in YK]: number[];
+      }>(
+        (acc, key) => {
+          acc[key] = _tData.y[key]?.o;
+          return acc;
+        },
+        {} as { [K in YK]: number[] },
+      ),
+    }),
+    [_tData],
+  );
+
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
     paths,
     isPressActive,
@@ -295,6 +311,7 @@ export function CartesianChart<
     yScale,
     chartBounds,
     canvasSize: size,
+    transformedData,
   };
   const clipRect = rect(
     chartBounds.left,
