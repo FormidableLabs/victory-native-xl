@@ -27,6 +27,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 import { pathTypes } from "../types";
+import { asNumber } from "../utils/asNumber";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -285,24 +286,43 @@ export function CartesianChart<
     })
     .activateAfterLongPress(100);
 
-  const transformedData = React.useMemo(
-    () => ({
-      x: _tData.ox,
-      y: (() => {
-        const cache = {} as Record<YK, number[]>;
-        return new Proxy<Record<YK, number[]>>({} as never, {
-          get(_, property: string) {
-            const key = property as YK;
-            if (!yKeys.includes(key)) return undefined;
-            if (cache[key]) return cache[key];
-            cache[key] = _tData.y[key].o;
-            return cache[key];
-          },
-        });
-      })(),
-    }),
-    [_tData, yKeys],
-  );
+  /**
+   * Allow end-user to request "raw-ish" data for a given yKey.
+   * Generate this on demand using a proxy.
+   */
+  type TransformedDataArg = CartesianChartRenderArg<
+    RawData,
+    T,
+    YK
+  >["transformedData"];
+  const transformedData = React.useMemo<TransformedDataArg>(() => {
+    const cache = {} as Record<
+      YK,
+      TransformedDataArg[keyof TransformedDataArg]
+    >;
+    return new Proxy(
+      {},
+      {
+        get(
+          _,
+          property: string,
+        ): TransformedDataArg[keyof TransformedDataArg] | undefined {
+          const key = property as YK;
+          if (!yKeys.includes(key)) return undefined;
+          if (cache[key]) return cache[key];
+
+          cache[key] = _tData.ix.map((val, i) => ({
+            x: asNumber(_tData.ox[i]),
+            xValue: val,
+            y: asNumber(_tData.y[key].o[i]),
+            yValue: asNumber(_tData.y[key].i[i]),
+          }));
+
+          return cache[key];
+        },
+      },
+    ) as TransformedDataArg;
+  }, [_tData, yKeys]);
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
     paths,
