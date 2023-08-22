@@ -1,12 +1,14 @@
 import type {
-  InputDatum,
+  NumericalFields,
   PrimitiveViewWindow,
   ScaleType,
   TransformedData,
 } from "../types";
-import { scaleBand, type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
+import { type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
 import type { GridProps } from "../grid/Grid";
 import { Grid } from "../grid/Grid";
+import { asNumber } from "../utils/asNumber";
+import { makeScale } from "./utils/makeXScale";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -23,11 +25,12 @@ import { Grid } from "../grid/Grid";
  *   and then map that into each of the other value lists.
  */
 export const transformInputData = <
-  T extends InputDatum,
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
   XK extends keyof T,
   YK extends keyof T,
 >({
-  data,
+  data: _data,
   xKey,
   yKeys,
   outputWindow,
@@ -36,18 +39,22 @@ export const transformInputData = <
   gridOptions,
   domain,
 }: {
-  data: T[];
+  data: RawData[];
   xKey: XK;
   yKeys: YK[];
   xScaleType: ScaleType;
   yScaleType: Omit<ScaleType, "band">;
   outputWindow: PrimitiveViewWindow;
-  gridOptions?: Partial<Omit<GridProps<T, XK, YK>, "xScale" | "yScale">>;
+  gridOptions?: Partial<
+    Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
+  >;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
-}): TransformedData<T, XK, YK> & {
+}): TransformedData<RawData, T, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
+  const data = _data as unknown as T[];
+
   // Take into account Grid component defaultProps
   const _gridOptions = Object.assign(
     {},
@@ -55,19 +62,23 @@ export const transformInputData = <
     gridOptions,
   ) as typeof gridOptions;
   // Input x is just extracting the xKey from each datum
-  const ix = data.map((datum) => datum[xKey]);
+  const ix = data.map((datum) => asNumber(datum[xKey]));
 
   // Then we find min/max of y values across all yKeys, use that for y range.
   // (if user provided a domain, use that instead)
   const yMin =
     domain?.y?.[0] ??
     Math.min(
-      ...yKeys.map((key) => Math.min(...data.map((datum) => datum[key]))),
+      ...yKeys.map((key) => {
+        return Math.min(...data.map((datum) => asNumber(datum[key])));
+      }),
     );
   const yMax =
     domain?.y?.[1] ??
     Math.max(
-      ...yKeys.map((key) => Math.max(...data.map((datum) => datum[key]))),
+      ...yKeys.map((key) =>
+        Math.max(...data.map((datum) => asNumber(datum[key]))),
+      ),
     );
 
   // Set up our y-output data structure
@@ -76,7 +87,7 @@ export const transformInputData = <
       acc[k] = { i: [], o: [] };
       return acc;
     },
-    {} as TransformedData<T, XK, YK>["y"],
+    {} as TransformedData<RawData, T, YK>["y"],
   );
 
   // Set up our y-scale, notice how domain is "flipped" because
@@ -118,22 +129,22 @@ export const transformInputData = <
       : scaleLog().domain(yScaleDomain).range(yScaleRange);
 
   yKeys.forEach((yKey) => {
-    y[yKey].i = data.map((datum) => datum[yKey]);
-    y[yKey].o = data.map((datum) => yScale(datum[yKey]));
+    y[yKey].i = data.map((datum) => asNumber(datum[yKey]));
+    y[yKey].o = data.map((datum) => yScale(asNumber(datum[yKey])));
   });
 
   // Measure our top-most y-label if we have grid options so we can
   //  compensate for it in our x-scale.
   const topYLabel =
-    gridOptions?.formatYLabel?.(yScale.domain().at(0)) ||
+    gridOptions?.formatYLabel?.(yScale.domain().at(0) as T[YK]) ||
     String(yScale.domain().at(0));
 
   // Generate our x-scale
-  const ixMin = domain?.x?.[0] ?? ix.at(0),
-    ixMax = domain?.x?.[1] ?? ix.at(-1);
+  const ixMin = asNumber(domain?.x?.[0] ?? ix.at(0)),
+    ixMax = asNumber(domain?.x?.[1] ?? ix.at(-1));
   const topYLabelWidth = gridOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
-  const oRange = (() => {
+  const oRange: [number, number] = (() => {
     const yLabelPosition =
       typeof _gridOptions?.labelPosition === "string"
         ? _gridOptions.labelPosition
@@ -162,13 +173,12 @@ export const transformInputData = <
     return [outputWindow.xMin, outputWindow.xMax];
   })();
 
-  const xScale =
-    xScaleType === "linear"
-      ? scaleLinear().domain([ixMin, ixMax]).range(oRange)
-      : xScaleType === "log"
-      ? scaleLog().domain([ixMin, ixMax]).range(oRange)
-      : scaleBand().domain(ix).range(oRange);
-  const ox = ix.map((x) => xScale(x));
+  const xScale = makeScale({
+    scaleType: xScaleType,
+    inputBounds: [ixMin, ixMax],
+    outputBounds: oRange,
+  });
+  const ox = ix.map((x) => xScale(x)!);
 
   return {
     ix,

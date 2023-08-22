@@ -33,10 +33,8 @@ export default function DomainBoundsScreen() {
           }}
           gridOptions={{
             font,
-            xTicks: 5,
-            yTicks: 5,
-            xLabelOffset: 12,
-            yLabelOffset: 12,
+            tickCount: 5,
+            labelOffset: 5,
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
           }}
         >
