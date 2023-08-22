@@ -33,7 +33,7 @@ const numPoints = (i: number) => {
 
 const colorSwatches = (i: number) => {
   if (i <= 3) return ["#e11d48", "#c084fc"];
-  if (i >= 4 && i > 8) return ["#2563eb", "#10b981"];
+  if (i >= 4 && i < 8) return ["#2563eb", "#10b981"];
   return ["#ea580c", "#eab308"];
 };
 
