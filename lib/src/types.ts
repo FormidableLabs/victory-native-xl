@@ -85,9 +85,3 @@ export type CartesianChartRenderArg<
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends number ? K : never]: T[K];
 };
-
-export type BaseScale = ((value: number) => number | undefined) & {
-  domain: () => [number, number];
-  range: () => [number, number];
-  ticks: () => number[];
-};
