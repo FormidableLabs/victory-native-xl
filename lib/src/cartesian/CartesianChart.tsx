@@ -290,18 +290,15 @@ export function CartesianChart<
       x: _tData.ox,
       y: (() => {
         const cache = {} as Record<YK, number[]>;
-        return new Proxy(
-          {},
-          {
-            get(_, property: string) {
-              const key = property as YK;
-              if (!yKeys.includes(key)) return undefined;
-              if (cache[key]) return cache[key];
-              cache[key] = _tData.y[key].o;
-              return cache[key];
-            },
+        return new Proxy<Record<YK, number[]>>({} as never, {
+          get(_, property: string) {
+            const key = property as YK;
+            if (!yKeys.includes(key)) return undefined;
+            if (cache[key]) return cache[key];
+            cache[key] = _tData.y[key].o;
+            return cache[key];
           },
-        ) as Record<YK, number[]>;
+        });
       })(),
     }),
     [_tData, yKeys],
