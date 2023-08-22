@@ -25,7 +25,6 @@ export const makeScale = ({
   if (scaleType === "linear") {
     const scale = scaleLinear().domain(inputBounds).range(outputBounds);
 
-    // TODO: These paddings should be based on incoming data
     if (padStart || padEnd) {
       scale
         .domain([
