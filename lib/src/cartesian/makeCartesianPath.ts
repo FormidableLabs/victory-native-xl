@@ -62,7 +62,6 @@ export const makeCartesianPath = (
     for (let i = 0; i < Math.min(ox.length, oy.length); i++) {
       const x = ox.at(i);
       const y = oy.at(i);
-      i === 0 && console.log("makeCartesianPath ->", x, y);
       y && x && path.addCircle(x, y, (<ScatterOptions>options).radius);
     }
     svgPath = path.toSVGString();
