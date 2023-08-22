@@ -27,6 +27,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 import { pathTypes } from "../types";
+import { asNumber } from "../utils/asNumber";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -117,7 +118,7 @@ export function CartesianChart<
     ),
   });
 
-  const { paths, xScale, yScale, chartBounds } = React.useMemo(() => {
+  const { paths, xScale, yScale, chartBounds, _tData } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
       xKey,
@@ -135,7 +136,6 @@ export function CartesianChart<
       domainPadding,
     });
     tData.value = _tData;
-
     /**
      * Creates a proxy object that will lazily create paths.
      * Consumer accesses e.g. paths["high.line"] or paths["low.area"]
@@ -185,7 +185,7 @@ export function CartesianChart<
       bottom: yScale(yScale.domain().at(-1) || 0),
     };
 
-    return { tData, paths, xScale, yScale, chartBounds };
+    return { tData, paths, xScale, yScale, chartBounds, _tData };
   }, [data, xKey, yKeys, size, curve, domain]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
@@ -286,6 +286,44 @@ export function CartesianChart<
     })
     .activateAfterLongPress(100);
 
+  /**
+   * Allow end-user to request "raw-ish" data for a given yKey.
+   * Generate this on demand using a proxy.
+   */
+  type TransformedDataArg = CartesianChartRenderArg<
+    RawData,
+    T,
+    YK
+  >["transformedData"];
+  const transformedData = React.useMemo<TransformedDataArg>(() => {
+    const cache = {} as Record<
+      YK,
+      TransformedDataArg[keyof TransformedDataArg]
+    >;
+    return new Proxy(
+      {},
+      {
+        get(
+          _,
+          property: string,
+        ): TransformedDataArg[keyof TransformedDataArg] | undefined {
+          const key = property as YK;
+          if (!yKeys.includes(key)) return undefined;
+          if (cache[key]) return cache[key];
+
+          cache[key] = _tData.ix.map((x, i) => ({
+            x: asNumber(_tData.ox[i]),
+            xValue: asNumber(x),
+            y: asNumber(_tData.y[key].o[i]),
+            yValue: asNumber(_tData.y[key].i[i]),
+          }));
+
+          return cache[key];
+        },
+      },
+    ) as TransformedDataArg;
+  }, [_tData, yKeys]);
+
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
     paths,
     isPressActive,
@@ -295,6 +333,7 @@ export function CartesianChart<
     yScale,
     chartBounds,
     canvasSize: size,
+    transformedData,
   };
   const clipRect = rect(
     chartBounds.left,
