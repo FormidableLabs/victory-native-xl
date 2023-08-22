@@ -35,6 +35,7 @@ export default function LineChartPage() {
       yAxisLabelPosition,
       scatterRadius,
       colors,
+      domainPadding,
     },
     dispatch,
   ] = React.useReducer(optionsReducer, {
@@ -70,6 +71,7 @@ export default function LineChartPage() {
               },
             }}
             data={DATA}
+            domainPadding={domainPadding}
           >
             {({ paths }) => {
               return (
@@ -250,6 +252,16 @@ export default function LineChartPage() {
               }
               value={yAxisLabelPosition}
               values={["inset", "outset"]}
+            />
+            <InputSlider
+              label="Domain Padding"
+              maxValue={100}
+              minValue={0}
+              step={5}
+              value={domainPadding}
+              onChange={(val) =>
+                dispatch({ type: "SET_DOMAIN_PADDING", payload: val })
+              }
             />
           </BottomSheetScrollView>
         </BottomSheet>

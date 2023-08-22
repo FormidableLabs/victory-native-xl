@@ -15,6 +15,7 @@ type State = {
   xAxisLabelPosition: AxisLabelPosition;
   yAxisLabelPosition: AxisLabelPosition;
   colors: Record<string, string>;
+  domainPadding: number;
 };
 
 type Action =
@@ -30,7 +31,8 @@ type Action =
   | { type: "SET_SCATTER_RADIUS"; payload: number }
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
-  | { type: "SET_COLORS"; payload: Record<string, string> };
+  | { type: "SET_COLORS"; payload: Record<string, string> }
+  | { type: "SET_DOMAIN_PADDING"; payload: number };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -60,6 +62,8 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, yAxisLabelPosition: action.payload };
     case "SET_COLORS":
       return { ...state, colors: { ...state.colors, ...action.payload } };
+    case "SET_DOMAIN_PADDING":
+      return { ...state, domainPadding: action.payload };
 
     default:
       throw new Error(`Unhandled action type`);
@@ -80,4 +84,5 @@ export const optionsInitialState: State = {
   xAxisLabelPosition: "outset",
   yAxisLabelPosition: "outset",
   colors: {},
+  domainPadding: 0,
 };
