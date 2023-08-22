@@ -6,13 +6,16 @@ import inter from "../assets/inter-medium.ttf";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { AnimatedText } from "../components/AnimatedText";
 
+/**
+ * Example of using oridinal data.
+ * Just create a numerical field with datum index, use that for lookups.
+ */
 export default function OrdinalDataScreen() {
   const font = useFont(inter, 12);
   const activeX = useSharedValue(0);
 
   const day = useDerivedValue(() => {
     const v = DATA?.[activeX.value]?.day || "";
-    console.log(v);
     return v;
   });
 
