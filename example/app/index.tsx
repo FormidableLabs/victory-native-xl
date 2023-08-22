@@ -6,13 +6,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export default function LandingPage() {
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
-        options={{
-          title: "Victory Native",
-          headerLargeTitle: true,
-          headerTintColor: "#f04d21",
-        }}
-      />
+      <Stack.Screen options={{ title: "Victory" }} />
       <FlatList
         contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 12 }}
         ItemSeparatorComponent={Separator}
