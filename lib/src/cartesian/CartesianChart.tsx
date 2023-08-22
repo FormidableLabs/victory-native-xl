@@ -304,7 +304,7 @@ export function CartesianChart<
         ) as Record<YK, number[]>;
       })(),
     }),
-    [_tData],
+    [_tData, yKeys],
   );
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
