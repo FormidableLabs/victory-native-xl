@@ -4,7 +4,7 @@ import type {
   ScaleType,
   TransformedData,
 } from "../types";
-import { type ScaleLinear, scaleLinear, scaleLog } from "d3-scale";
+import { type ScaleLinear } from "d3-scale";
 import type { GridProps } from "../grid/Grid";
 import { Grid } from "../grid/Grid";
 import { asNumber } from "../utils/asNumber";
@@ -43,7 +43,7 @@ export const transformInputData = <
   xKey: XK;
   yKeys: YK[];
   xScaleType: ScaleType;
-  yScaleType: Omit<ScaleType, "band">;
+  yScaleType: ScaleType;
   outputWindow: PrimitiveViewWindow;
   gridOptions?: Partial<
     Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
@@ -92,10 +92,10 @@ export const transformInputData = <
 
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
-  const yScaleDomain = [yMax, yMin];
+  const yScaleDomain = [yMax, yMin] as [number, number];
   const fontHeight = gridOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
-  const yScaleRange = (() => {
+  const yScaleRange: [number, number] = (() => {
     const yLabelPosition =
       typeof _gridOptions?.labelPosition === "string"
         ? _gridOptions.labelPosition
@@ -123,10 +123,12 @@ export const transformInputData = <
     return [outputWindow.yMin, outputWindow.yMax];
   })();
 
-  const yScale =
-    yScaleType === "linear"
-      ? scaleLinear().domain(yScaleDomain).range(yScaleRange).nice()
-      : scaleLog().domain(yScaleDomain).range(yScaleRange);
+  const yScale = makeScale({
+    inputBounds: yScaleDomain,
+    outputBounds: yScaleRange,
+    scaleType: yScaleType,
+    isNice: true,
+  });
 
   yKeys.forEach((yKey) => {
     y[yKey].i = data.map((datum) => asNumber(datum[yKey]));
