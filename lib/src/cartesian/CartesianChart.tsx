@@ -12,7 +12,6 @@ import {
 import type {
   CartesianChartRenderArg,
   NumericalFields,
-  ScaleType,
   SidedNumber,
   TransformedData,
   PathType,
@@ -38,8 +37,6 @@ type CartesianChartProps<
   xKey: XK;
   yKeys: YK[];
   curve: CurveType | { [K in YK]: CurveType };
-  xScaleType: ScaleType;
-  yScaleType: ScaleType;
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
@@ -77,8 +74,6 @@ export function CartesianChart<
   data,
   xKey,
   yKeys,
-  xScaleType,
-  yScaleType,
   curve,
   padding,
   domainPadding,
@@ -122,8 +117,6 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      xScaleType,
-      yScaleType,
       gridOptions,
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),

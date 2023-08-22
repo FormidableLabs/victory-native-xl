@@ -1,13 +1,6 @@
-import type { ScaleType } from "../../types";
-import {
-  type ScaleLinear,
-  scaleLinear,
-  scaleLog,
-  type ScaleLogarithmic,
-} from "d3-scale";
+import { type ScaleLinear, scaleLinear } from "d3-scale";
 
 export const makeScale = ({
-  scaleType,
   inputBounds,
   outputBounds,
   padStart,
@@ -16,29 +9,22 @@ export const makeScale = ({
 }: {
   inputBounds: [number, number];
   outputBounds: [number, number];
-  scaleType: ScaleType;
   padStart?: number;
   padEnd?: number;
   isNice?: boolean;
-}): ScaleLinear<number, number> | ScaleLogarithmic<number, number> => {
+}): ScaleLinear<number, number> => {
   // Linear
-  if (scaleType === "linear") {
-    const scale = scaleLinear().domain(inputBounds).range(outputBounds);
+  const scale = scaleLinear().domain(inputBounds).range(outputBounds);
 
-    if (padStart || padEnd) {
-      scale
-        .domain([
-          scale.invert(outputBounds[0] - (padStart ?? 0)),
-          scale.invert(outputBounds[1] + (padEnd ?? 0)),
-        ])
-        .range(outputBounds);
-    }
-
-    if (isNice) scale.nice();
-    return scale;
+  if (padStart || padEnd) {
+    scale
+      .domain([
+        scale.invert(outputBounds[0] - (padStart ?? 0)),
+        scale.invert(outputBounds[1] + (padEnd ?? 0)),
+      ])
+      .range(outputBounds);
   }
 
-  // Log
-  // TODO: Padding, clean 0-values
-  return scaleLog().domain(inputBounds).range(outputBounds);
+  if (isNice) scale.nice();
+  return scale;
 };

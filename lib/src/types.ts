@@ -47,8 +47,6 @@ export type SidedNumber =
   | number
   | { left?: number; right?: number; top?: number; bottom?: number };
 
-export type ScaleType = "linear" | "log";
-
 /**
  * Render arg for our line chart.
  */
