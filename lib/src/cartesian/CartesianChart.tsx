@@ -318,7 +318,7 @@ export function CartesianChart<
             yValue: asNumber(_tData.y[key].i[i]),
           }));
 
-          return [];
+          return cache[key];
         },
       },
     ) as TransformedDataArg;
