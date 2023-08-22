@@ -288,15 +288,21 @@ export function CartesianChart<
   const transformedData = React.useMemo(
     () => ({
       x: _tData.ox,
-      y: (Object.keys(_tData.y) as YK[]).reduce<{
-        [K in YK]: number[];
-      }>(
-        (acc, key) => {
-          acc[key] = _tData.y[key]?.o;
-          return acc;
-        },
-        {} as { [K in YK]: number[] },
-      ),
+      y: (() => {
+        const cache = {} as Record<YK, number[]>;
+        return new Proxy(
+          {},
+          {
+            get(_, property: string) {
+              const key = property as YK;
+              if (!yKeys.includes(key)) return undefined;
+              if (cache[key]) return cache[key];
+              cache[key] = _tData.y[key].o;
+              return cache[key];
+            },
+          },
+        ) as Record<YK, number[]>;
+      })(),
     }),
     [_tData],
   );
