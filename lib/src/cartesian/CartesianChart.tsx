@@ -15,6 +15,8 @@ import type {
   ScaleType,
   SidedNumber,
   TransformedData,
+  PathType,
+  ScatterOptions,
 } from "../types";
 import {
   Gesture,
@@ -24,6 +26,7 @@ import {
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
+import { pathTypes } from "../types";
 
 type CartesianChartProps<
   T extends InputDatum,
@@ -147,24 +150,30 @@ export function CartesianChart<
         {},
         {
           get(_, property: string) {
-            const [key, chartType] = property.split(".") as [
-              YK,
-              "line" | "area",
-            ];
-            if (!yKeys.includes(key) || !["line", "area"].includes(chartType))
-              return "";
+            const [key, chartType] = property.split(".") as [YK, PathType];
+            const getPath = (options: Record<string, unknown> = {}) => {
+              if (!yKeys.includes(key) || !pathTypes.includes(chartType))
+                return "";
 
-            if (cache[property]) return cache[property];
+              if (cache[property]) return cache[property];
 
-            const path = makeCartesianPath(_tData.ox, _tData.y[key].o, {
-              curveType:
-                typeof curve === "string" ? curve : curve[key] || "linear",
-              pathType: chartType,
-              y0: yScale.range()[1] || 0,
-            });
+              const path = makeCartesianPath(_tData.ox, _tData.y[key].o, {
+                options,
+                curveType:
+                  typeof curve === "string" ? curve : curve[key] || "linear",
+                pathType: chartType,
+                y0: yScale.range()[1] || 0,
+              });
 
-            cache[property] = path;
-            return path;
+              cache[property] = path;
+              return path;
+            };
+            switch (chartType) {
+              case "scatter":
+                return (options: ScatterOptions) => getPath(options);
+              default:
+                return getPath();
+            }
           },
         },
       ) as Parameters<CartesianChartProps<T, XK, YK>["children"]>[0]["paths"];
