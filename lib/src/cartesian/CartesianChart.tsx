@@ -27,7 +27,6 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 import { pathTypes } from "../types";
-import { useMemo } from "react";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -286,7 +285,7 @@ export function CartesianChart<
     })
     .activateAfterLongPress(100);
 
-  const transformedData = useMemo(
+  const transformedData = React.useMemo(
     () => ({
       x: _tData.ox,
       y: (Object.keys(_tData.y) as YK[]).reduce<{
