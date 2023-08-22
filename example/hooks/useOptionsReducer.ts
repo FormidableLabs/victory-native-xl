@@ -11,6 +11,7 @@ type State = {
   xTickCount: number;
   xAxisSide: XAxisSide;
   yAxisSide: YAxisSide;
+  scatterRadius: number;
   xAxisLabelPosition: AxisLabelPosition;
   yAxisLabelPosition: AxisLabelPosition;
   colors: Record<string, string>;
@@ -26,6 +27,7 @@ type Action =
   | { type: "SET_X_TICK_COUNT"; payload: number }
   | { type: "SET_X_AXIS_SIDE"; payload: XAxisSide }
   | { type: "SET_Y_AXIS_SIDE"; payload: YAxisSide }
+  | { type: "SET_SCATTER_RADIUS"; payload: number }
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_COLORS"; payload: Record<string, string> };
@@ -50,6 +52,8 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, xAxisSide: action.payload };
     case "SET_Y_AXIS_SIDE":
       return { ...state, yAxisSide: action.payload };
+    case "SET_SCATTER_RADIUS":
+      return { ...state, scatterRadius: action.payload };
     case "SET_X_AXIS_LABEL_POSITION":
       return { ...state, xAxisLabelPosition: action.payload };
     case "SET_Y_AXIS_LABEL_POSITION":
@@ -70,6 +74,7 @@ export const optionsInitialState: State = {
   fontSize: 12,
   yTickCount: 10,
   xTickCount: 10,
+  scatterRadius: 7,
   xAxisSide: "top",
   yAxisSide: "left",
   xAxisLabelPosition: "outset",

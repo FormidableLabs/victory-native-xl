@@ -2,6 +2,9 @@ import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import type { SkPath } from "@shopify/react-native-skia";
 
+export const pathTypes = ["line", "area", "scatter"] as const;
+export type PathType = (typeof pathTypes)[number];
+
 export type PrimitiveViewWindow = {
   xMin: number;
   xMax: number;
@@ -21,6 +24,10 @@ export type InputDatum = Record<string, unknown>;
 export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
+
+export type ScatterOptions = {
+  radius: number;
+};
 
 export type ValueOf<T> = T[keyof T];
 export type TransformedData<
@@ -56,7 +63,11 @@ export type CartesianChartRenderArg<
   T extends NumericalFields<RawData>,
   YK extends keyof T,
 > = {
-  paths: { [K in YK as `${K & string}.${"line" | "area"}`]: SkPath };
+  paths: {
+    [K in YK as `${K & string}.${Exclude<PathType, "scatter">}`]: SkPath;
+  } & {
+    [K in YK as `${K & string}.scatter`]: (options: ScatterOptions) => SkPath;
+  };
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   isPressActive: boolean;

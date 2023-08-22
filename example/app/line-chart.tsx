@@ -33,6 +33,7 @@ export default function LineChartPage() {
       yTickCount,
       xAxisLabelPosition,
       yAxisLabelPosition,
+      scatterRadius,
       colors,
     },
     dispatch,
@@ -43,6 +44,7 @@ export default function LineChartPage() {
       line: "#878787",
       xLabel: "#000000",
       yLabel: "#000000",
+      scatter: "#ffdc16",
     },
   });
   const font = useFont(inter, fontSize);
@@ -71,13 +73,21 @@ export default function LineChartPage() {
           >
             {({ paths }) => {
               return (
-                <Path
-                  path={paths["sales.line"]}
-                  style="stroke"
-                  color={colors.stroke}
-                  strokeCap="round"
-                  strokeWidth={strokeWidth}
-                />
+                <>
+                  <Path
+                    path={paths["sales.line"]}
+                    style="stroke"
+                    color={colors.stroke}
+                    strokeCap="round"
+                    strokeWidth={strokeWidth}
+                  />
+                  <Path
+                    path={paths["sales.scatter"]({ radius: scatterRadius })}
+                    style="fill"
+                    color={colors.scatter}
+                    strokeWidth={4}
+                  />
+                </>
               );
             }}
           </CartesianChart>
@@ -99,6 +109,13 @@ export default function LineChartPage() {
               color={colors.line}
               onChange={(val) =>
                 dispatch({ type: "SET_COLORS", payload: { line: val } })
+              }
+            />
+            <InputColor
+              label="Scatter Color"
+              color={colors.scatter}
+              onChange={(val) =>
+                dispatch({ type: "SET_COLORS", payload: { scatter: val } })
               }
             />
             <InputColor
@@ -130,6 +147,16 @@ export default function LineChartPage() {
               value={strokeWidth}
               onChange={(val) =>
                 dispatch({ type: "SET_STROKE_WIDTH", payload: val })
+              }
+            />
+            <InputSlider
+              label="Scatter Radius"
+              maxValue={32}
+              minValue={2}
+              step={1}
+              value={scatterRadius}
+              onChange={(val) =>
+                dispatch({ type: "SET_SCATTER_RADIUS", payload: val })
               }
             />
             <InputSlider
