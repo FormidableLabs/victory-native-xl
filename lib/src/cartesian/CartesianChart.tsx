@@ -311,9 +311,9 @@ export function CartesianChart<
           if (!yKeys.includes(key)) return undefined;
           if (cache[key]) return cache[key];
 
-          cache[key] = _tData.ix.map((val, i) => ({
+          cache[key] = _tData.ix.map((x, i) => ({
             x: asNumber(_tData.ox[i]),
-            xValue: val,
+            xValue: asNumber(x),
             y: asNumber(_tData.y[key].o[i]),
             yValue: asNumber(_tData.y[key].i[i]),
           }));
