@@ -55,7 +55,6 @@ export default function LineChartPage() {
             data={DATA}
           >
             {({ transformedData }) => {
-              console.log(transformedData.stars.at(0));
               return (
                 <>
                   {transformedData.stars.map(({ x, y }, i) => {
