@@ -2,13 +2,14 @@ import type {
   NumericalFields,
   PrimitiveViewWindow,
   ScaleType,
+  SidedNumber,
   TransformedData,
 } from "../types";
 import { type ScaleLinear } from "d3-scale";
 import type { GridProps } from "../grid/Grid";
 import { Grid } from "../grid/Grid";
 import { asNumber } from "../utils/asNumber";
-import { makeScale } from "./utils/makeXScale";
+import { makeScale } from "./utils/makeScale";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -38,6 +39,7 @@ export const transformInputData = <
   yScaleType,
   gridOptions,
   domain,
+  domainPadding,
 }: {
   data: RawData[];
   xKey: XK;
@@ -49,6 +51,7 @@ export const transformInputData = <
     Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
   >;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
+  domainPadding?: SidedNumber;
 }): TransformedData<RawData, T, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -128,6 +131,10 @@ export const transformInputData = <
     outputBounds: yScaleRange,
     scaleType: yScaleType,
     isNice: true,
+    padEnd:
+      typeof domainPadding === "number" ? domainPadding : domainPadding?.bottom,
+    padStart:
+      typeof domainPadding === "number" ? domainPadding : domainPadding?.top,
   });
 
   yKeys.forEach((yKey) => {
@@ -179,6 +186,10 @@ export const transformInputData = <
     scaleType: xScaleType,
     inputBounds: [ixMin, ixMax],
     outputBounds: oRange,
+    padStart:
+      typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
+    padEnd:
+      typeof domainPadding === "number" ? domainPadding : domainPadding?.right,
   });
   const ox = ix.map((x) => xScale(x)!);
 

@@ -29,6 +29,7 @@ export default function OrdinalDataScreen() {
           gridOptions={{ font, formatXLabel: (i) => DATA?.[i]?.day || "" }}
           isPressEnabled
           activePressX={{ value: activeX }}
+          domainPadding={{ left: 50, right: 50, top: 100, bottom: 100 }}
         >
           {({ paths }) => (
             <>

@@ -10,6 +10,8 @@ export const makeScale = ({
   scaleType,
   inputBounds,
   outputBounds,
+  padStart,
+  padEnd,
   isNice = false,
 }: {
   inputBounds: [number, number];
@@ -20,9 +22,19 @@ export const makeScale = ({
   isNice?: boolean;
 }): ScaleLinear<number, number> | ScaleLogarithmic<number, number> => {
   // Linear
-  // TODO: Padding
   if (scaleType === "linear") {
     const scale = scaleLinear().domain(inputBounds).range(outputBounds);
+
+    // TODO: These paddings should be based on incoming data
+    if (padStart || padEnd) {
+      scale
+        .domain([
+          scale.invert(outputBounds[0] - (padStart ?? 0)),
+          scale.invert(outputBounds[1] + (padEnd ?? 0)),
+        ])
+        .range(outputBounds);
+    }
+
     if (isNice) scale.nice();
     return scale;
   }

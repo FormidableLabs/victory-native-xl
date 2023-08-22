@@ -36,7 +36,7 @@ type CartesianChartProps<
   yKeys: YK[];
   curve: CurveType | { [K in YK]: CurveType };
   xScaleType: ScaleType;
-  yScaleType: Omit<ScaleType, "band">;
+  yScaleType: ScaleType;
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
@@ -123,22 +123,13 @@ export function CartesianChart<
       yScaleType,
       gridOptions,
       outputWindow: {
-        xMin:
-          valueFromSidedNumber(padding, "left") +
-          valueFromSidedNumber(domainPadding, "left"),
-        xMax:
-          size.width -
-          (valueFromSidedNumber(padding, "right") +
-            valueFromSidedNumber(domainPadding, "right")),
-        yMin:
-          valueFromSidedNumber(padding, "top") +
-          valueFromSidedNumber(domainPadding, "top"),
-        yMax:
-          size.height -
-          (valueFromSidedNumber(padding, "bottom") +
-            valueFromSidedNumber(domainPadding, "bottom")),
+        xMin: valueFromSidedNumber(padding, "left"),
+        xMax: size.width - valueFromSidedNumber(padding, "right"),
+        yMin: valueFromSidedNumber(padding, "top"),
+        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
       },
       domain,
+      domainPadding,
     });
     tData.value = _tData;
 
