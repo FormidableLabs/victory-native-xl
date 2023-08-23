@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "lib",
-    "example"
+    "example",
+    "website"
   ],
   "license": "MIT",
   "TODO: entries": "Setup main/module/types",
@@ -15,7 +16,8 @@
     "dev:lib": "yarn workspace victory-native dev",
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
-    "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\""
+    "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\"",
+    "dev:docs": "yarn workspace website start"
   },
   "devDependencies": {
     "@types/node": "^20.4.9",
