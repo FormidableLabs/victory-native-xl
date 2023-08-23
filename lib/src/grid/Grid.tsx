@@ -131,6 +131,7 @@ export const Grid = <
               p1={vec(xScale(tick), yScale(y2))}
               p2={vec(xScale(tick), yScale(y1))}
               color={lineColor}
+              strokeWidth={1}
             />
             {font && labelWidth && canFitLabelContent ? (
               <Text
@@ -176,6 +177,7 @@ export const Grid = <
               p1={vec(xScale(x1), yScale(tick))}
               p2={vec(xScale(x2), yScale(tick))}
               color={lineColor}
+              strokeWidth={1}
             />
             {font
               ? canFitLabelContent && (
