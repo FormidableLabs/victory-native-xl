@@ -1,4 +1,19 @@
 /**
+ * Which of the two points are closer to the target?
+ * Returns index of the closer point
+ *
+ * IMPORTANT! Keep this above findClosestPoint, for worklet/hoisting reasons
+ */
+function getClosest(
+  [idx1, val1]: [number, number],
+  [idx2, val2]: [number, number],
+  targetX: number,
+) {
+  "worklet";
+  return targetX - val1 >= val2 - targetX ? idx2 : idx1;
+}
+
+/**
  * Takes in array of numbers and a targetX and returns the _index_ of closest number
  */
 export function findClosestPoint(
@@ -51,16 +66,3 @@ export function findClosestPoint(
 
   return mid;
 }
-
-/**
- * Which of the two points are closer to the target?
- * Returns index of the closer point
- */
-const getClosest = (
-  [idx1, val1]: [number, number],
-  [idx2, val2]: [number, number],
-  targetX: number,
-) => {
-  "worklet";
-  return targetX - val1 >= val2 - targetX ? idx2 : idx1;
-};
