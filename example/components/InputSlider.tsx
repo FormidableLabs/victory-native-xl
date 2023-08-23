@@ -1,6 +1,8 @@
 import Slider from "@react-native-community/slider";
 import * as React from "react";
-import { Text, View, Platform } from "react-native";
+import { View, Platform } from "react-native";
+import { Text } from "./Text";
+import { appColors } from "../app/consts/colors";
 
 type Props = {
   label: string;
@@ -30,6 +32,7 @@ export const InputSlider = ({
     >
       <Slider
         onResponderGrant={() => Platform.select({ android: true, ios: false })}
+        minimumTrackTintColor={appColors.tint}
         style={{ width: "90%", height: 40 }}
         minimumValue={minValue}
         maximumValue={maxValue}
