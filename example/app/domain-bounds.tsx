@@ -2,7 +2,7 @@ import * as React from "react";
 import data from "../data/stockprice/tesla_stock.json";
 import { CartesianChart } from "victory-native";
 import { Path, useFont } from "@shopify/react-native-skia";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
 import { format } from "date-fns";
 
@@ -14,7 +14,7 @@ export default function DomainBoundsScreen() {
   const font = useFont(inter, 12);
 
   return (
-    <View>
+    <SafeAreaView>
       <View style={{ height: 400 }}>
         <CartesianChart
           data={DATA}
@@ -50,6 +50,6 @@ export default function DomainBoundsScreen() {
           )}
         </CartesianChart>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

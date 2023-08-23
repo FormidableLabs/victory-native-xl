@@ -13,7 +13,7 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
 import { format } from "date-fns";
 import {
@@ -47,7 +47,7 @@ export default function StockPriceScreen() {
   );
 
   return (
-    <View>
+    <SafeAreaView>
       <View
         style={{
           padding: 12,
@@ -124,7 +124,7 @@ export default function StockPriceScreen() {
           )}
         </CartesianChart>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

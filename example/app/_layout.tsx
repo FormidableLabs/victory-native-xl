@@ -1,8 +1,10 @@
 import { Stack } from "expo-router";
 import * as React from "react";
-import { Platform, SafeAreaView, Text } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { useAssets } from "expo-asset";
 import { Image, type ImageSource } from "expo-image";
+import { appColors } from "./consts/colors";
+import { useDarkMode } from "react-native-dark";
 
 const titleCaseName = (name: string) =>
   name
@@ -11,14 +13,25 @@ const titleCaseName = (name: string) =>
     .join(" ");
 
 export default function Layout() {
+  const isDark = useDarkMode();
   const [assets] = useAssets([
     require("../assets/victory.png"),
   ]) as ImageSource[][];
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.layout}>
       <Stack
         screenOptions={{
+          headerTransparent: Boolean(Platform.OS === "ios"),
+          headerBlurEffect: isDark ? "dark" : "light",
+          headerStyle: {
+            backgroundColor:
+              Platform.OS === "android"
+                ? isDark
+                  ? appColors.androidHeader.dark
+                  : appColors.androidHeader.light
+                : undefined,
+          },
           headerTitle: ({ children }) => {
             return (
               assets?.at(0) && (
@@ -35,7 +48,7 @@ export default function Layout() {
                           android: 8,
                         }),
                         fontSize: 16,
-                        color: "#f04d21",
+                        color: appColors.tint,
                       }}
                     >
                       {titleCaseName(children)}
@@ -45,9 +58,17 @@ export default function Layout() {
               )
             );
           },
-          headerTintColor: "#f04d21",
+          headerTintColor: appColors.tint,
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    backgroundColor: appColors.viewBackground.light,
+    $dark: { backgroundColor: appColors.viewBackground.dark },
+  },
+});

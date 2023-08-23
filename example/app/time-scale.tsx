@@ -8,7 +8,7 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
 import { format } from "date-fns";
 
@@ -20,7 +20,7 @@ export default function TimeScale() {
   const font = useFont(inter, 12);
 
   return (
-    <View>
+    <SafeAreaView>
       <View style={{ height: 400 }}>
         <CartesianChart
           data={DATA}
@@ -75,6 +75,6 @@ export default function TimeScale() {
           )}
         </CartesianChart>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
