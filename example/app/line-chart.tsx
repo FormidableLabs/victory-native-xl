@@ -1,6 +1,6 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -52,7 +52,7 @@ export default function LineChartPage() {
 
   return (
     <>
-      <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 0.667 }}>
           <CartesianChart
             xKey="day"
@@ -265,7 +265,7 @@ export default function LineChartPage() {
             />
           </BottomSheetScrollView>
         </BottomSheet>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

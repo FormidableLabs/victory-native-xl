@@ -1,6 +1,6 @@
 import { vec, type SkPoint, useFont, Points } from "@shopify/react-native-skia";
 import * as React from "react";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { CartesianChart } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 
@@ -42,7 +42,7 @@ export default function LineChartPage() {
 
   return (
     <>
-      <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 0.5 }}>
           <CartesianChart
             xKey="day"
@@ -84,7 +84,7 @@ export default function LineChartPage() {
             }}
           </CartesianChart>
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

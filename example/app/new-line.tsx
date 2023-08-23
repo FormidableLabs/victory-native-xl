@@ -7,7 +7,7 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 
@@ -21,7 +21,7 @@ export default function NewLinePage() {
   ]);
 
   return (
-    <View>
+    <SafeAreaView>
       <Text style={{ fontSize: 24, padding: 12 }}>
         {`${activePoint[0]}, ${activePoint[1]}`}
       </Text>
@@ -85,7 +85,7 @@ export default function NewLinePage() {
           )}
         </CartesianChart>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

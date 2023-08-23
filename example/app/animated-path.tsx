@@ -1,6 +1,6 @@
 import * as React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { Button, View } from "react-native";
+import { Button, SafeAreaView, View } from "react-native";
 import { CartesianChart, useAnimatedPath } from "victory-native";
 import type { SkPath } from "@shopify/react-native-skia";
 import { LinearGradient, Path, vec, Fill } from "@shopify/react-native-skia";
@@ -12,7 +12,7 @@ const DATA = data
 export default function AnimatedPathScreen() {
   const [data, setData] = React.useState(DATA);
   return (
-    <View>
+    <SafeAreaView>
       <View style={{ height: 400 }}>
         <CartesianChart
           data={data}
@@ -47,7 +47,7 @@ export default function AnimatedPathScreen() {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

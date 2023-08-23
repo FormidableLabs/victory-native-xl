@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CartesianChart } from "victory-native";
 import { Path, useFont } from "@shopify/react-native-skia";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { AnimatedText } from "../components/AnimatedText";
@@ -20,7 +20,7 @@ export default function OrdinalDataScreen() {
   });
 
   return (
-    <View>
+    <SafeAreaView>
       <View>
         <AnimatedText text={day} style={{ fontSize: 24 }} />
       </View>
@@ -46,7 +46,7 @@ export default function OrdinalDataScreen() {
           )}
         </CartesianChart>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

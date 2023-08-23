@@ -1,44 +1,31 @@
 import * as React from "react";
-import { Link, Stack } from "expo-router";
-import { Text, FlatList, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Stack } from "expo-router";
+import { FlatList, View, useWindowDimensions, StyleSheet } from "react-native";
+import { ChartCard } from "../components/ChartCard";
+import { appColors } from "./consts/colors";
+import { ChartRoutes } from "./consts/routes";
 
 export default function LandingPage() {
+  const { width } = useWindowDimensions();
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.view}>
       <Stack.Screen options={{ title: "Victory" }} />
       <FlatList
-        contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 12 }}
-        ItemSeparatorComponent={Separator}
+        contentContainerStyle={{ padding: 10 }}
+        numColumns={width < 500 ? 1 : 2}
         contentInsetAdjustmentBehavior="automatic"
-        data={EXAMPLES}
-        renderItem={({ item }) => (
-          <Link href={item.path} asChild>
-            <TouchableOpacity
-              style={{
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor: "lightgray",
-              }}
-            >
-              <Text>{item.title}</Text>
-            </TouchableOpacity>
-          </Link>
-        )}
+        data={ChartRoutes}
+        renderItem={({ item }) => <ChartCard item={item} />}
       />
     </View>
   );
 }
 
-const EXAMPLES: { title: string; path: string }[] = [
-  { title: "Line Chart", path: "/line-chart" },
-  { title: "New Line", path: "/new-line" },
-  { title: "Time Scale", path: "/time-scale" },
-  { title: "Stock Price", path: "/stock-price" },
-  { title: "Animated Path", path: "/animated-path" },
-  { title: "Domain Bounds", path: "/domain-bounds" },
-  { title: "Ordinal Data", path: "/ordinal-data" },
-  { title: "Custom Drawing", path: "/custom-drawing" },
-];
-
-const Separator = () => <View style={{ height: 12 }} />;
+const styles = StyleSheet.create({
+  view: {
+    flex: 1,
+    backgroundColor: appColors.viewBackground.light,
+    $dark: { backgroundColor: appColors.viewBackground.dark },
+  },
+});
