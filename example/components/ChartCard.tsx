@@ -1,8 +1,9 @@
 import * as React from "react";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { appColors } from "../app/consts/colors";
 import { ChartRoutes } from "../app/consts/routes";
 import { Link } from "expo-router";
+import { Text } from "./Text";
 
 type Props = {
   item: (typeof ChartRoutes)[number];
@@ -18,7 +19,7 @@ export const ChartCard = ({ item }: Props) => {
       >
         <View style={styles.card}>
           <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
+          <Text>{item.description}</Text>
         </View>
       </TouchableHighlight>
     </Link>
@@ -49,18 +50,8 @@ const styles = StyleSheet.create({
     },
   },
   title: {
-    fontWeight: "600",
+    fontWeight: "bold",
     fontSize: 18,
     marginBottom: 4,
-    color: appColors.text.light,
-    $dark: {
-      color: appColors.text.dark,
-    },
-  },
-  description: {
-    color: appColors.text.light,
-    $dark: {
-      color: appColors.text.dark,
-    },
   },
 });
