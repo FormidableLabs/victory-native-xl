@@ -10,6 +10,6 @@ export {
   type YAxisSide,
   type XAxisSide,
 } from "./types";
-export type { CurveType } from "./cartesian/makeCartesianPath";
+export type { CurveType } from "./cartesian/utils/makeCartesianPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";

@@ -1,8 +1,13 @@
 import * as React from "react";
-import { transformInputData } from "./transformInputData";
+import { transformInputData } from "./utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
-import {type CurveType, makeCartesianPath, PathType, pathTypes} from "./makeCartesianPath";
+import {
+  type CurveType,
+  makeCartesianPath,
+  PathType,
+  pathTypes,
+} from "./utils/makeCartesianPath";
 import {
   makeMutable,
   runOnJS,
@@ -116,7 +121,7 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      gridOptions,
+      gridOptions: Object.assign({}, Grid.defaultProps, gridOptions),
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),
         xMax: size.width - valueFromSidedNumber(padding, "right"),

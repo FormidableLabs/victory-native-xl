@@ -9,9 +9,9 @@ import {
   curveStep,
   line,
 } from "d3-shape";
-import { stitch } from "../utils/stitch";
+import { stitch } from "../../utils/stitch";
 import { Skia } from "@shopify/react-native-skia";
-import type { ScatterOptions } from "../types";
+import type { ScatterOptions } from "../../types";
 
 /**
  * Path types supported by Cartesian chart.
