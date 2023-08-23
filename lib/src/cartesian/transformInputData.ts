@@ -1,7 +1,6 @@
 import type {
   NumericalFields,
   PrimitiveViewWindow,
-  ScaleType,
   SidedNumber,
   TransformedData,
 } from "../types";
@@ -35,8 +34,6 @@ export const transformInputData = <
   xKey,
   yKeys,
   outputWindow,
-  xScaleType,
-  yScaleType,
   gridOptions,
   domain,
   domainPadding,
@@ -44,8 +41,6 @@ export const transformInputData = <
   data: RawData[];
   xKey: XK;
   yKeys: YK[];
-  xScaleType: ScaleType;
-  yScaleType: ScaleType;
   outputWindow: PrimitiveViewWindow;
   gridOptions?: Partial<
     Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
@@ -129,7 +124,6 @@ export const transformInputData = <
   const yScale = makeScale({
     inputBounds: yScaleDomain,
     outputBounds: yScaleRange,
-    scaleType: yScaleType,
     isNice: true,
     padEnd:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.bottom,
@@ -183,7 +177,6 @@ export const transformInputData = <
   })();
 
   const xScale = makeScale({
-    scaleType: xScaleType,
     inputBounds: [ixMin, ixMax],
     outputBounds: oRange,
     padStart:
