@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "lib",
-    "example",
-    "website"
+    "example"
   ],
   "license": "MIT",
   "TODO: entries": "Setup main/module/types",
