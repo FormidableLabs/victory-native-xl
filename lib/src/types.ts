@@ -1,9 +1,7 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import type { SkPath } from "@shopify/react-native-skia";
-
-export const pathTypes = ["line", "area", "scatter"] as const;
-export type PathType = (typeof pathTypes)[number];
+import type { PathType } from "./cartesian/utils/makeCartesianPath";
 
 export type PrimitiveViewWindow = {
   xMin: number;

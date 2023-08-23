@@ -16,7 +16,9 @@
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
     "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\"",
-    "dev:docs": "yarn workspace website start"
+    "dev:docs": "yarn workspace website start",
+    "test": "yarn workspace victory-native test",
+    "test:watch": "yarn workspace victory-native test:watch"
   },
   "devDependencies": {
     "@types/node": "^20.4.9",

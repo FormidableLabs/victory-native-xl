@@ -3,12 +3,11 @@ import type {
   PrimitiveViewWindow,
   SidedNumber,
   TransformedData,
-} from "../types";
+} from "../../types";
 import { type ScaleLinear } from "d3-scale";
-import type { GridProps } from "../grid/Grid";
-import { Grid } from "../grid/Grid";
-import { asNumber } from "../utils/asNumber";
-import { makeScale } from "./utils/makeScale";
+import type { GridProps } from "../../grid/Grid";
+import { asNumber } from "../../utils/asNumber";
+import { makeScale } from "./makeScale";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -53,12 +52,6 @@ export const transformInputData = <
 } => {
   const data = _data as unknown as T[];
 
-  // Take into account Grid component defaultProps
-  const _gridOptions = Object.assign(
-    {},
-    Grid.defaultProps,
-    gridOptions,
-  ) as typeof gridOptions;
   // Input x is just extracting the xKey from each datum
   const ix = data.map((datum) => asNumber(datum[xKey]));
 
@@ -95,14 +88,14 @@ export const transformInputData = <
   // Our yScaleRange is impacted by our grid options
   const yScaleRange: [number, number] = (() => {
     const yLabelPosition =
-      typeof _gridOptions?.labelPosition === "string"
-        ? _gridOptions.labelPosition
-        : _gridOptions?.labelPosition?.x;
-    const xAxisSide = _gridOptions?.axisSide?.x;
+      typeof gridOptions?.labelPosition === "string"
+        ? gridOptions.labelPosition
+        : gridOptions?.labelPosition?.x;
+    const xAxisSide = gridOptions?.axisSide?.x;
     const yLabelOffset =
-      (typeof _gridOptions?.labelOffset === "number"
-        ? _gridOptions.labelOffset
-        : _gridOptions?.labelOffset?.y) ?? 0;
+      (typeof gridOptions?.labelOffset === "number"
+        ? gridOptions.labelOffset
+        : gridOptions?.labelOffset?.y) ?? 0;
     // bottom, outset
     if (xAxisSide === "bottom" && yLabelPosition === "outset") {
       return [
@@ -149,14 +142,14 @@ export const transformInputData = <
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
     const yLabelPosition =
-      typeof _gridOptions?.labelPosition === "string"
-        ? _gridOptions.labelPosition
-        : _gridOptions?.labelPosition?.y;
-    const yAxisSide = _gridOptions?.axisSide?.y;
+      typeof gridOptions?.labelPosition === "string"
+        ? gridOptions.labelPosition
+        : gridOptions?.labelPosition?.y;
+    const yAxisSide = gridOptions?.axisSide?.y;
     const yLabelOffset =
-      (typeof _gridOptions?.labelOffset === "number"
-        ? _gridOptions.labelOffset
-        : _gridOptions?.labelOffset?.y) ?? 0;
+      (typeof gridOptions?.labelOffset === "number"
+        ? gridOptions.labelOffset
+        : gridOptions?.labelOffset?.y) ?? 0;
 
     // Left axes, outset label
     if (yAxisSide === "left" && yLabelPosition === "outset") {

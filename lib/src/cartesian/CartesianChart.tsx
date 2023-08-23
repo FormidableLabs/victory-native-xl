@@ -1,8 +1,13 @@
 import * as React from "react";
-import { transformInputData } from "./transformInputData";
+import { transformInputData } from "./utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
-import { type CurveType, makeCartesianPath } from "./makeCartesianPath";
+import {
+  type CurveType,
+  makeCartesianPath,
+  type PathType,
+  pathTypes,
+} from "./utils/makeCartesianPath";
 import {
   makeMutable,
   runOnJS,
@@ -14,7 +19,6 @@ import type {
   NumericalFields,
   SidedNumber,
   TransformedData,
-  PathType,
   ScatterOptions,
 } from "../types";
 import {
@@ -25,7 +29,6 @@ import {
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
-import { pathTypes } from "../types";
 import { asNumber } from "../utils/asNumber";
 
 type CartesianChartProps<
@@ -118,7 +121,7 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      gridOptions,
+      gridOptions: Object.assign({}, Grid.defaultProps, gridOptions),
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),
         xMax: size.width - valueFromSidedNumber(padding, "right"),
