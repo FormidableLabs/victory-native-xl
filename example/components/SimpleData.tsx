@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, StyleSheet, View } from "react-native";
-import { type InputDatum } from "victory-native-skia";
+import { type InputDatum } from "victory-native";
 
 export function SimpleData({
   renderChart,

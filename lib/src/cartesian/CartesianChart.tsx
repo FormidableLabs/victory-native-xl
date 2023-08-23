@@ -5,7 +5,7 @@ import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
 import {
   type CurveType,
   makeCartesianPath,
-  PathType,
+  type PathType,
   pathTypes,
 } from "./utils/makeCartesianPath";
 import {
