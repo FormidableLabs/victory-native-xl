@@ -1,3 +1,8 @@
+/**
+ * Cartesian chart exports (including useful types)
+ */
+export { CartesianChart } from "./cartesian/CartesianChart";
+
 export {
   type InputDatum,
   type CartesianChartRenderArg,
@@ -7,9 +12,4 @@ export {
 } from "./types";
 export type { CurveType } from "./cartesian/makeCartesianPath";
 
-export { CartesianChart } from "./cartesian/CartesianChart";
-
-/**
- * Utility hooks
- */
 export { useAnimatedPath } from "./hooks/useAnimatedPath";

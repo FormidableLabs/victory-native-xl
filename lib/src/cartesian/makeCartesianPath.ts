@@ -11,7 +11,13 @@ import {
 } from "d3-shape";
 import { stitch } from "../utils/stitch";
 import { Skia } from "@shopify/react-native-skia";
-import type { PathType, ScatterOptions } from "../types";
+import type { ScatterOptions } from "../types";
+
+/**
+ * Path types supported by Cartesian chart.
+ */
+export const pathTypes = ["line", "area", "scatter"] as const;
+export type PathType = (typeof pathTypes)[number];
 
 /**
  * Exposed curves from d3-shape.
