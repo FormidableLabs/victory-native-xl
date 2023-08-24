@@ -1,12 +1,6 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
-import {
-  Button,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
   useAnimatedPath,
@@ -25,11 +19,12 @@ import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
 import { useState } from "react";
+import { Button } from "../components/Button";
 
-const DATA = () =>
-  Array.from({ length: 10 }, (_, index) => ({
+const DATA = (numberPoints = 50) =>
+  Array.from({ length: numberPoints }, (_, index) => ({
     day: index + 1,
-    sales: Math.floor(Math.random() * (50 - 5 + 1)) + 5,
+    sales: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
   }));
 
 export default function LineChartPage() {
@@ -87,7 +82,7 @@ export default function LineChartPage() {
               y: yAxisLabelPosition,
             },
           }}
-          data={DATA()}
+          data={data}
           domainPadding={domainPadding}
         >
           {({ paths }) => (
@@ -104,7 +99,34 @@ export default function LineChartPage() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
-        <Button title="Shuffle Data" onPress={() => setData(DATA())} />
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 12,
+            marginTop: 10,
+            marginBottom: 16,
+          }}
+        >
+          <Button
+            style={{ flex: 1 }}
+            onPress={() => setData((data) => [...data].reverse())}
+            title="Shuffle Data"
+          />
+          <Button
+            style={{ flex: 1 }}
+            onPress={() =>
+              setData((data) => [
+                ...data,
+                {
+                  day: data.length + 1,
+                  sales: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+                },
+              ])
+            }
+            title="Add Point"
+          />
+        </View>
+
         <InputSlider
           label="Domain Padding"
           maxValue={100}
