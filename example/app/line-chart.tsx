@@ -21,10 +21,12 @@ import { useDarkMode } from "react-native-dark";
 import { useState } from "react";
 import { Button } from "../components/Button";
 
-const DATA = (numberPoints = 50) =>
+const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+
+const DATA = (numberPoints = 13) =>
   Array.from({ length: numberPoints }, (_, index) => ({
     day: index + 1,
-    sales: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+    sales: randomNumber(),
   }));
 
 export default function LineChartPage() {
@@ -124,7 +126,7 @@ export default function LineChartPage() {
                 ...data,
                 {
                   day: data.length + 1,
-                  sales: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+                  sales: randomNumber(),
                 },
               ])
             }
