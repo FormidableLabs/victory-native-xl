@@ -38,7 +38,7 @@ export default function LineChartPage() {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeView}>
         <View style={styles.chart}>
           <CartesianChart
             xKey="day"
@@ -98,12 +98,15 @@ export default function LineChartPage() {
 }
 
 const styles = StyleSheet.create({
-  chart: {
+  safeView: {
+    flex: 1,
     backgroundColor: appColors.viewBackground.light,
-    flex: 1.5,
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
+  },
+  chart: {
+    flex: 1.5,
   },
   optionsScrollView: {
     flex: 1,

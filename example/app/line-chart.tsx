@@ -1,7 +1,18 @@
 import { Path, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
+import {
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import {
+  CartesianChart,
+  useAnimatedPath,
+  type XAxisSide,
+  type YAxisSide,
+} from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
@@ -13,11 +24,13 @@ import type { AxisLabelPosition } from "lib/src/types";
 import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
+import { useState } from "react";
 
-const DATA = Array.from({ length: 10 }, (_, index) => ({
-  day: index + 1,
-  sales: Math.floor(Math.random() * (50 - 5 + 1)) + 5,
-}));
+const DATA = () =>
+  Array.from({ length: 10 }, (_, index) => ({
+    day: index + 1,
+    sales: Math.floor(Math.random() * (50 - 5 + 1)) + 5,
+  }));
 
 export default function LineChartPage() {
   const isDark = useDarkMode();
@@ -53,9 +66,10 @@ export default function LineChartPage() {
     },
   });
   const font = useFont(inter, fontSize);
+  const [data, setData] = useState(DATA());
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
         <CartesianChart
           xKey="day"
@@ -73,34 +87,24 @@ export default function LineChartPage() {
               y: yAxisLabelPosition,
             },
           }}
-          data={DATA}
+          data={DATA()}
           domainPadding={domainPadding}
         >
-          {({ paths }) => {
-            return (
-              <>
-                <Path
-                  path={paths["sales.line"]}
-                  style="stroke"
-                  color={colors.stroke}
-                  strokeCap="round"
-                  strokeWidth={strokeWidth}
-                />
-                <Path
-                  path={paths["sales.scatter"]({ radius: scatterRadius })}
-                  style="fill"
-                  color={colors.scatter}
-                  strokeWidth={4}
-                />
-              </>
-            );
-          }}
+          {({ paths }) => (
+            <ChartPath
+              paths={paths}
+              strokeWidth={strokeWidth}
+              colors={colors}
+              scatterRadius={scatterRadius}
+            />
+          )}
         </CartesianChart>
       </View>
       <ScrollView
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
+        <Button title="Shuffle Data" onPress={() => setData(DATA())} />
         <InputSlider
           label="Domain Padding"
           maxValue={100}
@@ -262,13 +266,58 @@ export default function LineChartPage() {
   );
 }
 
+type ChartPathProps = {
+  paths: any;
+  colors: Record<string, string>;
+  scatterRadius: number;
+  strokeWidth: number;
+};
+
+const ChartPath = ({
+  paths,
+  colors,
+  strokeWidth,
+  scatterRadius,
+}: ChartPathProps) => {
+  const animatedLinePath = useAnimatedPath(paths["sales.line"], {
+    type: "spring",
+  });
+  const animatedScatterPath = useAnimatedPath(
+    paths["sales.scatter"]({ radius: scatterRadius }),
+    {
+      type: "spring",
+    },
+  );
+
+  return (
+    <>
+      <Path
+        path={animatedLinePath}
+        style="stroke"
+        color={colors.stroke}
+        strokeCap="round"
+        strokeWidth={strokeWidth}
+      />
+      <Path
+        path={animatedScatterPath}
+        style="fill"
+        color={colors.scatter}
+        strokeWidth={4}
+      />
+    </>
+  );
+};
+
 const styles = StyleSheet.create({
-  chart: {
-    backgroundColor: appColors.viewBackground.light,
+  safeView: {
     flex: 1,
+    backgroundColor: appColors.viewBackground.light,
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
+  },
+  chart: {
+    flex: 1,
   },
   optionsScrollView: {
     flex: 0.5,

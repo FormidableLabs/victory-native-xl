@@ -80,7 +80,7 @@ export default function StockPriceScreen() {
             />
           </>
         ) : (
-          <Text>Pan across the chart to see more.</Text>
+          <Text>Pan across the chart path to see more.</Text>
         )}
       </View>
       <View style={{ flex: 1, marginBottom: 20 }}>
