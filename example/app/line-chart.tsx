@@ -1,4 +1,4 @@
-import { Path, SkPath, useFont } from "@shopify/react-native-skia";
+import { Path, type SkPath, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
