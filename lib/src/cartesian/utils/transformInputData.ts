@@ -50,7 +50,7 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
 } => {
-  const data = _data as unknown as T[];
+  const data = (_data as unknown as T[]).sort((a, b) => +a[xKey] - +b[xKey]);
 
   // Input x is just extracting the xKey from each datum
   const ix = data.map((datum) => asNumber(datum[xKey]));
