@@ -1,11 +1,11 @@
 import * as React from "react";
 import {
   StyleSheet,
+  Text,
   TouchableHighlight,
   type TouchableHighlightProps,
 } from "react-native";
 import { appColors } from "../app/consts/colors";
-import { Text } from "./Text";
 
 type ButtonProps = Omit<TouchableHighlightProps, "children"> & {
   title: string;
@@ -22,7 +22,7 @@ export const Button = ({ style, title, ...rest }: ButtonProps) => {
 const styles = StyleSheet.create({
   touchable: {
     backgroundColor: appColors.tint,
-    borderRadius: 4,
+    borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 10,
     justifyContent: "center",
@@ -30,5 +30,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: "bold",
+    color: appColors.text.dark,
   },
 });
