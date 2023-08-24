@@ -3,7 +3,7 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
-  CurveType,
+  type CurveType,
   useAnimatedPath,
   usePrevious,
   type XAxisSide,
