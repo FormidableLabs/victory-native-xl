@@ -3,7 +3,6 @@ import {
   StyleSheet,
   TouchableHighlight,
   type TouchableHighlightProps,
-  View,
 } from "react-native";
 import { appColors } from "../app/consts/colors";
 import { Text } from "./Text";

@@ -1,4 +1,4 @@
-import { Path, useFont } from "@shopify/react-native-skia";
+import { Path, SkPath, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -86,12 +86,17 @@ export default function LineChartPage() {
           domainPadding={domainPadding}
         >
           {({ paths }) => (
-            <ChartPath
-              paths={paths}
-              strokeWidth={strokeWidth}
-              colors={colors}
-              scatterRadius={scatterRadius}
-            />
+            <>
+              <AnimatedPath
+                path={paths["sales.line"]}
+                color={colors.stroke!}
+                strokeWidth={strokeWidth}
+              />
+              <AnimatedScatter
+                path={paths["sales.scatter"]({ radius: scatterRadius })}
+                color={colors.scatter!}
+              />
+            </>
           )}
         </CartesianChart>
       </View>
@@ -288,46 +293,34 @@ export default function LineChartPage() {
   );
 }
 
-type ChartPathProps = {
-  paths: any;
-  colors: Record<string, string>;
-  scatterRadius: number;
-  strokeWidth: number;
-};
-
-const ChartPath = ({
-  paths,
-  colors,
+const AnimatedPath = ({
+  path,
+  color,
   strokeWidth,
-  scatterRadius,
-}: ChartPathProps) => {
-  const animatedLinePath = useAnimatedPath(paths["sales.line"], {
+}: {
+  path: SkPath;
+  color: string;
+  strokeWidth: number;
+}) => {
+  const animatedLinePath = useAnimatedPath(path, {
     type: "spring",
   });
-  const animatedScatterPath = useAnimatedPath(
-    paths["sales.scatter"]({ radius: scatterRadius }),
-    {
-      type: "spring",
-    },
-  );
-
   return (
-    <>
-      <Path
-        path={animatedLinePath}
-        style="stroke"
-        color={colors.stroke}
-        strokeCap="round"
-        strokeWidth={strokeWidth}
-      />
-      <Path
-        path={animatedScatterPath}
-        style="fill"
-        color={colors.scatter}
-        strokeWidth={4}
-      />
-    </>
+    <Path
+      path={animatedLinePath}
+      style="stroke"
+      color={color}
+      strokeCap="round"
+      strokeWidth={strokeWidth}
+    />
   );
+};
+
+const AnimatedScatter = ({ path, color }: { path: SkPath; color: string }) => {
+  const animatedLinePath = useAnimatedPath(path, {
+    type: "spring",
+  });
+  return <Path path={animatedLinePath} style="fill" color={color} />;
 };
 
 const styles = StyleSheet.create({
