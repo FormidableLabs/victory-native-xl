@@ -1,5 +1,5 @@
 import type { AxisLabelPosition } from "lib/src/types";
-import type { XAxisSide, YAxisSide } from "victory-native";
+import type { CurveType, XAxisSide, YAxisSide } from "victory-native";
 
 type State = {
   strokeWidth: number;
@@ -16,6 +16,7 @@ type State = {
   yAxisLabelPosition: AxisLabelPosition;
   colors: Record<string, string>;
   domainPadding: number;
+  curveType: CurveType;
 };
 
 type Action =
@@ -32,7 +33,8 @@ type Action =
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_COLORS"; payload: Record<string, string> }
-  | { type: "SET_DOMAIN_PADDING"; payload: number };
+  | { type: "SET_DOMAIN_PADDING"; payload: number }
+  | { type: "SET_CURVE_TYPE"; payload: CurveType };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -64,6 +66,8 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, colors: { ...state.colors, ...action.payload } };
     case "SET_DOMAIN_PADDING":
       return { ...state, domainPadding: action.payload };
+    case "SET_CURVE_TYPE":
+      return { ...state, curveType: action.payload };
 
     default:
       throw new Error(`Unhandled action type`);
@@ -85,4 +89,5 @@ export const optionsInitialState: State = {
   yAxisLabelPosition: "outset",
   colors: {},
   domainPadding: 0,
+  curveType: "linear",
 };
