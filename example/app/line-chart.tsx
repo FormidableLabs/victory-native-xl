@@ -1,7 +1,12 @@
-import { Path, useFont } from "@shopify/react-native-skia";
+import { Path, type SkPath, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { CartesianChart, type XAxisSide, type YAxisSide } from "victory-native";
+import {
+  CartesianChart,
+  useAnimatedPath,
+  type XAxisSide,
+  type YAxisSide,
+} from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
@@ -13,11 +18,16 @@ import type { AxisLabelPosition } from "lib/src/types";
 import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
+import { useState } from "react";
+import { Button } from "../components/Button";
 
-const DATA = Array.from({ length: 10 }, (_, index) => ({
-  day: index + 1,
-  sales: Math.floor(Math.random() * (50 - 5 + 1)) + 5,
-}));
+const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+
+const DATA = (numberPoints = 13) =>
+  Array.from({ length: numberPoints }, (_, index) => ({
+    day: index + 1,
+    sales: randomNumber(),
+  }));
 
 export default function LineChartPage() {
   const isDark = useDarkMode();
@@ -53,9 +63,10 @@ export default function LineChartPage() {
     },
   });
   const font = useFont(inter, fontSize);
+  const [data, setData] = useState(DATA());
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
         <CartesianChart
           xKey="day"
@@ -73,34 +84,56 @@ export default function LineChartPage() {
               y: yAxisLabelPosition,
             },
           }}
-          data={DATA}
+          data={data}
           domainPadding={domainPadding}
         >
-          {({ paths }) => {
-            return (
-              <>
-                <Path
-                  path={paths["sales.line"]}
-                  style="stroke"
-                  color={colors.stroke}
-                  strokeCap="round"
-                  strokeWidth={strokeWidth}
-                />
-                <Path
-                  path={paths["sales.scatter"]({ radius: scatterRadius })}
-                  style="fill"
-                  color={colors.scatter}
-                  strokeWidth={4}
-                />
-              </>
-            );
-          }}
+          {({ paths }) => (
+            <>
+              <AnimatedPath
+                path={paths["sales.line"]}
+                color={colors.stroke!}
+                strokeWidth={strokeWidth}
+              />
+              <AnimatedScatter
+                path={paths["sales.scatter"]({ radius: scatterRadius })}
+                color={colors.scatter!}
+              />
+            </>
+          )}
         </CartesianChart>
       </View>
       <ScrollView
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 12,
+            marginTop: 10,
+            marginBottom: 16,
+          }}
+        >
+          <Button
+            style={{ flex: 1 }}
+            onPress={() => setData((data) => [...data].reverse())}
+            title="Shuffle Data"
+          />
+          <Button
+            style={{ flex: 1 }}
+            onPress={() =>
+              setData((data) => [
+                ...data,
+                {
+                  day: data.length + 1,
+                  sales: randomNumber(),
+                },
+              ])
+            }
+            title="Add Point"
+          />
+        </View>
+
         <InputSlider
           label="Domain Padding"
           maxValue={100}
@@ -262,13 +295,46 @@ export default function LineChartPage() {
   );
 }
 
+const AnimatedPath = ({
+  path,
+  color,
+  strokeWidth,
+}: {
+  path: SkPath;
+  color: string;
+  strokeWidth: number;
+}) => {
+  const animatedLinePath = useAnimatedPath(path, {
+    type: "spring",
+  });
+  return (
+    <Path
+      path={animatedLinePath}
+      style="stroke"
+      color={color}
+      strokeCap="round"
+      strokeWidth={strokeWidth}
+    />
+  );
+};
+
+const AnimatedScatter = ({ path, color }: { path: SkPath; color: string }) => {
+  const animatedLinePath = useAnimatedPath(path, {
+    type: "spring",
+  });
+  return <Path path={animatedLinePath} style="fill" color={color} />;
+};
+
 const styles = StyleSheet.create({
-  chart: {
-    backgroundColor: appColors.viewBackground.light,
+  safeView: {
     flex: 1,
+    backgroundColor: appColors.viewBackground.light,
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
+  },
+  chart: {
+    flex: 1,
   },
   optionsScrollView: {
     flex: 0.5,

@@ -13,7 +13,7 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import inter from "../assets/inter-medium.ttf";
 import { format } from "date-fns";
 import {
@@ -24,14 +24,19 @@ import {
 } from "react-native-reanimated";
 import { AnimatedText } from "../components/AnimatedText";
 import * as Haptics from "expo-haptics";
+import { appColors } from "./consts/colors";
+import { Text } from "../components/Text";
+import { useDarkMode } from "react-native-dark";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function StockPriceScreen() {
+  const isDark = useDarkMode();
   const font = useFont(inter, 12);
   const [isPressActive, setIsPressActive] = React.useState(false);
   const activeDateMS = useSharedValue(0);
   const activeHigh = useSharedValue(0);
+  const textColor = isDark ? appColors.text.dark : appColors.text.light;
 
   const activeDate = useDerivedValue(() => {
     if (!isPressActive) return "";
@@ -47,7 +52,7 @@ export default function StockPriceScreen() {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.scrollView}>
       <View
         style={{
           padding: 12,
@@ -56,22 +61,33 @@ export default function StockPriceScreen() {
           height: 80,
         }}
       >
-        {isPressActive && (
+        {isPressActive ? (
           <>
             <AnimatedText
               text={activeDate}
-              style={{ fontSize: 16, color: "gray" }}
+              style={{
+                fontSize: 16,
+                color: textColor,
+              }}
             />
-            <AnimatedText text={activeHighDisplay} style={{ fontSize: 24 }} />
+            <AnimatedText
+              text={activeHighDisplay}
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                color: textColor,
+              }}
+            />
           </>
+        ) : (
+          <Text>Pan across the chart path to see more.</Text>
         )}
       </View>
-      <View style={{ height: 300 }}>
+      <View style={{ flex: 1, marginBottom: 20 }}>
         <CartesianChart
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          // padding={{ left: 10, right: 10 }}
           curve="linear"
           isPressEnabled
           activePressX={{ value: activeDateMS }}
@@ -85,6 +101,8 @@ export default function StockPriceScreen() {
             labelPosition: { x: "outset", y: "inset" },
             axisSide: { x: "bottom", y: "left" },
             formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
+            lineColor: isDark ? "#71717a" : "#d4d4d8",
+            labelColor: textColor,
           }}
           renderOutside={({
             isPressActive,
@@ -100,6 +118,8 @@ export default function StockPriceScreen() {
                   bottom={chartBounds.bottom}
                   top={chartBounds.top}
                   activeValue={activePressY.high.value}
+                  textColor={textColor}
+                  lineColor={isDark ? "#71717a" : "#d4d4d8"}
                 />
               </>
             )
@@ -109,7 +129,7 @@ export default function StockPriceScreen() {
             <>
               <StockArea
                 // TODO: Remove optional chain, accessing this shouldn't crash stuff
-                xPosition={activePressX?.position}
+                xPosition={activePressX.position}
                 path={paths["high.area"]}
                 isPressActive={isPressActive}
                 {...chartBounds}
@@ -117,7 +137,7 @@ export default function StockPriceScreen() {
               <Path
                 path={paths["high.line"]}
                 style="stroke"
-                color="blue"
+                color={appColors.tint}
                 strokeWidth={2}
               />
             </>
@@ -173,7 +193,7 @@ const StockArea = ({
         <LinearGradient
           start={vec(0, 0)}
           end={vec(top, bottom)}
-          colors={["blue", "#0000ff33"]}
+          colors={[appColors.tint, `${appColors.tint}33`]}
         />
       </Path>
     </Group>
@@ -186,12 +206,16 @@ const ActiveValueIndicator = ({
   top,
   bottom,
   activeValue,
+  textColor,
+  lineColor,
 }: {
   xPosition: SharedValue<number>;
   yPosition: SharedValue<number>;
   activeValue: SharedValue<number>;
   bottom: number;
   top: number;
+  textColor: string;
+  lineColor: string;
 }) => {
   const FONT_SIZE = 16;
   const font = useFont(inter, FONT_SIZE);
@@ -212,10 +236,16 @@ const ActiveValueIndicator = ({
 
   return (
     <>
-      <Line p1={start} p2={end} />
-      <Circle cx={xPosition} cy={yPosition} r={10} color="black" />
-      <Circle cx={xPosition} cy={yPosition} r={8} color="blue" />
+      <Line p1={start} p2={end} color={lineColor} />
+      <Circle cx={xPosition} cy={yPosition} r={10} color={appColors.tint} />
+      <Circle
+        cx={xPosition}
+        cy={yPosition}
+        r={8}
+        color="hsla(0, 0, 100%, 0.25)"
+      />
       <SkiaText
+        color={textColor}
         font={font}
         text={activeValueDisplay}
         x={activeValueX}
@@ -239,3 +269,13 @@ const MONTHS = [
   "Nov",
   "Dec",
 ];
+
+const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: appColors.viewBackground.light,
+    flex: 1,
+    $dark: {
+      backgroundColor: appColors.viewBackground.dark,
+    },
+  },
+});

@@ -1,8 +1,13 @@
 import { vec, type SkPoint, useFont, Points } from "@shopify/react-native-skia";
 import * as React from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { CartesianChart } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
+import { appColors } from "./consts/colors";
+import { useDarkMode } from "react-native-dark";
+import { InputSlider } from "../components/InputSlider";
+import { InputColor } from "../components/InputColor";
+import { useState } from "react";
 
 const DATA = Array.from({ length: 13 }, (_, index) => ({
   day: index + 1,
@@ -25,54 +30,39 @@ const calculateStarPoints = (
   return vectors;
 };
 
-const numPoints = (i: number) => {
-  if (i <= 3) return 3;
-  if (i >= 4 && i > 8) return 4;
-  return 5;
-};
-
-const colorSwatches = (i: number) => {
-  if (i <= 3) return ["#e11d48", "#c084fc"];
-  if (i >= 4 && i < 8) return ["#2563eb", "#10b981"];
-  return ["#ea580c", "#eab308"];
-};
-
 export default function LineChartPage() {
   const font = useFont(inter, 12);
+  const isDark = useDarkMode();
+  const [numPoints, setNumPoints] = useState(5);
+  const [shapeColor, setShapeColor] = useState<string>(appColors.tint);
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 0.5 }}>
+      <SafeAreaView style={styles.safeView}>
+        <View style={styles.chart}>
           <CartesianChart
             xKey="day"
             padding={10}
             yKeys={["stars"]}
-            domainPadding={30}
+            domainPadding={20}
             gridOptions={{
               font,
+              tickCount: 5,
+              lineColor: isDark ? "#71717a" : "#d4d4d8",
+              labelColor: isDark ? appColors.text.dark : appColors.text.light,
             }}
             data={DATA}
           >
             {({ transformedData }) => {
               return (
                 <>
-                  {transformedData.stars.map(({ x, y }, i) => {
+                  {transformedData.stars.map(({ x, y }) => {
                     return (
                       <React.Fragment key={`point-${x}-${y}`}>
                         <Points
-                          points={calculateStarPoints(x, y, 5, numPoints(i))}
+                          points={calculateStarPoints(x, y, 5, numPoints)}
                           mode="polygon"
-                          color={colorSwatches(i).at(0)}
-                          style="stroke"
-                          strokeCap="round"
-                          strokeWidth={2}
-                        />
-                        <Points
-                          points={calculateStarPoints(x, y, 8.5, numPoints(i))}
-                          mode="polygon"
-                          color={colorSwatches(i).at(1)}
-                          style="stroke"
+                          color={shapeColor}
                           strokeCap="round"
                           strokeWidth={2}
                         />
@@ -84,7 +74,51 @@ export default function LineChartPage() {
             }}
           </CartesianChart>
         </View>
+        <ScrollView
+          style={styles.optionsScrollView}
+          contentContainerStyle={styles.options}
+        >
+          <InputSlider
+            label="Number of points"
+            maxValue={8}
+            minValue={3}
+            step={1}
+            value={numPoints}
+            onChange={setNumPoints}
+          />
+          <InputColor
+            label="Shape color"
+            color={shapeColor}
+            onChange={setShapeColor}
+          />
+        </ScrollView>
       </SafeAreaView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  safeView: {
+    flex: 1,
+    backgroundColor: appColors.viewBackground.light,
+    $dark: {
+      backgroundColor: appColors.viewBackground.dark,
+    },
+  },
+  chart: {
+    flex: 1.5,
+  },
+  optionsScrollView: {
+    flex: 1,
+    backgroundColor: appColors.cardBackground.light,
+    $dark: {
+      backgroundColor: appColors.cardBackground.dark,
+    },
+  },
+  options: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+  },
+});
