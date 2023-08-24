@@ -341,13 +341,13 @@ export function CartesianChart<
   // Body of the chart.
   const body = (
     <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
       {gridOptions && hasMeasuredLayoutSize && (
         <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
       )}
       <Group clip={clipRect}>
         {hasMeasuredLayoutSize && children(renderArg)}
       </Group>
+      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </Canvas>
   );
 
