@@ -3,7 +3,9 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
+  CurveType,
   useAnimatedPath,
+  usePrevious,
   type XAxisSide,
   type YAxisSide,
 } from "victory-native";
@@ -20,6 +22,7 @@ import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
 import { useState } from "react";
 import { Button } from "../components/Button";
+import isEqual from "react-fast-compare";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -47,6 +50,7 @@ export default function LineChartPage() {
       scatterRadius,
       colors,
       domainPadding,
+      curveType,
     },
     dispatch,
   ] = React.useReducer(optionsReducer, {
@@ -64,6 +68,13 @@ export default function LineChartPage() {
   });
   const font = useFont(inter, fontSize);
   const [data, setData] = useState(DATA());
+
+  /**
+   * We only want to animate when the dataset changes. This
+   * checks if the options or data changed on render.
+   */
+  const prevData = usePrevious(data);
+  const didOptionsChange = isEqual(prevData, data);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -85,6 +96,7 @@ export default function LineChartPage() {
             },
           }}
           data={data}
+          curve={curveType}
           domainPadding={domainPadding}
         >
           {({ paths }) => (
@@ -93,10 +105,12 @@ export default function LineChartPage() {
                 path={paths["sales.line"]}
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
+                didOptionsChange={didOptionsChange}
               />
               <AnimatedScatter
                 path={paths["sales.scatter"]({ radius: scatterRadius })}
                 color={colors.scatter!}
+                didOptionsChange={didOptionsChange}
               />
             </>
           )}
@@ -133,7 +147,12 @@ export default function LineChartPage() {
             title="Add Point"
           />
         </View>
-
+        <InputSegment<CurveType>
+          label="Curve Type"
+          onChange={(val) => dispatch({ type: "SET_CURVE_TYPE", payload: val })}
+          value={curveType}
+          values={["linear", "natural", "cardinal", "step"]}
+        />
         <InputSlider
           label="Domain Padding"
           maxValue={100}
@@ -299,17 +318,19 @@ const AnimatedPath = ({
   path,
   color,
   strokeWidth,
+  didOptionsChange,
 }: {
   path: SkPath;
   color: string;
   strokeWidth: number;
+  didOptionsChange: boolean;
 }) => {
   const animatedLinePath = useAnimatedPath(path, {
     type: "spring",
   });
   return (
     <Path
-      path={animatedLinePath}
+      path={didOptionsChange ? path : animatedLinePath}
       style="stroke"
       color={color}
       strokeCap="round"
@@ -318,11 +339,26 @@ const AnimatedPath = ({
   );
 };
 
-const AnimatedScatter = ({ path, color }: { path: SkPath; color: string }) => {
+const AnimatedScatter = ({
+  path,
+  color,
+  didOptionsChange,
+}: {
+  path: SkPath;
+  color: string;
+  didOptionsChange: boolean;
+}) => {
   const animatedLinePath = useAnimatedPath(path, {
     type: "spring",
   });
-  return <Path path={animatedLinePath} style="fill" color={color} />;
+
+  return (
+    <Path
+      path={didOptionsChange ? path : animatedLinePath}
+      style="fill"
+      color={color}
+    />
+  );
 };
 
 const styles = StyleSheet.create({

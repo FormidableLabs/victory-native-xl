@@ -13,3 +13,4 @@ export {
 export type { CurveType } from "./cartesian/utils/makeCartesianPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
+export { usePrevious } from "./utils/usePrevious";

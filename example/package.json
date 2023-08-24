@@ -22,6 +22,7 @@
     "expo-router": "2.0.0",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
+    "react-fast-compare": "^3.2.2",
     "react-native": "0.72.3",
     "react-native-dark": "^0.1.3",
     "react-native-gesture-handler": "~2.12.0",
