@@ -8,6 +8,7 @@
     "ios": "expo start --ios"
   },
   "dependencies": {
+    "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-community/slider": "4.4.2",
     "@react-native-segmented-control/segmented-control": "^2.4.2",
