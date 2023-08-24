@@ -16,11 +16,14 @@ export const InfoCard = ({ message, fileName }: Props) => {
     <View style={styles.card}>
       <Text>{message}</Text>
       <View style={styles.file}>
-        <Entypo
-          name="code"
-          size={20}
-          color={isDark ? appColors.text.dark : appColors.text.light}
-        />
+        {Platform.OS === "ios" ? (
+          <Entypo
+            name="code"
+            size={20}
+            style={{ marginRight: 10 }}
+            color={isDark ? appColors.text.dark : appColors.text.light}
+          />
+        ) : null}
         <Text style={styles.fileName}>example/app/{fileName}</Text>
       </View>
     </View>
@@ -29,6 +32,7 @@ export const InfoCard = ({ message, fileName }: Props) => {
 
 const styles = StyleSheet.create({
   card: {
+    width: "100%",
     backgroundColor: appColors.infoCardBackground.light,
     padding: 15,
     borderRadius: 10,
@@ -48,6 +52,5 @@ const styles = StyleSheet.create({
       android: "monospace",
     }),
     fontWeight: "bold",
-    marginLeft: 10,
   },
 });
