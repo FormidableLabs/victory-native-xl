@@ -1,6 +1,13 @@
 import React from "react";
 import data from "../data/stockprice/tesla_stock.json";
-import { type ChartBounds, CartesianChart } from "victory-native";
+import {
+  CartesianChart,
+  CartesianLine,
+  type ChartBounds,
+  type PointsArray,
+  type Scale,
+  useCartesianAreaPath,
+} from "victory-native";
 import {
   Circle,
   Group,
@@ -8,7 +15,6 @@ import {
   LinearGradient,
   Path,
   Skia,
-  type SkPath,
   Text as SkiaText,
   useFont,
   vec,
@@ -125,18 +131,17 @@ export default function StockPriceScreen() {
             )
           }
         >
-          {({ paths, isPressActive, activePressX, chartBounds }) => (
+          {({ isPressActive, activePressX, chartBounds, points, yScale }) => (
             <>
               <StockArea
-                // TODO: Remove optional chain, accessing this shouldn't crash stuff
                 xPosition={activePressX.position}
-                path={paths["high.area"]}
+                points={points.high}
+                yScale={yScale}
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
-              <Path
-                path={paths["high.line"]}
-                style="stroke"
+              <CartesianLine
+                data={points.high}
                 color={appColors.tint}
                 strokeWidth={2}
               />
@@ -149,7 +154,8 @@ export default function StockPriceScreen() {
 }
 
 const StockArea = ({
-  path,
+  points,
+  yScale,
   xPosition,
   isPressActive,
   left,
@@ -157,10 +163,12 @@ const StockArea = ({
   bottom,
   top,
 }: {
-  path: SkPath;
+  points: PointsArray;
+  yScale: Scale;
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
+  const path = useCartesianAreaPath(points, yScale);
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;

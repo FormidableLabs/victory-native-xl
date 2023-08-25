@@ -1,41 +1,15 @@
-import {
-  area,
-  curveBumpX,
-  curveBumpY,
-  curveCardinal,
-  curveCatmullRom,
-  curveLinear,
-  curveNatural,
-  curveStep,
-  line,
-} from "d3-shape";
+import { area, line } from "d3-shape";
 import { stitch } from "../../utils/stitch";
 import { Skia } from "@shopify/react-native-skia";
 import type { ScatterOptions } from "../../types";
+import type { CurveType } from "./curves";
+import { CURVES } from "./curves";
 
 /**
  * Path types supported by Cartesian chart.
  */
 export const pathTypes = ["line", "area", "scatter"] as const;
 export type PathType = (typeof pathTypes)[number];
-
-/**
- * Exposed curves from d3-shape.
- */
-export const CURVES = {
-  linear: curveLinear,
-  natural: curveNatural,
-  bumpX: curveBumpX,
-  bumpY: curveBumpY,
-  cardinal: curveCardinal,
-  cardinal50: curveCardinal.tension(0.5),
-  catmullRom: curveCatmullRom,
-  catmullRom0: curveCatmullRom.alpha(0),
-  catmullRom100: curveCatmullRom.alpha(1),
-  step: curveStep,
-} as const;
-
-export type CurveType = keyof typeof CURVES;
 
 /**
  * Generates a path from the given points.

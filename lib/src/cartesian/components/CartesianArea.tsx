@@ -1,15 +1,14 @@
 import * as React from "react";
-import type { PointsArray } from "victory-native";
+import type { PointsArray, Scale } from "../../types";
 import { type CartesianLineOptions } from "../hooks/useCartesianLinePath";
 import { Path } from "@shopify/react-native-skia";
 import { useCartesianAreaPath } from "../hooks/useCartesianAreaPath";
-import type { ScaleLinear } from "d3-scale";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 export type CartesianAreaProps = {
   data: PointsArray;
-  yScale: ScaleLinear<number, number>;
+  yScale: Scale;
   isAnimated?: boolean;
   animationConfig?: PathAnimationConfig;
   color?: string;
@@ -21,15 +20,15 @@ export function CartesianArea({
   yScale,
   isAnimated,
   animationConfig,
-  color = "black",
+  curveType,
   ...ops
-}: CartesianAreaProps) {
-  const path = useCartesianAreaPath(data, yScale, ops);
+}: React.PropsWithChildren<CartesianAreaProps>) {
+  const path = useCartesianAreaPath(data, yScale, { curveType });
 
   return React.createElement(isAnimated ? AnimatedPath : Path, {
     path,
     style: "fill",
-    color,
+    ...ops,
     ...(isAnimated && { animationConfig }),
   });
 }

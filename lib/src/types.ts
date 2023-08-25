@@ -1,7 +1,5 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
-import type { SkPath } from "@shopify/react-native-skia";
-import type { PathType } from "./cartesian/utils/makeCartesianPath";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -59,13 +57,8 @@ export type CartesianChartRenderArg<
   T extends NumericalFields<RawData>,
   YK extends keyof T,
 > = {
-  paths: {
-    [K in YK as `${K & string}.${Exclude<PathType, "scatter">}`]: SkPath;
-  } & {
-    [K in YK as `${K & string}.scatter`]: (options: ScatterOptions) => SkPath;
-  };
-  xScale: ScaleLinear<number, number, never>;
-  yScale: ScaleLinear<number, number, never>;
+  xScale: Scale;
+  yScale: Scale;
   isPressActive: boolean;
   activePressX: {
     value: SharedValue<number>;
@@ -80,6 +73,8 @@ export type CartesianChartRenderArg<
     [K in YK]: PointsArray;
   };
 };
+
+export type Scale = ScaleLinear<number, number>;
 
 export type PointsArray = {
   x: number;

@@ -1,10 +1,11 @@
 import * as React from "react";
-import type { CurveType, PointsArray } from "victory-native";
+import type { PointsArray } from "../../types";
 import { area } from "d3-shape";
-import { CURVES } from "../utils/makeCartesianPath";
 import { Skia } from "@shopify/react-native-skia";
 import { stitchDataArray } from "../../utils/stitch";
 import type { ScaleLinear } from "d3-scale";
+import type { CurveType } from "../utils/curves";
+import { CURVES } from "../utils/curves";
 
 export type CartesianAreaOptions = {
   curveType?: CurveType;
@@ -13,7 +14,7 @@ export type CartesianAreaOptions = {
 export const useCartesianAreaPath = (
   data: PointsArray,
   yScale: ScaleLinear<number, number>,
-  { curveType = "linear" }: CartesianAreaOptions,
+  { curveType = "linear" }: CartesianAreaOptions = {},
 ) => {
   return React.useMemo(() => {
     const svgPath = area()

@@ -1,13 +1,12 @@
-import { Path, type SkPath, useFont } from "@shopify/react-native-skia";
+import { useFont } from "@shopify/react-native-skia";
 import * as React from "react";
+import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
-  CartesianArea,
   CartesianChart,
   CartesianDots,
   CartesianLine,
   type CurveType,
-  useAnimatedPath,
   usePrevious,
   type XAxisSide,
   type YAxisSide,
@@ -23,7 +22,6 @@ import type { AxisLabelPosition } from "lib/src/types";
 import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
-import { useState } from "react";
 import { Button } from "../components/Button";
 import isEqual from "react-fast-compare";
 
@@ -102,19 +100,19 @@ export default function LineChartPage() {
           curve={curveType}
           domainPadding={domainPadding}
         >
-          {({ points, yScale }) => (
+          {({ points }) => (
             <>
               <CartesianLine
                 data={points.sales}
                 curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
-                isAnimated
+                isAnimated={!didOptionsChange}
                 animationConfig={{ type: "spring" }}
               />
               <CartesianDots
                 data={points.sales}
-                isAnimated
+                isAnimated={!didOptionsChange}
                 animationConfig={{ type: "spring" }}
                 color={colors.scatter!}
               />
@@ -319,53 +317,6 @@ export default function LineChartPage() {
     </SafeAreaView>
   );
 }
-
-const AnimatedPath = ({
-  path,
-  color,
-  strokeWidth,
-  didOptionsChange,
-}: {
-  path: SkPath;
-  color: string;
-  strokeWidth: number;
-  didOptionsChange: boolean;
-}) => {
-  const animatedLinePath = useAnimatedPath(path, {
-    type: "spring",
-  });
-  return (
-    <Path
-      path={didOptionsChange ? path : animatedLinePath}
-      style="stroke"
-      color={color}
-      strokeCap="round"
-      strokeWidth={strokeWidth}
-    />
-  );
-};
-
-const AnimatedScatter = ({
-  path,
-  color,
-  didOptionsChange,
-}: {
-  path: SkPath;
-  color: string;
-  didOptionsChange: boolean;
-}) => {
-  const animatedLinePath = useAnimatedPath(path, {
-    type: "spring",
-  });
-
-  return (
-    <Path
-      path={didOptionsChange ? path : animatedLinePath}
-      style="fill"
-      color={color}
-    />
-  );
-};
 
 const styles = StyleSheet.create({
   safeView: {

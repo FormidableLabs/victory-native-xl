@@ -1,9 +1,9 @@
 import * as React from "react";
 import type { CurveType, PointsArray } from "victory-native";
 import { line } from "d3-shape";
-import { CURVES } from "../utils/makeCartesianPath";
 import { Skia } from "@shopify/react-native-skia";
 import { stitchDataArray } from "../../utils/stitch";
+import { CURVES } from "../utils/curves";
 
 export type CartesianLineOptions = {
   curveType?: CurveType;

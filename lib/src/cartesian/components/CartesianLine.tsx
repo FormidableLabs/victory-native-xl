@@ -4,7 +4,7 @@ import {
   type CartesianLineOptions,
   useCartesianLinePath,
 } from "../hooks/useCartesianLinePath";
-import { Path } from "@shopify/react-native-skia";
+import { Path, type PathProps } from "@shopify/react-native-skia";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
@@ -14,23 +14,24 @@ export type CartesianLinePathProps = {
   animationConfig?: PathAnimationConfig;
   color?: string;
   strokeWidth?: number;
-} & CartesianLineOptions;
+} & CartesianLineOptions &
+  Partial<
+    Pick<PathProps, "color" | "strokeWidth" | "strokeJoin" | "strokeCap">
+  >;
 
 export function CartesianLine({
   data,
   isAnimated,
   animationConfig,
-  color = "black",
-  strokeWidth = 1,
+  curveType,
   ...ops
-}: CartesianLinePathProps) {
-  const path = useCartesianLinePath(data, ops);
+}: React.PropsWithChildren<CartesianLinePathProps>) {
+  const path = useCartesianLinePath(data, { curveType });
 
   return React.createElement(isAnimated ? AnimatedPath : Path, {
     path,
     style: "stroke",
-    color,
-    strokeWidth,
+    ...ops,
     ...(isAnimated && { animationConfig }),
   });
 }

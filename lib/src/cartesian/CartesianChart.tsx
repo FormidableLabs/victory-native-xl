@@ -1,13 +1,7 @@
 import * as React from "react";
 import { transformInputData } from "./utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect, type SkPath } from "@shopify/react-native-skia";
-import {
-  type CurveType,
-  makeCartesianPath,
-  type PathType,
-  pathTypes,
-} from "./utils/makeCartesianPath";
+import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import {
   makeMutable,
   runOnJS,
@@ -19,7 +13,6 @@ import type {
   NumericalFields,
   SidedNumber,
   TransformedData,
-  ScatterOptions,
 } from "../types";
 import {
   Gesture,
@@ -30,6 +23,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { Grid, type GridProps } from "../grid/Grid";
 import { asNumber } from "../utils/asNumber";
+import type { CurveType } from "./utils/curves";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -116,7 +110,7 @@ export function CartesianChart<
     ),
   });
 
-  const { paths, xScale, yScale, chartBounds, _tData } = React.useMemo(() => {
+  const { xScale, yScale, chartBounds, _tData } = React.useMemo(() => {
     const { xScale, yScale, ..._tData } = transformInputData({
       data,
       xKey,
@@ -132,47 +126,6 @@ export function CartesianChart<
       domainPadding,
     });
     tData.value = _tData;
-    /**
-     * Creates a proxy object that will lazily create paths.
-     * Consumer accesses e.g. paths["high.line"] or paths["low.area"]
-     * and the proxy will create the path if it doesn't exist.
-     */
-    const makePaths = () => {
-      const cache = {} as Record<string, SkPath>;
-      return new Proxy(
-        {},
-        {
-          get(_, property: string) {
-            const [key, chartType] = property.split(".") as [YK, PathType];
-            const getPath = (options: Record<string, unknown> = {}) => {
-              if (!yKeys.includes(key) || !pathTypes.includes(chartType))
-                return "";
-
-              if (cache[property]) return cache[property];
-
-              const path = makeCartesianPath(_tData.ox, _tData.y[key].o, {
-                options,
-                curveType:
-                  typeof curve === "string" ? curve : curve[key] || "linear",
-                pathType: chartType,
-                y0: yScale.range()[1] || 0,
-              });
-
-              cache[property] = path;
-              return path;
-            };
-            switch (chartType) {
-              case "scatter":
-                return (options: ScatterOptions) => getPath(options);
-              default:
-                return getPath();
-            }
-          },
-        },
-      ) as CartesianChartRenderArg<RawData, T, YK>["paths"];
-    };
-
-    const paths = makePaths();
 
     const chartBounds = {
       left: xScale(xScale.domain().at(0) || 0),
@@ -181,7 +134,7 @@ export function CartesianChart<
       bottom: yScale(yScale.domain().at(-1) || 0),
     };
 
-    return { tData, paths, xScale, yScale, chartBounds, _tData };
+    return { tData, xScale, yScale, chartBounds, _tData };
   }, [data, xKey, yKeys, size, curve, domain]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
@@ -311,7 +264,6 @@ export function CartesianChart<
   }, [_tData, yKeys]);
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
-    paths,
     isPressActive,
     activePressX,
     activePressY,

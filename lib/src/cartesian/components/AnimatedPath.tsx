@@ -4,9 +4,11 @@ import type {
   SkiaDefaultProps,
   SkPath,
 } from "@shopify/react-native-skia";
-import { useAnimatedPath } from "victory-native";
 import { Path } from "@shopify/react-native-skia";
-import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
+import {
+  type PathAnimationConfig,
+  useAnimatedPath,
+} from "../../hooks/useAnimatedPath";
 
 type AnimatedPathProps = { path: SkPath } & SkiaDefaultProps<
   PathProps,
