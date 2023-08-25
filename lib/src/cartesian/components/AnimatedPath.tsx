@@ -13,13 +13,9 @@ import {
 type AnimatedPathProps = { path: SkPath } & SkiaDefaultProps<
   PathProps,
   "start" | "end"
-> & { animationConfig?: PathAnimationConfig };
+> & { animate?: PathAnimationConfig };
 
-export function AnimatedPath({
-  path,
-  animationConfig,
-  ...rest
-}: AnimatedPathProps) {
-  const p = useAnimatedPath(path, animationConfig);
+export function AnimatedPath({ path, animate, ...rest }: AnimatedPathProps) {
+  const p = useAnimatedPath(path, animate);
   return <Path path={p} {...rest} />;
 }
