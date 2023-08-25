@@ -101,6 +101,9 @@ export default function StockPriceScreen() {
           onPressActiveChange={setIsPressActive}
           onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
+            lineColor: isDark ? "#71717a" : "#d4d4d8",
+          }}
+          axisOptions={{
             font,
             tickCount: 5,
             labelOffset: { x: 12, y: 8 },

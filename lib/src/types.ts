@@ -1,5 +1,6 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
+import { type SkFont } from "@shopify/react-native-skia";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -85,4 +86,31 @@ export type PointsArray = {
 
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends number ? K : never]: T[K];
+};
+
+export type GridProps = {
+  xScale: ScaleLinear<number, number>;
+  yScale: ScaleLinear<number, number>;
+  lineColor: string;
+};
+
+export type AxisProps<
+  RawData extends Record<string, unknown>,
+  T extends NumericalFields<RawData>,
+  XK extends keyof T,
+  YK extends keyof T,
+> = {
+  xScale: ScaleLinear<number, number, never>;
+  yScale: ScaleLinear<number, number, never>;
+  font?: SkFont | null;
+  lineColor: string;
+  labelColor: string | { x: string; y: string };
+  tickCount: number | { x: number; y: number };
+  labelOffset: number | { x: number; y: number };
+  labelPosition:
+    | AxisLabelPosition
+    | { x: AxisLabelPosition; y: AxisLabelPosition };
+  axisSide: { x: XAxisSide; y: YAxisSide };
+  formatXLabel: (label: T[XK]) => string;
+  formatYLabel: (label: T[YK]) => string;
 };

@@ -9,7 +9,9 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import type {
+  AxisProps,
   CartesianChartRenderArg,
+  GridProps,
   NumericalFields,
   SidedNumber,
   TransformedData,
@@ -21,7 +23,8 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { Grid, type GridProps } from "../grid/Grid";
+import { CartesianAxis } from "./components/CartesianAxis";
+import { CartesianGrid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
 
@@ -58,8 +61,9 @@ type CartesianChartProps<
     args: CartesianChartRenderArg<RawData, T, YK>,
   ) => React.ReactNode;
   /** Grid props */
-  gridOptions?: Partial<
-    Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
+  gridOptions?: Partial<Omit<GridProps, "xScale" | "yScale">>;
+  axisOptions?: Partial<
+    Omit<AxisProps<RawData, T, XK, YK>, "xScale" | "yScale">
   >;
 };
 
@@ -85,6 +89,7 @@ export function CartesianChart<
   children,
   renderOutside,
   gridOptions,
+  axisOptions,
   domain,
 }: CartesianChartProps<RawData, T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -115,7 +120,7 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      gridOptions: Object.assign({}, Grid.defaultProps, gridOptions),
+      axisOptions: Object.assign({}, CartesianAxis.defaultProps, axisOptions),
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),
         xMax: size.width - valueFromSidedNumber(padding, "right"),
@@ -283,8 +288,15 @@ export function CartesianChart<
   // Body of the chart.
   const body = (
     <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-      {gridOptions && hasMeasuredLayoutSize && (
-        <Grid xScale={xScale} yScale={yScale} {...gridOptions} />
+      {hasMeasuredLayoutSize && (
+        <>
+          {gridOptions ? (
+            <CartesianGrid {...{ ...gridOptions, xScale, yScale }} />
+          ) : null}
+          {axisOptions ? (
+            <CartesianAxis {...{ ...axisOptions, xScale, yScale }} />
+          ) : null}
+        </>
       )}
       <Group clip={clipRect}>
         {hasMeasuredLayoutSize && children(renderArg)}

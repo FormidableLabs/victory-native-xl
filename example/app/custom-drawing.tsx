@@ -46,6 +46,9 @@ export default function LineChartPage() {
             yKeys={["stars"]}
             domainPadding={20}
             gridOptions={{
+              lineColor: isDark ? "#71717a" : "#d4d4d8",
+            }}
+            axisOptions={{
               font,
               tickCount: 5,
               lineColor: isDark ? "#71717a" : "#d4d4d8",

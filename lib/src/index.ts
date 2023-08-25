@@ -25,3 +25,7 @@ export { useCartesianAreaPath } from "./cartesian/hooks/useCartesianAreaPath";
 export { CartesianArea } from "./cartesian/components/CartesianArea";
 // Scatter
 export { CartesianDots } from "./cartesian/components/CartesianDots";
+
+// Grid and Axis
+export { CartesianAxis } from "./cartesian/components/CartesianAxis";
+export { CartesianGrid } from "./cartesian/components/CartesianGrid";
