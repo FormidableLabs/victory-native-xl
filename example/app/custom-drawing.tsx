@@ -53,10 +53,10 @@ export default function LineChartPage() {
             }}
             data={DATA}
           >
-            {({ transformedData }) => {
+            {({ points }) => {
               return (
                 <>
-                  {transformedData.stars.map(({ x, y }) => {
+                  {points.stars.map(({ x, y }) => {
                     return (
                       <React.Fragment key={`point-${x}-${y}`}>
                         <Points

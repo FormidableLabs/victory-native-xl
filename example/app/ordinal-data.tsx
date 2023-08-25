@@ -1,9 +1,8 @@
 import * as React from "react";
-import { CartesianChart } from "victory-native";
+import { CartesianChart, CartesianLine } from "victory-native";
 import {
   Circle,
   LinearGradient,
-  Path,
   useFont,
   vec,
 } from "@shopify/react-native-skia";
@@ -51,24 +50,24 @@ export default function OrdinalDataScreen() {
           isPressEnabled
           activePressX={{ value: activeX }}
         >
-          {({ paths, chartBounds, transformedData, yScale }) => {
+          {({ chartBounds, points, yScale }) => {
             return (
               <>
-                <Path
-                  path={paths["high.line"]}
-                  style="stroke"
-                  strokeCap="round"
-                  strokeJoin="round"
+                <CartesianLine
+                  points={points.high}
                   color={appColors.tint}
                   strokeWidth={5}
+                  strokeCap="round"
+                  strokeJoin="round"
                 >
                   <LinearGradient
                     start={vec(0, 0)}
                     end={vec(chartBounds.top, chartBounds.bottom)}
                     colors={colors}
                   />
-                </Path>
-                {transformedData.high.map(({ x, y, xValue, yValue }) => (
+                </CartesianLine>
+
+                {points.high.map(({ x, y, xValue, yValue }) => (
                   <AnimatedCircle
                     key={`circle-${x}-${y}`}
                     x={x}
