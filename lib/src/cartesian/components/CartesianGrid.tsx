@@ -1,7 +1,6 @@
+import React, { useMemo } from "react";
 import { type ScaleLinear } from "d3-scale";
-import { useMemo } from "react";
 import { Path, Skia } from "@shopify/react-native-skia";
-import * as React from "react";
 
 export type GridProps = {
   xScale: ScaleLinear<number, number>;

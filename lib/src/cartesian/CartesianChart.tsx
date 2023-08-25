@@ -21,8 +21,8 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { type AxisProps, Axis } from "./CartesianAxis";
-import { type GridProps, Grid } from "./CartesianGrid";
+import { type AxisProps, Axis } from "./components/CartesianAxis";
+import { type GridProps, Grid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
 

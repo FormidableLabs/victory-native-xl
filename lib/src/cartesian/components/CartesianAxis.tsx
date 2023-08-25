@@ -1,15 +1,14 @@
-import * as React from "react";
+import React, { useMemo } from "react";
 import { type ScaleLinear } from "d3-scale";
 import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
 import type {
+  ValueOf,
+  NumericalFields,
   AxisLabelPosition,
   InputDatum,
   XAxisSide,
   YAxisSide,
-} from "../types";
-import type { ValueOf } from "../types";
-import { useMemo } from "react";
-import { type NumericalFields } from "../types";
+} from "../../types";
 
 export type AxisProps<
   RawData extends Record<string, unknown>,

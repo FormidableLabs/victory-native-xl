@@ -7,7 +7,7 @@ import type {
 import { type ScaleLinear } from "d3-scale";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
-import { type AxisProps } from "../CartesianAxis";
+import { type AxisProps } from "../components/CartesianAxis";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
