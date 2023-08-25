@@ -5,7 +5,7 @@ import { Path } from "@shopify/react-native-skia";
 import { useCartesianAreaPath } from "../hooks/useCartesianAreaPath";
 import type { ScaleLinear } from "d3-scale";
 import { AnimatedPath } from "./AnimatedPath";
-import { PathAnimationConfig } from "../../hooks/useAnimatedPath";
+import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 export type CartesianAreaProps = {
   data: PointsArray;
@@ -30,6 +30,6 @@ export function CartesianArea({
     path,
     style: "fill",
     color,
-    animationConfig,
+    ...(isAnimated && { animationConfig }),
   });
 }

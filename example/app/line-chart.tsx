@@ -4,6 +4,7 @@ import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianArea,
   CartesianChart,
+  CartesianDots,
   CartesianLine,
   type CurveType,
   useAnimatedPath,
@@ -101,7 +102,7 @@ export default function LineChartPage() {
           curve={curveType}
           domainPadding={domainPadding}
         >
-          {({ paths, points, yScale }) => (
+          {({ points, yScale }) => (
             <>
               <CartesianLine
                 data={points.sales}
@@ -111,22 +112,11 @@ export default function LineChartPage() {
                 isAnimated
                 animationConfig={{ type: "spring" }}
               />
-              <CartesianArea
+              <CartesianDots
                 data={points.sales}
-                yScale={yScale}
                 isAnimated
                 animationConfig={{ type: "spring" }}
-              />
-              {/*<AnimatedPath*/}
-              {/*  path={paths["sales.line"]}*/}
-              {/*  color={colors.stroke!}*/}
-              {/*  strokeWidth={strokeWidth}*/}
-              {/*  didOptionsChange={didOptionsChange}*/}
-              {/*/>*/}
-              <AnimatedScatter
-                path={paths["sales.scatter"]({ radius: scatterRadius })}
                 color={colors.scatter!}
-                didOptionsChange={didOptionsChange}
               />
             </>
           )}
