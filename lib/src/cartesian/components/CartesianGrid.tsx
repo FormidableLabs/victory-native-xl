@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Path, Skia } from "@shopify/react-native-skia";
 import type { GridProps } from "../../types";
 
-export const Grid = ({ xScale, yScale, lineColor }: GridProps) => {
+export const CartesianGrid = ({ xScale, yScale, lineColor }: GridProps) => {
   const gridPath = useMemo(() => {
     const [x1 = 0, x2 = 0] = xScale.domain();
     const [y1 = 0, y2 = 0] = yScale.domain();
@@ -24,6 +24,6 @@ export const Grid = ({ xScale, yScale, lineColor }: GridProps) => {
   );
 };
 
-Grid.defaultProps = {
+CartesianGrid.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
 } satisfies Partial<GridProps>;

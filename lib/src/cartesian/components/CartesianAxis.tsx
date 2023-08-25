@@ -7,7 +7,7 @@ import type {
   AxisProps,
 } from "../../types";
 
-export const Axis = <
+export const CartesianAxis = <
   RawData extends Record<string, unknown>,
   T extends NumericalFields<RawData>,
   XK extends keyof T,
@@ -159,7 +159,7 @@ export const Axis = <
   );
 };
 
-Axis.defaultProps = {
+CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   tickCount: 10,
   labelOffset: { x: 2, y: 4 },
