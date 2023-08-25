@@ -48,5 +48,21 @@ describe("transformInputData", () => {
     expect(yScale(10)).toEqual(0);
   });
 
+  it("sorts data by xKey", () => {
+    const { ix, y } = transformInputData({
+      data: [
+        { x: 2, y: 3 },
+        { x: 0, y: 7 },
+        { x: 1, y: 5 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+    });
+
+    expect(ix).toEqual([0, 1, 2]);
+    expect(y.y.i).toEqual([7, 5, 3]);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });
