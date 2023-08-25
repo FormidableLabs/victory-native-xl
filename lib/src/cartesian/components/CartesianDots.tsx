@@ -6,8 +6,7 @@ import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 type CartesianDotsProps = {
   points: PointsArray;
-  isAnimated?: boolean;
-  animationConfig?: PathAnimationConfig;
+  animate?: PathAnimationConfig;
   color?: string;
 };
 
@@ -16,8 +15,7 @@ type CartesianDotsProps = {
  */
 export function CartesianDots({
   points,
-  isAnimated,
-  animationConfig,
+  animate,
   color = "black",
 }: CartesianDotsProps) {
   const path = React.useMemo(() => {
@@ -30,10 +28,10 @@ export function CartesianDots({
     return p;
   }, [points]);
 
-  return React.createElement(isAnimated ? AnimatedPath : Path, {
+  return React.createElement(animate ? AnimatedPath : Path, {
     path,
     style: "fill",
     color,
-    ...(isAnimated && { animationConfig }),
+    ...(Boolean(animate) && { animate }),
   });
 }

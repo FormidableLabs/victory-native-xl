@@ -107,13 +107,11 @@ export default function LineChartPage() {
                 curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
-                isAnimated={!didOptionsChange}
-                animationConfig={{ type: "spring" }}
+                animate={didOptionsChange ? undefined : { type: "spring" }}
               />
               <CartesianDots
                 points={points.sales}
-                isAnimated={!didOptionsChange}
-                animationConfig={{ type: "spring" }}
+                animate={didOptionsChange ? undefined : { type: "spring" }}
                 color={colors.scatter!}
               />
             </>

@@ -10,8 +10,7 @@ import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 export type CartesianLinePathProps = {
   points: PointsArray;
-  isAnimated?: boolean;
-  animationConfig?: PathAnimationConfig;
+  animate?: PathAnimationConfig;
   color?: string;
   strokeWidth?: number;
 } & CartesianLineOptions &
@@ -21,17 +20,16 @@ export type CartesianLinePathProps = {
 
 export function CartesianLine({
   points,
-  isAnimated,
-  animationConfig,
+  animate,
   curveType,
   ...ops
 }: React.PropsWithChildren<CartesianLinePathProps>) {
   const path = useCartesianLinePath(points, { curveType });
 
-  return React.createElement(isAnimated ? AnimatedPath : Path, {
+  return React.createElement(animate ? AnimatedPath : Path, {
     path,
     style: "stroke",
     ...ops,
-    ...(isAnimated && { animationConfig }),
+    ...(Boolean(animate) && { animate }),
   });
 }
