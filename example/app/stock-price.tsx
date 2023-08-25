@@ -139,7 +139,6 @@ export default function StockPriceScreen() {
               <StockArea
                 xPosition={activePressX.position}
                 points={points.high}
-                yScale={yScale}
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
@@ -158,7 +157,6 @@ export default function StockPriceScreen() {
 
 const StockArea = ({
   points,
-  yScale,
   xPosition,
   isPressActive,
   left,
@@ -167,11 +165,10 @@ const StockArea = ({
   top,
 }: {
   points: PointsArray;
-  yScale: Scale;
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
-  const path = useCartesianAreaPath(points, yScale);
+  const path = useCartesianAreaPath(points, bottom);
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;

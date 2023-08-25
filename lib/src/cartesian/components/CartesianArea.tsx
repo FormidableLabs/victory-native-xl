@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { PointsArray, Scale } from "../../types";
+import type { PointsArray } from "../../types";
 import { type CartesianLineOptions } from "../hooks/useCartesianLinePath";
 import { Path } from "@shopify/react-native-skia";
 import { useCartesianAreaPath } from "../hooks/useCartesianAreaPath";
@@ -8,7 +8,7 @@ import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 export type CartesianAreaProps = {
   points: PointsArray;
-  yScale: Scale;
+  y0: number;
   animate?: PathAnimationConfig;
   color?: string;
   strokeWidth?: number;
@@ -16,12 +16,12 @@ export type CartesianAreaProps = {
 
 export function CartesianArea({
   points,
-  yScale,
+  y0,
   animate,
   curveType,
   ...ops
 }: React.PropsWithChildren<CartesianAreaProps>) {
-  const path = useCartesianAreaPath(points, yScale, { curveType });
+  const path = useCartesianAreaPath(points, y0, { curveType });
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,
