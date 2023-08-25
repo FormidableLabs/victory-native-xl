@@ -9,7 +9,9 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import type {
+  AxisProps,
   CartesianChartRenderArg,
+  GridProps,
   NumericalFields,
   SidedNumber,
   TransformedData,
@@ -21,8 +23,8 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { type AxisProps, Axis } from "./components/CartesianAxis";
-import { type GridProps, Grid } from "./components/CartesianGrid";
+import { Axis } from "./components/CartesianAxis";
+import { Grid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
 

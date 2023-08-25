@@ -1,35 +1,11 @@
 import React, { useMemo } from "react";
-import { type ScaleLinear } from "d3-scale";
-import { Line, Text, vec, type SkFont } from "@shopify/react-native-skia";
+import { Line, Text, vec } from "@shopify/react-native-skia";
 import type {
   ValueOf,
   NumericalFields,
-  AxisLabelPosition,
   InputDatum,
-  XAxisSide,
-  YAxisSide,
+  AxisProps,
 } from "../../types";
-
-export type AxisProps<
-  RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
-> = {
-  xScale: ScaleLinear<number, number, never>;
-  yScale: ScaleLinear<number, number, never>;
-  font?: SkFont | null;
-  lineColor: string;
-  labelColor: string | { x: string; y: string };
-  tickCount: number | { x: number; y: number };
-  labelOffset: number | { x: number; y: number };
-  labelPosition:
-    | AxisLabelPosition
-    | { x: AxisLabelPosition; y: AxisLabelPosition };
-  axisSide: { x: XAxisSide; y: YAxisSide };
-  formatXLabel: (label: T[XK]) => string;
-  formatYLabel: (label: T[YK]) => string;
-};
 
 export const Axis = <
   RawData extends Record<string, unknown>,

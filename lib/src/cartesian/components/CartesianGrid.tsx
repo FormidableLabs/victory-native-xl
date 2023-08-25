@@ -1,12 +1,6 @@
 import React, { useMemo } from "react";
-import { type ScaleLinear } from "d3-scale";
 import { Path, Skia } from "@shopify/react-native-skia";
-
-export type GridProps = {
-  xScale: ScaleLinear<number, number>;
-  yScale: ScaleLinear<number, number>;
-  lineColor: string;
-};
+import type { GridProps } from "../../types";
 
 export const Grid = ({ xScale, yScale, lineColor }: GridProps) => {
   const gridPath = useMemo(() => {
