@@ -54,7 +54,7 @@ export default function OrdinalDataScreen() {
             return (
               <>
                 <CartesianLine
-                  data={points.high}
+                  points={points.high}
                   color={appColors.tint}
                   strokeWidth={5}
                   strokeCap="round"

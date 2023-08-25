@@ -12,16 +12,16 @@ export type CartesianAreaOptions = {
 };
 
 export const useCartesianAreaPath = (
-  data: PointsArray,
+  points: PointsArray,
   yScale: ScaleLinear<number, number>,
   { curveType = "linear" }: CartesianAreaOptions = {},
 ) => {
   return React.useMemo(() => {
     const svgPath = area()
       .y0(yScale.range()[1] || 0)
-      ?.curve(CURVES[curveType])(stitchDataArray(data));
+      ?.curve(CURVES[curveType])(stitchDataArray(points));
     if (!svgPath) return Skia.Path.Make();
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
-  }, [data, curveType]);
+  }, [points, curveType]);
 };

@@ -1,11 +1,11 @@
 import * as React from "react";
-import type { PointsArray } from "victory-native";
+import type { PointsArray } from "../../types";
 import { Path, Skia } from "@shopify/react-native-skia";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 type CartesianDotsProps = {
-  data: PointsArray;
+  points: PointsArray;
   isAnimated?: boolean;
   animationConfig?: PathAnimationConfig;
   color?: string;
@@ -15,7 +15,7 @@ type CartesianDotsProps = {
  * TODO: Colors, sizes, shapes
  */
 export function CartesianDots({
-  data,
+  points,
   isAnimated,
   animationConfig,
   color = "black",
@@ -23,12 +23,12 @@ export function CartesianDots({
   const path = React.useMemo(() => {
     const p = Skia.Path.Make();
 
-    data.forEach(({ x, y }) => {
+    points.forEach(({ x, y }) => {
       p.addCircle(x, y, 10);
     });
 
     return p;
-  }, [data]);
+  }, [points]);
 
   return React.createElement(isAnimated ? AnimatedPath : Path, {
     path,

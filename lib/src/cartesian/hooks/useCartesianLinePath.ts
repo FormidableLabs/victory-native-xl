@@ -10,13 +10,13 @@ export type CartesianLineOptions = {
 };
 
 export const useCartesianLinePath = (
-  data: PointsArray,
+  points: PointsArray,
   { curveType = "linear" }: CartesianLineOptions,
 ) => {
   return React.useMemo(() => {
-    const svgPath = line().curve(CURVES[curveType])(stitchDataArray(data));
+    const svgPath = line().curve(CURVES[curveType])(stitchDataArray(points));
     if (!svgPath) return Skia.Path.Make();
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
-  }, [data, curveType]);
+  }, [points, curveType]);
 };

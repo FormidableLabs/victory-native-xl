@@ -7,7 +7,7 @@ import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 export type CartesianAreaProps = {
-  data: PointsArray;
+  points: PointsArray;
   yScale: Scale;
   isAnimated?: boolean;
   animationConfig?: PathAnimationConfig;
@@ -16,14 +16,14 @@ export type CartesianAreaProps = {
 } & CartesianLineOptions;
 
 export function CartesianArea({
-  data,
+  points,
   yScale,
   isAnimated,
   animationConfig,
   curveType,
   ...ops
 }: React.PropsWithChildren<CartesianAreaProps>) {
-  const path = useCartesianAreaPath(data, yScale, { curveType });
+  const path = useCartesianAreaPath(points, yScale, { curveType });
 
   return React.createElement(isAnimated ? AnimatedPath : Path, {
     path,

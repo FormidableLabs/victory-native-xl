@@ -141,7 +141,7 @@ export default function StockPriceScreen() {
                 {...chartBounds}
               />
               <CartesianLine
-                data={points.high}
+                points={points.high}
                 color={appColors.tint}
                 strokeWidth={2}
               />

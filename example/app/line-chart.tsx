@@ -103,7 +103,7 @@ export default function LineChartPage() {
           {({ points }) => (
             <>
               <CartesianLine
-                data={points.sales}
+                points={points.sales}
                 curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
@@ -111,7 +111,7 @@ export default function LineChartPage() {
                 animationConfig={{ type: "spring" }}
               />
               <CartesianDots
-                data={points.sales}
+                points={points.sales}
                 isAnimated={!didOptionsChange}
                 animationConfig={{ type: "spring" }}
                 color={colors.scatter!}
