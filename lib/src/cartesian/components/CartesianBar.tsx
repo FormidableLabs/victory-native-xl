@@ -1,52 +1,42 @@
 import * as React from "react";
-import { Path, Skia } from "@shopify/react-native-skia";
-import type { PointsArray, Scale } from "../../types";
+import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
+import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
 type CartesianBarProps = {
   points: PointsArray;
-  xScale: Scale;
-  yScale: Scale;
-  innerPadding: number;
-  color?: string;
+  innerPadding?: number;
+  chartBounds: ChartBounds;
   animate?: PathAnimationConfig;
-};
+} & Partial<Pick<PathProps, "color">>;
 
 export const CartesianBar = ({
   points,
-  xScale,
-  yScale,
+  chartBounds,
   animate,
-  color,
-  innerPadding,
+  innerPadding = 0.25,
+  ...ops
 }: CartesianBarProps) => {
-  const [y0 = 0, y1 = 0] = yScale.domain();
-
   const path = React.useMemo(() => {
-    const domainWidth = xScale.range().at(1)! - xScale.range().at(0)!;
+    const domainWidth = chartBounds.right - chartBounds.left;
     const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
     const path = Skia.Path.Make();
 
-    points.forEach((point) => {
+    points.forEach(({ x, y }) => {
       path.addRect(
-        Skia.XYWHRect(
-          point.x! - barWidth / 2,
-          point.y!,
-          barWidth,
-          -(yScale(y0) - yScale(y1) - point.y),
-        ),
+        Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),
       );
     });
 
     return path;
-  }, [xScale, yScale, points]);
+  }, [points, chartBounds]);
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,
     style: "fill",
-    color,
     ...(Boolean(animate) && { animate }),
+    ...ops,
   });
 };
 

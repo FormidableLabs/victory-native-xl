@@ -40,14 +40,13 @@ export default function BarChartPage() {
             }}
             data={DATA}
           >
-            {({ points, xScale, yScale }) => {
+            {({ points, chartBounds }) => {
               return (
                 <>
                   <CartesianBar
                     color={appColors.tint}
-                    xScale={xScale}
-                    yScale={yScale}
                     points={points.listenCount}
+                    chartBounds={chartBounds}
                   />
                   <CartesianDots color="aqua" points={points.listenCount} />
                   <CartesianLine
