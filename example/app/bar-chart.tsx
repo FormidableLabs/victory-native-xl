@@ -11,7 +11,7 @@ import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { useDarkMode } from "react-native-dark";
 
-const DATA = Array.from({ length: 10 }, (_, index) => ({
+const DATA = Array.from({ length: 5 }, (_, index) => ({
   month: index + 1,
   listenCount: Math.floor(Math.random() * (50 - 20 + 1)) + 20,
 }));
@@ -27,7 +27,7 @@ export default function BarChartPage() {
             xKey="month"
             padding={5}
             yKeys={["listenCount"]}
-            domainPadding={30}
+            domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0] }}
             gridOptions={{
               lineColor: isDark ? "#71717a" : "#d4d4d8",
@@ -47,6 +47,7 @@ export default function BarChartPage() {
                     color={appColors.tint}
                     points={points.listenCount}
                     chartBounds={chartBounds}
+                    innerPadding={0.5}
                   />
                   <CartesianDots color="aqua" points={points.listenCount} />
                   <CartesianLine
