@@ -3,6 +3,7 @@ import * as React from "react";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
+  CartesianBars,
   CartesianChart,
   CartesianDots,
   CartesianLine,
@@ -102,8 +103,15 @@ export default function LineChartPage() {
           curve={curveType}
           domainPadding={domainPadding}
         >
-          {({ points }) => (
+          {({ points, xScale, yScale }) => (
             <>
+              <CartesianBars
+                points={points.sales}
+                xScale={xScale}
+                yScale={yScale}
+                innerPadding={0.3}
+                animate={{ type: "spring" }}
+              />
               <CartesianLine
                 points={points.sales}
                 curveType="linear"
