@@ -92,7 +92,7 @@ export default function BarChartPage() {
             maxValue={1}
             minValue={0}
             step={0.1}
-            value={innerPadding.toFixed(1)}
+            value={innerPadding}
             onChange={setInnerPadding}
           />
         </ScrollView>

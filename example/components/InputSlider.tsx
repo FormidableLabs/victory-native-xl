@@ -40,7 +40,9 @@ export const InputSlider = ({
         value={value}
         onValueChange={onChange}
       />
-      <Text style={{ alignSelf: "center" }}>{value}</Text>
+      <Text style={{ alignSelf: "center" }}>
+        {value % 1 === 0 ? value : value.toFixed(1)}
+      </Text>
     </View>
   </View>
 );
