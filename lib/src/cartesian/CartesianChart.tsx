@@ -286,23 +286,13 @@ export function CartesianChart<
    * Allow end-user to request "raw-ish" data for a given yKey.
    * Generate this on demand using a proxy.
    */
-  type TransformedDataArg = CartesianChartRenderArg<
-    RawData,
-    T,
-    YK
-  >["transformedData"];
-  const transformedData = React.useMemo<TransformedDataArg>(() => {
-    const cache = {} as Record<
-      YK,
-      TransformedDataArg[keyof TransformedDataArg]
-    >;
+  type PointsArg = CartesianChartRenderArg<RawData, T, YK>["points"];
+  const points = React.useMemo<PointsArg>(() => {
+    const cache = {} as Record<YK, PointsArg[keyof PointsArg]>;
     return new Proxy(
       {},
       {
-        get(
-          _,
-          property: string,
-        ): TransformedDataArg[keyof TransformedDataArg] | undefined {
+        get(_, property: string): PointsArg[keyof PointsArg] | undefined {
           const key = property as YK;
           if (!yKeys.includes(key)) return undefined;
           if (cache[key]) return cache[key];
@@ -317,7 +307,7 @@ export function CartesianChart<
           return cache[key];
         },
       },
-    ) as TransformedDataArg;
+    ) as PointsArg;
   }, [_tData, yKeys]);
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
@@ -329,7 +319,7 @@ export function CartesianChart<
     yScale,
     chartBounds,
     canvasSize: size,
-    transformedData,
+    points,
   };
   const clipRect = rect(
     chartBounds.left,

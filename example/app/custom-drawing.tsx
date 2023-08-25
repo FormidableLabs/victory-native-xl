@@ -53,7 +53,7 @@ export default function LineChartPage() {
             }}
             data={DATA}
           >
-            {({ transformedData }) => {
+            {({ points }) => {
               return (
                 <>
                   {transformedData.stars.map(({ x, y }) => {

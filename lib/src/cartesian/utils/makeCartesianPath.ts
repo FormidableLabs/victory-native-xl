@@ -22,7 +22,7 @@ export type PathType = (typeof pathTypes)[number];
 /**
  * Exposed curves from d3-shape.
  */
-const CURVES = {
+export const CURVES = {
   linear: curveLinear,
   natural: curveNatural,
   bumpX: curveBumpX,

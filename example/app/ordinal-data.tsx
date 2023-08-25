@@ -51,7 +51,7 @@ export default function OrdinalDataScreen() {
           isPressEnabled
           activePressX={{ value: activeX }}
         >
-          {({ paths, chartBounds, transformedData, yScale }) => {
+          {({ paths, chartBounds, points, yScale }) => {
             return (
               <>
                 <Path
@@ -68,7 +68,7 @@ export default function OrdinalDataScreen() {
                     colors={colors}
                   />
                 </Path>
-                {transformedData.high.map(({ x, y, xValue, yValue }) => (
+                {points.high.map(({ x, y, xValue, yValue }) => (
                   <AnimatedCircle
                     key={`circle-${x}-${y}`}
                     x={x}

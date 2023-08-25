@@ -3,6 +3,7 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
+  CartesianLine,
   type CurveType,
   useAnimatedPath,
   usePrevious,
@@ -99,14 +100,20 @@ export default function LineChartPage() {
           curve={curveType}
           domainPadding={domainPadding}
         >
-          {({ paths }) => (
+          {({ paths, points }) => (
             <>
-              <AnimatedPath
-                path={paths["sales.line"]}
+              <CartesianLine
+                data={points.sales}
+                curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
-                didOptionsChange={didOptionsChange}
               />
+              {/*<AnimatedPath*/}
+              {/*  path={paths["sales.line"]}*/}
+              {/*  color={colors.stroke!}*/}
+              {/*  strokeWidth={strokeWidth}*/}
+              {/*  didOptionsChange={didOptionsChange}*/}
+              {/*/>*/}
               <AnimatedScatter
                 path={paths["sales.scatter"]({ radius: scatterRadius })}
                 color={colors.scatter!}

@@ -9,8 +9,13 @@ export {
   type ChartBounds,
   type YAxisSide,
   type XAxisSide,
+  type PointsArray,
 } from "./types";
 export type { CurveType } from "./cartesian/utils/makeCartesianPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { usePrevious } from "./utils/usePrevious";
+
+// Line
+export { useCartesianLinePath } from "./cartesian/hooks/useCartesianLinePath";
+export { CartesianLine } from "./cartesian/components/CartesianLine";

@@ -76,10 +76,17 @@ export type CartesianChartRenderArg<
   };
   chartBounds: ChartBounds;
   canvasSize: { width: number; height: number };
-  transformedData: {
-    [K in YK]: { x: number; xValue: number; y: number; yValue: number }[];
+  points: {
+    [K in YK]: PointsArray;
   };
 };
+
+export type PointsArray = {
+  x: number;
+  xValue: number;
+  y: number;
+  yValue: number;
+}[];
 
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends number ? K : never]: T[K];
