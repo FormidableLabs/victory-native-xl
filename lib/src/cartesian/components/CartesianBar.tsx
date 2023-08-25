@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Path, Skia } from "@shopify/react-native-skia";
-import { scaleBand } from "d3-scale";
 import type { PointsArray, Scale } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
@@ -9,37 +8,32 @@ type CartesianBarProps = {
   points: PointsArray;
   xScale: Scale;
   yScale: Scale;
-  isAnimated?: boolean;
+  innerPadding: number;
   color?: string;
-  animationConfig?: PathAnimationConfig;
+  animate?: PathAnimationConfig;
 };
 
 export const CartesianBar = ({
   points,
   xScale,
   yScale,
-  isAnimated,
-  animationConfig,
+  animate,
   color,
+  innerPadding,
 }: CartesianBarProps) => {
   const [y0 = 0, y1 = 0] = yScale.domain();
 
   const path = React.useMemo(() => {
+    const domainWidth = xScale.range().at(1)! - xScale.range().at(0)!;
+    const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
     const path = Skia.Path.Make();
-    const scale = scaleBand()
-      .range([xScale(points.at(0)!.xValue!), xScale(points.at(-1)!.xValue!)])
-      .domain(points.map((p) => p.xValue.toFixed(0)))
-      .paddingInner(0.5)
-      .paddingOuter(-0.5)
-      .align(0.5)
-      .round(false);
 
     points.forEach((point) => {
       path.addRect(
         Skia.XYWHRect(
-          scale(point.xValue.toFixed(0))!,
+          point.x! - barWidth / 2,
           point.y!,
-          scale.bandwidth(),
+          barWidth,
           -(yScale(y0) - yScale(y1) - point.y),
         ),
       );
@@ -48,10 +42,14 @@ export const CartesianBar = ({
     return path;
   }, [xScale, yScale, points]);
 
-  return React.createElement(isAnimated ? AnimatedPath : Path, {
+  return React.createElement(animate ? AnimatedPath : Path, {
     path,
     style: "fill",
     color,
-    ...(isAnimated && { animationConfig }),
+    ...(Boolean(animate) && { animate }),
   });
 };
+
+CartesianBar.defaultProps = {
+  innerPadding: 0.25,
+} satisfies Partial<CartesianBarProps>;
