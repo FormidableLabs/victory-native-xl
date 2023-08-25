@@ -11,11 +11,13 @@ import {
 import { usePrevious } from "../utils/usePrevious";
 import { Skia } from "@shopify/react-native-skia";
 
+export type PathAnimationConfig =
+  | ({ type: "timing" } & WithTimingConfig)
+  | { type: "spring" & WithSpringConfig };
+
 export const useAnimatedPath = (
   path: SkPath,
-  animConfig:
-    | ({ type: "timing" } & WithTimingConfig)
-    | { type: "spring" & WithSpringConfig } = { type: "timing", duration: 300 },
+  animConfig: PathAnimationConfig = { type: "timing", duration: 300 },
 ) => {
   const t = useSharedValue(0);
   const prevPath = usePrevious(path);

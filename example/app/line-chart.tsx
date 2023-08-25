@@ -2,6 +2,7 @@ import { Path, type SkPath, useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
+  CartesianArea,
   CartesianChart,
   CartesianLine,
   type CurveType,
@@ -100,13 +101,21 @@ export default function LineChartPage() {
           curve={curveType}
           domainPadding={domainPadding}
         >
-          {({ paths, points }) => (
+          {({ paths, points, yScale }) => (
             <>
               <CartesianLine
                 data={points.sales}
                 curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
+                isAnimated
+                animationConfig={{ type: "spring" }}
+              />
+              <CartesianArea
+                data={points.sales}
+                yScale={yScale}
+                isAnimated
+                animationConfig={{ type: "spring" }}
               />
               {/*<AnimatedPath*/}
               {/*  path={paths["sales.line"]}*/}

@@ -1,36 +1,35 @@
 import * as React from "react";
 import type { PointsArray } from "victory-native";
-import {
-  type CartesianLineOptions,
-  useCartesianLinePath,
-} from "../hooks/useCartesianLinePath";
+import { type CartesianLineOptions } from "../hooks/useCartesianLinePath";
 import { Path } from "@shopify/react-native-skia";
+import { useCartesianAreaPath } from "../hooks/useCartesianAreaPath";
+import type { ScaleLinear } from "d3-scale";
 import { AnimatedPath } from "./AnimatedPath";
-import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
+import { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
-export type CartesianLinePathProps = {
+export type CartesianAreaProps = {
   data: PointsArray;
+  yScale: ScaleLinear<number, number>;
   isAnimated?: boolean;
   animationConfig?: PathAnimationConfig;
   color?: string;
   strokeWidth?: number;
 } & CartesianLineOptions;
 
-export function CartesianLine({
+export function CartesianArea({
   data,
+  yScale,
   isAnimated,
   animationConfig,
   color = "black",
-  strokeWidth = 1,
   ...ops
-}: CartesianLinePathProps) {
-  const path = useCartesianLinePath(data, ops);
+}: CartesianAreaProps) {
+  const path = useCartesianAreaPath(data, yScale, ops);
 
   return React.createElement(isAnimated ? AnimatedPath : Path, {
     path,
-    style: "stroke",
+    style: "fill",
     color,
-    strokeWidth,
     animationConfig,
   });
 }
