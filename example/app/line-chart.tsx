@@ -1,4 +1,4 @@
-import { useFont } from "@shopify/react-native-skia";
+import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
@@ -111,7 +111,14 @@ export default function LineChartPage() {
                 yScale={yScale}
                 innerPadding={0.3}
                 animate={{ type: "spring" }}
-              />
+                color="red"
+              >
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(500, 500)}
+                  colors={["red", "blue"]}
+                />
+              </CartesianBars>
               <CartesianLine
                 points={points.sales}
                 curveType="linear"
