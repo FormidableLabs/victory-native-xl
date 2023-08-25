@@ -130,7 +130,7 @@ export default function LineChartPage() {
         >
           <Button
             style={{ flex: 1 }}
-            onPress={() => setData((data) => [...data].reverse())}
+            onPress={() => setData((data) => DATA(data.length))}
             title="Shuffle Data"
           />
           <Button
