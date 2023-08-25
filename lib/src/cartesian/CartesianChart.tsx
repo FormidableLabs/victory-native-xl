@@ -21,8 +21,8 @@ import {
 } from "react-native-gesture-handler";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { type AxisProps, axisDefaultProps, Axis } from "./CartesianAxis";
-import { type GridProps, gridDefaultProps, Grid } from "./CartesianGrid";
+import { type AxisProps, Axis } from "./CartesianAxis";
+import { type GridProps, Grid } from "./CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
 
@@ -118,7 +118,7 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      axisOptions: Object.assign({}, axisDefaultProps, axisOptions),
+      axisOptions: Object.assign({}, Axis.defaultProps, axisOptions),
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),
         xMax: size.width - valueFromSidedNumber(padding, "right"),
@@ -289,14 +289,10 @@ export function CartesianChart<
       {hasMeasuredLayoutSize && (
         <>
           {gridOptions ? (
-            <Grid
-              {...{ ...gridDefaultProps, ...gridOptions, xScale, yScale }}
-            />
+            <Grid {...{ ...gridOptions, xScale, yScale }} />
           ) : null}
           {axisOptions ? (
-            <Axis
-              {...{ ...axisDefaultProps, ...axisOptions, xScale, yScale }}
-            />
+            <Axis {...{ ...axisOptions, xScale, yScale }} />
           ) : null}
         </>
       )}

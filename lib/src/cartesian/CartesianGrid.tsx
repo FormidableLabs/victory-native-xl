@@ -4,8 +4,8 @@ import { Path, Skia } from "@shopify/react-native-skia";
 import * as React from "react";
 
 export type GridProps = {
-  xScale: ScaleLinear<number, number, never>;
-  yScale: ScaleLinear<number, number, never>;
+  xScale: ScaleLinear<number, number>;
+  yScale: ScaleLinear<number, number>;
   lineColor: string;
 };
 
@@ -31,6 +31,6 @@ export const Grid = ({ xScale, yScale, lineColor }: GridProps) => {
   );
 };
 
-export const gridDefaultProps = {
+Grid.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
 } satisfies Partial<GridProps>;

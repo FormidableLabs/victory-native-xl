@@ -89,6 +89,10 @@ export const transformInputData = <
   const fontHeight = axisOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
   const yScaleRange: [number, number] = (() => {
+    const xTickCount =
+      (typeof axisOptions?.tickCount === "number"
+        ? axisOptions?.tickCount
+        : axisOptions?.tickCount?.x) ?? 0;
     const yLabelPosition =
       typeof axisOptions?.labelPosition === "string"
         ? axisOptions.labelPosition
@@ -102,13 +106,15 @@ export const transformInputData = <
     if (xAxisSide === "bottom" && yLabelPosition === "outset") {
       return [
         outputWindow.yMin,
-        outputWindow.yMax - fontHeight - yLabelOffset * 2,
+        outputWindow.yMax +
+          (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
       ];
     }
     // Top outset
     if (xAxisSide === "top" && yLabelPosition === "outset") {
       return [
-        outputWindow.yMin + fontHeight + yLabelOffset * 2,
+        outputWindow.yMin +
+          (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
         outputWindow.yMax,
       ];
     }
@@ -143,6 +149,10 @@ export const transformInputData = <
   const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
+    const yTickCount =
+      (typeof axisOptions?.tickCount === "number"
+        ? axisOptions?.tickCount
+        : axisOptions?.tickCount?.y) ?? 0;
     const yLabelPosition =
       typeof axisOptions?.labelPosition === "string"
         ? axisOptions.labelPosition
@@ -156,7 +166,8 @@ export const transformInputData = <
     // Left axes, outset label
     if (yAxisSide === "left" && yLabelPosition === "outset") {
       return [
-        outputWindow.xMin + topYLabelWidth + yLabelOffset,
+        outputWindow.xMin +
+          (yTickCount > 0 ? topYLabelWidth + yLabelOffset : 0),
         outputWindow.xMax,
       ];
     }
@@ -164,7 +175,8 @@ export const transformInputData = <
     if (yAxisSide === "right" && yLabelPosition === "outset") {
       return [
         outputWindow.xMin,
-        outputWindow.xMax - topYLabelWidth - yLabelOffset,
+        outputWindow.xMax +
+          (yTickCount > 0 ? -topYLabelWidth - yLabelOffset : 0),
       ];
     }
     // Inset labels don't need added offsets

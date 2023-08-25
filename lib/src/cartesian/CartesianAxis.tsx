@@ -184,7 +184,7 @@ export const Axis = <
   );
 };
 
-export const axisDefaultProps = {
+Axis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   tickCount: 10,
   labelOffset: { x: 2, y: 4 },
