@@ -5,7 +5,6 @@ import {
   CartesianLine,
   type ChartBounds,
   type PointsArray,
-  type Scale,
   useCartesianAreaPath,
 } from "victory-native";
 import {
@@ -134,7 +133,7 @@ export default function StockPriceScreen() {
             )
           }
         >
-          {({ isPressActive, activePressX, chartBounds, points, yScale }) => (
+          {({ isPressActive, activePressX, chartBounds, points }) => (
             <>
               <StockArea
                 xPosition={activePressX.position}
