@@ -3,6 +3,7 @@ import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
+import type { PropsWithChildren } from "react";
 
 type CartesianBarProps = {
   points: PointsArray;
@@ -17,7 +18,7 @@ export const CartesianBar = ({
   animate,
   innerPadding = 0.25,
   ...ops
-}: CartesianBarProps) => {
+}: PropsWithChildren<CartesianBarProps>) => {
   const path = React.useMemo(() => {
     const domainWidth = chartBounds.right - chartBounds.left;
     const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
