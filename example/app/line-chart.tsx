@@ -84,9 +84,8 @@ export default function LineChartPage() {
           xKey="day"
           padding={chartPadding}
           yKeys={["sales"]}
-          gridOptions={{
+          axisOptions={{
             font,
-            lineColor: colors.line,
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             labelOffset: { x: xLabelOffset, y: yLabelOffset },
             tickCount: { x: xTickCount, y: yTickCount },
@@ -95,6 +94,9 @@ export default function LineChartPage() {
               x: xAxisLabelPosition,
               y: yAxisLabelPosition,
             },
+          }}
+          gridOptions={{
+            lineColor: colors.line,
           }}
           data={data}
           curve={curveType}

@@ -5,9 +5,9 @@ import type {
   TransformedData,
 } from "../../types";
 import { type ScaleLinear } from "d3-scale";
-import type { GridProps } from "../../grid/Grid";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
+import { type AxisProps } from "../CartesianAxis";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -33,7 +33,7 @@ export const transformInputData = <
   xKey,
   yKeys,
   outputWindow,
-  gridOptions,
+  axisOptions,
   domain,
   domainPadding,
 }: {
@@ -41,8 +41,8 @@ export const transformInputData = <
   xKey: XK;
   yKeys: YK[];
   outputWindow: PrimitiveViewWindow;
-  gridOptions?: Partial<
-    Omit<GridProps<RawData, T, XK, YK>, "xScale" | "yScale">
+  axisOptions?: Partial<
+    Omit<AxisProps<RawData, T, XK, YK>, "xScale" | "yScale">
   >;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   domainPadding?: SidedNumber;
@@ -86,18 +86,18 @@ export const transformInputData = <
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
   const yScaleDomain = [yMax, yMin] as [number, number];
-  const fontHeight = gridOptions?.font?.getSize?.() ?? 0;
+  const fontHeight = axisOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
   const yScaleRange: [number, number] = (() => {
     const yLabelPosition =
-      typeof gridOptions?.labelPosition === "string"
-        ? gridOptions.labelPosition
-        : gridOptions?.labelPosition?.x;
-    const xAxisSide = gridOptions?.axisSide?.x;
+      typeof axisOptions?.labelPosition === "string"
+        ? axisOptions.labelPosition
+        : axisOptions?.labelPosition?.x;
+    const xAxisSide = axisOptions?.axisSide?.x;
     const yLabelOffset =
-      (typeof gridOptions?.labelOffset === "number"
-        ? gridOptions.labelOffset
-        : gridOptions?.labelOffset?.y) ?? 0;
+      (typeof axisOptions?.labelOffset === "number"
+        ? axisOptions.labelOffset
+        : axisOptions?.labelOffset?.y) ?? 0;
     // bottom, outset
     if (xAxisSide === "bottom" && yLabelPosition === "outset") {
       return [
@@ -134,24 +134,24 @@ export const transformInputData = <
   // Measure our top-most y-label if we have grid options so we can
   //  compensate for it in our x-scale.
   const topYLabel =
-    gridOptions?.formatYLabel?.(yScale.domain().at(0) as T[YK]) ||
+    axisOptions?.formatYLabel?.(yScale.domain().at(0) as T[YK]) ||
     String(yScale.domain().at(0));
 
   // Generate our x-scale
   const ixMin = asNumber(domain?.x?.[0] ?? ix.at(0)),
     ixMax = asNumber(domain?.x?.[1] ?? ix.at(-1));
-  const topYLabelWidth = gridOptions?.font?.getTextWidth(topYLabel) ?? 0;
+  const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
     const yLabelPosition =
-      typeof gridOptions?.labelPosition === "string"
-        ? gridOptions.labelPosition
-        : gridOptions?.labelPosition?.y;
-    const yAxisSide = gridOptions?.axisSide?.y;
+      typeof axisOptions?.labelPosition === "string"
+        ? axisOptions.labelPosition
+        : axisOptions?.labelPosition?.y;
+    const yAxisSide = axisOptions?.axisSide?.y;
     const yLabelOffset =
-      (typeof gridOptions?.labelOffset === "number"
-        ? gridOptions.labelOffset
-        : gridOptions?.labelOffset?.y) ?? 0;
+      (typeof axisOptions?.labelOffset === "number"
+        ? axisOptions.labelOffset
+        : axisOptions?.labelOffset?.y) ?? 0;
 
     // Left axes, outset label
     if (yAxisSide === "left" && yLabelPosition === "outset") {
