@@ -2,12 +2,12 @@ import { vec, type SkPoint, useFont, Points } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { CartesianChart } from "victory-native";
+import { useDarkMode } from "react-native-dark";
+import { useState } from "react";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
-import { useDarkMode } from "react-native-dark";
 import { InputSlider } from "../components/InputSlider";
 import { InputColor } from "../components/InputColor";
-import { useState } from "react";
 
 const DATA = Array.from({ length: 13 }, (_, index) => ({
   day: index + 1,

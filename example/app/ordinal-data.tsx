@@ -7,17 +7,17 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import inter from "../assets/inter-medium.ttf";
 import {
   interpolateColor,
   useDerivedValue,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { appColors } from "./consts/colors";
 import { useEffect } from "react";
-import { InfoCard } from "../components/InfoCard";
 import { useDarkMode } from "react-native-dark";
+import inter from "../assets/inter-medium.ttf";
+import { appColors } from "./consts/colors";
+import { InfoCard } from "../components/InfoCard";
 import { AnimatedText } from "../components/AnimatedText";
 import { Text } from "../components/Text";
 
@@ -119,7 +119,7 @@ const AnimatedCircle = ({
   const animatedRadius = useSharedValue(0);
   useEffect(() => {
     animatedRadius.value = withSpring(radius);
-  }, [radius]);
+  }, [animatedRadius, radius]);
   return <Circle r={animatedRadius} cx={x} cy={y} color={color} style="fill" />;
 };
 

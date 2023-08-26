@@ -8,8 +8,8 @@ import {
   withTiming,
   type WithTimingConfig,
 } from "react-native-reanimated";
-import { usePrevious } from "../utils/usePrevious";
 import { Skia } from "@shopify/react-native-skia";
+import { usePrevious } from "../utils/usePrevious";
 
 export type PathAnimationConfig =
   | ({ type: "timing" } & WithTimingConfig)
@@ -26,7 +26,7 @@ export const useAnimatedPath = (
     const { type, ...rest } = animConfig;
     t.value = 0;
     t.value = (type === "timing" ? withTiming : withSpring)(1, rest);
-  }, [path]);
+  }, [animConfig, path, t]);
 
   return useDerivedValue<SkPath>(() => {
     if (t.value !== 1 && path.isInterpolatable(prevPath)) {

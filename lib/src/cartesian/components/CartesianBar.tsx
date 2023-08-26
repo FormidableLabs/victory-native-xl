@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
+import type { PropsWithChildren } from "react";
 import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
-import type { PropsWithChildren } from "react";
 
 type CartesianBarProps = {
   points: PointsArray;
@@ -31,7 +31,13 @@ export const CartesianBar = ({
     });
 
     return path;
-  }, [points, chartBounds]);
+  }, [
+    chartBounds.right,
+    chartBounds.left,
+    chartBounds.bottom,
+    innerPadding,
+    points,
+  ]);
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,
