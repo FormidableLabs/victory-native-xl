@@ -15,6 +15,11 @@ export const ChartRoutes: {
     path: "/bar-chart",
   },
   {
+    title: "Bar Group",
+    description: "A bar chart with grouped data.",
+    path: "/bar-group",
+  },
+  {
     title: "Custom Drawing",
     description:
       "A chart that demonstrates Victory Native XL’s ability to support custom drawing using Skia.",
