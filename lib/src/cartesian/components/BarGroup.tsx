@@ -1,6 +1,8 @@
+/* eslint @typescript-eslint/ban-ts-comment: 0 */
+
 import * as React from "react";
 import type { ChartBounds, PointsArray } from "../../types";
-import { Path, PathProps, Skia } from "@shopify/react-native-skia";
+import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { AnimatedPath } from "./AnimatedPath";
 
@@ -31,10 +33,13 @@ export function BarGroup({
   const firstBar = bars[0];
   if (!firstBar) return null;
 
+  // Determine width of each bar group (e.g. 2 dataset bars for a given x-value)
   const groupWidth =
     ((1 - innerPadding) * (chartBounds.right - chartBounds.left)) /
     firstBar.points.length;
+  // Determine width of each bar
   const barWidth = ((1 - groupInnerPadding) * groupWidth) / bars.length;
+  // Determine gap between bars *within* a group
   const gapWidth = (groupWidth - barWidth * bars.length) / (bars.length - 1);
 
   return bars.map((props, i) =>
@@ -59,8 +64,13 @@ type BarGroupBarProps = {
 } & Partial<Pick<PathProps, "color">>;
 function BarGroupBar(props: React.PropsWithChildren<BarGroupBarProps>) {
   const { points, animate, ...rest } = props;
+
+  // Props that come from BarGroup but aren't exposed publicly.
+  // @ts-ignore
   const barWidth = props.__barWidth as number;
+  // @ts-ignore
   const bottom = props.__bottom as number;
+  // @ts-ignore
   const offset = props.__offset as number;
 
   const path = React.useMemo(() => {
