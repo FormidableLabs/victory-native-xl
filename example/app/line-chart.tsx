@@ -11,19 +11,19 @@ import {
   type XAxisSide,
   type YAxisSide,
 } from "victory-native";
-import inter from "../assets/inter-medium.ttf";
+import type { AxisLabelPosition } from "lib/src/types";
+import { useDarkMode } from "react-native-dark";
+import isEqual from "react-fast-compare";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
 import {
   optionsInitialState,
   optionsReducer,
 } from "example/hooks/useOptionsReducer";
-import type { AxisLabelPosition } from "lib/src/types";
 import { InputColor } from "example/components/InputColor";
+import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
-import { useDarkMode } from "react-native-dark";
 import { Button } from "../components/Button";
-import isEqual from "react-fast-compare";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -86,6 +86,7 @@ export default function LineChartPage() {
           yKeys={["sales"]}
           axisOptions={{
             font,
+            lineColor: colors.line,
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             labelOffset: { x: xLabelOffset, y: yLabelOffset },
             tickCount: { x: xTickCount, y: yTickCount },

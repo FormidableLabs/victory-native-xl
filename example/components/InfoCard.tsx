@@ -1,8 +1,8 @@
 import * as React from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { Text } from "./Text";
 import { Entypo } from "@expo/vector-icons";
 import { useDarkMode } from "react-native-dark";
+import { Text } from "./Text";
 import { appColors } from "../app/consts/colors";
 
 type Props = {

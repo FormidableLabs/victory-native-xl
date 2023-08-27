@@ -1,5 +1,4 @@
 import * as React from "react";
-import { transformInputData } from "./utils/transformInputData";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import {
@@ -8,6 +7,11 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
 import type {
   AxisProps,
   CartesianChartRenderArg,
@@ -16,11 +20,7 @@ import type {
   SidedNumber,
   TransformedData,
 } from "../types";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
@@ -76,7 +76,6 @@ export function CartesianChart<
   data,
   xKey,
   yKeys,
-  curve,
   padding,
   domainPadding,
   isPressEnabled,
@@ -140,7 +139,18 @@ export function CartesianChart<
     };
 
     return { tData, xScale, yScale, chartBounds, _tData };
-  }, [data, xKey, yKeys, size, curve, domain]);
+  }, [
+    data,
+    xKey,
+    yKeys,
+    axisOptions,
+    padding,
+    size.width,
+    size.height,
+    domain,
+    domainPadding,
+    tData,
+  ]);
 
   const [isPressActive, setIsPressActive] = React.useState(false);
   const changePressActive = React.useCallback(

@@ -10,7 +10,7 @@
   "TODO: entries": "Setup main/module/types",
   "react-native": "src/index",
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.tsx .",
+    "lint": "eslint --ext .js,.ts,.tsx example lib",
     "typecheck": "tsc --noEmit",
     "dev:lib": "yarn workspace victory-native dev",
     "dev:example": "yarn workspace example start",
@@ -27,8 +27,11 @@
     "concurrently": "^8.2.0",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.6.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.1",
     "typescript": "^5.1.6"
   }
