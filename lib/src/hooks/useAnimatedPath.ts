@@ -26,7 +26,8 @@ export const useAnimatedPath = (
     const { type, ...rest } = animConfig;
     t.value = 0;
     t.value = (type === "timing" ? withTiming : withSpring)(1, rest);
-  }, [animConfig, path, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, t]);
 
   return useDerivedValue<SkPath>(() => {
     if (t.value !== 1 && path.isInterpolatable(prevPath)) {
