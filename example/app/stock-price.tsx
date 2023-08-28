@@ -147,7 +147,7 @@ export default function StockPriceScreen() {
           <Text>Pan across the chart path to see more.</Text>
         )}
       </View>
-      <View style={{ height: 500, marginBottom: 20 }}>
+      <View style={{ flex: 1, maxHeight: 500, marginBottom: 20 }}>
         <CartesianChart
           data={DATA}
           xKey="date"
