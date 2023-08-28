@@ -16,6 +16,7 @@ export { type CurveType } from "./cartesian/utils/curves";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { usePrevious } from "./utils/usePrevious";
+export { useChartPressValue } from "./cartesian/hooks/useChartPressValue";
 
 // Line
 export { useLinePath } from "./cartesian/hooks/useLinePath";

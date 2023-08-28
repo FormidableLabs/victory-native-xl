@@ -5,6 +5,7 @@ import {
   type ChartBounds,
   type PointsArray,
   useAreaPath,
+  useChartPressValue,
 } from "victory-native";
 import {
   Circle,
@@ -39,14 +40,15 @@ export default function StockPriceScreen() {
   const isDark = useDarkMode();
   const font = useFont(inter, 12);
   const [isPressActive, setIsPressActive] = React.useState(false);
-  const activeDateMS = useSharedValue(0);
-  const activeHigh = useSharedValue(0);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
+  const pressValue = useChartPressValue(DATA, ["high"]);
+  const activeDateMs = pressValue.x.value;
+  const activeHigh = pressValue.y.high.value;
 
   const activeDate = useDerivedValue(() => {
     if (!isPressActive) return "";
 
-    const date = new Date(activeDateMS.value);
+    const date = new Date(activeDateMs.value);
     const M = MONTHS[date.getMonth()];
     const D = date.getDate();
     const Y = date.getFullYear();
@@ -93,10 +95,9 @@ export default function StockPriceScreen() {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
+          activePressSharedValue={pressValue}
           curve="linear"
           isPressEnabled
-          activePressX={{ value: activeDateMS }}
-          activePressY={{ high: { value: activeHigh } }}
           onPressActiveChange={setIsPressActive}
           onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
@@ -112,20 +113,15 @@ export default function StockPriceScreen() {
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: textColor,
           }}
-          renderOutside={({
-            isPressActive,
-            activePressX,
-            activePressY,
-            chartBounds,
-          }) =>
+          renderOutside={({ isPressActive, chartBounds }) =>
             isPressActive && (
               <>
                 <ActiveValueIndicator
-                  xPosition={activePressX.position}
-                  yPosition={activePressY.high.position}
+                  xPosition={pressValue.x.position}
+                  yPosition={pressValue.y.high.position}
                   bottom={chartBounds.bottom}
                   top={chartBounds.top}
-                  activeValue={activePressY.high.value}
+                  activeValue={pressValue.y.high.value}
                   textColor={textColor}
                   lineColor={isDark ? "#71717a" : "#d4d4d8"}
                 />
@@ -133,10 +129,10 @@ export default function StockPriceScreen() {
             )
           }
         >
-          {({ isPressActive, activePressX, chartBounds, points }) => (
+          {({ isPressActive, chartBounds, points }) => (
             <>
               <StockArea
-                xPosition={activePressX.position}
+                xPosition={pressValue.x.position}
                 points={points.high}
                 isPressActive={isPressActive}
                 {...chartBounds}
