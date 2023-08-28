@@ -41,9 +41,10 @@ export default function StockPriceScreen() {
   const font = useFont(inter, 12);
   const [isPressActive, setIsPressActive] = React.useState(false);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
-  const pressValue = useChartPressSharedValue(["high"]);
-  const activeDateMs = pressValue.x.value;
-  const activeHigh = pressValue.y.high.value;
+  const firstTouch = useChartPressSharedValue(["high"]);
+  const secondTouch = useChartPressSharedValue(["high"]);
+  const activeDateMs = firstTouch.x.value;
+  const activeHigh = firstTouch.y.high.value;
 
   const activeDate = useDerivedValue(() => {
     if (!isPressActive) return "";
@@ -95,7 +96,7 @@ export default function StockPriceScreen() {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          activePressSharedValue={pressValue}
+          activePressSharedValues={[firstTouch, secondTouch]}
           curve="linear"
           isPressEnabled
           onPressActiveChange={setIsPressActive}
@@ -117,11 +118,11 @@ export default function StockPriceScreen() {
             isPressActive && (
               <>
                 <ActiveValueIndicator
-                  xPosition={pressValue.x.position}
-                  yPosition={pressValue.y.high.position}
+                  xPosition={firstTouch.x.position}
+                  yPosition={firstTouch.y.high.position}
                   bottom={chartBounds.bottom}
                   top={chartBounds.top}
-                  activeValue={pressValue.y.high.value}
+                  activeValue={firstTouch.y.high.value}
                   textColor={textColor}
                   lineColor={isDark ? "#71717a" : "#d4d4d8"}
                 />
@@ -132,7 +133,7 @@ export default function StockPriceScreen() {
           {({ isPressActive, chartBounds, points }) => (
             <>
               <StockArea
-                xPosition={pressValue.x.position}
+                xPosition={firstTouch.x.position}
                 points={points.high}
                 isPressActive={isPressActive}
                 {...chartBounds}
