@@ -17,8 +17,8 @@ const DATA = (length: number = 10) =>
 
 export default function BarGroupPage() {
   const [data, setData] = React.useState(DATA(5));
-  const [innerPadding, setInnerPadding] = React.useState(0.4);
-  const [groupInnerPadding, setGroupInnerPadding] = React.useState(0.1);
+  const [betweenGroupPadding, setBetweenGroupPadding] = React.useState(0.4);
+  const [withinGroupPadding, setWithinGroupPadding] = React.useState(0.1);
   const font = useFont(inter, 12);
 
   return (
@@ -35,8 +35,8 @@ export default function BarGroupPage() {
           {({ points, chartBounds }) => (
             <BarGroup
               chartBounds={chartBounds}
-              innerPadding={innerPadding}
-              groupInnerPadding={groupInnerPadding}
+              betweenGroupPadding={betweenGroupPadding}
+              withinGroupPadding={withinGroupPadding}
             >
               <BarGroup.Bar points={points.y} animate={{ type: "timing" }}>
                 <LinearGradient
@@ -82,16 +82,16 @@ export default function BarGroupPage() {
           maxValue={1}
           minValue={0}
           step={0.1}
-          value={innerPadding}
-          onChange={setInnerPadding}
+          value={betweenGroupPadding}
+          onChange={setBetweenGroupPadding}
         />
         <InputSlider
           label="Group Inner Padding"
           maxValue={1}
           minValue={0}
           step={0.1}
-          value={groupInnerPadding}
-          onChange={setGroupInnerPadding}
+          value={withinGroupPadding}
+          onChange={setWithinGroupPadding}
         />
       </ScrollView>
     </SafeAreaView>

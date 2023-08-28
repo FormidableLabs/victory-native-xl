@@ -6,14 +6,14 @@ import { AnimatedPath } from "./AnimatedPath";
 
 type BarGroupProps = {
   chartBounds: ChartBounds;
-  innerPadding?: number;
-  groupInnerPadding?: number;
+  betweenGroupPadding?: number;
+  withinGroupPadding?: number;
   children: React.ReactElement[];
 };
 
 export function BarGroup({
-  innerPadding = 0.25,
-  groupInnerPadding = 0.25,
+  betweenGroupPadding = 0.25,
+  withinGroupPadding = 0.25,
   chartBounds,
   children,
 }: BarGroupProps) {
@@ -33,11 +33,11 @@ export function BarGroup({
 
   // Determine width of each bar group (e.g. 2 dataset bars for a given x-value)
   const groupWidth =
-    ((1 - innerPadding) * (chartBounds.right - chartBounds.left)) /
+    ((1 - betweenGroupPadding) * (chartBounds.right - chartBounds.left)) /
     Math.max(1, firstBar.points.length);
   // Determine width of each bar
   const barWidth =
-    ((1 - groupInnerPadding) * groupWidth) / Math.max(1, bars.length);
+    ((1 - withinGroupPadding) * groupWidth) / Math.max(1, bars.length);
   // Determine gap between bars *within* a group
   const gapWidth =
     (groupWidth - barWidth * bars.length) / Math.max(1, bars.length - 1);
