@@ -24,6 +24,7 @@ import { InputColor } from "example/components/InputColor";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { Button } from "../components/Button";
+import { InfoCard } from "../components/InfoCard";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -100,14 +101,13 @@ export default function LineChartPage() {
             lineColor: colors.line,
           }}
           data={data}
-          curve={curveType}
           domainPadding={domainPadding}
         >
           {({ points }) => (
             <>
               <Line
                 points={points.sales}
-                curveType="linear"
+                curveType={curveType}
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
                 animate={didOptionsChange ? undefined : { type: "spring" }}
@@ -125,12 +125,16 @@ export default function LineChartPage() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
+        <InfoCard>
+          This chart shows off a line with scatter points. This view also
+          highlights Victory’s extensive customization options for the grid,
+          axis, chart, colors, and curve.
+        </InfoCard>
         <View
           style={{
             flexDirection: "row",
             gap: 12,
-            marginTop: 10,
-            marginBottom: 16,
+            marginVertical: 16,
           }}
         >
           <Button

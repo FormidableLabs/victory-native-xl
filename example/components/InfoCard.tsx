@@ -1,30 +1,31 @@
 import * as React from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { View, StyleSheet } from "react-native";
 import { useDarkMode } from "react-native-dark";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import type { PropsWithChildren } from "react";
 import { Text } from "./Text";
 import { appColors } from "../app/consts/colors";
 
-type Props = {
-  message: string;
-  fileName: string;
-};
-
-export const InfoCard = ({ message, fileName }: Props) => {
+export const InfoCard = ({ children }: PropsWithChildren) => {
   const isDark = useDarkMode();
   return (
     <View style={styles.card}>
-      <Text>{message}</Text>
-      <View style={styles.file}>
-        {Platform.OS === "ios" ? (
-          <Entypo
-            name="code"
-            size={20}
-            style={{ marginRight: 10 }}
-            color={isDark ? appColors.text.dark : appColors.text.light}
-          />
-        ) : null}
-        <Text style={styles.fileName}>example/app/{fileName}</Text>
+      <View style={styles.content}>
+        <Ionicons
+          name="information-circle-sharp"
+          size={20}
+          style={{ marginRight: 10 }}
+          color={
+            isDark
+              ? appColors.infoCardActive.dark
+              : appColors.infoCardActive.light
+          }
+        />
+        {typeof children === "string" ? (
+          <Text style={styles.text}>{children}</Text>
+        ) : (
+          children
+        )}
       </View>
     </View>
   );
@@ -33,24 +34,21 @@ export const InfoCard = ({ message, fileName }: Props) => {
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    backgroundColor: appColors.infoCardBackground.light,
-    padding: 15,
+    borderWidth: 1,
+    borderColor: appColors.infoCardActive.light,
     borderRadius: 10,
     $dark: {
-      backgroundColor: appColors.infoCardBackground.dark,
+      borderColor: appColors.infoCardActive.dark,
     },
   },
-  file: {
+  content: {
+    flex: 1,
     flexDirection: "row",
-    marginTop: 10,
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
+    margin: 15,
   },
-  fileName: {
-    fontFamily: Platform.select({
-      ios: "Courier New",
-      android: "monospace",
-    }),
-    fontWeight: "bold",
+  text: {
+    flex: 1,
   },
 });

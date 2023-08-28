@@ -97,10 +97,11 @@ export default function OrdinalDataScreen() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
-        <InfoCard
-          fileName="ordinal-data.tsx"
-          message="This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data."
-        />
+        <InfoCard>
+          This chart shows off ordinal data and touch events. Tap different x
+          axis points to see the highlighted dot move. The color changes based
+          on interpolating the color from the transformed and range data.
+        </InfoCard>
       </ScrollView>
     </SafeAreaView>
   );
