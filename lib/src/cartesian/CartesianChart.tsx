@@ -1,7 +1,7 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
-import { runOnJS, useSharedValue } from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
 import {
   Gesture,
   GestureDetector,
@@ -38,15 +38,9 @@ type CartesianChartProps<
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   isPressEnabled?: boolean;
-  onPressActiveStart?: () => void;
-  onPressActiveEnd?: () => void;
-  onPressActiveChange?: (isPressActive: boolean) => void;
-  onPressValueChange?: (args: {
-    x: { value: number; position: number };
-    y: { [K in YK]: { value: number; position: number } };
-  }) => void;
-  activePressSharedValue?: ChartPressValue<YK & string>;
-  activePressSharedValues?: ChartPressValue<YK & string>[];
+  activePressSharedValue?:
+    | ChartPressValue<YK & string>
+    | ChartPressValue<YK & string>[];
   children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, T, YK>,
@@ -70,17 +64,12 @@ export function CartesianChart<
   padding,
   domainPadding,
   isPressEnabled,
-  onPressActiveChange,
-  onPressValueChange,
-  onPressActiveStart,
-  onPressActiveEnd,
   children,
   renderOutside,
   gridOptions,
   axisOptions,
   domain,
-  // activePressSharedValue,
-  activePressSharedValues,
+  activePressSharedValue,
 }: CartesianChartProps<RawData, T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -143,21 +132,12 @@ export function CartesianChart<
     tData,
   ]);
 
-  const [isPressActive, setIsPressActive] = React.useState(false);
-  const changePressActive = React.useCallback(
-    (val: boolean) => {
-      setIsPressActive(val);
-      onPressActiveChange?.(val);
-    },
-    [onPressActiveChange],
-  );
-
   /**
    * Pan gesture handling
    */
   const lastIdx = useSharedValue(null as null | number);
   const handleTouch = (
-    v: NonNullable<typeof activePressSharedValues>[number],
+    v: NonNullable<typeof activePressSharedValue>,
     x: number,
   ) => {
     "worklet";
@@ -177,51 +157,18 @@ export function CartesianChart<
           }
         }
       } catch (err) {
-        err instanceof Error && console.log(err.message);
         // no-op
       }
     }
 
-    // TODO: How do we handle this for multiple-touches?
-    // JS-thread callback
-    // onPressValueChange &&
-    //   lastIdx.value !== idx &&
-    //   runOnJS(onPressValueChange)({
-    //     x: {
-    //       value: asNumber(tData.value.ix[idx]),
-    //       position: asNumber(tData.value.ox[idx]),
-    //     },
-    //     y: yKeys.reduce(
-    //       (acc, key) => {
-    //         acc[key] = {
-    //           value: asNumber(tData.value.y[key].i[idx]),
-    //           position: asNumber(tData.value.y[key].o[idx]),
-    //         };
-    //         return acc;
-    //       },
-    //       {} as { [K in YK]: { value: number; position: number } },
-    //     ),
-    //   });
-
     lastIdx.value = idx;
   };
-  // const pan = Gesture.Pan()
-  //   .onStart((evt) => {
-  //     onPressActiveStart && runOnJS(onPressActiveStart)();
-  //     runOnJS(changePressActive)(true);
-  //     handleTouch(evt.x);
-  //   })
-  //   .onUpdate((evt) => {
-  //     handleTouch(evt.x);
-  //   })
-  //   .onEnd(() => {
-  //     onPressActiveEnd && runOnJS(onPressActiveEnd)();
-  //     runOnJS(changePressActive)(false);
-  //   })
-  //   .activateAfterLongPress(100);
 
   // touch ID -> value index mapping
   const touchMap = useSharedValue({} as Record<number, number | undefined>);
+  const activePressSharedValues = Array.isArray(activePressSharedValue)
+    ? activePressSharedValue
+    : [activePressSharedValue];
   const ges = Gesture.Manual()
     .onTouchesDown((e, manager) => {
       const vals = activePressSharedValues || [];
@@ -235,11 +182,10 @@ export function CartesianChart<
         // Update the mapping
         if (typeof touchMap.value[touch.id] !== "number")
           touchMap.value[touch.id] = i;
+
+        v.isActive.value = true;
         handleTouch(v, touch.x);
       }
-
-      onPressActiveStart && runOnJS(onPressActiveStart)();
-      runOnJS(changePressActive)(true);
 
       manager.activate();
     })
@@ -258,19 +204,24 @@ export function CartesianChart<
       }
     })
     .onTouchesUp((e, manager) => {
-      // All fingers up, end the gesture.
+      for (const touch of e.changedTouches) {
+        const vals = activePressSharedValues || [];
+
+        // Set active state to false
+        const touchId = touch?.id;
+        const idx = typeof touchId === "number" && touchMap.value[touchId];
+        const val = typeof idx === "number" && vals[idx];
+        if (val) {
+          val.isActive.value = false;
+        }
+
+        // Free up touch map for this touch
+        touchMap.value[touch.id] = undefined;
+      }
+
+      // All fingers up, end the gesture
       if (e.numberOfTouches === 0) {
         manager.end();
-        touchMap.value = {};
-
-        onPressActiveEnd && runOnJS(onPressActiveEnd)();
-        runOnJS(changePressActive)(false);
-      }
-      // Free up touches?
-      else {
-        for (const touch of e.changedTouches) {
-          touchMap.value[touch.id] = undefined;
-        }
       }
     });
 
@@ -303,7 +254,6 @@ export function CartesianChart<
   }, [_tData, yKeys]);
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
-    isPressActive,
     xScale,
     yScale,
     chartBounds,

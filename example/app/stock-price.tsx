@@ -6,6 +6,7 @@ import {
   type PointsArray,
   useAreaPath,
   useChartPressSharedValue,
+  useIsPressActive,
 } from "victory-native";
 import {
   Circle,
@@ -39,15 +40,17 @@ const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 export default function StockPriceScreen() {
   const isDark = useDarkMode();
   const font = useFont(inter, 12);
-  const [isPressActive, setIsPressActive] = React.useState(false);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
-  const firstTouch = useChartPressSharedValue(["high"]);
-  const secondTouch = useChartPressSharedValue(["high"]);
+  const { state: firstTouch, isActive: isFirstPressActive } =
+    useChartPressSharedValue(["high"]);
+  const { state: secondTouch, isActive: isSecondPressActive } =
+    useChartPressSharedValue(["high"]);
+
   const activeDateMs = firstTouch.x.value;
   const activeHigh = firstTouch.y.high.value;
 
   const activeDate = useDerivedValue(() => {
-    if (!isPressActive) return "";
+    if (!isFirstPressActive) return "";
 
     const date = new Date(activeDateMs.value);
     const M = MONTHS[date.getMonth()];
@@ -56,7 +59,7 @@ export default function StockPriceScreen() {
     return `${M} ${D}, ${Y}`;
   });
   const activeHighDisplay = useDerivedValue(() =>
-    isPressActive ? activeHigh.value.toFixed(2) : "",
+    isFirstPressActive ? activeHigh.value.toFixed(2) : "",
   );
 
   return (
@@ -69,7 +72,7 @@ export default function StockPriceScreen() {
           height: 80,
         }}
       >
-        {isPressActive ? (
+        {isFirstPressActive ? (
           <>
             <AnimatedText
               text={activeDate}
@@ -91,16 +94,16 @@ export default function StockPriceScreen() {
           <Text>Pan across the chart path to see more.</Text>
         )}
       </View>
-      <View style={{ flex: 1, marginBottom: 20 }}>
+      <View style={{ height: 500, marginBottom: 20 }}>
         <CartesianChart
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          activePressSharedValues={[firstTouch, secondTouch]}
+          activePressSharedValue={[firstTouch, secondTouch]}
           curve="linear"
           isPressEnabled
-          onPressActiveChange={setIsPressActive}
-          onPressActiveStart={() => Haptics.selectionAsync()}
+          // TODO: Enable this somehow?
+          // onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
             lineColor: isDark ? "#71717a" : "#d4d4d8",
           }}
@@ -114,28 +117,44 @@ export default function StockPriceScreen() {
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: textColor,
           }}
-          renderOutside={({ isPressActive, chartBounds }) =>
-            isPressActive && (
-              <>
-                <ActiveValueIndicator
-                  xPosition={firstTouch.x.position}
-                  yPosition={firstTouch.y.high.position}
-                  bottom={chartBounds.bottom}
-                  top={chartBounds.top}
-                  activeValue={firstTouch.y.high.value}
-                  textColor={textColor}
-                  lineColor={isDark ? "#71717a" : "#d4d4d8"}
-                />
-              </>
-            )
-          }
+          renderOutside={({ chartBounds }) => (
+            <>
+              {isFirstPressActive && (
+                <>
+                  <ActiveValueIndicator
+                    xPosition={firstTouch.x.position}
+                    yPosition={firstTouch.y.high.position}
+                    bottom={chartBounds.bottom}
+                    top={chartBounds.top}
+                    activeValue={firstTouch.y.high.value}
+                    textColor={textColor}
+                    lineColor={isDark ? "#71717a" : "#d4d4d8"}
+                  />
+                </>
+              )}
+              {isSecondPressActive && (
+                <>
+                  <ActiveValueIndicator
+                    xPosition={secondTouch.x.position}
+                    yPosition={secondTouch.y.high.position}
+                    bottom={chartBounds.bottom}
+                    top={chartBounds.top}
+                    activeValue={secondTouch.y.high.value}
+                    textColor={textColor}
+                    lineColor={isDark ? "#71717a" : "#d4d4d8"}
+                  />
+                </>
+              )}
+            </>
+          )}
         >
-          {({ isPressActive, chartBounds, points }) => (
+          {({ chartBounds, points }) => (
             <>
               <StockArea
-                xPosition={firstTouch.x.position}
                 points={points.high}
-                isPressActive={isPressActive}
+                isWindowActive={isFirstPressActive && isSecondPressActive}
+                startX={firstTouch.x.position}
+                endX={secondTouch.x.position}
                 {...chartBounds}
               />
               <Line
@@ -153,54 +172,69 @@ export default function StockPriceScreen() {
 
 const StockArea = ({
   points,
-  xPosition,
-  isPressActive,
+  isWindowActive,
+  startX,
+  endX,
   left,
   right,
-  bottom,
   top,
+  bottom,
 }: {
   points: PointsArray;
-  xPosition: SharedValue<number>;
-  isPressActive: boolean;
+  isWindowActive: boolean;
+  startX: SharedValue<number>;
+  endX: SharedValue<number>;
 } & ChartBounds) => {
   const { path } = useAreaPath(points, bottom);
-  const clipRectRight = useSharedValue(right);
-  React.useEffect(() => {
-    clipRectRight.value = right;
-  }, [clipRectRight, right]);
 
-  React.useEffect(() => {
-    if (!isPressActive) {
-      clipRectRight.value = xPosition.value;
-      clipRectRight.value = withTiming(right, { duration: 200 });
-    }
-  }, [clipRectRight, isPressActive, right, xPosition.value]);
-
-  const leftRect = useDerivedValue(() => {
+  const backgroundClip = useDerivedValue(() => {
     const path = Skia.Path.Make();
-    path.addRect(
-      Skia.XYWHRect(
-        left,
-        top,
-        (isPressActive ? xPosition.value : clipRectRight.value) - left,
-        bottom - top,
-      ),
-    );
+
+    if (isWindowActive) {
+      path.addRect(Skia.XYWHRect(left, top, startX.value - left, bottom - top));
+      path.addRect(
+        Skia.XYWHRect(endX.value, top, right - endX.value, bottom - top),
+      );
+    } else {
+      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
+    }
 
     return path;
   });
 
+  const windowClip = useDerivedValue(() => {
+    if (!isWindowActive) return Skia.Path.Make();
+
+    const path = Skia.Path.Make();
+    path.addRect(
+      Skia.XYWHRect(startX.value, top, endX.value - startX.value, bottom - top),
+    );
+    return path;
+  });
+
+  const grad = (
+    <LinearGradient
+      start={vec(0, 0)}
+      end={vec(top, bottom)}
+      colors={[appColors.tint, `${appColors.tint}33`]}
+    />
+  );
+
   return (
-    <Group clip={leftRect}>
-      <Path path={path} style="fill">
-        <LinearGradient
-          start={vec(0, 0)}
-          end={vec(top, bottom)}
-          colors={[appColors.tint, `${appColors.tint}33`]}
-        />
-      </Path>
-    </Group>
+    <>
+      <Group clip={backgroundClip} opacity={isWindowActive ? 0.3 : 1}>
+        <Path path={path} style="fill">
+          {grad}
+        </Path>
+      </Group>
+      {isWindowActive && (
+        <Group clip={windowClip}>
+          <Path path={path} style="fill">
+            {grad}
+          </Path>
+        </Group>
+      )}
+    </>
   );
 };
 

@@ -20,6 +20,7 @@ export {
   useChartPressSharedValue,
   type ChartPressValue,
 } from "./cartesian/hooks/useChartPressSharedValue";
+export { useIsPressActive } from "./cartesian/hooks/useIsPressActive";
 
 // Line
 export { useLinePath } from "./cartesian/hooks/useLinePath";
