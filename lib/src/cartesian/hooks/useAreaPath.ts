@@ -6,16 +6,16 @@ import type { PointsArray } from "../../types";
 import type { CurveType } from "../utils/curves";
 import { CURVES } from "../utils/curves";
 
-export type CartesianAreaOptions = {
+export type AreaPathOptions = {
   curveType?: CurveType;
 };
 
-export const useCartesianAreaPath = (
+export const useAreaPath = (
   points: PointsArray,
   y0: number,
-  { curveType = "linear" }: CartesianAreaOptions = {},
+  { curveType = "linear" }: AreaPathOptions = {},
 ) => {
-  return React.useMemo(() => {
+  const path = React.useMemo(() => {
     const svgPath = area().y0(y0)?.curve(CURVES[curveType])(
       stitchDataArray(points),
     );
@@ -23,4 +23,6 @@ export const useCartesianAreaPath = (
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
   }, [points, curveType, y0]);
+
+  return { path };
 };

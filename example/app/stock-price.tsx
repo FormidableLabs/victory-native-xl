@@ -1,10 +1,10 @@
 import React from "react";
 import {
   CartesianChart,
-  CartesianLine,
+  Line as VLine,
   type ChartBounds,
   type PointsArray,
-  useCartesianAreaPath,
+  useAreaPath,
 } from "victory-native";
 import {
   Circle,
@@ -141,7 +141,7 @@ export default function StockPriceScreen() {
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
-              <CartesianLine
+              <VLine
                 points={points.high}
                 color={appColors.tint}
                 strokeWidth={2}
@@ -167,7 +167,7 @@ const StockArea = ({
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
-  const path = useCartesianAreaPath(points, bottom);
+  const { path } = useAreaPath(points, bottom);
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;

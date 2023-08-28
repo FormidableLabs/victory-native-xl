@@ -12,7 +12,7 @@ type CartesianBarProps = {
   animate?: PathAnimationConfig;
 } & Partial<Pick<PathProps, "color">>;
 
-export const CartesianBar = ({
+export const Bar = ({
   points,
   chartBounds,
   animate,
@@ -47,6 +47,6 @@ export const CartesianBar = ({
   });
 };
 
-CartesianBar.defaultProps = {
+Bar.defaultProps = {
   innerPadding: 0.25,
 } satisfies Partial<CartesianBarProps>;
