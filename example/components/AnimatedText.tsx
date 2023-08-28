@@ -10,6 +10,7 @@ Reanimated.addWhitelistedNativeProps({ text: true });
 
 type AnimatedTextProps = Omit<TextInputProps, "editable" | "value"> & {
   text: SharedValue<string>;
+  style?: React.ComponentProps<typeof AnimText>["style"];
 };
 
 export function AnimatedText({ text, ...rest }: AnimatedTextProps) {

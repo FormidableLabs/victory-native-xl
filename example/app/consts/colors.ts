@@ -6,4 +6,6 @@ export const appColors = {
   cardBackground: { dark: "#525252", light: "#fff" },
   cardBorder: { dark: "#a1a1aa", light: "#a1a1aa" },
   infoCardBackground: { dark: "#a16207", light: "#fef3c7" },
+  success: { dark: "#7ee17e", light: "#085408" },
+  error: { dark: "#c84c4c", light: "#9e1a1a" },
 } as const;

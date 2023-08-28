@@ -11,7 +11,7 @@ export type LinePathOptions = {
 
 export const useLinePath = (
   points: PointsArray,
-  { curveType = "linear" }: LinePathOptions,
+  { curveType = "linear" }: LinePathOptions = {},
 ) => {
   const path = React.useMemo(() => {
     const svgPath = line().curve(CURVES[curveType])(stitchDataArray(points));
