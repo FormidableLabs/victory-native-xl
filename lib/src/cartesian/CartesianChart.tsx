@@ -6,6 +6,7 @@ import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
+  type TouchData,
 } from "react-native-gesture-handler";
 import type {
   AxisProps,
@@ -136,10 +137,10 @@ export function CartesianChart<
    * Pan gesture handling
    */
   const lastIdx = useSharedValue(null as null | number);
-  const handleTouch = (
-    v: NonNullable<typeof activePressSharedValue>,
-    x: number,
-  ) => {
+  /**
+   * Take a "press value" and an x-value and update the shared values accordingly.
+   */
+  const handleTouch = (v: ChartPressValue<YK & string>, x: number) => {
     "worklet";
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
@@ -164,12 +165,30 @@ export function CartesianChart<
     lastIdx.value = idx;
   };
 
-  // touch ID -> value index mapping
+  /**
+   * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
+   * - Using Pan Gesture handler effectively _just_ for the .activateAfterLongPress functionality.
+   * - Tracking the finger is handled with .onTouchesMove instead of .onUpdate, because
+   *    .onTouchesMove gives us access to each individual finger.
+   * - The activation gets a bit complicated because we want to wait til "start" state before updating Press Value
+   *    which gives time for the gesture to get cancelled before we start updating the shared values.
+   *    Therefore we use gestureState.bootstrap to store some "bootstrap" information if gesture isn't active when finger goes down.
+   */
+  // touch ID -> value index mapping to keep track of which finger updates which value
   const touchMap = useSharedValue({} as Record<number, number | undefined>);
   const activePressSharedValues = Array.isArray(activePressSharedValue)
     ? activePressSharedValue
     : [activePressSharedValue];
-  const ges = Gesture.Manual()
+  const gestureState = useSharedValue({
+    isGestureActive: false,
+    bootstrap: [] as [ChartPressValue<YK & string>, TouchData][],
+  });
+
+  const touchGesture = Gesture.Pan()
+    .manualActivation(true)
+    /**
+     * When a finger goes down, either update the state or store in the bootstrap array.
+     */
     .onTouchesDown((e, manager) => {
       const vals = activePressSharedValues || [];
       if (!vals.length || e.numberOfTouches === 0) return;
@@ -179,6 +198,27 @@ export function CartesianChart<
         const v = vals[i];
         if (!v || !touch) continue;
 
+        if (gestureState.value.isGestureActive) {
+          // Update the mapping
+          if (typeof touchMap.value[touch.id] !== "number")
+            touchMap.value[touch.id] = i;
+
+          v.isActive.value = true;
+          handleTouch(v, touch.x);
+        } else {
+          gestureState.value.bootstrap.push([v, touch]);
+        }
+      }
+
+      if (gestureState.value.isGestureActive) manager.activate();
+    })
+    /**
+     * On start, check if we have any bootstraped updates we need to apply.
+     */
+    .onStart(() => {
+      gestureState.value.isGestureActive = true;
+      for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
+        const [v, touch] = gestureState.value.bootstrap[i]!;
         // Update the mapping
         if (typeof touchMap.value[touch.id] !== "number")
           touchMap.value[touch.id] = i;
@@ -186,9 +226,17 @@ export function CartesianChart<
         v.isActive.value = true;
         handleTouch(v, touch.x);
       }
-
-      manager.activate();
     })
+    /**
+     * Clear gesture state on gesture end.
+     */
+    .onEnd(() => {
+      gestureState.value.isGestureActive = false;
+      gestureState.value.bootstrap = [];
+    })
+    /**
+     * As fingers move, update the shared values accordingly.
+     */
     .onTouchesMove((e) => {
       const vals = activePressSharedValues || [];
       if (!vals.length || e.numberOfTouches === 0) return;
@@ -200,9 +248,13 @@ export function CartesianChart<
         const v = typeof idx === "number" && vals?.[idx];
 
         if (!v || !touch) continue;
+        if (!v.isActive.value) v.isActive.value = true;
         handleTouch(v, touch.x);
       }
     })
+    /**
+     * On each finger up, start to update values and "free up" the touch map.
+     */
     .onTouchesUp((e, manager) => {
       for (const touch of e.changedTouches) {
         const vals = activePressSharedValues || [];
@@ -223,7 +275,12 @@ export function CartesianChart<
       if (e.numberOfTouches === 0) {
         manager.end();
       }
-    });
+    })
+    /**
+     * Activate after a long press, which helps with preventing all touch hijacking.
+     * This is important if this chart is inside of some sort of scrollable container.
+     */
+    .activateAfterLongPress(100);
 
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
@@ -290,7 +347,7 @@ export function CartesianChart<
   // Conditionally wrap the body in gesture handler based on isPressEnabled
   return isPressEnabled ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={ges}>{body}</GestureDetector>
+      <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
     </GestureHandlerRootView>
   ) : (
     body

@@ -25,7 +25,7 @@ const colors = [appColors.tint, "#818cf8"];
 
 export default function OrdinalDataScreen() {
   const font = useFont(inter, 12);
-  const activePress = useChartPressSharedValue(["high"]);
+  const { state: activePress } = useChartPressSharedValue(["high"]);
   const activeX = activePress.x.value;
   const activeXValue = useDerivedValue(() => activeX.value);
   const day = useDerivedValue(() => DATA?.[activeX.value]?.day || "");
