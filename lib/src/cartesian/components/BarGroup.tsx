@@ -1,8 +1,6 @@
-/* eslint @typescript-eslint/ban-ts-comment: 0 */
-
 import * as React from "react";
-import type { ChartBounds, PointsArray } from "../../types";
 import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
+import type { ChartBounds, PointsArray } from "../../types";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { AnimatedPath } from "./AnimatedPath";
 
@@ -36,11 +34,13 @@ export function BarGroup({
   // Determine width of each bar group (e.g. 2 dataset bars for a given x-value)
   const groupWidth =
     ((1 - innerPadding) * (chartBounds.right - chartBounds.left)) /
-    firstBar.points.length;
+    Math.max(1, firstBar.points.length);
   // Determine width of each bar
-  const barWidth = ((1 - groupInnerPadding) * groupWidth) / bars.length;
+  const barWidth =
+    ((1 - groupInnerPadding) * groupWidth) / Math.max(1, bars.length);
   // Determine gap between bars *within* a group
-  const gapWidth = (groupWidth - barWidth * bars.length) / (bars.length - 1);
+  const gapWidth =
+    (groupWidth - barWidth * bars.length) / Math.max(1, bars.length - 1);
 
   return bars.map((props, i) =>
     React.createElement(BarGroupBar, {
@@ -81,7 +81,7 @@ function BarGroupBar(props: React.PropsWithChildren<BarGroupBarProps>) {
     });
 
     return p;
-  }, [points, barWidth, offset]);
+  }, [points, offset, barWidth, bottom]);
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,

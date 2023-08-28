@@ -1,8 +1,8 @@
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { appColors } from "./consts/colors";
 import { BarGroup, CartesianChart } from "victory-native";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
 import { InputSlider } from "../components/InputSlider";
