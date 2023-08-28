@@ -1,7 +1,7 @@
 import React from "react";
 import {
   CartesianChart,
-  Line as VLine,
+  Line,
   type ChartBounds,
   type PointsArray,
   useAreaPath,
@@ -9,7 +9,7 @@ import {
 import {
   Circle,
   Group,
-  Line,
+  Line as SkiaLine,
   LinearGradient,
   Path,
   Skia,
@@ -141,7 +141,7 @@ export default function StockPriceScreen() {
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
-              <VLine
+              <Line
                 points={points.high}
                 color={appColors.tint}
                 strokeWidth={2}
@@ -243,7 +243,7 @@ const ActiveValueIndicator = ({
 
   return (
     <>
-      <Line p1={start} p2={end} color={lineColor} />
+      <SkiaLine p1={start} p2={end} color={lineColor} />
       <Circle cx={xPosition} cy={yPosition} r={10} color={appColors.tint} />
       <Circle
         cx={xPosition}
