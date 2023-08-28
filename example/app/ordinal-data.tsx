@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CartesianChart, Line } from "victory-native";
+import { CartesianChart, Line, useChartPressSharedValue } from "victory-native";
 import {
   Circle,
   LinearGradient,
@@ -25,7 +25,8 @@ const colors = [appColors.tint, "#818cf8"];
 
 export default function OrdinalDataScreen() {
   const font = useFont(inter, 12);
-  const activeX = useSharedValue(0);
+  const activePress = useChartPressSharedValue(["high"]);
+  const activeX = activePress.x.value;
   const activeXValue = useDerivedValue(() => activeX.value);
   const day = useDerivedValue(() => DATA?.[activeX.value]?.day || "");
   const isDark = useDarkMode();
@@ -51,7 +52,7 @@ export default function OrdinalDataScreen() {
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
           isPressEnabled
-          activePressX={{ value: activeX }}
+          activePressSharedValue={activePress}
         >
           {({ chartBounds, points, yScale }) => {
             return (

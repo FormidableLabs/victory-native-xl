@@ -1,12 +1,7 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
-import {
-  makeMutable,
-  runOnJS,
-  type SharedValue,
-  useSharedValue,
-} from "react-native-reanimated";
+import { runOnJS, useSharedValue } from "react-native-reanimated";
 import {
   Gesture,
   GestureDetector,
@@ -27,6 +22,7 @@ import { CartesianAxis } from "./components/CartesianAxis";
 import { CartesianGrid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
+import type { ChartPressValue } from "./hooks/useChartPressSharedValue";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -49,13 +45,7 @@ type CartesianChartProps<
     x: { value: number; position: number };
     y: { [K in YK]: { value: number; position: number } };
   }) => void;
-  activePressX?: {
-    value?: SharedValue<number>;
-    position?: SharedValue<number>;
-  };
-  activePressY?: {
-    [K in YK]?: { value?: SharedValue<number>; position?: SharedValue<number> };
-  };
+  activePressSharedValue?: ChartPressValue<YK & string>;
   children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, T, YK>,
@@ -83,13 +73,12 @@ export function CartesianChart<
   onPressValueChange,
   onPressActiveStart,
   onPressActiveEnd,
-  activePressX: incomingActivePressX,
-  activePressY: incomingActivePressY,
   children,
   renderOutside,
   gridOptions,
   axisOptions,
   domain,
+  activePressSharedValue,
 }: CartesianChartProps<RawData, T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -160,42 +149,6 @@ export function CartesianChart<
     },
     [onPressActiveChange],
   );
-  const internalActivePressX = React.useRef({
-    value: makeMutable(0),
-    position: makeMutable(0),
-  });
-  const activePressX = {
-    value: incomingActivePressX?.value || internalActivePressX.current.value,
-    position:
-      incomingActivePressX?.position || internalActivePressX.current.position,
-  };
-
-  const internalActivePressY = React.useRef(
-    yKeys.reduce(
-      (acc, key) => {
-        acc[key] = {
-          value: makeMutable(0),
-          position: makeMutable(0),
-        };
-        return acc;
-      },
-      {} as CartesianChartRenderArg<RawData, T, YK>["activePressY"],
-    ),
-  );
-  const activePressY = yKeys.reduce(
-    (acc, key) => {
-      acc[key] = {
-        value:
-          incomingActivePressY?.[key]?.value ||
-          internalActivePressY.current[key].value,
-        position:
-          incomingActivePressY?.[key]?.position ||
-          internalActivePressY.current[key].position,
-      };
-      return acc;
-    },
-    {} as CartesianChartRenderArg<RawData, T, YK>["activePressY"],
-  );
 
   /**
    * Pan gesture handling
@@ -206,26 +159,40 @@ export function CartesianChart<
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
 
-    activePressX.value.value = tData.value.ix[idx]!;
-    activePressX.position.value = tData.value.ox[idx]!;
+    const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
+    // Shared value
+    if (activePressSharedValue) {
+      try {
+        activePressSharedValue.x.value.value = asNumber(tData.value.ix[idx]);
+        activePressSharedValue.x.position.value = asNumber(tData.value.ox[idx]);
+        for (const yk in activePressSharedValue.y) {
+          if (isInYs(yk)) {
+            activePressSharedValue.y[yk].value.value = asNumber(
+              tData.value.y[yk].i[idx],
+            );
+            activePressSharedValue.y[yk].position.value = asNumber(
+              tData.value.y[yk].o[idx],
+            );
+          }
+        }
+      } catch {
+        // no-op
+      }
+    }
 
-    yKeys.forEach((key) => {
-      activePressY[key].value.value = tData.value.y[key].i[idx]!;
-      activePressY[key].position.value = tData.value.y[key].o[idx]!;
-    });
-
+    // JS-thread callback
     onPressValueChange &&
       lastIdx.value !== idx &&
       runOnJS(onPressValueChange)({
         x: {
-          value: activePressX.value.value,
-          position: activePressX.position.value,
+          value: asNumber(tData.value.ix[idx]),
+          position: asNumber(tData.value.ox[idx]),
         },
         y: yKeys.reduce(
           (acc, key) => {
             acc[key] = {
-              value: activePressY[key].value.value,
-              position: activePressY[key].position.value,
+              value: asNumber(tData.value.y[key].i[idx]),
+              position: asNumber(tData.value.y[key].o[idx]),
             };
             return acc;
           },
@@ -280,8 +247,6 @@ export function CartesianChart<
 
   const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
     isPressActive,
-    activePressX,
-    activePressY,
     xScale,
     yScale,
     chartBounds,

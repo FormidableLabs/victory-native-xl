@@ -61,13 +61,6 @@ export type CartesianChartRenderArg<
   xScale: Scale;
   yScale: Scale;
   isPressActive: boolean;
-  activePressX: {
-    value: SharedValue<number>;
-    position: SharedValue<number>;
-  };
-  activePressY: {
-    [K in YK]: { value: SharedValue<number>; position: SharedValue<number> };
-  };
   chartBounds: ChartBounds;
   canvasSize: { width: number; height: number };
   points: {
