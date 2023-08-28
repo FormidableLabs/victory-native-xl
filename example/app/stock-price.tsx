@@ -5,7 +5,7 @@ import {
   type ChartBounds,
   type PointsArray,
   useAreaPath,
-  useChartPressValue,
+  useChartPressSharedValue,
 } from "victory-native";
 import {
   Circle,
@@ -41,7 +41,7 @@ export default function StockPriceScreen() {
   const font = useFont(inter, 12);
   const [isPressActive, setIsPressActive] = React.useState(false);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
-  const pressValue = useChartPressValue(DATA, ["high"]);
+  const pressValue = useChartPressSharedValue(["high"]);
   const activeDateMs = pressValue.x.value;
   const activeHigh = pressValue.y.high.value;
 

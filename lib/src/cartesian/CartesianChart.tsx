@@ -22,7 +22,7 @@ import { CartesianAxis } from "./components/CartesianAxis";
 import { CartesianGrid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { CurveType } from "./utils/curves";
-import type { ChartPressValue } from "./hooks/useChartPressValue";
+import type { ChartPressValue } from "./hooks/useChartPressSharedValue";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -45,7 +45,7 @@ type CartesianChartProps<
     x: { value: number; position: number };
     y: { [K in YK]: { value: number; position: number } };
   }) => void;
-  activePressSharedValue?: ChartPressValue<RawData, T, YK>;
+  activePressSharedValue?: ChartPressValue<YK & string>;
   children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, T, YK>,
@@ -159,22 +159,28 @@ export function CartesianChart<
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
 
+    const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
     // Shared value
     if (activePressSharedValue) {
       try {
         activePressSharedValue.x.value.value = asNumber(tData.value.ix[idx]);
         activePressSharedValue.x.position.value = asNumber(tData.value.ox[idx]);
         for (const yk in activePressSharedValue.y) {
-          activePressSharedValue.y[yk].value.value = asNumber(
-            tData.value.y[yk].i[idx],
-          );
-          activePressSharedValue.y[yk].position.value = asNumber(
-            tData.value.y[yk].o[idx],
-          );
+          if (isInYs(yk)) {
+            activePressSharedValue.y[yk].value.value = asNumber(
+              tData.value.y[yk].i[idx],
+            );
+            activePressSharedValue.y[yk].position.value = asNumber(
+              tData.value.y[yk].o[idx],
+            );
+          }
         }
-      } catch {}
+      } catch {
+        // no-op
+      }
     }
 
+    // JS-thread callback
     onPressValueChange &&
       lastIdx.value !== idx &&
       runOnJS(onPressValueChange)({

@@ -1,15 +1,11 @@
 import * as React from "react";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
-import { type NumericalFields } from "../../types";
 
-export const useChartPressValue = <
-  RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  YK extends keyof T,
->(
-  _data: RawData[],
-  yKeys: YK[],
-): ChartPressValue<RawData, T, YK> => {
+export const useChartPressSharedValue = <K extends string>(
+  yKeys: K[],
+): ChartPressValue<K> => {
+  const keys = yKeys.join(",");
+
   return React.useMemo(() => {
     return {
       x: { value: makeMutable(0), position: makeMutable(0) },
@@ -22,19 +18,16 @@ export const useChartPressValue = <
           return acc;
         },
         {} as Record<
-          YK,
+          K,
           { value: SharedValue<number>; position: SharedValue<number> }
         >,
       ),
     };
-  }, [yKeys.join(",")]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keys]);
 };
 
-export type ChartPressValue<
-  RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  YK extends keyof T,
-> = {
+export type ChartPressValue<K extends string> = {
   x: { value: SharedValue<number>; position: SharedValue<number> };
-  y: Record<YK, { value: SharedValue<number>; position: SharedValue<number> }>;
+  y: Record<K, { value: SharedValue<number>; position: SharedValue<number> }>;
 };
