@@ -1,7 +1,7 @@
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { CartesianBar, CartesianChart } from "victory-native";
+import { Bar, CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
@@ -44,7 +44,7 @@ export default function BarChartPage() {
             {({ points, chartBounds }) => {
               return (
                 <>
-                  <CartesianBar
+                  <Bar
                     points={points.listenCount}
                     chartBounds={chartBounds}
                     animate={{ type: "spring" }}
@@ -55,7 +55,7 @@ export default function BarChartPage() {
                       end={vec(0, 400)}
                       colors={["#a78bfa", "#a78bfa50"]}
                     />
-                  </CartesianBar>
+                  </Bar>
                 </>
               );
             }}

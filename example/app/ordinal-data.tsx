@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CartesianChart, CartesianLine } from "victory-native";
+import { CartesianChart, Line } from "victory-native";
 import {
   Circle,
   LinearGradient,
@@ -56,7 +56,7 @@ export default function OrdinalDataScreen() {
           {({ chartBounds, points, yScale }) => {
             return (
               <>
-                <CartesianLine
+                <Line
                   points={points.high}
                   color={appColors.tint}
                   strokeWidth={5}
@@ -68,7 +68,7 @@ export default function OrdinalDataScreen() {
                     end={vec(chartBounds.top, chartBounds.bottom)}
                     colors={colors}
                   />
-                </CartesianLine>
+                </Line>
 
                 {points.high.map(({ x, y, xValue, yValue }) => (
                   <AnimatedCircle

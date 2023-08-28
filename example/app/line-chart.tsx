@@ -4,8 +4,8 @@ import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
-  CartesianDots,
-  CartesianLine,
+  Scatter,
+  Line,
   type CurveType,
   usePrevious,
   type XAxisSide,
@@ -105,14 +105,14 @@ export default function LineChartPage() {
         >
           {({ points }) => (
             <>
-              <CartesianLine
+              <Line
                 points={points.sales}
                 curveType="linear"
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
                 animate={didOptionsChange ? undefined : { type: "spring" }}
               />
-              <CartesianDots
+              <Scatter
                 points={points.sales}
                 animate={didOptionsChange ? undefined : { type: "spring" }}
                 color={colors.scatter!}

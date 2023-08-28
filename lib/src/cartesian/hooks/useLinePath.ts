@@ -5,18 +5,20 @@ import type { CurveType, PointsArray } from "victory-native";
 import { stitchDataArray } from "../../utils/stitch";
 import { CURVES } from "../utils/curves";
 
-export type CartesianLineOptions = {
+export type LinePathOptions = {
   curveType?: CurveType;
 };
 
-export const useCartesianLinePath = (
+export const useLinePath = (
   points: PointsArray,
-  { curveType = "linear" }: CartesianLineOptions,
+  { curveType = "linear" }: LinePathOptions,
 ) => {
-  return React.useMemo(() => {
+  const path = React.useMemo(() => {
     const svgPath = line().curve(CURVES[curveType])(stitchDataArray(points));
     if (!svgPath) return Skia.Path.Make();
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
   }, [points, curveType]);
+
+  return { path };
 };

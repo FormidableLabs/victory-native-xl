@@ -4,7 +4,7 @@ import type { PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
-type CartesianDotsProps = {
+type ScatterProps = {
   points: PointsArray;
   animate?: PathAnimationConfig;
   color?: string;
@@ -13,11 +13,7 @@ type CartesianDotsProps = {
 /**
  * TODO: Colors, sizes, shapes
  */
-export function CartesianDots({
-  points,
-  animate,
-  color = "black",
-}: CartesianDotsProps) {
+export function Scatter({ points, animate, color = "black" }: ScatterProps) {
   const path = React.useMemo(() => {
     const p = Skia.Path.Make();
 

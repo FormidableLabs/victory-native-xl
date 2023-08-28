@@ -18,21 +18,21 @@ export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { usePrevious } from "./utils/usePrevious";
 
 // Line
-export { useCartesianLinePath } from "./cartesian/hooks/useCartesianLinePath";
-export { CartesianLine } from "./cartesian/components/CartesianLine";
+export { useLinePath } from "./cartesian/hooks/useLinePath";
+export { Line } from "./cartesian/components/Line";
 
 // Bar
-export { CartesianBar } from "./cartesian/components/CartesianBar";
+export { Bar } from "./cartesian/components/Bar";
 
 // Bar group
 export { BarGroup } from "./cartesian/components/BarGroup";
 
 // Area
-export { useCartesianAreaPath } from "./cartesian/hooks/useCartesianAreaPath";
-export { CartesianArea } from "./cartesian/components/CartesianArea";
+export { useAreaPath } from "./cartesian/hooks/useAreaPath";
+export { Area } from "./cartesian/components/Area";
 
 // Scatter
-export { CartesianDots } from "./cartesian/components/CartesianDots";
+export { Scatter } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";

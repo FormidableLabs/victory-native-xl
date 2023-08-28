@@ -1,15 +1,15 @@
 import React from "react";
 import {
   CartesianChart,
-  CartesianLine,
+  Line,
   type ChartBounds,
   type PointsArray,
-  useCartesianAreaPath,
+  useAreaPath,
 } from "victory-native";
 import {
   Circle,
   Group,
-  Line,
+  Line as SkiaLine,
   LinearGradient,
   Path,
   Skia,
@@ -141,7 +141,7 @@ export default function StockPriceScreen() {
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
-              <CartesianLine
+              <Line
                 points={points.high}
                 color={appColors.tint}
                 strokeWidth={2}
@@ -167,7 +167,7 @@ const StockArea = ({
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
-  const path = useCartesianAreaPath(points, bottom);
+  const { path } = useAreaPath(points, bottom);
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;
@@ -243,7 +243,7 @@ const ActiveValueIndicator = ({
 
   return (
     <>
-      <Line p1={start} p2={end} color={lineColor} />
+      <SkiaLine p1={start} p2={end} color={lineColor} />
       <Circle cx={xPosition} cy={yPosition} r={10} color={appColors.tint} />
       <Circle
         cx={xPosition}
