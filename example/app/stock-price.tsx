@@ -1,11 +1,11 @@
 import React from "react";
 import {
   CartesianChart,
-  Line,
   type ChartBounds,
   type PointsArray,
   useAreaPath,
   useChartPressSharedValue,
+  useLinePath,
 } from "victory-native";
 import {
   Circle,
@@ -18,16 +18,15 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, type TextStyle, View } from "react-native";
 import { format } from "date-fns";
 import {
   type SharedValue,
+  useAnimatedStyle,
   useDerivedValue,
-  useSharedValue,
-  withTiming,
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
 import { useDarkMode } from "react-native-dark";
+import * as Haptics from "expo-haptics";
 import inter from "../assets/inter-medium.ttf";
 import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "./consts/colors";
@@ -38,25 +37,90 @@ const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function StockPriceScreen() {
   const isDark = useDarkMode();
+  const colorPrefix = isDark ? "dark" : "light";
   const font = useFont(inter, 12);
-  const [isPressActive, setIsPressActive] = React.useState(false);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
-  const pressValue = useChartPressSharedValue(["high"]);
-  const activeDateMs = pressValue.x.value;
-  const activeHigh = pressValue.y.high.value;
+  const { state: firstTouch, isActive: isFirstPressActive } =
+    useChartPressSharedValue(["high"]);
+  const { state: secondTouch, isActive: isSecondPressActive } =
+    useChartPressSharedValue(["high"]);
 
+  // On activation of gesture, play haptic feedback
+  React.useEffect(() => {
+    if (isFirstPressActive) Haptics.selectionAsync().catch(() => null);
+  }, [isFirstPressActive]);
+  React.useEffect(() => {
+    if (isSecondPressActive) Haptics.selectionAsync().catch(() => null);
+  }, [isSecondPressActive]);
+
+  // Active date display
   const activeDate = useDerivedValue(() => {
-    if (!isPressActive) return "";
+    if (!isFirstPressActive) return "";
 
-    const date = new Date(activeDateMs.value);
-    const M = MONTHS[date.getMonth()];
-    const D = date.getDate();
-    const Y = date.getFullYear();
-    return `${M} ${D}, ${Y}`;
+    // One-touch only
+    if (!isSecondPressActive) return formatDate(firstTouch.x.value.value);
+    // Two-touch
+    const early =
+      firstTouch.x.value.value < secondTouch.x.value.value
+        ? firstTouch
+        : secondTouch;
+    const late = early === firstTouch ? secondTouch : firstTouch;
+    return `${formatDate(early.x.value.value)} - ${formatDate(
+      late.x.value.value,
+    )}`;
   });
-  const activeHighDisplay = useDerivedValue(() =>
-    isPressActive ? activeHigh.value.toFixed(2) : "",
-  );
+
+  // Active high display
+  const activeHigh = useDerivedValue(() => {
+    if (!isFirstPressActive) return "";
+
+    // One-touch
+    if (!isSecondPressActive) return firstTouch.y.high.value.value.toFixed(2);
+
+    // Two-touch
+    const early =
+      firstTouch.x.value.value < secondTouch.x.value.value
+        ? firstTouch
+        : secondTouch;
+    const late = early === firstTouch ? secondTouch : firstTouch;
+
+    return `${early.y.high.value.value.toFixed(
+      2,
+    )} – ${late.y.high.value.value.toFixed(2)}`;
+  });
+
+  // Determine if the selected range has a positive delta, which will be used to conditionally pick colors.
+  const isDeltaPositive = useDerivedValue(() => {
+    if (!isSecondPressActive) return true;
+
+    const early =
+      firstTouch.x.value.value < secondTouch.x.value.value
+        ? firstTouch
+        : secondTouch;
+    const late = early === firstTouch ? secondTouch : firstTouch;
+    return early.y.high.value.value < late.y.high.value.value;
+  });
+
+  // Color the active high display based on the delta
+  const activeHighStyle = useAnimatedStyle<TextStyle>(() => {
+    const s: TextStyle = { fontSize: 24, fontWeight: "bold", color: textColor };
+
+    // One-touch
+    if (!isSecondPressActive) return s;
+    s.color = isDeltaPositive.value
+      ? appColors.success[colorPrefix]
+      : appColors.error[colorPrefix];
+
+    return s;
+  });
+
+  // Indicator color based on delta
+  const indicatorColor = useDerivedValue(() => {
+    if (!(isFirstPressActive && isSecondPressActive)) return appColors.tint;
+    return isDeltaPositive.value
+      ? appColors.success[colorPrefix]
+      : appColors.error[colorPrefix];
+  });
 
   return (
     <SafeAreaView style={styles.scrollView}>
@@ -68,7 +132,7 @@ export default function StockPriceScreen() {
           height: 80,
         }}
       >
-        {isPressActive ? (
+        {isFirstPressActive ? (
           <>
             <AnimatedText
               text={activeDate}
@@ -77,29 +141,21 @@ export default function StockPriceScreen() {
                 color: textColor,
               }}
             />
-            <AnimatedText
-              text={activeHighDisplay}
-              style={{
-                fontSize: 24,
-                fontWeight: "bold",
-                color: textColor,
-              }}
-            />
+            <AnimatedText text={activeHigh} style={activeHighStyle} />
           </>
         ) : (
           <Text>Pan across the chart path to see more.</Text>
         )}
       </View>
-      <View style={{ flex: 1, marginBottom: 20 }}>
+      <View style={{ flex: 1, maxHeight: 500, marginBottom: 20 }}>
         <CartesianChart
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          activePressSharedValue={pressValue}
+          activePressSharedValue={[firstTouch, secondTouch]}
           curve="linear"
           isPressEnabled
-          onPressActiveChange={setIsPressActive}
-          onPressActiveStart={() => Haptics.selectionAsync()}
+          // TODO: Enable this somehow?
           gridOptions={{
             lineColor: isDark ? "#71717a" : "#d4d4d8",
           }}
@@ -109,38 +165,54 @@ export default function StockPriceScreen() {
             labelOffset: { x: 12, y: 8 },
             labelPosition: { x: "outset", y: "inset" },
             axisSide: { x: "bottom", y: "left" },
-            formatXLabel: (ms) => format(new Date(ms), "MM-dd"),
+            formatXLabel: (ms) => format(new Date(ms), "MM/yy"),
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: textColor,
           }}
-          renderOutside={({ isPressActive, chartBounds }) =>
-            isPressActive && (
-              <>
-                <ActiveValueIndicator
-                  xPosition={pressValue.x.position}
-                  yPosition={pressValue.y.high.position}
-                  bottom={chartBounds.bottom}
-                  top={chartBounds.top}
-                  activeValue={pressValue.y.high.value}
-                  textColor={textColor}
-                  lineColor={isDark ? "#71717a" : "#d4d4d8"}
-                />
-              </>
-            )
-          }
+          renderOutside={({ chartBounds }) => (
+            <>
+              {isFirstPressActive && (
+                <>
+                  <ActiveValueIndicator
+                    xPosition={firstTouch.x.position}
+                    yPosition={firstTouch.y.high.position}
+                    bottom={chartBounds.bottom}
+                    top={chartBounds.top}
+                    activeValue={firstTouch.y.high.value}
+                    textColor={textColor}
+                    lineColor={isDark ? "#71717a" : "#d4d4d8"}
+                    indicatorColor={indicatorColor}
+                  />
+                </>
+              )}
+              {isSecondPressActive && (
+                <>
+                  <ActiveValueIndicator
+                    xPosition={secondTouch.x.position}
+                    yPosition={secondTouch.y.high.position}
+                    bottom={chartBounds.bottom}
+                    top={chartBounds.top}
+                    activeValue={secondTouch.y.high.value}
+                    textColor={textColor}
+                    lineColor={isDark ? "#71717a" : "#d4d4d8"}
+                    indicatorColor={indicatorColor}
+                    topOffset={16}
+                  />
+                </>
+              )}
+            </>
+          )}
         >
-          {({ isPressActive, chartBounds, points }) => (
+          {({ chartBounds, points }) => (
             <>
               <StockArea
-                xPosition={pressValue.x.position}
+                colorPrefix={colorPrefix}
                 points={points.high}
-                isPressActive={isPressActive}
+                isWindowActive={isFirstPressActive && isSecondPressActive}
+                isDeltaPositive={isDeltaPositive}
+                startX={firstTouch.x.position}
+                endX={secondTouch.x.position}
                 {...chartBounds}
-              />
-              <Line
-                points={points.high}
-                color={appColors.tint}
-                strokeWidth={2}
               />
             </>
           )}
@@ -150,56 +222,116 @@ export default function StockPriceScreen() {
   );
 }
 
+/**
+ * Show the line/area chart for the stock price, taking into account press state.
+ */
 const StockArea = ({
+  colorPrefix,
   points,
-  xPosition,
-  isPressActive,
+  isWindowActive,
+  isDeltaPositive,
+  startX,
+  endX,
   left,
   right,
-  bottom,
   top,
+  bottom,
 }: {
+  colorPrefix: "dark" | "light";
   points: PointsArray;
-  xPosition: SharedValue<number>;
-  isPressActive: boolean;
+  isWindowActive: boolean;
+  isDeltaPositive: SharedValue<boolean>;
+  startX: SharedValue<number>;
+  endX: SharedValue<number>;
 } & ChartBounds) => {
-  const { path } = useAreaPath(points, bottom);
-  const clipRectRight = useSharedValue(right);
-  React.useEffect(() => {
-    clipRectRight.value = right;
-  }, [clipRectRight, right]);
+  const { path: areaPath } = useAreaPath(points, bottom);
+  const { path: linePath } = useLinePath(points);
 
-  React.useEffect(() => {
-    if (!isPressActive) {
-      clipRectRight.value = xPosition.value;
-      clipRectRight.value = withTiming(right, { duration: 200 });
-    }
-  }, [clipRectRight, isPressActive, right, xPosition.value]);
-
-  const leftRect = useDerivedValue(() => {
+  const backgroundClip = useDerivedValue(() => {
     const path = Skia.Path.Make();
-    path.addRect(
-      Skia.XYWHRect(
-        left,
-        top,
-        (isPressActive ? xPosition.value : clipRectRight.value) - left,
-        bottom - top,
-      ),
-    );
+
+    if (isWindowActive) {
+      path.addRect(Skia.XYWHRect(left, top, startX.value - left, bottom - top));
+      path.addRect(
+        Skia.XYWHRect(endX.value, top, right - endX.value, bottom - top),
+      );
+    } else {
+      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
+    }
 
     return path;
   });
 
+  const windowClip = useDerivedValue(() => {
+    if (!isWindowActive) return Skia.Path.Make();
+
+    const path = Skia.Path.Make();
+    path.addRect(
+      Skia.XYWHRect(startX.value, top, endX.value - startX.value, bottom - top),
+    );
+    return path;
+  });
+
+  const gradColors = useDerivedValue(() => {
+    if (!isWindowActive) return [appColors.tint, `${appColors.tint}33`];
+
+    return isDeltaPositive.value
+      ? [appColors.success[colorPrefix], `${appColors.success[colorPrefix]}33`]
+      : [appColors.error[colorPrefix], `${appColors.error[colorPrefix]}33`];
+  });
+
+  const windowLineColor = useDerivedValue(() => {
+    return isDeltaPositive.value
+      ? appColors.success[colorPrefix]
+      : appColors.error[colorPrefix];
+  });
+
   return (
-    <Group clip={leftRect}>
-      <Path path={path} style="fill">
-        <LinearGradient
-          start={vec(0, 0)}
-          end={vec(top, bottom)}
-          colors={[appColors.tint, `${appColors.tint}33`]}
+    <>
+      {/* Base */}
+      <Group clip={backgroundClip} opacity={isWindowActive ? 0.3 : 1}>
+        <Path path={areaPath} style="fill">
+          <LinearGradient
+            start={vec(0, 0)}
+            end={vec(top, bottom)}
+            colors={
+              isWindowActive
+                ? [
+                    appColors.cardBorder[colorPrefix],
+                    `${appColors.cardBorder[colorPrefix]}33`,
+                  ]
+                : [appColors.tint, `${appColors.tint}33`]
+            }
+          />
+        </Path>
+        <Path
+          path={linePath}
+          style="stroke"
+          strokeWidth={2}
+          color={
+            isWindowActive ? appColors.cardBorder[colorPrefix] : appColors.tint
+          }
         />
-      </Path>
-    </Group>
+      </Group>
+      {/* Clipped window */}
+      {isWindowActive && (
+        <Group clip={windowClip}>
+          <Path path={areaPath} style="fill">
+            <LinearGradient
+              start={vec(0, 0)}
+              end={vec(top, bottom)}
+              colors={gradColors}
+            />
+          </Path>
+          <Path
+            path={linePath}
+            style="stroke"
+            strokeWidth={2}
+            color={windowLineColor}
+          />
+        </Group>
+      )}
+    </>
   );
 };
 
@@ -211,6 +343,8 @@ const ActiveValueIndicator = ({
   activeValue,
   textColor,
   lineColor,
+  indicatorColor,
+  topOffset = 0,
 }: {
   xPosition: SharedValue<number>;
   yPosition: SharedValue<number>;
@@ -219,12 +353,14 @@ const ActiveValueIndicator = ({
   top: number;
   textColor: string;
   lineColor: string;
+  indicatorColor: SharedValue<string>;
+  topOffset?: number;
 }) => {
   const FONT_SIZE = 16;
   const font = useFont(inter, FONT_SIZE);
   const start = useDerivedValue(() => vec(xPosition.value, bottom));
   const end = useDerivedValue(() =>
-    vec(xPosition.value, top + 1.5 * FONT_SIZE),
+    vec(xPosition.value, top + 1.5 * FONT_SIZE + topOffset),
   );
   // Text label
   const activeValueDisplay = useDerivedValue(() =>
@@ -239,8 +375,8 @@ const ActiveValueIndicator = ({
 
   return (
     <>
-      <SkiaLine p1={start} p2={end} color={lineColor} />
-      <Circle cx={xPosition} cy={yPosition} r={10} color={appColors.tint} />
+      <SkiaLine p1={start} p2={end} color={lineColor} strokeWidth={1} />
+      <Circle cx={xPosition} cy={yPosition} r={10} color={indicatorColor} />
       <Circle
         cx={xPosition}
         cy={yPosition}
@@ -252,7 +388,7 @@ const ActiveValueIndicator = ({
         font={font}
         text={activeValueDisplay}
         x={activeValueX}
-        y={top + FONT_SIZE}
+        y={top + FONT_SIZE + topOffset}
       />
     </>
   );
@@ -272,6 +408,16 @@ const MONTHS = [
   "Nov",
   "Dec",
 ];
+
+const formatDate = (ms: number) => {
+  "worklet";
+
+  const date = new Date(ms);
+  const M = MONTHS[date.getMonth()];
+  const D = date.getDate();
+  const Y = date.getFullYear();
+  return `${M} ${D}, ${Y}`;
+};
 
 const styles = StyleSheet.create({
   scrollView: {

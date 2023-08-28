@@ -60,7 +60,6 @@ export type CartesianChartRenderArg<
 > = {
   xScale: Scale;
   yScale: Scale;
-  isPressActive: boolean;
   chartBounds: ChartBounds;
   canvasSize: { width: number; height: number };
   points: {
