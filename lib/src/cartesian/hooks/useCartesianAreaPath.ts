@@ -22,5 +22,5 @@ export const useCartesianAreaPath = (
     if (!svgPath) return Skia.Path.Make();
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
-  }, [points, curveType]);
+  }, [points, curveType, y0]);
 };
