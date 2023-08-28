@@ -4,7 +4,6 @@ import {
   CartesianLine,
   type ChartBounds,
   type PointsArray,
-  type Scale,
   useCartesianAreaPath,
 } from "victory-native";
 import {
@@ -134,12 +133,11 @@ export default function StockPriceScreen() {
             )
           }
         >
-          {({ isPressActive, activePressX, chartBounds, points, yScale }) => (
+          {({ isPressActive, activePressX, chartBounds, points }) => (
             <>
               <StockArea
                 xPosition={activePressX.position}
                 points={points.high}
-                yScale={yScale}
                 isPressActive={isPressActive}
                 {...chartBounds}
               />
@@ -158,7 +156,6 @@ export default function StockPriceScreen() {
 
 const StockArea = ({
   points,
-  yScale,
   xPosition,
   isPressActive,
   left,
@@ -167,11 +164,10 @@ const StockArea = ({
   top,
 }: {
   points: PointsArray;
-  yScale: Scale;
   xPosition: SharedValue<number>;
   isPressActive: boolean;
 } & ChartBounds) => {
-  const path = useCartesianAreaPath(points, yScale);
+  const path = useCartesianAreaPath(points, bottom);
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;
