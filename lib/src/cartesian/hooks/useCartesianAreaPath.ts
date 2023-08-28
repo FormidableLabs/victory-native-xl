@@ -1,9 +1,9 @@
 import * as React from "react";
-import type { PointsArray } from "../../types";
 import { area } from "d3-shape";
 import { Skia } from "@shopify/react-native-skia";
-import { stitchDataArray } from "../../utils/stitch";
 import type { ScaleLinear } from "d3-scale";
+import { stitchDataArray } from "../../utils/stitch";
+import type { PointsArray } from "../../types";
 import type { CurveType } from "../utils/curves";
 import { CURVES } from "../utils/curves";
 
@@ -23,5 +23,5 @@ export const useCartesianAreaPath = (
     if (!svgPath) return Skia.Path.Make();
 
     return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
-  }, [points, curveType]);
+  }, [yScale, curveType, points]);
 };

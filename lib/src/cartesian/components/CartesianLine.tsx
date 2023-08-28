@@ -1,10 +1,10 @@
 import * as React from "react";
+import { Path, type PathProps } from "@shopify/react-native-skia";
 import type { PointsArray } from "victory-native";
 import {
   type CartesianLineOptions,
   useCartesianLinePath,
 } from "../hooks/useCartesianLinePath";
-import { Path, type PathProps } from "@shopify/react-native-skia";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 
