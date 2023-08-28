@@ -17,13 +17,22 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "userInterfaceStyle": "automatic"
+      "userInterfaceStyle": "automatic",
+      "bundleIdentifier": "com.formidable.victorynativexldemo"
     },
     "android": {
       "userInterfaceStyle": "automatic"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "74d92f64-3a25-4511-b3ea-ca48efcdda62"
+      }
+    }
   }
 }
