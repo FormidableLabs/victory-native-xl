@@ -26,6 +26,7 @@ import {
   useDerivedValue,
 } from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
+import * as Haptics from "expo-haptics";
 import inter from "../assets/inter-medium.ttf";
 import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "./consts/colors";
@@ -44,6 +45,15 @@ export default function StockPriceScreen() {
   const { state: secondTouch, isActive: isSecondPressActive } =
     useChartPressSharedValue(["high"]);
 
+  // On activation of gesture, play haptic feedback
+  React.useEffect(() => {
+    if (isFirstPressActive) Haptics.selectionAsync().catch(() => null);
+  }, [isFirstPressActive]);
+  React.useEffect(() => {
+    if (isSecondPressActive) Haptics.selectionAsync().catch(() => null);
+  }, [isSecondPressActive]);
+
+  // Active date display
   const activeDate = useDerivedValue(() => {
     if (!isFirstPressActive) return "";
 
@@ -60,6 +70,7 @@ export default function StockPriceScreen() {
     )}`;
   });
 
+  // Active high display
   const activeHigh = useDerivedValue(() => {
     if (!isFirstPressActive) return "";
 
@@ -78,6 +89,7 @@ export default function StockPriceScreen() {
     )} – ${late.y.high.value.value.toFixed(2)}`;
   });
 
+  // Determine if the selected range has a positive delta, which will be used to conditionally pick colors.
   const isDeltaPositive = useDerivedValue(() => {
     if (!isSecondPressActive) return true;
 
@@ -89,6 +101,7 @@ export default function StockPriceScreen() {
     return early.y.high.value.value < late.y.high.value.value;
   });
 
+  // Color the active high display based on the delta
   const activeHighStyle = useAnimatedStyle<TextStyle>(() => {
     const s: TextStyle = { fontSize: 24, fontWeight: "bold", color: textColor };
 
@@ -101,6 +114,7 @@ export default function StockPriceScreen() {
     return s;
   });
 
+  // Indicator color based on delta
   const indicatorColor = useDerivedValue(() => {
     if (!isSecondPressActive) return appColors.tint;
     return isDeltaPositive.value
@@ -142,7 +156,6 @@ export default function StockPriceScreen() {
           curve="linear"
           isPressEnabled
           // TODO: Enable this somehow?
-          // onPressActiveStart={() => Haptics.selectionAsync()}
           gridOptions={{
             lineColor: isDark ? "#71717a" : "#d4d4d8",
           }}
@@ -209,6 +222,9 @@ export default function StockPriceScreen() {
   );
 }
 
+/**
+ * Show the line/area chart for the stock price, taking into account press state.
+ */
 const StockArea = ({
   colorPrefix,
   points,
