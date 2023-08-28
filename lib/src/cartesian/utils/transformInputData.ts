@@ -1,3 +1,4 @@
+import { type ScaleLinear } from "d3-scale";
 import type {
   AxisProps,
   NumericalFields,
@@ -5,7 +6,6 @@ import type {
   SidedNumber,
   TransformedData,
 } from "../../types";
-import { type ScaleLinear } from "d3-scale";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
 

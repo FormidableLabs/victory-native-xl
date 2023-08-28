@@ -20,6 +20,10 @@ export { usePrevious } from "./utils/usePrevious";
 // Line
 export { useCartesianLinePath } from "./cartesian/hooks/useCartesianLinePath";
 export { CartesianLine } from "./cartesian/components/CartesianLine";
+
+// Bar
+export { CartesianBar } from "./cartesian/components/CartesianBar";
+
 // Area
 export { useCartesianAreaPath } from "./cartesian/hooks/useCartesianAreaPath";
 export { CartesianArea } from "./cartesian/components/CartesianArea";

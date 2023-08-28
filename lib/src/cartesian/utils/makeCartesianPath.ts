@@ -1,6 +1,6 @@
 import { area, line } from "d3-shape";
-import { stitch } from "../../utils/stitch";
 import { Skia } from "@shopify/react-native-skia";
+import { stitch } from "../../utils/stitch";
 import type { ScatterOptions } from "../../types";
 import type { CurveType } from "./curves";
 import { CURVES } from "./curves";

@@ -1,7 +1,7 @@
 import * as React from "react";
-import type { CurveType, PointsArray } from "victory-native";
 import { line } from "d3-shape";
 import { Skia } from "@shopify/react-native-skia";
+import type { CurveType, PointsArray } from "victory-native";
 import { stitchDataArray } from "../../utils/stitch";
 import { CURVES } from "../utils/curves";
 

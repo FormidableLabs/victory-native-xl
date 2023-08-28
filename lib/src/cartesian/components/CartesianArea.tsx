@@ -1,7 +1,7 @@
 import * as React from "react";
+import { Path } from "@shopify/react-native-skia";
 import type { PointsArray } from "../../types";
 import { type CartesianLineOptions } from "../hooks/useCartesianLinePath";
-import { Path } from "@shopify/react-native-skia";
 import { useCartesianAreaPath } from "../hooks/useCartesianAreaPath";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";

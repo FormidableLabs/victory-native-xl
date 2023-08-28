@@ -1,5 +1,4 @@
 import React from "react";
-import data from "../data/stockprice/tesla_stock.json";
 import {
   CartesianChart,
   CartesianLine,
@@ -19,7 +18,6 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import inter from "../assets/inter-medium.ttf";
 import { format } from "date-fns";
 import {
   type SharedValue,
@@ -27,11 +25,13 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { AnimatedText } from "../components/AnimatedText";
 import * as Haptics from "expo-haptics";
+import { useDarkMode } from "react-native-dark";
+import inter from "../assets/inter-medium.ttf";
+import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "./consts/colors";
 import { Text } from "../components/Text";
-import { useDarkMode } from "react-native-dark";
+import data from "../data/stockprice/tesla_stock.json";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
@@ -171,14 +171,14 @@ const StockArea = ({
   const clipRectRight = useSharedValue(right);
   React.useEffect(() => {
     clipRectRight.value = right;
-  }, [right]);
+  }, [clipRectRight, right]);
 
   React.useEffect(() => {
     if (!isPressActive) {
       clipRectRight.value = xPosition.value;
       clipRectRight.value = withTiming(right, { duration: 200 });
     }
-  }, [isPressActive]);
+  }, [clipRectRight, isPressActive, right, xPosition.value]);
 
   const leftRect = useDerivedValue(() => {
     const path = Skia.Path.Make();

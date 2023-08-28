@@ -10,6 +10,11 @@ export const ChartRoutes: {
     path: "/line-chart",
   },
   {
+    title: "Bar Chart",
+    description: "A simple bar chart.",
+    path: "/bar-chart",
+  },
+  {
     title: "Custom Drawing",
     description:
       "A chart that demonstrates Victory Native XL’s ability to support custom drawing using Skia.",
