@@ -8,7 +8,6 @@ import {
   withTiming,
   type WithTimingConfig,
 } from "react-native-reanimated";
-import { Skia } from "@shopify/react-native-skia";
 import { usePrevious } from "../utils/usePrevious";
 
 export type PathAnimationConfig =
@@ -31,7 +30,7 @@ export const useAnimatedPath = (
 
   return useDerivedValue<SkPath>(() => {
     if (t.value !== 1 && path.isInterpolatable(prevPath)) {
-      return path.interpolate(prevPath, t.value) || Skia.Path.Make();
+      return path.interpolate(prevPath, t.value) || path;
     }
     return path;
   });

@@ -24,9 +24,13 @@ export { CartesianLine } from "./cartesian/components/CartesianLine";
 // Bar
 export { CartesianBar } from "./cartesian/components/CartesianBar";
 
+// Bar group
+export { BarGroup } from "./cartesian/components/BarGroup";
+
 // Area
 export { useCartesianAreaPath } from "./cartesian/hooks/useCartesianAreaPath";
 export { CartesianArea } from "./cartesian/components/CartesianArea";
+
 // Scatter
 export { CartesianDots } from "./cartesian/components/CartesianDots";
 
