@@ -1,2 +1,4 @@
-export const asNumber = (val: unknown): number =>
-  typeof val === "number" ? val : Number(val);
+export const asNumber = (val: unknown): number => {
+  "worklet";
+  return typeof val === "number" ? val : Number(val);
+};

@@ -159,34 +159,40 @@ export function CartesianChart<
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
 
+    // Shared value
     if (activePressSharedValue) {
-      activePressSharedValue.x.value.value = tData.value.ix[idx]!;
-      activePressSharedValue.x.position.value = tData.value.ox[idx]!;
-      for (const yk in activePressSharedValue.y) {
-        activePressSharedValue.y[yk].value.value = tData.value.y[yk].i[idx]!;
-        activePressSharedValue.y[yk].position.value = tData.value.y[yk].o[idx]!;
-      }
+      try {
+        activePressSharedValue.x.value.value = asNumber(tData.value.ix[idx]);
+        activePressSharedValue.x.position.value = asNumber(tData.value.ox[idx]);
+        for (const yk in activePressSharedValue.y) {
+          activePressSharedValue.y[yk].value.value = asNumber(
+            tData.value.y[yk].i[idx],
+          );
+          activePressSharedValue.y[yk].position.value = asNumber(
+            tData.value.y[yk].o[idx],
+          );
+        }
+      } catch {}
     }
 
-    // TODO: These need to get updated, compute ahead of time and use value for shared value and JS-land here.
-    // onPressValueChange &&
-    //   lastIdx.value !== idx &&
-    //   runOnJS(onPressValueChange)({
-    //     x: {
-    //       value: activePressX.value.value,
-    //       position: activePressX.position.value,
-    //     },
-    //     y: yKeys.reduce(
-    //       (acc, key) => {
-    //         acc[key] = {
-    //           value: activePressY[key].value.value,
-    //           position: activePressY[key].position.value,
-    //         };
-    //         return acc;
-    //       },
-    //       {} as { [K in YK]: { value: number; position: number } },
-    //     ),
-    //   });
+    onPressValueChange &&
+      lastIdx.value !== idx &&
+      runOnJS(onPressValueChange)({
+        x: {
+          value: asNumber(tData.value.ix[idx]),
+          position: asNumber(tData.value.ox[idx]),
+        },
+        y: yKeys.reduce(
+          (acc, key) => {
+            acc[key] = {
+              value: asNumber(tData.value.y[key].i[idx]),
+              position: asNumber(tData.value.y[key].o[idx]),
+            };
+            return acc;
+          },
+          {} as { [K in YK]: { value: number; position: number } },
+        ),
+      });
 
     lastIdx.value = idx;
   };
