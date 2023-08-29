@@ -8,7 +8,7 @@ import { appColors } from "./consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -17,8 +17,7 @@ const DATA = (length: number = 10) =>
   }));
 
 export default function BarChartPage(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [data, setData] = useState(DATA(5));

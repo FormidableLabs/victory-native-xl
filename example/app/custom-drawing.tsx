@@ -9,7 +9,7 @@ import { appColors } from "./consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { InputColor } from "../components/InputColor";
 import { InfoCard } from "../components/InfoCard";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const DATA = Array.from({ length: 13 }, (_, index) => ({
   day: index + 1,
@@ -33,8 +33,7 @@ const calculateStarPoints = (
 };
 
 export default function CustomDrawingPage(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [numPoints, setNumPoints] = useState(5);

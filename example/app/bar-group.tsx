@@ -8,7 +8,7 @@ import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
 import { InputSlider } from "../components/InputSlider";
 import { InfoCard } from "../components/InfoCard";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -19,8 +19,7 @@ const DATA = (length: number = 10) =>
   }));
 
 export default function BarGroupPage(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const [data, setData] = React.useState(DATA(5));
   const [betweenGroupPadding, setBetweenGroupPadding] = React.useState(0.4);
   const [withinGroupPadding, setWithinGroupPadding] = React.useState(0.1);

@@ -20,13 +20,12 @@ import { appColors } from "./consts/colors";
 import { InfoCard } from "../components/InfoCard";
 import { AnimatedText } from "../components/AnimatedText";
 import { Text } from "../components/Text";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const colors = [appColors.tint, "#818cf8"];
 
 export default function OrdinalDataScreen(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
   const { state: activePress } = useChartPressSharedValue(["high"]);
   const activeX = activePress.x.value;

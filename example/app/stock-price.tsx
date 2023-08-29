@@ -30,7 +30,6 @@ import {
   type SharedValue,
   useAnimatedStyle,
   useDerivedValue,
-  useSharedValue,
 } from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
 import * as Haptics from "expo-haptics";
@@ -39,13 +38,12 @@ import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "./consts/colors";
 import data from "../data/stockprice/tesla_stock.json";
 import { InfoCard } from "../components/InfoCard";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
 export default function StockPriceScreen(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const isDark = useDarkMode();
   const colorPrefix = isDark ? "dark" : "light";
   const font = useFont(inter, 12);
@@ -54,8 +52,6 @@ export default function StockPriceScreen(props: { segment: string }) {
     useChartPressSharedValue(["high"]);
   const { state: secondTouch, isActive: isSecondPressActive } =
     useChartPressSharedValue(["high"]);
-  const defaultText = useSharedValue("Multi-touch the chart to select a range");
-  const defaultSubText = useSharedValue("—");
 
   // On activation of gesture, play haptic feedback
   React.useEffect(() => {
@@ -67,7 +63,7 @@ export default function StockPriceScreen(props: { segment: string }) {
 
   // Active date display
   const activeDate = useDerivedValue(() => {
-    if (!isFirstPressActive) return "";
+    if (!isFirstPressActive) return "Single or multi-touch the chart";
 
     // One-touch only
     if (!isSecondPressActive) return formatDate(firstTouch.x.value.value);
@@ -84,7 +80,7 @@ export default function StockPriceScreen(props: { segment: string }) {
 
   // Active high display
   const activeHigh = useDerivedValue(() => {
-    if (!isFirstPressActive) return "";
+    if (!isFirstPressActive) return "—";
 
     // One-touch
     if (!isSecondPressActive)
@@ -225,16 +221,13 @@ export default function StockPriceScreen(props: { segment: string }) {
         >
           <>
             <AnimatedText
-              text={isFirstPressActive ? activeDate : defaultText}
+              text={activeDate}
               style={{
                 fontSize: 16,
                 color: textColor,
               }}
             />
-            <AnimatedText
-              text={isFirstPressActive ? activeHigh : defaultSubText}
-              style={activeHighStyle}
-            />
+            <AnimatedText text={activeHigh} style={activeHighStyle} />
           </>
         </View>
         <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>

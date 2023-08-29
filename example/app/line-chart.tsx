@@ -25,7 +25,7 @@ import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
-import { ChartRoutes } from "./consts/routes";
+import { descriptionForRoute } from "./consts/routes";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -36,8 +36,7 @@ const DATA = (numberPoints = 13) =>
   }));
 
 export default function LineChartPage(props: { segment: string }) {
-  const description =
-    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
+  const description = descriptionForRoute(props.segment);
   const isDark = useDarkMode();
   const [
     {

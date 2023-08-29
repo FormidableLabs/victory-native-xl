@@ -30,7 +30,7 @@ export const ChartRoutes: {
   {
     title: "Stock Price",
     description:
-      "This chart shows off Victory’s support for large datasets and multi-touch interactions. You can use Victory’s active press array to support single or multi-touch..",
+      "This chart shows off Victory’s support for large datasets and multi-touch interactions. You can use Victory’s active press array to support single or multi-touch.",
     path: "/stock-price",
   },
   {
@@ -40,3 +40,6 @@ export const ChartRoutes: {
     path: "/ordinal-data",
   },
 ];
+
+export const descriptionForRoute = (path: string) =>
+  ChartRoutes.find((r) => r.path.includes(path))?.description || "";
