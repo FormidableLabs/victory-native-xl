@@ -25,6 +25,6 @@ This toolset offers a foundation to build high-end data visualizations that can 
 
 This worked well in many scenarios, but fell short in a few key ways:
 
-- React Native SVG is traditionally not _that_ performant, especially on Android devices.
+- React Native SVG wasn't designed to have a large number of nodes being updated over the bridge dynamically.
 - Victory's animation/gesture code triggers a lot of React re-renders, which when coupled with the first point made for almost-useless charts in Android when needing to add user interactions with datasets of any significant size.
 - Native mobile and web are _different targets_ and UX differs in non-trivial ways. We believe that users expect to interact with data visualizations on mobile apps in different ways than on a desktop browser, and mobile data visualization libraries should adapt accordingly.

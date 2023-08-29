@@ -9,7 +9,7 @@ const sidebars = {
     {
       type: "category",
       label: "Guides",
-      items: ["guides/basic-bar-graph"],
+      items: ["guides/basic-bar-chart"],
     },
     {
       type: "category",
