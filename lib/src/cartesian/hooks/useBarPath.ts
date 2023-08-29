@@ -7,9 +7,14 @@ export const useBarPath = (
   chartBounds: ChartBounds,
   innerPadding = 0.2,
 ) => {
-  const path = React.useMemo(() => {
+  const barWidth = React.useMemo(() => {
     const domainWidth = chartBounds.right - chartBounds.left;
     const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
+
+    return barWidth;
+  }, [chartBounds.left, chartBounds.right, innerPadding, points.length]);
+
+  const path = React.useMemo(() => {
     const path = Skia.Path.Make();
 
     points.forEach(({ x, y }) => {
@@ -19,13 +24,7 @@ export const useBarPath = (
     });
 
     return path;
-  }, [
-    chartBounds.right,
-    chartBounds.left,
-    chartBounds.bottom,
-    innerPadding,
-    points,
-  ]);
+  }, [barWidth, chartBounds.bottom, points]);
 
-  return { path };
+  return { path, barWidth };
 };

@@ -43,7 +43,7 @@ export function MyChart() {
 `useBarPath` has a function signature as follows:
 
 ```ts
-useBarPath(points: PointsArray, chartBounds: ChartBounds, innerPadding?: number): { path: SkPath }
+useBarPath(points: PointsArray, chartBounds: ChartBounds, innerPadding?: number): { path: SkPath; barWidth: number; }
 ```
 
 ### `points`
@@ -57,3 +57,13 @@ A `ChartBounds` object needed to appropriately draw the bars. This generally com
 ### `innerPadding`
 
 An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars should be "white space". Defaults to `0.2`. Use `0` for no gap between bars, and values closer to `1` to make bars increasingly narrow.
+
+## Returns
+
+### `path`
+
+The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element.
+
+### `barWidth`
+
+A `number` representing the width of each bar.
