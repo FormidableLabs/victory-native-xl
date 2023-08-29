@@ -41,7 +41,7 @@ The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#a
 
 ### `curveType`
 
-[A `CurveType` value](./use-line-path.md#options) that indicates the type of curve should be drawn (e.g. `linear` or `natural`).
+[A `CurveType` value](./use-area-path.md#options) that indicates the type of curve should be drawn (e.g. `linear` or `natural`).
 
 ### `children`
 
