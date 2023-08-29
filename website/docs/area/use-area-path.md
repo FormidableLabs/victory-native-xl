@@ -68,3 +68,9 @@ The `options` argument object has the following fields:
   - `catmullRom0`
   - `catmullRom100`
   - `step`
+
+## Returns
+
+### `path`
+
+The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element.
