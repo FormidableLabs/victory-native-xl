@@ -31,6 +31,10 @@ export function MyChart() {
 
 A `PointsArray` array that comes from a field of the `points` object exposed the `children` render function of `CartesianChart`, as illustrated in the example above.
 
+### `y0`
+
+A `number` that indicates where the "bottom" of the area path should run. This number should be in _canvas coordinates_.
+
 ### `animate`
 
 The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#animconfig) and will animate the path when the points changes.

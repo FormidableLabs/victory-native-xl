@@ -1,6 +1,6 @@
 # `useAreaPath`
 
-The `useAreaPath` hook takes a `PointsArray` input, as well as a value for the "bottom" of the area chart and some options, and returns a Skia `SkPath` path object that represents the path for that line chart.
+The `useAreaPath` hook takes a `PointsArray` input, a value for the "bottom" of the area chart, and some options, and returns a Skia `SkPath` path object that represents the path for that line chart.
 
 ## Exmaple
 
@@ -51,7 +51,7 @@ The `points` argument is a `PointsArray` array used to generate the line's path.
 
 ### `y0`
 
-A `number` that indicates where the "bottom" of the area path should run.
+A `number` that indicates where the "bottom" of the area path should run. This number should be in _canvas coordinates_.
 
 ### `options`
 
