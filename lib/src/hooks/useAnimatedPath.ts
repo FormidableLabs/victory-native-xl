@@ -7,12 +7,14 @@ import {
   type WithSpringConfig,
   withTiming,
   type WithTimingConfig,
+  type WithDecayConfig,
 } from "react-native-reanimated";
 import { usePrevious } from "../utils/usePrevious";
 
 export type PathAnimationConfig =
   | ({ type: "timing" } & WithTimingConfig)
-  | { type: "spring" & WithSpringConfig };
+  | ({ type: "spring" } & WithSpringConfig)
+  | ({ type: "decay" } & WithDecayConfig);
 
 export const useAnimatedPath = (
   path: SkPath,

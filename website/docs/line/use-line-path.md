@@ -2,11 +2,12 @@
 
 The `useLinePath` hook takes a `PointsArray` input, as well as some options, and returns a Skia `SkPath` path object that represents the path for that line chart.
 
-## Basic Exmaple
+## Exmaple
 
 ```tsx
 import { CartesianChart, useLinePath, type PointsArray } from "victory-native";
 import { Path } from "@shopify/react-native-skia";
+import DATA from "./my-data";
 
 function MyCustomLine({ points }: { points: PointsArray }) {
   // 👇 use the hook to generate a path object.
@@ -24,7 +25,7 @@ export function MyChart() {
 }
 ```
 
-## API
+## Arguments
 
 `useLinePath` has a function signature as follows:
 

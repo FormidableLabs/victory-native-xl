@@ -8,11 +8,19 @@ import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 export type CartesianLinePathProps = {
   points: PointsArray;
   animate?: PathAnimationConfig;
-  color?: string;
-  strokeWidth?: number;
 } & LinePathOptions &
   Partial<
-    Pick<PathProps, "color" | "strokeWidth" | "strokeJoin" | "strokeCap">
+    Pick<
+      PathProps,
+      | "color"
+      | "strokeWidth"
+      | "strokeJoin"
+      | "strokeCap"
+      | "blendMode"
+      | "strokeMiter"
+      | "opacity"
+      | "antiAlias"
+    >
   >;
 
 export function Line({
