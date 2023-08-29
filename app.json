@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "victory-native-xl-monorepo",
+    "slug": "victory-native-xl-monorepo",
+    "version": "0.0.1",
+    "sdkVersion": "49.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  }
+}
