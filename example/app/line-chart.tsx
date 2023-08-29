@@ -24,6 +24,8 @@ import { InputColor } from "example/components/InputColor";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { Button } from "../components/Button";
+import { InfoCard } from "../components/InfoCard";
+import { descriptionForRoute } from "./consts/routes";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -33,7 +35,8 @@ const DATA = (numberPoints = 13) =>
     sales: randomNumber(),
   }));
 
-export default function LineChartPage() {
+export default function LineChartPage(props: { segment: string }) {
+  const description = descriptionForRoute(props.segment);
   const isDark = useDarkMode();
   const [
     {
@@ -64,7 +67,7 @@ export default function LineChartPage() {
       line: isDark ? "#71717a" : "#d4d4d8",
       xLabel: isDark ? appColors.text.dark : appColors.text.light,
       yLabel: isDark ? appColors.text.dark : appColors.text.light,
-      scatter: appColors.tint,
+      scatter: "#a78bfa",
     },
   });
   const font = useFont(inter, fontSize);
@@ -100,14 +103,13 @@ export default function LineChartPage() {
             lineColor: colors.line,
           }}
           data={data}
-          curve={curveType}
           domainPadding={domainPadding}
         >
           {({ points }) => (
             <>
               <Line
                 points={points.sales}
-                curveType="linear"
+                curveType={curveType}
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
                 animate={didOptionsChange ? undefined : { type: "spring" }}
@@ -125,12 +127,12 @@ export default function LineChartPage() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
+        <InfoCard>{description}</InfoCard>
         <View
           style={{
             flexDirection: "row",
             gap: 12,
-            marginTop: 10,
-            marginBottom: 16,
+            marginVertical: 16,
           }}
         >
           <Button

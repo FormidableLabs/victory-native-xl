@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   type TouchableHighlightProps,
 } from "react-native";
+import { useDarkMode } from "react-native-dark";
 import { appColors } from "../app/consts/colors";
 
 type ButtonProps = Omit<TouchableHighlightProps, "children"> & {
@@ -12,8 +13,17 @@ type ButtonProps = Omit<TouchableHighlightProps, "children"> & {
 };
 
 export const Button = ({ style, title, ...rest }: ButtonProps) => {
+  const isDark = useDarkMode();
   return (
-    <TouchableHighlight {...rest} style={[styles.touchable, style]}>
+    <TouchableHighlight
+      underlayColor={
+        isDark
+          ? appColors.buttonUnderlayColor.dark
+          : appColors.buttonUnderlayColor.light
+      }
+      {...rest}
+      style={[styles.touchable, style]}
+    >
       <Text style={styles.text}>{title}</Text>
     </TouchableHighlight>
   );
@@ -21,15 +31,30 @@ export const Button = ({ style, title, ...rest }: ButtonProps) => {
 
 const styles = StyleSheet.create({
   touchable: {
-    backgroundColor: appColors.tint,
+    backgroundColor: appColors.buttonBackgroundColor.light,
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 10,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 1 },
+    borderWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: 1,
+    borderColor: appColors.buttonBorderColor.light,
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    elevation: 1,
+    $dark: {
+      borderColor: appColors.buttonBorderColor.dark,
+      backgroundColor: appColors.buttonBackgroundColor.dark,
+    },
   },
   text: {
     fontWeight: "bold",
-    color: appColors.text.dark,
+    color: appColors.text.light,
+    $dark: {
+      color: appColors.text.dark,
+    },
   },
 });

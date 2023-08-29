@@ -20,10 +20,12 @@ import { appColors } from "./consts/colors";
 import { InfoCard } from "../components/InfoCard";
 import { AnimatedText } from "../components/AnimatedText";
 import { Text } from "../components/Text";
+import { descriptionForRoute } from "./consts/routes";
 
 const colors = [appColors.tint, "#818cf8"];
 
-export default function OrdinalDataScreen() {
+export default function OrdinalDataScreen(props: { segment: string }) {
+  const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
   const { state: activePress } = useChartPressSharedValue(["high"]);
   const activeX = activePress.x.value;
@@ -97,10 +99,7 @@ export default function OrdinalDataScreen() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
-        <InfoCard
-          fileName="ordinal-data.tsx"
-          message="This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data."
-        />
+        <InfoCard>{description}</InfoCard>
       </ScrollView>
     </SafeAreaView>
   );

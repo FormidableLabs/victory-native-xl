@@ -2,10 +2,13 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { BarGroup, CartesianChart } from "victory-native";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { useDarkMode } from "react-native-dark";
 import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
 import { InputSlider } from "../components/InputSlider";
+import { InfoCard } from "../components/InfoCard";
+import { descriptionForRoute } from "./consts/routes";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -15,11 +18,13 @@ const DATA = (length: number = 10) =>
     w: 5 + Math.floor(45 * Math.random()),
   }));
 
-export default function BarGroupPage() {
+export default function BarGroupPage(props: { segment: string }) {
+  const description = descriptionForRoute(props.segment);
   const [data, setData] = React.useState(DATA(5));
   const [betweenGroupPadding, setBetweenGroupPadding] = React.useState(0.4);
   const [withinGroupPadding, setWithinGroupPadding] = React.useState(0.1);
   const font = useFont(inter, 12);
+  const isDark = useDarkMode();
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -29,8 +34,17 @@ export default function BarGroupPage() {
           xKey="x"
           yKeys={["y", "z", "w"]}
           domain={{ y: [0, 50] }}
+          padding={{ left: 10, right: 10, bottom: 5, top: 15 }}
           domainPadding={{ left: 50, right: 50, top: 30 }}
-          axisOptions={{ font }}
+          axisOptions={{
+            font,
+            tickCount: { y: 10, x: 5 },
+            lineColor: isDark ? "#71717a" : "#d4d4d8",
+            labelColor: isDark ? appColors.text.dark : appColors.text.light,
+          }}
+          gridOptions={{
+            lineColor: isDark ? "#71717a" : "#d4d4d8",
+          }}
         >
           {({ points, chartBounds }) => (
             <BarGroup
@@ -41,20 +55,24 @@ export default function BarGroupPage() {
               <BarGroup.Bar points={points.y} animate={{ type: "timing" }}>
                 <LinearGradient
                   start={vec(0, 0)}
-                  end={vec(0, 500)}
-                  colors={["#00ff00", "#000000"]}
+                  end={vec(0, 540)}
+                  colors={["#f472b6", "#be185d90"]}
                 />
               </BarGroup.Bar>
-              <BarGroup.Bar
-                points={points.z}
-                color="blue"
-                animate={{ type: "timing" }}
-              />
-              <BarGroup.Bar
-                points={points.w}
-                color="purple"
-                animate={{ type: "timing" }}
-              />
+              <BarGroup.Bar points={points.z} animate={{ type: "timing" }}>
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(0, 500)}
+                  colors={["#c084fc", "#7c3aed90"]}
+                />
+              </BarGroup.Bar>
+              <BarGroup.Bar points={points.w} animate={{ type: "timing" }}>
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(0, 500)}
+                  colors={["#a5f3fc", "#0891b290"]}
+                />
+              </BarGroup.Bar>
             </BarGroup>
           )}
         </CartesianChart>
@@ -63,12 +81,12 @@ export default function BarGroupPage() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
+        <InfoCard>{description}</InfoCard>
         <View
           style={{
             flexDirection: "row",
             gap: 12,
-            marginTop: 10,
-            marginBottom: 16,
+            marginVertical: 16,
           }}
         >
           <Button
