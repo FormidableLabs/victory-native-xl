@@ -215,8 +215,10 @@ export function CartesianChart<
     /**
      * On start, check if we have any bootstraped updates we need to apply.
      */
-    .onStart(() => {
+    .onBegin(() => {
       gestureState.value.isGestureActive = true;
+    })
+    .onStart(() => {
       for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
         const [v, touch] = gestureState.value.bootstrap[i]!;
         // Update the mapping
@@ -230,8 +232,10 @@ export function CartesianChart<
     /**
      * Clear gesture state on gesture end.
      */
-    .onEnd(() => {
+    .onFinalize(() => {
       gestureState.value.isGestureActive = false;
+    })
+    .onEnd(() => {
       gestureState.value.bootstrap = [];
     })
     /**

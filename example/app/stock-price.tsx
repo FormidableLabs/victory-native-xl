@@ -116,7 +116,7 @@ export default function StockPriceScreen() {
 
   // Indicator color based on delta
   const indicatorColor = useDerivedValue(() => {
-    if (!isSecondPressActive) return appColors.tint;
+    if (!(isFirstPressActive && isSecondPressActive)) return appColors.tint;
     return isDeltaPositive.value
       ? appColors.success[colorPrefix]
       : appColors.error[colorPrefix];
