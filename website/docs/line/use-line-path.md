@@ -35,7 +35,7 @@ useLinePath(points: PointsArray, options?: { curveType?: CurveType }): { path: S
 
 ### `points`
 
-The `points` argument is a `PointsArray` array that comes from a field of the `points` object exposed the `children` render function of `CartesianChart`, as illustrated in the example above.
+The `points` argument is a `PointsArray` array used to generate the line's path. Generally, this array comes from a field of the `points` object exposed the `children` render function of `CartesianChart`, as illustrated in the example above.
 
 ### `options`
 
