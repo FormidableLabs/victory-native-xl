@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
-    "ios": "expo start:ios",
-    "android": "expo start --android"
+    "android": "expo start --android",
+    "ios": "expo start --ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
