@@ -8,6 +8,11 @@ const sidebars = {
     "cartesian-chart",
     {
       type: "category",
+      label: "Guides",
+      items: ["guides/basic-bar-graph"],
+    },
+    {
+      type: "category",
       label: "Line Paths",
       items: ["line/use-line-path", "line/line"],
     },
@@ -15,6 +20,21 @@ const sidebars = {
       type: "category",
       label: "Area Paths",
       items: ["area/use-area-path", "area/area"],
+    },
+    {
+      type: "category",
+      label: "Bar Paths",
+      items: [
+        "bar/use-bar-path",
+        "bar/bar",
+        "bar/use-bar-group-path",
+        "bar/bar-group",
+      ],
+    },
+    {
+      type: "category",
+      label: "Scatter Paths",
+      items: ["scatter/scatter"],
     },
   ],
   // By default, Docusaurus generates a sidebar from the docs folder structure
