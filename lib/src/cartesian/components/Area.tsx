@@ -9,9 +9,8 @@ export type AreaProps = {
   points: PointsArray;
   y0: number;
   animate?: PathAnimationConfig;
-  strokeWidth?: number;
 } & AreaPathOptions &
-  Partial<Pick<PathProps, "color">>;
+  Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export function Area({
   points,
