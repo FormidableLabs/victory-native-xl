@@ -9,12 +9,12 @@ const sidebars = {
     {
       type: "category",
       label: "Line Paths",
-      items: ["use-line-path", "line"],
+      items: ["line/use-line-path", "line/line"],
     },
     {
       type: "category",
       label: "Area Paths",
-      items: ["use-area-path", "area"],
+      items: ["area/use-area-path", "area/area"],
     },
   ],
   // By default, Docusaurus generates a sidebar from the docs folder structure
