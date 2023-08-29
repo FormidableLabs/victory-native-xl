@@ -14,21 +14,21 @@ const sidebars = {
     {
       type: "category",
       label: "Line Paths",
-      items: ["line/use-line-path", "line/line"],
+      items: ["line/line", "line/use-line-path"],
     },
     {
       type: "category",
       label: "Area Paths",
-      items: ["area/use-area-path", "area/area"],
+      items: ["area/area", "area/use-area-path"],
     },
     {
       type: "category",
       label: "Bar Paths",
       items: [
-        "bar/use-bar-path",
         "bar/bar",
-        "bar/use-bar-group-path",
+        "bar/use-bar-path",
         "bar/bar-group",
+        "bar/use-bar-group-path",
       ],
     },
     {
