@@ -8,6 +8,8 @@ import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { InputColor } from "../components/InputColor";
+import { InfoCard } from "../components/InfoCard";
+import { ChartRoutes } from "./consts/routes";
 
 const DATA = Array.from({ length: 13 }, (_, index) => ({
   day: index + 1,
@@ -30,7 +32,9 @@ const calculateStarPoints = (
   return vectors;
 };
 
-export default function LineChartPage() {
+export default function CustomDrawingPage(props: { segment: string }) {
+  const description =
+    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [numPoints, setNumPoints] = useState(5);
@@ -81,6 +85,7 @@ export default function LineChartPage() {
           style={styles.optionsScrollView}
           contentContainerStyle={styles.options}
         >
+          <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
           <InputSlider
             label="Number of points"
             maxValue={8}

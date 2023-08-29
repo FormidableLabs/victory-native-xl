@@ -25,6 +25,7 @@ import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
+import { ChartRoutes } from "./consts/routes";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -34,7 +35,9 @@ const DATA = (numberPoints = 13) =>
     sales: randomNumber(),
   }));
 
-export default function LineChartPage() {
+export default function LineChartPage(props: { segment: string }) {
+  const description =
+    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
   const isDark = useDarkMode();
   const [
     {
@@ -65,7 +68,7 @@ export default function LineChartPage() {
       line: isDark ? "#71717a" : "#d4d4d8",
       xLabel: isDark ? appColors.text.dark : appColors.text.light,
       yLabel: isDark ? appColors.text.dark : appColors.text.light,
-      scatter: appColors.tint,
+      scatter: "#a78bfa",
     },
   });
   const font = useFont(inter, fontSize);
@@ -125,11 +128,7 @@ export default function LineChartPage() {
         style={styles.optionsScrollView}
         contentContainerStyle={styles.options}
       >
-        <InfoCard>
-          This chart shows off a line with scatter points. This view also
-          highlights Victory’s extensive customization options for the grid,
-          axis, chart, colors, and curve.
-        </InfoCard>
+        <InfoCard>{description}</InfoCard>
         <View
           style={{
             flexDirection: "row",

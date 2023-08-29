@@ -1,15 +1,18 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, type ViewStyle, type StyleProp } from "react-native";
 import { useDarkMode } from "react-native-dark";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import type { PropsWithChildren } from "react";
 import { Text } from "./Text";
 import { appColors } from "../app/consts/colors";
 
-export const InfoCard = ({ children }: PropsWithChildren) => {
+export const InfoCard = ({
+  style,
+  children,
+}: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>) => {
   const isDark = useDarkMode();
   return (
-    <View style={styles.card}>
+    <View style={[style, styles.card]}>
       <View style={styles.content}>
         <Ionicons
           name="information-circle-sharp"

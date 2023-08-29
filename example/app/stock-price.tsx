@@ -18,24 +18,34 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { SafeAreaView, StyleSheet, type TextStyle, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  type TextStyle,
+  View,
+} from "react-native";
 import { format } from "date-fns";
 import {
   type SharedValue,
   useAnimatedStyle,
   useDerivedValue,
+  useSharedValue,
 } from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
 import * as Haptics from "expo-haptics";
 import inter from "../assets/inter-medium.ttf";
 import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "./consts/colors";
-import { Text } from "../components/Text";
 import data from "../data/stockprice/tesla_stock.json";
+import { InfoCard } from "../components/InfoCard";
+import { ChartRoutes } from "./consts/routes";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 
-export default function StockPriceScreen() {
+export default function StockPriceScreen(props: { segment: string }) {
+  const description =
+    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
   const isDark = useDarkMode();
   const colorPrefix = isDark ? "dark" : "light";
   const font = useFont(inter, 12);
@@ -44,6 +54,8 @@ export default function StockPriceScreen() {
     useChartPressSharedValue(["high"]);
   const { state: secondTouch, isActive: isSecondPressActive } =
     useChartPressSharedValue(["high"]);
+  const defaultText = useSharedValue("Multi-touch the chart to select a range");
+  const defaultSubText = useSharedValue("—");
 
   // On activation of gesture, play haptic feedback
   React.useEffect(() => {
@@ -75,7 +87,8 @@ export default function StockPriceScreen() {
     if (!isFirstPressActive) return "";
 
     // One-touch
-    if (!isSecondPressActive) return firstTouch.y.high.value.value.toFixed(2);
+    if (!isSecondPressActive)
+      return "$" + firstTouch.y.high.value.value.toFixed(2);
 
     // Two-touch
     const early =
@@ -84,9 +97,9 @@ export default function StockPriceScreen() {
         : secondTouch;
     const late = early === firstTouch ? secondTouch : firstTouch;
 
-    return `${early.y.high.value.value.toFixed(
+    return `$${early.y.high.value.value.toFixed(
       2,
-    )} – ${late.y.high.value.value.toFixed(2)}`;
+    )} – $${late.y.high.value.value.toFixed(2)}`;
   });
 
   // Determine if the selected range has a positive delta, which will be used to conditionally pick colors.
@@ -124,30 +137,7 @@ export default function StockPriceScreen() {
 
   return (
     <SafeAreaView style={styles.scrollView}>
-      <View
-        style={{
-          padding: 12,
-          alignItems: "center",
-          justifyContent: "center",
-          height: 80,
-        }}
-      >
-        {isFirstPressActive ? (
-          <>
-            <AnimatedText
-              text={activeDate}
-              style={{
-                fontSize: 16,
-                color: textColor,
-              }}
-            />
-            <AnimatedText text={activeHigh} style={activeHighStyle} />
-          </>
-        ) : (
-          <Text>Pan across the chart path to see more.</Text>
-        )}
-      </View>
-      <View style={{ flex: 1, maxHeight: 500, marginBottom: 20 }}>
+      <View style={{ flex: 2, maxHeight: 500, marginBottom: 20 }}>
         <CartesianChart
           data={DATA}
           xKey="date"
@@ -166,6 +156,7 @@ export default function StockPriceScreen() {
             labelPosition: { x: "outset", y: "inset" },
             axisSide: { x: "bottom", y: "left" },
             formatXLabel: (ms) => format(new Date(ms), "MM/yy"),
+            formatYLabel: (v) => `$${v}`,
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: textColor,
           }}
@@ -218,6 +209,36 @@ export default function StockPriceScreen() {
           )}
         </CartesianChart>
       </View>
+      <ScrollView
+        style={styles.optionsScrollView}
+        contentContainerStyle={styles.options}
+      >
+        <View
+          style={{
+            paddingBottom: 16,
+            paddingTop: 0,
+            alignItems: "center",
+            justifyContent: "center",
+            height: 80,
+            width: "100%",
+          }}
+        >
+          <>
+            <AnimatedText
+              text={isFirstPressActive ? activeDate : defaultText}
+              style={{
+                fontSize: 16,
+                color: textColor,
+              }}
+            />
+            <AnimatedText
+              text={isFirstPressActive ? activeHigh : defaultSubText}
+              style={activeHighStyle}
+            />
+          </>
+        </View>
+        <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -363,8 +384,8 @@ const ActiveValueIndicator = ({
     vec(xPosition.value, top + 1.5 * FONT_SIZE + topOffset),
   );
   // Text label
-  const activeValueDisplay = useDerivedValue(() =>
-    activeValue.value.toFixed(2),
+  const activeValueDisplay = useDerivedValue(
+    () => "$" + activeValue.value.toFixed(2),
   );
   const activeValueWidth = useDerivedValue(
     () => font?.getTextWidth(activeValueDisplay.value) || 0,
@@ -426,5 +447,18 @@ const styles = StyleSheet.create({
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
+  },
+  optionsScrollView: {
+    flex: 1,
+    backgroundColor: appColors.cardBackground.light,
+    $dark: {
+      backgroundColor: appColors.cardBackground.dark,
+    },
+  },
+  options: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
 });

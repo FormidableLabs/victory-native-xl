@@ -7,6 +7,8 @@ import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
+import { InfoCard } from "../components/InfoCard";
+import { ChartRoutes } from "./consts/routes";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -14,7 +16,9 @@ const DATA = (length: number = 10) =>
     listenCount: Math.floor(Math.random() * (50 - 20 + 1)) + 20,
   }));
 
-export default function BarChartPage() {
+export default function BarChartPage(props: { segment: string }) {
+  const description =
+    ChartRoutes.find((r) => r.path === "/" + props.segment)?.description ?? "";
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [data, setData] = useState(DATA(5));
@@ -65,6 +69,7 @@ export default function BarChartPage() {
           style={styles.optionsScrollView}
           contentContainerStyle={styles.options}
         >
+          <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
           <View
             style={{
               flexDirection: "row",
