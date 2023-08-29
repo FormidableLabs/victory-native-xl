@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
-    "ios": "expo run:ios",
+    "ios": "expo start:ios",
     "android": "expo start --android"
   },
   "dependencies": {
