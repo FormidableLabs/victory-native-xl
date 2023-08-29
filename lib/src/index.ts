@@ -26,9 +26,11 @@ export { useLinePath } from "./cartesian/hooks/useLinePath";
 export { Line } from "./cartesian/components/Line";
 
 // Bar
+export { useBarPath } from "./cartesian/hooks/useBarPath";
 export { Bar } from "./cartesian/components/Bar";
 
 // Bar group
+export { useBarGroupPaths } from "./cartesian/hooks/useBarGroupPaths";
 export { BarGroup } from "./cartesian/components/BarGroup";
 
 // Area
