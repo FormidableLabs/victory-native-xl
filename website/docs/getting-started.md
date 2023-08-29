@@ -53,7 +53,7 @@ At this point, we're you'll just see a blank view, since we aren't rendering any
 
 ### Add a line to the chart
 
-The `CartesianChart` uses a render-prop for its `children` prop. To render content inside of the Cartesian chart, you return Skia elements from the `children` render function. We'll use the `Line` component from `victory-native` to render a line graph using our temperature data.
+The `CartesianChart` uses a render-prop for its `children` prop. To render content inside of the Cartesian chart, you return Skia elements from the `children` render function. We'll use the `Line` component from `victory-native` to render a line path using our temperature data.
 
 ```tsx
 import { View } from "react-native";
@@ -65,7 +65,7 @@ function MyChart() {
       <CartesianChart data={DATA} xKey="day" yKeys={["highTmp"]}>
         {/* 👇 render function exposes various data, such as points. */}
         {({ points }) => (
-          // 👇 and we'll use the Line component to render a line graph.
+          // 👇 and we'll use the Line component to render a line path.
           <Line points={points.highTmp} color="red" strokeWidth={3} />
         )}
       </CartesianChart>
@@ -74,7 +74,7 @@ function MyChart() {
 }
 ```
 
-Now we've got a line graph to represent our daily high temperature data!
+Now we've got a line path to represent our daily high temperature data!
 
 DOCS:TODO: Maybe a screenshot of this...
 
