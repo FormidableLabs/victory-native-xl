@@ -1,16 +1,17 @@
 import * as React from "react";
-import { Path, type PathProps, Skia } from "@shopify/react-native-skia";
+import { Path, type PathProps } from "@shopify/react-native-skia";
 import type { PropsWithChildren } from "react";
 import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
+import { useBarPath } from "../hooks/useBarPath";
 
 type CartesianBarProps = {
   points: PointsArray;
-  innerPadding?: number;
   chartBounds: ChartBounds;
+  innerPadding?: number;
   animate?: PathAnimationConfig;
-} & Partial<Pick<PathProps, "color">>;
+} & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export const Bar = ({
   points,
@@ -19,25 +20,7 @@ export const Bar = ({
   innerPadding = 0.25,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
-  const path = React.useMemo(() => {
-    const domainWidth = chartBounds.right - chartBounds.left;
-    const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
-    const path = Skia.Path.Make();
-
-    points.forEach(({ x, y }) => {
-      path.addRect(
-        Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),
-      );
-    });
-
-    return path;
-  }, [
-    chartBounds.right,
-    chartBounds.left,
-    chartBounds.bottom,
-    innerPadding,
-    points,
-  ]);
+  const { path } = useBarPath(points, chartBounds, innerPadding);
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,

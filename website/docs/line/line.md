@@ -6,7 +6,6 @@ The `Line` component takes a `PointsArray` prop, as well as some options for sty
 
 ```tsx
 import { CartesianChart, Line } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
 import DATA from "./my-data";
 
 export function MyChart() {
