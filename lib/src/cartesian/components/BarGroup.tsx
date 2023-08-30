@@ -10,6 +10,11 @@ type BarGroupProps = {
   betweenGroupPadding?: number;
   withinGroupPadding?: number;
   children: React.ReactElement[];
+  onBarSizeChange?: (values: {
+    barWidth: number;
+    groupWidth: number;
+    gapWidth: number;
+  }) => void;
 };
 
 export function BarGroup({
@@ -17,6 +22,7 @@ export function BarGroup({
   withinGroupPadding = 0.25,
   chartBounds,
   children,
+  onBarSizeChange,
 }: BarGroupProps) {
   // Collect the bar props
   const bars = [] as BarGroupBarProps[];
@@ -27,12 +33,21 @@ export function BarGroup({
       }
     }
   });
-  const { paths } = useBarGroupPaths(
+  const { paths, barWidth, groupWidth, gapWidth } = useBarGroupPaths(
     bars.map((bar) => bar.points),
     chartBounds,
     betweenGroupPadding,
     withinGroupPadding,
   );
+
+  // Handle bar size change
+  const onBarSizeChangeRef = React.useRef(onBarSizeChange);
+  React.useEffect(() => {
+    onBarSizeChangeRef.current = onBarSizeChange;
+  }, [onBarSizeChange]);
+  React.useEffect(() => {
+    onBarSizeChangeRef.current?.({ barWidth, groupWidth, gapWidth });
+  }, [barWidth, gapWidth, groupWidth]);
 
   // If no bars, short-circuit
   const firstBar = bars[0];

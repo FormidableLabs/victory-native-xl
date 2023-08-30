@@ -1,10 +1,9 @@
 import * as React from "react";
-import type { SkPath } from "@shopify/react-native-skia";
 import { Skia } from "@shopify/react-native-skia";
-import type { ChartBounds, PointsArray, Tuple } from "../../types";
+import type { ChartBounds, PointsArray } from "../../types";
 
-export const useBarGroupPaths = <N extends number>(
-  points: Tuple<PointsArray, N>,
+export const useBarGroupPaths = (
+  points: PointsArray[],
   chartBounds: ChartBounds,
   betweenGroupPadding = 0,
   withinGroupPadding = 0,
@@ -39,7 +38,7 @@ export const useBarGroupPaths = <N extends number>(
         );
       });
       return p;
-    }) as Tuple<SkPath, N>;
+    });
   }, [barWidth, chartBounds.bottom, gapWidth, groupWidth, points]);
 
   return { barWidth, groupWidth, gapWidth, paths };
