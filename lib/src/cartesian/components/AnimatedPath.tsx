@@ -5,6 +5,9 @@ import type {
   SkPath,
 } from "@shopify/react-native-skia";
 import { Fill, LinearGradient, Path, vec } from "@shopify/react-native-skia";
+import { makeMutable, SharedValue } from "react-native-reanimated";
+import isEqual from "react-fast-compare";
+import { usePrevious } from "victory-native";
 import {
   type PathAnimationConfig,
   useAnimatedPath,
@@ -24,38 +27,37 @@ type AnimatedPathProps = { path: SkPath } & SkiaDefaultProps<
 export function AnimatedPath({
   path,
   animate,
-  style,
-  color,
-  strokeWidth,
-  strokeJoin,
-  strokeCap,
-  strokeMiter,
-  antiAlias,
-  opacity,
-  stroke,
   children,
+  ...rest
 }: AnimatedPathProps) {
   const p = useAnimatedPath(path, animate);
-  return (
-    <Path
-      path={p}
-      style={style}
-      strokeWidth={strokeWidth}
-      strokeJoin={strokeJoin}
-      strokeCap={strokeCap}
-      strokeMiter={strokeMiter}
-      antiAlias={antiAlias}
-      opacity={opacity}
-      stroke={stroke}
-    >
-      {color && (
-        <LinearGradient
-          start={vec(0, 0)}
-          end={vec(1, 1)}
-          colors={[String(color)]}
-        />
-      )}
-      {children}
-    </Path>
-  );
+  const animProps = React.useRef({});
+
+  const prevRest = usePrevious(rest);
+
+  React.useEffect(() => {
+    if (!isEqual(rest, prevRest)) {
+      syncPropsToSharedValues(rest, animProps.current);
+    }
+  });
+  // On mount
+  React.useEffect(() => {
+    syncPropsToSharedValues(rest, animProps.current);
+  }, []);
+
+  return <Path path={p} {...animProps.current}></Path>;
 }
+
+const syncPropsToSharedValues = (
+  props: Record<string, any>,
+  sharedValues: Record<string, SharedValue<any>>,
+) => {
+  for (const key in props) {
+    const v = sharedValues[key];
+    if (v) {
+      v.value = props[key];
+    } else {
+      sharedValues[key] = makeMutable(props[key]);
+    }
+  }
+};

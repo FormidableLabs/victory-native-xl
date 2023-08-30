@@ -29,6 +29,7 @@
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "react": "18.2.0",
+    "react-fast-compare": "^3.2.2",
     "react-native": "0.72.3",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-reanimated": "~3.3.0",
