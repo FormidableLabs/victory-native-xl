@@ -1,28 +1,23 @@
 import * as React from "react";
-import type {
-  PathProps,
-  SkiaDefaultProps,
-  SkPath,
-} from "@shopify/react-native-skia";
-import { Fill, LinearGradient, Path, vec } from "@shopify/react-native-skia";
-import { makeMutable, SharedValue } from "react-native-reanimated";
+import type { PathProps, SkPath } from "@shopify/react-native-skia";
+import { Path } from "@shopify/react-native-skia";
+import { makeMutable, type SharedValue } from "react-native-reanimated";
 import isEqual from "react-fast-compare";
-import { usePrevious } from "victory-native";
+import { usePrevious } from "../../utils/usePrevious";
 import {
   type PathAnimationConfig,
   useAnimatedPath,
 } from "../../hooks/useAnimatedPath";
 
-type AnimatedPathProps = { path: SkPath } & SkiaDefaultProps<
-  PathProps,
-  "start" | "end"
-> & { animate?: PathAnimationConfig };
+type AnimatedPathProps = { path: SkPath } & Partial<PathProps> & {
+    animate?: PathAnimationConfig;
+  };
 
 /**
  * IMPORTANT!
- * Don't try to do the "right thing" and do a spread-pass-thru here.
- * For some reason, doing {...rest} into the <Path /> crashes things on the native side periodically.
- * For whatever reason, manually passing each prop (maybe???) works fine.
+ * For some reason, Skia doesn't like mixing shared and non-shared values?
+ * Things seem to crash if you mix a derived value for the path with e.g. strings for color.
+ * We do a little bit of gymnastics to make sure that all props are shared values.
  */
 export function AnimatedPath({
   path,
@@ -31,33 +26,64 @@ export function AnimatedPath({
   ...rest
 }: AnimatedPathProps) {
   const p = useAnimatedPath(path, animate);
-  const animProps = React.useRef({});
-
+  const animProps = React.useMemo(() => {
+    const vals = {};
+    syncPropsToSharedValues(rest, vals);
+    return vals;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const prevRest = usePrevious(rest);
 
+  // Sync props to shared values when values change
   React.useEffect(() => {
     if (!isEqual(rest, prevRest)) {
-      syncPropsToSharedValues(rest, animProps.current);
+      syncPropsToSharedValues(rest, animProps);
     }
-  });
-  // On mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rest, prevRest]);
+  // On mount, do initial sync
   React.useEffect(() => {
-    syncPropsToSharedValues(rest, animProps.current);
+    syncPropsToSharedValues(rest, animProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <Path path={p} {...animProps.current}></Path>;
+  return (
+    <Path path={p} {...animProps}>
+      {children}
+    </Path>
+  );
 }
 
+/**
+ * Sync prop values to a map of prop -> shared values
+ */
 const syncPropsToSharedValues = (
-  props: Record<string, any>,
-  sharedValues: Record<string, SharedValue<any>>,
+  props: Record<string, unknown | SharedValue<unknown>>,
+  sharedValues: Record<string, SharedValue<unknown>>,
 ) => {
+  const keysToRemove = new Set(Object.keys(sharedValues));
+
   for (const key in props) {
-    const v = sharedValues[key];
-    if (v) {
-      v.value = props[key];
-    } else {
-      sharedValues[key] = makeMutable(props[key]);
+    keysToRemove.delete(key);
+
+    const propVal = props[key];
+    const sharVal = sharedValues[key];
+
+    // Shared value missing, create it
+    if (!sharVal) {
+      sharedValues[key] =
+        propVal instanceof Object && "value" in propVal
+          ? propVal
+          : makeMutable(propVal);
+    }
+    // Shared value exists, update it if not already a shared value
+    else if (!(propVal instanceof Object && "value" in propVal)) {
+      sharVal.value = propVal;
     }
   }
+
+  // Remove keys that didn't get passed in props
+  keysToRemove.forEach((key) => {
+    delete sharedValues[key];
+  });
 };
