@@ -5,12 +5,14 @@ import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { useBarPath } from "../hooks/useBarPath";
+import type { RoundedCorners } from "../../utils/createRoundedRectPath";
 
 type CartesianBarProps = {
   points: PointsArray;
   chartBounds: ChartBounds;
   innerPadding?: number;
   animate?: PathAnimationConfig;
+  roundedCorners?: RoundedCorners;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export const Bar = ({
@@ -18,9 +20,15 @@ export const Bar = ({
   chartBounds,
   animate,
   innerPadding = 0.25,
+  roundedCorners = {},
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
-  const { path } = useBarPath(points, chartBounds, innerPadding);
+  const { path } = useBarPath(
+    points,
+    chartBounds,
+    innerPadding,
+    roundedCorners,
+  );
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,
