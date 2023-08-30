@@ -60,6 +60,8 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 
 ## Returns
 
+Returns an object with the following fields.
+
 ### `path`
 
 The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element.

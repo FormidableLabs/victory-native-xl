@@ -28,7 +28,7 @@ const sidebars = {
         "bar/bar",
         "bar/use-bar-path",
         "bar/bar-group",
-        "bar/use-bar-group-path",
+        "bar/use-bar-group-paths",
       ],
     },
     {
