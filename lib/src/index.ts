@@ -16,7 +16,6 @@ export { type CurveType } from "./cartesian/utils/curves";
 export { type RoundedCorners } from "./utils/createRoundedRectPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
-export { useBarPath } from "./cartesian/hooks/useBarPath";
 export { usePrevious } from "./utils/usePrevious";
 export {
   useChartPressSharedValue,
@@ -29,6 +28,7 @@ export { Line } from "./cartesian/components/Line";
 
 // Bar
 export { Bar } from "./cartesian/components/Bar";
+export { useBarPath } from "./cartesian/hooks/useBarPath";
 
 // Bar group
 export { BarGroup } from "./cartesian/components/BarGroup";
