@@ -4,16 +4,14 @@ import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
-  Scatter,
-  Line,
   type CurveType,
-  usePrevious,
+  Line,
+  Scatter,
   type XAxisSide,
   type YAxisSide,
 } from "victory-native";
 import type { AxisLabelPosition } from "lib/src/types";
 import { useDarkMode } from "react-native-dark";
-import isEqual from "react-fast-compare";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
 import {
@@ -73,13 +71,6 @@ export default function LineChartPage(props: { segment: string }) {
   const font = useFont(inter, fontSize);
   const [data, setData] = useState(DATA());
 
-  /**
-   * We only want to animate when the dataset changes. This
-   * checks if the options or data changed on render.
-   */
-  const prevData = usePrevious(data);
-  const didOptionsChange = isEqual(prevData, data);
-
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
@@ -112,11 +103,11 @@ export default function LineChartPage(props: { segment: string }) {
                 curveType={curveType}
                 color={colors.stroke!}
                 strokeWidth={strokeWidth}
-                animate={didOptionsChange ? undefined : { type: "spring" }}
+                animate={{ type: "spring" }}
               />
               <Scatter
                 points={points.sales}
-                animate={didOptionsChange ? undefined : { type: "spring" }}
+                animate={{ type: "spring" }}
                 color={colors.scatter!}
               />
             </>
