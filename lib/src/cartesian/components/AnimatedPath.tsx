@@ -41,11 +41,6 @@ export function AnimatedPath({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest, prevRest]);
-  // On mount, do initial sync
-  React.useEffect(() => {
-    syncPropsToSharedValues(rest, animProps);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Path path={p} {...animProps}>
