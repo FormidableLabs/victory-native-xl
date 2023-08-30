@@ -53,7 +53,6 @@ export default function OrdinalDataScreen(props: { segment: string }) {
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
-          isPressEnabled
           activePressSharedValue={activePress}
         >
           {({ chartBounds, points, yScale }) => {

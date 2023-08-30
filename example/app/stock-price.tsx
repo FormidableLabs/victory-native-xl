@@ -140,8 +140,6 @@ export default function StockPriceScreen(props: { segment: string }) {
           yKeys={["high"]}
           activePressSharedValue={[firstTouch, secondTouch]}
           curve="linear"
-          isPressEnabled
-          // TODO: Enable this somehow?
           gridOptions={{
             lineColor: isDark ? "#71717a" : "#d4d4d8",
           }}

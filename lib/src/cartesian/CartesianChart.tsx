@@ -38,7 +38,6 @@ type CartesianChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
-  isPressEnabled?: boolean;
   activePressSharedValue?:
     | ChartPressValue<YK & string>
     | ChartPressValue<YK & string>[];
@@ -64,7 +63,6 @@ export function CartesianChart<
   yKeys,
   padding,
   domainPadding,
-  isPressEnabled,
   children,
   renderOutside,
   gridOptions,
@@ -349,7 +347,7 @@ export function CartesianChart<
   );
 
   // Conditionally wrap the body in gesture handler based on isPressEnabled
-  return isPressEnabled ? (
+  return activePressSharedValue ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
     </GestureHandlerRootView>
