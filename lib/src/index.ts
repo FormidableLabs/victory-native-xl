@@ -13,6 +13,7 @@ export {
   type Scale,
 } from "./types";
 export { type CurveType } from "./cartesian/utils/curves";
+export { type RoundedCorners } from "./utils/createRoundedRectPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { usePrevious } from "./utils/usePrevious";

@@ -22,6 +22,7 @@ export default function BarChartPage(props: { segment: string }) {
   const isDark = useDarkMode();
   const [data, setData] = useState(DATA(5));
   const [innerPadding, setInnerPadding] = useState(0.33);
+  const [roundedCorner, setRoundedCorner] = useState(5);
 
   return (
     <>
@@ -52,6 +53,10 @@ export default function BarChartPage(props: { segment: string }) {
                     chartBounds={chartBounds}
                     animate={{ type: "spring" }}
                     innerPadding={innerPadding}
+                    roundedCorners={{
+                      topLeft: roundedCorner,
+                      topRight: roundedCorner,
+                    }}
                   >
                     <LinearGradient
                       start={vec(0, 0)}
@@ -98,6 +103,14 @@ export default function BarChartPage(props: { segment: string }) {
             step={0.1}
             value={innerPadding}
             onChange={setInnerPadding}
+          />
+          <InputSlider
+            label="Top Corner Radius"
+            maxValue={16}
+            minValue={0}
+            step={1}
+            value={roundedCorner}
+            onChange={setRoundedCorner}
           />
         </ScrollView>
       </SafeAreaView>
