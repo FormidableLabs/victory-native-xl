@@ -28,7 +28,6 @@ export { Line } from "./cartesian/components/Line";
 
 // Bar
 export { Bar } from "./cartesian/components/Bar";
-export { useBarPath } from "./cartesian/hooks/useBarPath";
 
 // Bar group
 export { BarGroup } from "./cartesian/components/BarGroup";
