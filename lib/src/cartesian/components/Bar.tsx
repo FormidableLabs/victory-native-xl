@@ -20,7 +20,7 @@ export const Bar = ({
   chartBounds,
   animate,
   innerPadding = 0.25,
-  roundedCorners = {},
+  roundedCorners,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
   const { path } = useBarPath(

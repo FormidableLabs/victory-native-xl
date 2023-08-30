@@ -10,7 +10,7 @@ export const useBarPath = (
   points: PointsArray,
   chartBounds: ChartBounds,
   innerPadding = 0.2,
-  roundedCorners: RoundedCorners = {},
+  roundedCorners?: RoundedCorners,
 ) => {
   const barWidth = React.useMemo(() => {
     const domainWidth = chartBounds.right - chartBounds.left;
@@ -22,6 +22,12 @@ export const useBarPath = (
     const path = Skia.Path.Make();
 
     points.forEach(({ x, y }) => {
+      if (!roundedCorners) {
+        path.addRect(
+          Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),
+        );
+        return;
+      }
       const roundedRectPath = Skia.Path.MakeFromSVGString(
         createRoundedRectPath(
           x - barWidth / 2,
