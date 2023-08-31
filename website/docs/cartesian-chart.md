@@ -77,7 +77,10 @@ For example, passing `padding={{ left: 20, right: 20 }}` will add 20 DIPs of spa
 
 ### `gridOptions`
 
-DOCS:TODO:
+The `gridOptions` props is an object used to configure an optional chart grid, with the following fields:
+
+- `lineColor`: a `string` to specify the color of the grid lines.
+- `strokeColor`: a `number` to specify the stroke width of the grid lines. (TODO: Actually implement this...)
 
 ### `axisOptions`
 
@@ -93,7 +96,11 @@ The `activePressSharedValue` prop has a type of `ChartPressValue | ChartPressVal
 
 The `renderOutside` prop is identical to [the `children` prop](#children-required) in form, but it will render elements at the root of the Skia canvas (not inside of a clipping group). This allows you to render elements outside of the bounds of any axes that you have configured.
 
-DOCS:TODO: Diagram of what this visually looks like.
+<div style={{textAlign: 'center'}}>
+
+![Diagram of where renderOutside renders to](./assets/renderOutside.jpg)
+
+</div>
 
 ## Render Function Fields
 
