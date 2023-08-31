@@ -1,6 +1,6 @@
 {
   "name": "victory-native",
-  "version": "40.0.0-alpha.1",
+  "version": "39.0.0",
   "private": false,
   "license": "MIT",
   "TODO: entries": "Setup main/module/types",
