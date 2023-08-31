@@ -20,7 +20,9 @@ export const CartesianGrid = ({ xScale, yScale, lineColor }: GridProps) => {
   }, [xScale, yScale]);
 
   return (
-    <Path path={gridPath} strokeWidth={1} color={lineColor} style="stroke" />
+    <>
+      <Path path={gridPath} strokeWidth={1} color={lineColor} style="stroke" />
+    </>
   );
 };
 

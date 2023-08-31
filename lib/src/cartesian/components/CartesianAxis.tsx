@@ -6,6 +6,7 @@ import type {
   InputDatum,
   AxisProps,
 } from "../../types";
+import { StyleSheet } from "react-native";
 
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
@@ -87,7 +88,7 @@ export const CartesianAxis = <
           p1={vec(xScale(x1), yScale(tick))}
           p2={vec(xScale(x2), yScale(tick))}
           color={lineColor}
-          strokeWidth={1}
+          strokeWidth={StyleSheet.hairlineWidth}
         />
         {font
           ? canFitLabelContent && (
@@ -136,7 +137,7 @@ export const CartesianAxis = <
           p1={vec(xScale(tick), yScale(y2))}
           p2={vec(xScale(tick), yScale(y1))}
           color={lineColor}
-          strokeWidth={1}
+          strokeWidth={StyleSheet.hairlineWidth}
         />
         {font && labelWidth && canFitLabelContent ? (
           <Text
