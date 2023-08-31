@@ -10,6 +10,14 @@
   <br />
   <br />
 
+  <strong>
+    This project is in pre-release mode.
+  </strong>
+
+
+  <br />
+  <br />
+
   <a href="https://npmjs.com/package/victory-native">
     <img alt="weekly downloads" src="https://img.shields.io/npm/dw/victory-native.svg">
   </a>
@@ -25,7 +33,23 @@
   </a>
 </div>
 
-**This project is in pre-release mode.** You can view the [docs here](https://formidable.com/open-source/victory-native).
+## Installation
+
+Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
+
+```shell
+yarn add react-native-reanimated react-native-gesture-handler react-native-skia
+```
+
+For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
+
+Then install `victory-native@next`:
+
+```shell
+yarn add victory-native@next
+```
+
+To get started and read more about the API, view the [docs here](https://formidable.com/open-source/victory-native).
 
 ## LICENSE
 
