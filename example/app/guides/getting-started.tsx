@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView } from "react-native";
-import { CartesianChart, Line, useChartPressSharedValue } from "victory-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { appColors } from "../consts/colors";
@@ -8,7 +8,7 @@ import inter from "../../assets/inter-medium.ttf";
 
 export default function GettingStartedScreen() {
   const font = useFont(inter, 12);
-  const { state, isActive } = useChartPressSharedValue(["highTmp"]);
+  const { state, isActive } = useChartPressState(["highTmp"]);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -20,7 +20,7 @@ export default function GettingStartedScreen() {
           axisOptions={{
             font,
           }}
-          activePressSharedValue={state}
+          chartPressState={state}
         >
           {({ points }) => (
             <>

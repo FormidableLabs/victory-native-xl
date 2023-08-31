@@ -20,7 +20,7 @@ import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
-import type { ChartPressValue } from "./hooks/useChartPressSharedValue";
+import type { ChartPressState } from "./hooks/useChartPressState";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -34,9 +34,9 @@ type CartesianChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
-  activePressSharedValue?:
-    | ChartPressValue<YK & string>
-    | ChartPressValue<YK & string>[];
+  chartPressState?:
+    | ChartPressState<YK & string>
+    | ChartPressState<YK & string>[];
   children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, T, YK>,
@@ -61,7 +61,7 @@ export function CartesianChart<
   renderOutside,
   axisOptions,
   domain,
-  activePressSharedValue,
+  chartPressState,
 }: CartesianChartProps<RawData, T, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -131,7 +131,7 @@ export function CartesianChart<
   /**
    * Take a "press value" and an x-value and update the shared values accordingly.
    */
-  const handleTouch = (v: ChartPressValue<YK & string>, x: number) => {
+  const handleTouch = (v: ChartPressState<YK & string>, x: number) => {
     "worklet";
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
@@ -167,12 +167,12 @@ export function CartesianChart<
    */
   // touch ID -> value index mapping to keep track of which finger updates which value
   const touchMap = useSharedValue({} as Record<number, number | undefined>);
-  const activePressSharedValues = Array.isArray(activePressSharedValue)
-    ? activePressSharedValue
-    : [activePressSharedValue];
+  const activePressSharedValues = Array.isArray(chartPressState)
+    ? chartPressState
+    : [chartPressState];
   const gestureState = useSharedValue({
     isGestureActive: false,
-    bootstrap: [] as [ChartPressValue<YK & string>, TouchData][],
+    bootstrap: [] as [ChartPressState<YK & string>, TouchData][],
   });
 
   const touchGesture = Gesture.Pan()
@@ -337,7 +337,7 @@ export function CartesianChart<
   );
 
   // Conditionally wrap the body in gesture handler based on activePressSharedValue
-  return activePressSharedValue ? (
+  return chartPressState ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
     </GestureHandlerRootView>
