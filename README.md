@@ -25,6 +25,7 @@
   </a>
 </div>
 
+**This project is in pre-release mode.** You can view the [docs here](https://formidable.com/open-source/victory-native).
 
 ## LICENSE
 
@@ -35,3 +36,11 @@ MIT
 **Active:** Formidable is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
 
 [maintenance-image]: https://img.shields.io/badge/maintenance-active-green.svg
+
+
+## Core Contributors
+
+Victory Native (XL) was grown in the Midwest 🌽 by:
+- [Grant Sander](https://github.com/gksander)
+- [Keith Luchtel](https://github.com/keithluchtel)
+- [Carlos Kelly](http://github.com/carloskelly13)
