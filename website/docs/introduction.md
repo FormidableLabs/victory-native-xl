@@ -2,11 +2,35 @@
 slug: /
 ---
 
+import ReactPlayer from "react-player/lazy";
+import barMp4 from './img/bar-fps.mp4';
+import areaMp4 from './img/area-fps.mp4';
+
 # Introduction
 
 Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flexibility, ease of use, and **performance**. Currently, this is a pre-release project, and we are looking for feedback from the community. Please open issues for any bugs or feature requests you have.
 
-DOCS:TODO: An introductory GIF with FPS meter.
+<div style={{ display: "flex", flexDirection: "column", placeItems: "center", paddingBottom: 40 }}>
+  <div style={{ display: "flex", flexDirection: "row", placeItems: "center", gap: 16 }}>
+    <ReactPlayer
+      width={350}
+      height={450}
+      playing={true}
+      loop={true}
+      controls={true}
+      url={areaMp4}
+    />
+    <ReactPlayer
+      width={350}
+      height={425}
+      playing={true}
+      loop={true}
+      controls={true}
+      url={barMp4}
+    />
+  </div>
+</div>
+
 
 Under the hood it's using:
 
