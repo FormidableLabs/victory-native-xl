@@ -43,4 +43,3 @@ export { Scatter } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
-export { CartesianGrid } from "./cartesian/components/CartesianGrid";

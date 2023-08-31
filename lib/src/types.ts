@@ -1,6 +1,6 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
-import { type SkFont } from "@shopify/react-native-skia";
+import { type Color, type SkFont } from "@shopify/react-native-skia";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -80,12 +80,6 @@ export type NumericalFields<T> = {
   [K in keyof T as T[K] extends number ? K : never]: T[K];
 };
 
-export type GridProps = {
-  xScale: ScaleLinear<number, number>;
-  yScale: ScaleLinear<number, number>;
-  lineColor: string;
-};
-
 export type AxisProps<
   RawData extends Record<string, unknown>,
   T extends NumericalFields<RawData>,
@@ -95,7 +89,8 @@ export type AxisProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  lineColor: string;
+  lineColor: Color | { grid: Color; frame: Color };
+  lineWidth: number | { grid: number; frame: number };
   labelColor: string | { x: string; y: string };
   tickCount: number | { x: number; y: number };
   labelOffset: number | { x: number; y: number };

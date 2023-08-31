@@ -140,9 +140,6 @@ export default function StockPriceScreen(props: { segment: string }) {
           yKeys={["high"]}
           activePressSharedValue={[firstTouch, secondTouch]}
           curve="linear"
-          gridOptions={{
-            lineColor: isDark ? "#71717a" : "#d4d4d8",
-          }}
           axisOptions={{
             font,
             tickCount: 5,

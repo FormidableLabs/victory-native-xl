@@ -90,9 +90,6 @@ export default function LineChartPage(props: { segment: string }) {
               y: yAxisLabelPosition,
             },
           }}
-          gridOptions={{
-            lineColor: colors.line,
-          }}
           data={data}
           domainPadding={domainPadding}
         >

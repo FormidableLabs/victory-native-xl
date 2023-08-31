@@ -1,12 +1,19 @@
 import React, { useMemo } from "react";
-import { Line, Text, vec } from "@shopify/react-native-skia";
+import {
+  Line,
+  Path,
+  Skia,
+  Text,
+  vec,
+  type Color,
+} from "@shopify/react-native-skia";
+import { StyleSheet } from "react-native";
 import type {
   ValueOf,
   NumericalFields,
   InputDatum,
   AxisProps,
 } from "../../types";
-import { StyleSheet } from "react-native";
 
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
@@ -19,6 +26,7 @@ export const CartesianAxis = <
   labelOffset,
   axisSide,
   lineColor,
+  lineWidth,
   labelColor,
   formatYLabel,
   formatXLabel,
@@ -40,8 +48,25 @@ export const CartesianAxis = <
         typeof labelPosition === "string" ? labelPosition : labelPosition.x,
       yLabelPosition:
         typeof labelPosition === "string" ? labelPosition : labelPosition.y,
+      gridLineColor: (typeof lineColor === "object" && "grid" in lineColor
+        ? lineColor.grid
+        : lineColor) as Color,
+      frameLineColor: (typeof lineColor === "object" && "frame" in lineColor
+        ? lineColor.frame
+        : lineColor) as Color,
+      gridLineWidth: typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
+      frameLineWidth:
+        typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
     } as const;
-  }, [tickCount, labelPosition, labelOffset, axisSide]);
+  }, [
+    tickCount,
+    labelOffset,
+    axisSide.x,
+    axisSide.y,
+    labelPosition,
+    lineColor,
+    lineWidth,
+  ]);
 
   const {
     xTicks,
@@ -52,6 +77,10 @@ export const CartesianAxis = <
     yLabelPosition,
     xLabelOffset,
     yLabelOffset,
+    gridLineColor,
+    frameLineColor,
+    gridLineWidth,
+    frameLineWidth,
   } = axisConfiguration;
 
   const [x1 = 0, x2 = 0] = xScale.domain();
@@ -87,8 +116,8 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(x1), yScale(tick))}
           p2={vec(xScale(x2), yScale(tick))}
-          color={lineColor}
-          strokeWidth={StyleSheet.hairlineWidth}
+          color={gridLineColor}
+          strokeWidth={gridLineWidth}
         />
         {font
           ? canFitLabelContent && (
@@ -136,8 +165,8 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(tick), yScale(y2))}
           p2={vec(xScale(tick), yScale(y1))}
-          color={lineColor}
-          strokeWidth={StyleSheet.hairlineWidth}
+          color={gridLineColor}
+          strokeWidth={gridLineWidth}
         />
         {font && labelWidth && canFitLabelContent ? (
           <Text
@@ -152,16 +181,37 @@ export const CartesianAxis = <
     );
   });
 
+  const boundingFrame = React.useMemo(() => {
+    const framePath = Skia.Path.Make();
+
+    framePath.addRect(
+      Skia.XYWHRect(
+        xScale(x1),
+        yScale(y1),
+        xScale(x2) - xScale(x1),
+        yScale(y2) - yScale(y1),
+      ),
+    );
+    return framePath;
+  }, [x1, x2, xScale, y1, y2, yScale]);
+
   return (
     <>
       {xTicks > 0 ? xAxisNodes : null}
       {yTicks > 0 ? yAxisNodes : null}
+      <Path
+        path={boundingFrame}
+        strokeWidth={frameLineWidth}
+        style="stroke"
+        color={frameLineColor}
+      />
     </>
   );
 };
 
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
+  lineWidth: { grid: StyleSheet.hairlineWidth, frame: 1 },
   tickCount: 5,
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },

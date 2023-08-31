@@ -123,4 +123,6 @@ And now we've got some axes and grid lines!
 
 ### Adding a tooltip
 
-DOCS:TODO: Section on creating a basic tooltip
+You might also want to give your users a way to interact with the line chart you've created. Handling user gestures can be complex, especially in canvas-like drawing context. Victory Native helps streamline this for you. To build a basic tooltip, we'll do three things.
+
+DOCS:TODO: Finish this up.
