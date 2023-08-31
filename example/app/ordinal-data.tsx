@@ -42,9 +42,6 @@ export default function OrdinalDataScreen(props: { segment: string }) {
           domainPadding={40}
           padding={{ top: 25, left: 10, right: 10, bottom: 10 }}
           yKeys={["high"]}
-          gridOptions={{
-            lineColor: isDark ? "#71717a" : "#d4d4d8",
-          }}
           axisOptions={{
             font,
             formatXLabel: (i) => DATA?.[i]?.day || "",

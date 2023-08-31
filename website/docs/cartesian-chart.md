@@ -80,13 +80,6 @@ A `number` or an object of shape `{ left?: number; right?: number; top?: number;
 
 For example, passing `padding={{ left: 20, right: 20 }}` will add 20 DIPs of space between the edges of the chart and where the line/bar/area graph will start.
 
-### `gridOptions`
-
-The `gridOptions` props is an object used to configure an optional chart grid, with the following fields:
-
-- `lineColor`: a `string` to specify the color of the grid lines.
-- `strokeColor`: a `number` to specify the stroke width of the grid lines. (TODO: Actually implement this...)
-
 ### `axisOptions`
 
 DOCS:TODO:

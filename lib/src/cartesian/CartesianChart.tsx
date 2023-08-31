@@ -11,7 +11,6 @@ import {
 import type {
   AxisProps,
   CartesianChartRenderArg,
-  GridProps,
   NumericalFields,
   SidedNumber,
   TransformedData,
@@ -20,7 +19,6 @@ import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
-import { CartesianGrid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressValue } from "./hooks/useChartPressSharedValue";
 
@@ -43,8 +41,6 @@ type CartesianChartProps<
   renderOutside: (
     args: CartesianChartRenderArg<RawData, T, YK>,
   ) => React.ReactNode;
-  /** Grid props */
-  gridOptions?: Partial<Omit<GridProps, "xScale" | "yScale">>;
   axisOptions?: Partial<
     Omit<AxisProps<RawData, T, XK, YK>, "xScale" | "yScale">
   >;
@@ -63,7 +59,6 @@ export function CartesianChart<
   domainPadding,
   children,
   renderOutside,
-  gridOptions,
   axisOptions,
   domain,
   activePressSharedValue,
@@ -329,9 +324,6 @@ export function CartesianChart<
     <Canvas style={{ flex: 1 }} onLayout={onLayout}>
       {hasMeasuredLayoutSize && (
         <>
-          {gridOptions ? (
-            <CartesianGrid {...{ ...gridOptions, xScale, yScale }} />
-          ) : null}
           {axisOptions ? (
             <CartesianAxis {...{ ...axisOptions, xScale, yScale }} />
           ) : null}

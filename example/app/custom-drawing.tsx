@@ -48,9 +48,6 @@ export default function CustomDrawingPage(props: { segment: string }) {
             padding={10}
             yKeys={["stars"]}
             domainPadding={20}
-            gridOptions={{
-              lineColor: isDark ? "#71717a" : "#d4d4d8",
-            }}
             axisOptions={{
               font,
               tickCount: 5,

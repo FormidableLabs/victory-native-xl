@@ -39,6 +39,13 @@ export const ChartRoutes: {
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
     path: "/ordinal-data",
   },
+  // Guides from the docs
+  {
+    title: "Getting Started",
+    description:
+      "Basic chart example with a line chart and a tooltip. Referenced in Getting Started documentation",
+    path: "/guides/getting-started",
+  },
 ];
 
 export const descriptionForRoute = (path: string) =>

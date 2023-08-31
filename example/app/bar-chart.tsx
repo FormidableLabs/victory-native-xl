@@ -34,9 +34,6 @@ export default function BarChartPage(props: { segment: string }) {
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 60] }}
-            gridOptions={{
-              lineColor: isDark ? "#71717a" : "#d4d4d8",
-            }}
             axisOptions={{
               font,
               tickCount: 5,

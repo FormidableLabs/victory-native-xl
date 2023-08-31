@@ -42,9 +42,6 @@ export default function BarGroupPage(props: { segment: string }) {
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
-          gridOptions={{
-            lineColor: isDark ? "#71717a" : "#d4d4d8",
-          }}
         >
           {({ points, chartBounds }) => (
             <BarGroup
