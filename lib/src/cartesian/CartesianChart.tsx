@@ -346,7 +346,7 @@ export function CartesianChart<
     </Canvas>
   );
 
-  // Conditionally wrap the body in gesture handler based on isPressEnabled
+  // Conditionally wrap the body in gesture handler based on activePressSharedValue
   return activePressSharedValue ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
@@ -357,7 +357,6 @@ export function CartesianChart<
 }
 
 CartesianChart.defaultProps = {
-  isPressEnabled: false,
   curve: "linear",
   chartType: "line",
   xScaleType: "linear",
