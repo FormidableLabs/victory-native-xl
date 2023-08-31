@@ -1,5 +1,9 @@
 import * as React from "react";
-import type { PathProps, SkPath } from "@shopify/react-native-skia";
+import type {
+  PathProps,
+  SkPath,
+  SkiaDefaultProps,
+} from "@shopify/react-native-skia";
 import { Path } from "@shopify/react-native-skia";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import isEqual from "react-fast-compare";
@@ -9,7 +13,10 @@ import {
   useAnimatedPath,
 } from "../../hooks/useAnimatedPath";
 
-type AnimatedPathProps = { path: SkPath } & Partial<PathProps> & {
+type AnimatedPathProps = { path: SkPath } & SkiaDefaultProps<
+  PathProps,
+  "start" | "end"
+> & {
     animate?: PathAnimationConfig;
   };
 

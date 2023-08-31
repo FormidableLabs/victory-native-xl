@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Path, type PathProps } from "@shopify/react-native-skia";
+import {
+  Path,
+  type PathProps,
+  type SkiaDefaultProps,
+} from "@shopify/react-native-skia";
 import type { PointsArray } from "victory-native";
 import { type LinePathOptions, useLinePath } from "../hooks/useLinePath";
 import { AnimatedPath } from "./AnimatedPath";
@@ -9,7 +13,7 @@ export type CartesianLinePathProps = {
   points: PointsArray;
   animate?: PathAnimationConfig;
 } & LinePathOptions &
-  Partial<
+  SkiaDefaultProps<
     Pick<
       PathProps,
       | "color"
@@ -20,7 +24,10 @@ export type CartesianLinePathProps = {
       | "strokeMiter"
       | "opacity"
       | "antiAlias"
-    >
+      | "start"
+      | "end"
+    >,
+    "start" | "end"
   >;
 
 export function Line({
