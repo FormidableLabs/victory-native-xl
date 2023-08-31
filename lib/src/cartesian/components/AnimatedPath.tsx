@@ -39,8 +39,7 @@ export function AnimatedPath({
     if (!isEqual(rest, prevRest)) {
       syncPropsToSharedValues(rest, animProps);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rest, prevRest]);
+  }, [rest, prevRest, animProps]);
 
   return (
     <Path path={p} {...animProps}>
