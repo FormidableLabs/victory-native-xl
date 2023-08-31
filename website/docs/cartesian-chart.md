@@ -1,6 +1,6 @@
 # Cartesian Chart
 
-The `CartesianChart` component is perhaps the core component of `victory-native`. It's core responsibilities are:
+The `CartesianChart` component is the core component of `victory-native`. Its core responsibilities are:
 
 - accepting raw data that you'd eventually like to chart, as well as some configuration around charting (such as options for axes, etc.)
 - transforming that raw data into a format that can be easily accessed and used for charting with other `victory-native` components.
@@ -12,10 +12,13 @@ The example below shows a basic use of the `CartesianChart`.
 ```tsx
 import { View } from "react-native";
 import { CartesianChart, Line } from "victory-native";
+import { useFont } from "@shopify/react-native-skia";
 // 👇 import a font file you'd like to use for tick labels
 import inter from "../assets/inter-medium.ttf";
 
 function MyChart() {
+  const font = useFont(inter, 12);
+
   return (
     <View style={{ height: 300 }}>
       <CartesianChart
@@ -55,6 +58,8 @@ A `string` value indicating the _key_ of each `data[number]` object to be used o
 
 A `string[]` array of string indicating the _keys_ of each `data[number]` object to be used on the dependent (y) axis for charting. E.g. `yKeys={["lowTmp", "highTmp"]}` if you want to chart both high and low temperatures on the y-axis and those values have keys of `lowTmp` and `highTmp` respectively.
 
+This prop accepts an _array_ of strings because the `CartesianChart` supports multiple ranges (e.g. plotting both high and low temperatures), and the `CartesianChart` component needs to know about all of the slices of the dataset you plan to plot (to e.g. determine the total range of the chart).
+
 ### `children` (required)
 
 The `children` prop is a render function whose sole argument is an object that exposes transformed data for you to use in your drawing operations. For example, the `children` render function's argument has a `points` field that exposes a version of your input data that's transformed to be plotted on the Canvas (see [the Example section](#example) above for an example of this).
@@ -67,7 +72,7 @@ The `children` function will render its Skia elements inside of [a clipping grou
 
 A `number` or an object of shape `{ left?: number; right?: number; top?: number; bottom?: number; }` that specifies that padding between the outer bounds of the Skia canvas and where the charting bounds will occur.
 
-For example, passing `padding={{ left: 20, bottom: 20 }}` will add 20 DIPs of space to the bottom and left of the chart, but have the chart "bleed" to the right and top. Passing `padding={20}` will add 20 DIPs of space to all sides.
+For example, passing `padding={{ left: 20, bottom: 20 }}` will add 20 Density Independent Pixels (DIPs) of space to the bottom and left of the chart, but have the chart "bleed" to the right and top. Passing `padding={20}` will add 20 DIPs of space to all sides.
 
 ### `domainPadding`
 
@@ -88,7 +93,7 @@ DOCS:TODO:
 
 ### `activePressSharedValue`
 
-The `activePressSharedValue` prop allows you to create Reanimated `SharedValue`s that will be used to track the user's "press" gesture on the chart. This is generally used for creating some sort of tooltip/active value indicator. See the [Basic Tooltip Guide](./guides/basic-tooltip.md) for more in-depth information on how to use this prop.
+The `activePressSharedValue` prop allows you to pass in Reanimated `SharedValue`s that will be used to track the user's "press" gesture on the chart. This is generally used for creating some sort of tooltip/active value indicator. See the [Basic Tooltip Guide](./guides/basic-tooltip.md) for more in-depth information on how to use this prop.
 
 The `activePressSharedValue` prop has a type of `ChartPressValue | ChartPressValue[]`, where `ChartPressValue` is an object generated from the `useChartPressSharedValue` hook.
 

@@ -10,10 +10,10 @@ yarn add react-native-reanimated react-native-gesture-handler react-native-skia
 
 For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
 
-Then install `victory-native`:
+Then install `victory-native@next`:
 
 ```shell
-yarn add victory-native
+yarn add victory-native@next
 ```
 
 Now you should be ready to go.
