@@ -4,7 +4,7 @@ slug: /
 
 # Introduction
 
-Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flexibility, ease of use, and **performance**.
+Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flexibility, ease of use, and **performance**. Currently, this is a pre-release project, and we are looking for feedback from the community. Please open issues for any bugs or feature requests you have.
 
 DOCS:TODO: An introductory GIF with FPS meter.
 
