@@ -22,7 +22,6 @@ import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
 import { CartesianGrid } from "./components/CartesianGrid";
 import { asNumber } from "../utils/asNumber";
-import type { CurveType } from "./utils/curves";
 import type { ChartPressValue } from "./hooks/useChartPressSharedValue";
 
 type CartesianChartProps<
@@ -34,7 +33,6 @@ type CartesianChartProps<
   data: RawData[];
   xKey: XK;
   yKeys: YK[];
-  curve: CurveType | { [K in YK]: CurveType };
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };

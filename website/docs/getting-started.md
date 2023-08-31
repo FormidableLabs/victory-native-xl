@@ -23,10 +23,10 @@ Now you should be ready to go.
 Let's create a basic line chart on a Cartesian grid. Let's mock out a little bit of dummy data for "high temperature" for each day in a month:
 
 ```ts
-const DATA = Array.from({ length: 31 }, (_, i) => {
+const DATA = Array.from({ length: 31 }, (_, i) => ({
   day: i,
   highTmp: 40 + 30 * Math.random(),
-});
+}));
 ```
 
 ### Instantiate a chart
@@ -40,9 +40,9 @@ import { CartesianChart } from "victory-native";
 // ...
 
 function MyChart() {
-  //     👇 start our chart
   return (
     <View style={{ height: 300 }}>
+      // 👇 start our chart
       <CartesianChart data={DATA} xKey="day" yKeys={["highTmp"]} />
     </View>
   );
@@ -53,7 +53,7 @@ At this point, we're you'll just see a blank view, since we aren't rendering any
 
 ### Add a line to the chart
 
-The `CartesianChart` uses a render-prop for its `children` prop. To render content inside of the Cartesian chart, you return Skia elements from the `children` render function. We'll use the `Line` component from `victory-native` to render a line path using our temperature data.
+The `CartesianChart` uses a render function for its `children` prop. To render content inside of the Cartesian chart, you return Skia elements from the `children` render function. We'll use the `Line` component from `victory-native` to render a line path using our temperature data.
 
 ```tsx
 import { View } from "react-native";
@@ -80,7 +80,7 @@ DOCS:TODO: Maybe a screenshot of this...
 
 ### Add some axes
 
-You might want some axes to make your line graph a bit easier to read an interpret. The `CartesianChart` offers out-of-the-box support for axes and grids to make it easy to get up and running with some axes. Let's add some now.
+You might want some axes to make your line graph a bit easier to read and interpret. The `CartesianChart` offers out-of-the-box support for axes and grids to make it easy to get up and running with some axes. Let's add some now.
 
 ```tsx
 import { View } from "react-native";
