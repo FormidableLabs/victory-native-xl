@@ -12,13 +12,16 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx example lib",
     "typecheck": "tsc --noEmit",
+    "build": "yarn workspace victory-native build",
     "dev:lib": "yarn workspace victory-native dev",
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
     "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\"",
     "test": "yarn workspace victory-native test",
     "test:watch": "yarn workspace victory-native test:watch",
-    "check:code": "yarn lint && yarn typecheck && yarn test"
+    "changeset": "changeset",
+    "check:code": "yarn lint && yarn typecheck && yarn test",
+    "version": "yarn changeset version && yarn install --no-frozen-lockfile"
   },
   "devDependencies": {
     "@types/node": "^20.4.9",
@@ -33,6 +36,8 @@
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "@changesets/cli": "^2.26.2",
+    "@svitejs/changesets-changelog-github-compact": "^1.1.0"
   }
 }
