@@ -162,7 +162,7 @@ export const CartesianAxis = <
 
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-  tickCount: 10,
+  tickCount: 5,
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },
   labelPosition: "outset",

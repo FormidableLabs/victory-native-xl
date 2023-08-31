@@ -76,7 +76,11 @@ function MyChart() {
 
 Now we've got a line path to represent our daily high temperature data!
 
-DOCS:TODO: Maybe a screenshot of this...
+<div style={{ maxWidth: 400, margin: "0px auto" }}>
+
+![Screenshot of the line chart generated from the code above](./assets/getting-started-line.jpg)
+
+</div>
 
 ### Add some axes
 
@@ -111,7 +115,11 @@ function MyChart() {
 
 And now we've got some axes and grid lines!
 
-DOCS:TODO: Screenshot of this.
+<div style={{ maxWidth: 400, margin: "0px auto" }}>
+
+![Screenshot of the line chart generated from the code above](./assets/getting-started-axes.jpg)
+
+</div>
 
 ### Adding a tooltip
 
