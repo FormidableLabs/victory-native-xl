@@ -102,8 +102,8 @@ This guide will show you how to create this bar chart with some customization li
              * to the roundedCorners prop. This will round the top left and top right.
              */
             roundedCorners={{
-              topLeft: roundedCorner,
-              topRight: roundedCorner,
+              topLeft: 5,
+              topRight: 5,
             }}
           />
         )}
