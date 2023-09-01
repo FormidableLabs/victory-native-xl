@@ -99,7 +99,7 @@ The `axisOptions` is an optional prop allows you to configure the axes and grid 
 
 ### `chartPressState`
 
-The `chartPressState` prop allows you to pass in Reanimated `SharedValue`s that will be used to track the user's "press" gesture on the chart. This is generally used for creating some sort of tooltip/active value indicator. See the [Chart Gestures page](./chart-gestures.md) for more in-depth information on how to use this prop.
+The `chartPressState` prop allows you to pass in Reanimated `SharedValue`s that will be used to track the user's "press" gesture on the chart. This is generally used for creating some sort of tooltip/active value indicator. See the [Chart Gestures page](./chart-gestures.mdx) for more in-depth information on how to use this prop.
 
 The `chartPressState` prop has a type of `ChartPressState | ChartPressState[]`, where `ChartPressState` is an object generated from the `useChartPressState` hook.
 
