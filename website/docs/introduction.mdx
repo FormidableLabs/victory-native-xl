@@ -12,22 +12,26 @@ Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flex
 
 <div className="flex flex-col pb-5 md:pb-10 items-center">
   <div className="flex flex-col md:flex-row gap-5 items-center">
-    <ReactPlayer
-      width={350}
-      height={450}
-      playing={true}
-      loop={true}
-      controls={true}
-      url={areaMp4}
-    />
-    <ReactPlayer
-      width={350}
-      height={425}
-      playing={true}
-      loop={true}
-      controls={true}
-      url={barMp4}
-    />
+    <div className="rounded-md overflow-hidden border shadow">
+      <ReactPlayer
+        width={320}
+        height={450}
+        playing={true}
+        loop={true}
+        controls={true}
+        url={areaMp4}
+      />
+    </div>
+    <div className="rounded-md overflow-hidden border shadow">
+      <ReactPlayer
+        width={350}
+        height={390}
+        playing={true}
+        loop={true}
+        controls={true}
+        url={barMp4}
+      />
+    </div>
   </div>
 </div>
 
