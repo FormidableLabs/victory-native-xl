@@ -91,7 +91,9 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
-      axisOptions: Object.assign({}, CartesianAxis.defaultProps, axisOptions),
+      axisOptions: axisOptions
+        ? Object.assign({}, CartesianAxis.defaultProps, axisOptions)
+        : undefined,
       outputWindow: {
         xMin: valueFromSidedNumber(padding, "left"),
         xMax: size.width - valueFromSidedNumber(padding, "right"),

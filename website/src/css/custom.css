@@ -32,4 +32,14 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+article h1 {
+  @apply text-2xl md:text-3xl;
+}
 
+article h2 {
+  @apply text-xl md:text-2xl;
+}
+
+article h3 {
+  @apply text-lg md:text-xl;
+}

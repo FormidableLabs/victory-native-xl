@@ -13,7 +13,7 @@ import { descriptionForRoute } from "./consts/routes";
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
     month: index + 1,
-    listenCount: Math.floor(Math.random() * (50 - 20 + 1)) + 20,
+    listenCount: Math.floor(Math.random() * (100 - 50 + 1)) + 50,
   }));
 
 export default function BarChartPage(props: { segment: string }) {
@@ -33,10 +33,14 @@ export default function BarChartPage(props: { segment: string }) {
             padding={5}
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
-            domain={{ y: [0, 60] }}
+            domain={{ y: [0, 100] }}
             axisOptions={{
               font,
               tickCount: 5,
+              formatXLabel: (value) => {
+                const date = new Date(2023, value - 1);
+                return date.toLocaleString("default", { month: "short" });
+              },
               lineColor: isDark ? "#71717a" : "#d4d4d8",
               labelColor: isDark ? appColors.text.dark : appColors.text.light,
             }}
