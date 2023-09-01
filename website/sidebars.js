@@ -4,10 +4,11 @@ const sidebars = {
     "introduction",
     "getting-started",
     "cartesian-chart",
+    "chart-gestures",
     {
       type: "category",
       label: "Guides",
-      items: ["guides/basic-bar-chart", "guides/basic-tooltip"],
+      items: ["guides/basic-bar-chart", "guides/multi-press"],
     },
     {
       type: "category",

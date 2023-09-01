@@ -1,3 +1,0 @@
-# Basic Tooltip
-
-DOCS:TODO:
