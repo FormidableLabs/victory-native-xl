@@ -2,7 +2,7 @@
 
 ## Installation
 
-Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
+Start by installing the peer dependencies of `victory-native` – [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/), [Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/), and [Skia](https://shopify.github.io/react-native-skia/):
 
 ```shell
 yarn add react-native-reanimated react-native-gesture-handler react-native-skia
@@ -20,7 +20,7 @@ Now you should be ready to go.
 
 ## Your first chart
 
-Let's create a basic line chart on a Cartesian grid. Let's mock out a little bit of dummy data for "high temperature" for each day in a month:
+Let's create a basic line chart on a Cartesian grid. Let's mock out a little bit of mock data for "high temperature" for each day in a month:
 
 ```ts
 const DATA = Array.from({ length: 31 }, (_, i) => ({
