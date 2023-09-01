@@ -3,7 +3,6 @@
   "version": "39.0.0",
   "private": false,
   "license": "MIT",
-  "TODO: entries": "Setup main/module/types",
   "react-native": "src/index",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -16,6 +15,7 @@
       "./dist/index.js"
     ]
   },
+  "files": ["dist"],
   "scripts": {
     "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
     "dev": "tsc --watch",
@@ -23,7 +23,6 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "TODO: Deps": "Move deps into devDeps, setup peerDeps",
   "dependencies": {
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",

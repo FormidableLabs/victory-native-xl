@@ -1,9 +1,9 @@
 import * as React from "react";
 import { line } from "d3-shape";
 import { Skia } from "@shopify/react-native-skia";
-import type { CurveType, PointsArray } from "victory-native";
+import type { PointsArray } from "../../types";
 import { stitchDataArray } from "../../utils/stitch";
-import { CURVES } from "../utils/curves";
+import { CURVES, type CurveType } from "../utils/curves";
 
 export type LinePathOptions = {
   curveType?: CurveType;

@@ -4,7 +4,7 @@ import {
   type PathProps,
   type SkiaDefaultProps,
 } from "@shopify/react-native-skia";
-import type { PointsArray } from "victory-native";
+import type { PointsArray } from "../../types";
 import { type LinePathOptions, useLinePath } from "../hooks/useLinePath";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";

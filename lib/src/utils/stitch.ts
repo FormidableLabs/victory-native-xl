@@ -1,4 +1,4 @@
-import type { PointsArray } from "victory-native";
+import type { PointsArray } from "../types";
 
 /**
  * Stitches two arrays together into an array of tuples.
