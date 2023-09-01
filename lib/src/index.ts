@@ -18,9 +18,9 @@ export { type RoundedCorners } from "./utils/createRoundedRectPath";
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { usePrevious } from "./utils/usePrevious";
 export {
-  useChartPressSharedValue,
-  type ChartPressValue,
-} from "./cartesian/hooks/useChartPressSharedValue";
+  useChartPressState,
+  type ChartPressState,
+} from "./cartesian/hooks/useChartPressState";
 
 // Line
 export { useLinePath } from "./cartesian/hooks/useLinePath";

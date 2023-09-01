@@ -6,9 +6,9 @@ import {
   useAnimatedReaction,
 } from "react-native-reanimated";
 
-export const useChartPressSharedValue = <K extends string>(
+export const useChartPressState = <K extends string>(
   yKeys: K[],
-): { state: ChartPressValue<K>; isActive: boolean } => {
+): { state: ChartPressState<K>; isActive: boolean } => {
   const keys = yKeys.join(",");
 
   const state = React.useMemo(() => {
@@ -37,13 +37,13 @@ export const useChartPressSharedValue = <K extends string>(
   return { state, isActive };
 };
 
-export type ChartPressValue<K extends string> = {
+export type ChartPressState<K extends string> = {
   isActive: SharedValue<boolean>;
   x: { value: SharedValue<number>; position: SharedValue<number> };
   y: Record<K, { value: SharedValue<number>; position: SharedValue<number> }>;
 };
 
-const useIsPressActive = <K extends string>(value: ChartPressValue<K>) => {
+const useIsPressActive = <K extends string>(value: ChartPressState<K>) => {
   const [isPressActive, setIsPressActive] = React.useState(
     () => value.isActive.value,
   );

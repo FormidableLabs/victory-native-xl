@@ -4,7 +4,7 @@ import {
   type ChartBounds,
   type PointsArray,
   useAreaPath,
-  useChartPressSharedValue,
+  useChartPressState,
   useLinePath,
 } from "victory-native";
 import {
@@ -49,9 +49,9 @@ export default function StockPriceScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
   const { state: firstTouch, isActive: isFirstPressActive } =
-    useChartPressSharedValue(["high"]);
+    useChartPressState(["high"]);
   const { state: secondTouch, isActive: isSecondPressActive } =
-    useChartPressSharedValue(["high"]);
+    useChartPressState(["high"]);
 
   // On activation of gesture, play haptic feedback
   React.useEffect(() => {
@@ -138,7 +138,7 @@ export default function StockPriceScreen(props: { segment: string }) {
           data={DATA}
           xKey="date"
           yKeys={["high"]}
-          activePressSharedValue={[firstTouch, secondTouch]}
+          chartPressState={[firstTouch, secondTouch]}
           curve="linear"
           axisOptions={{
             font,
