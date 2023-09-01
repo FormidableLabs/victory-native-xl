@@ -66,7 +66,7 @@ A `PointsArray` array indicating the dataset to be used for this particular bar.
 
 ### `animate`
 
-The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#animconfig) and will animate the path when the points changes.
+The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.md#animconfig) and will animate the path when the points changes.
 
 ### `children`
 

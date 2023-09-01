@@ -37,7 +37,7 @@ A `number` that indicates where the "bottom" of the area path should run. This n
 
 ### `animate`
 
-The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#animconfig) and will animate the path when the points changes.
+The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.md#animconfig) and will animate the path when the points changes.
 
 ### `curveType`
 

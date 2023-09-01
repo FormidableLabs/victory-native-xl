@@ -109,7 +109,7 @@ The `renderOutside` prop is identical to [the `children` prop](#children-require
 
 <div style={{textAlign: 'center'}}>
 
-![Diagram of where renderOutside renders to](./assets/renderOutside.jpg)
+![Diagram of where renderOutside renders to](../assets/renderOutside.jpg)
 
 </div>
 
