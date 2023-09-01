@@ -10,8 +10,8 @@ import areaMp4 from './img/area-fps.mp4';
 
 Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flexibility, ease of use, and **performance**. Currently, this is a pre-release project, and we are looking for feedback from the community. Please open issues for any bugs or feature requests you have.
 
-<div style={{ display: "flex", flexDirection: "column", placeItems: "center", paddingBottom: 40 }}>
-  <div style={{ display: "flex", flexDirection: "row", placeItems: "center", gap: 16 }}>
+<div className="flex flex-col pb-5 md:pb-10 items-center">
+  <div className="flex flex-col md:flex-row gap-5 items-center">
     <ReactPlayer
       width={350}
       height={450}
