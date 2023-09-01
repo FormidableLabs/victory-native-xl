@@ -168,9 +168,9 @@ This guide will show you how to create this bar chart with some customization li
         domainPadding={{ left: 50, right: 50, top: 30 }}
         axisOptions={{
           font,
-          formatXLabel: (value) => {
-            const date = new Date(2023, value - 1);
-            return date.toLocaleString("default", { month: "short" });
+          formatXLabel(value) {
+            const date = new Date(2023, value - 1)
+            return date.toLocaleString("default", { month: "short" })
           },
         }}
       >
@@ -186,10 +186,7 @@ This guide will show you how to create this bar chart with some customization li
             <LinearGradient
               start={vec(0, 0)}
               end={vec(0, 400)}
-              colors={[
-                "#a78bfa",
-                "#a78bfa50"
-              ]}
+              colors={["#a78bfa", "#a78bfa50"]}
             />
           </Bar>
         )}
