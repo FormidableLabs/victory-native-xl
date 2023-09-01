@@ -32,7 +32,7 @@ This guide will show you how to create this bar chart with some customization li
   <CartesianChart
     data={data}
     /**
-     *  👇 the xKey should map to the property on data of you want on the x-axis
+     * 👇 the xKey should map to the property on data of you want on the x-axis
      */
     xKey="month"
     /** 
