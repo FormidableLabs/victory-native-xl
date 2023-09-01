@@ -10,14 +10,6 @@
   <br />
   <br />
 
-  <strong>
-    This project is in pre-release mode.
-  </strong>
-
-
-  <br />
-  <br />
-
   <a href="https://npmjs.com/package/victory-native">
     <img alt="weekly downloads" src="https://img.shields.io/npm/dw/victory-native.svg">
   </a>
@@ -32,6 +24,10 @@
     <img alt="Maintenance Status" src="https://img.shields.io/badge/maintenance-active-green.svg" />
   </a>
 </div>
+
+## ⚠️ Pre-Production Disclamer
+
+Victory Native XL is set to replace the current stable version. However, please be advised that it's currently in a pre-production release (beta stage). While many of the new features and improvements are exciting, there might still be some shifts in APIs or bugs that need to be ironed out. We encourage users to test it and provide feedback, but also to be cautious and avoid using it in critical production environments until it has been further stabilized. Your feedback and contributions during this phase will be invaluable in ensuring the robustness of the next stable release.
 
 ## Installation
 
