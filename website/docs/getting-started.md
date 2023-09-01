@@ -2,7 +2,7 @@
 
 ## Installation
 
-Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
+Start by installing the peer dependencies of `victory-native` – [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/), [Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/), and [Skia](https://shopify.github.io/react-native-skia/):
 
 ```shell
 yarn add react-native-reanimated react-native-gesture-handler react-native-skia
@@ -20,7 +20,7 @@ Now you should be ready to go.
 
 ## Your first chart
 
-Let's create a basic line chart on a Cartesian grid. Let's mock out a little bit of dummy data for "high temperature" for each day in a month:
+Let's create a basic line chart on a Cartesian grid. Let's mock out a little bit of mock data for "high temperature" for each day in a month:
 
 ```ts
 const DATA = Array.from({ length: 31 }, (_, i) => ({
@@ -125,4 +125,125 @@ And now we've got some axes and grid lines!
 
 You might also want to give your users a way to interact with the line chart you've created. Handling user gestures can be complex, especially in canvas-like drawing context. Victory Native helps streamline this for you. To build a basic tooltip, we'll do three things.
 
-DOCS:TODO: Finish this up.
+- Create a `ChartPressState` instance using the `useChartPressState` hook from `victory-native`.
+- Pass our state variable into our `<CartesianChart />` element.
+- Use the Reanimated shared values from the `ChartPressState` instance in a custom `ToolTip` component that we'll create to create our tooltip element.
+
+We'll start by creating our `ChartPressState` instance and pass it to our chart element.
+
+```tsx
+// ...
+import { /*...*/ useChartPressState } from "victory-native";
+
+export default function GettingStartedScreen() {
+  // ...
+  // 👇 create our chart press state
+  const { state, isActive } = useChartPressState(["highTmp"]);
+
+  return (
+    // ...
+    <CartesianChart
+      // ...
+      chartPressState={state} // 👈 and pass it to our chart.
+    >
+      {/* ... */}
+    </CartesianChart>
+    // ...
+  );
+}
+
+// ...
+```
+
+Then we'll create a `ToolTip` component that uses some Reanimaed `SharedValue`s from our `state` variable.
+
+```tsx
+import type { SharedValue } from "react-native-reanimated";
+// ...
+
+function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
+  return <Circle cx={x} cy={y} r={8} color="black" />;
+}
+```
+
+And we'll conditionally show an instance of this component when the chart press is active:
+
+```tsx
+// ...
+import { /*...*/ useChartPressState } from "victory-native";
+
+export default function GettingStartedScreen() {
+  // ...
+  const { state, isActive } = useChartPressState(["highTmp"]);
+
+  return (
+    // ...
+    <CartesianChart
+      // ...
+      chartPressState={state}
+    >
+      {
+        (/*...*/) => (
+          <>
+            {/* 👇 Conditionally show our tooltip and pass values. */}
+            {isActive ? (
+              <ToolTip x={state.x.position} y={state.y.highTmp.position} />
+            ) : null}
+          </>
+        )
+      }
+    </CartesianChart>
+    // ...
+  );
+}
+
+// ...
+```
+
+Putting this all together, we have something like the following:
+
+```tsx
+import * as React from "react";
+import { View } from "react-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
+import { Circle, useFont } from "@shopify/react-native-skia";
+import type { SharedValue } from "react-native-reanimated";
+import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
+
+export default function GettingStartedScreen() {
+  const font = useFont(inter, 12);
+  const { state, isActive } = useChartPressState(["highTmp"]);
+
+  return (
+    <View style={{ height: 300 }}>
+      <CartesianChart
+        data={DATA}
+        xKey="day"
+        yKeys={["highTmp"]}
+        axisOptions={{
+          font,
+        }}
+        chartPressState={state}
+      >
+        {({ points }) => (
+          <>
+            <Line points={points.highTmp} color="red" strokeWidth={3} />
+            {isActive && (
+              <ToolTip x={state.x.position} y={state.y.highTmp.position} />
+            )}
+          </>
+        )}
+      </CartesianChart>
+    </View>
+  );
+}
+
+function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
+  return <Circle cx={x} cy={y} r={8} color="black" />;
+}
+
+const DATA = Array.from({ length: 31 }, (_, i) => ({
+  day: i,
+  highTmp: 40 + 30 * Math.random(),
+}));
+```
