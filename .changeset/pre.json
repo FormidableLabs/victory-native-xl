@@ -5,5 +5,7 @@
     "example": "1.0.0",
     "victory-native": "39.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "serious-trees-provide"
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "victory-native",
-  "version": "39.0.0",
+  "version": "40.0.0-next.0",
   "private": false,
   "license": "MIT",
   "react-native": "src/index",
@@ -15,7 +15,9 @@
       "./dist/index.js"
     ]
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
     "dev": "tsc --watch",
