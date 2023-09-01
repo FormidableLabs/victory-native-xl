@@ -4,7 +4,7 @@ This guide will show you how to create this bar chart with some customization li
 
 <div className="max-w-xs mx-auto">
 
-  ![Bar Chart Example](../assets/bar-guide-final.png)
+  ![Bar Chart Example](../../assets/bar-guide-final.png)
 
 </div>
 
@@ -53,7 +53,7 @@ This guide will show you how to create this bar chart with some customization li
 
   <div className="max-w-xs mx-auto">
   
-  ![Bar Chart Example](../assets/bar-guide-step-3.png)
+  ![Bar Chart Example](../../assets/bar-guide-step-3.png)
   
   </div>
 
@@ -142,6 +142,6 @@ This guide will show you how to create this bar chart with some customization li
 
   <div className="max-w-xs mx-auto">
 
-  ![Bar Chart Example](../assets/bar-guide-final.png)
+  ![Bar Chart Example](../../assets/bar-guide-final.png)
   
   </div>
