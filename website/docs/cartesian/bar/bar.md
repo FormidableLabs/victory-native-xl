@@ -13,10 +13,10 @@ export function MyChart() {
     <CartesianChart data={DATA} xKey="x" yKeys={["y"]}>
       {({ points, chartBounds }) => (
         //👇 pass a PointsArray to the Bar component, as well as options.
-        <Bar 
-          points={points.y} 
-          chartBounds={chartBounds} 
-          color="red"  
+        <Bar
+          points={points.y}
+          chartBounds={chartBounds}
+          color="red"
           roundedCorners={{ topLeft: 10, topRight: 10 }}
         />
       )}
@@ -41,15 +41,16 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 
 ### `animate`
 
-The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#animconfig) and will animate the path when the points change.
+The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.md#animconfig) and will animate the path when the points change.
 
 ### `roundedCorners`
 
 The `roundedCorners` prop allows you to customize the roundedness of each corner of the Bar component. It's an object type that defines the radii for the top-left, top-right, bottom-right, and bottom-left corners.
- - `topLeft?: number`: Defines the radius of the top-left corner of the Bar. If not provided, the default is 0 (no rounding).
- - `topRight?: number`: Defines the radius of the top-right corner of the Bar. If not provided, the default is 0 (no rounding).
- - `bottomRight?: number`: Defines the radius of the bottom-right corner of the Bar. If not provided, the default is 0 (no rounding).
- - `bottomLeft?: number`: Defines the radius of the bottom-left corner of the Bar. If not provided, the default is 0 (no rounding).
+
+- `topLeft?: number`: Defines the radius of the top-left corner of the Bar. If not provided, the default is 0 (no rounding).
+- `topRight?: number`: Defines the radius of the top-right corner of the Bar. If not provided, the default is 0 (no rounding).
+- `bottomRight?: number`: Defines the radius of the bottom-right corner of the Bar. If not provided, the default is 0 (no rounding).
+- `bottomLeft?: number`: Defines the radius of the bottom-left corner of the Bar. If not provided, the default is 0 (no rounding).
 
 ### `children`
 

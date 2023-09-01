@@ -3,38 +3,52 @@ const sidebars = {
   docsSidebar: [
     "introduction",
     "getting-started",
-    "cartesian-chart",
-    "chart-gestures",
     {
       type: "category",
-      label: "Guides",
-      items: ["guides/basic-bar-chart", "guides/multi-press"],
-    },
-    {
-      type: "category",
-      label: "Line Paths",
-      items: ["line/line", "line/use-line-path"],
-    },
-    {
-      type: "category",
-      label: "Area Paths",
-      items: ["area/area", "area/use-area-path"],
-    },
-    {
-      type: "category",
-      label: "Bar Paths",
+      label: "Cartesian Charts",
+      collapsed: false,
+      collapsible: false,
       items: [
-        "bar/bar",
-        "bar/use-bar-path",
-        "bar/bar-group",
-        "bar/use-bar-group-paths",
+        "cartesian/cartesian-chart",
+        "cartesian/chart-gestures",
+
+        {
+          type: "category",
+          label: "Guides",
+          items: [
+            "cartesian/guides/basic-bar-chart",
+            "cartesian/guides/multi-press",
+          ],
+        },
+
+        {
+          type: "category",
+          label: "Line Paths",
+          items: ["cartesian/line/line", "cartesian/line/use-line-path"],
+        },
+        {
+          type: "category",
+          label: "Area Paths",
+          items: ["cartesian/area/area", "cartesian/area/use-area-path"],
+        },
+        {
+          type: "category",
+          label: "Bar Paths",
+          items: [
+            "cartesian/bar/bar",
+            "cartesian/bar/use-bar-path",
+            "cartesian/bar/bar-group",
+            "cartesian/bar/use-bar-group-paths",
+          ],
+        },
+        {
+          type: "category",
+          label: "Scatter Paths",
+          items: ["cartesian/scatter/scatter"],
+        },
       ],
     },
-    {
-      type: "category",
-      label: "Scatter Paths",
-      items: ["scatter/scatter"],
-    },
+
     "animated-paths",
   ],
   // By default, Docusaurus generates a sidebar from the docs folder structure

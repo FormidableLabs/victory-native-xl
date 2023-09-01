@@ -33,7 +33,7 @@ A `PointsArray` array that comes from a field of the `points` object exposed the
 
 ### `animate`
 
-The `animate` prop takes [a `PathAnimationConfig` object](../animated-paths.md#animconfig) and will animate the path when the points changes.
+The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.md#animconfig) and will animate the path when the points changes.
 
 ### `curveType`
 
