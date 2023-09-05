@@ -25,6 +25,15 @@
   </a>
 </div>
 
+<p>&nbsp;</p>
+
+<div align="center">
+
+https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-9903-4fe1-9b5f-3b516c0d7428
+  
+</div>
+
+
 ## ⚠️ Pre-Production Disclamer
 
 Victory Native XL is set to replace the current stable version. However, please be advised that it's currently in a pre-production release (beta stage). While many of the new features and improvements are exciting, there might still be some shifts in APIs or bugs that need to be ironed out. We encourage users to test it and provide feedback, but also to be cautious and avoid using it in critical production environments until it has been further stabilized. Your feedback and contributions during this phase will be invaluable in ensuring the robustness of the next stable release.
