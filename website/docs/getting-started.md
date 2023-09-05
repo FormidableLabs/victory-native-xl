@@ -135,7 +135,7 @@ We'll start by creating our `ChartPressState` instance and pass it to our chart 
 // ...
 import { /*...*/ useChartPressState } from "victory-native";
 
-export default function GettingStartedScreen() {
+function MyChart() {
   // ...
   // 👇 create our chart press state
   const { state, isActive } = useChartPressState(["highTmp"]);
@@ -172,7 +172,7 @@ And we'll conditionally show an instance of this component when the chart press 
 // ...
 import { /*...*/ useChartPressState } from "victory-native";
 
-export default function GettingStartedScreen() {
+function MyChart() {
   // ...
   const { state, isActive } = useChartPressState(["highTmp"]);
 
@@ -210,7 +210,7 @@ import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
 
-export default function GettingStartedScreen() {
+function MyChart() {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState(["highTmp"]);
 
