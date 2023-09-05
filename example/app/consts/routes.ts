@@ -2,6 +2,7 @@ export const ChartRoutes: {
   title: string;
   description: string;
   path: string;
+  url?: string;
 }[] = [
   {
     title: "Line Chart",
@@ -39,19 +40,27 @@ export const ChartRoutes: {
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
     path: "/ordinal-data",
   },
-  // // Guides from the docs
-  // {
-  //   title: "Getting Started",
-  //   description:
-  //     "Basic chart example with a line chart and a tooltip. Referenced in Getting Started documentation",
-  //   path: "/guides/getting-started",
-  // },
-  // {
-  //   title: "Multi Press",
-  //   description: "Guide for supporting multi-press interactions.",
-  //   path: "/guides/multi-press",
-  // },
 ];
+
+if (__DEV__) {
+  ChartRoutes.unshift(
+    {
+      title: "Getting Started Guide",
+      description: "Basic chart example with a line chart and a tooltip.",
+      url: "https://formidable.com/open-source/victory-native/getting-started",
+      path: "/guides/getting-started",
+    },
+    {
+      title: "Multi-Press Guide",
+      description: "Guide for supporting multi-press interactions.",
+      url: "https://formidable.com/open-source/victory-native/cartesian/guides/multi-press",
+      path: "/guides/multi-press",
+    },
+  );
+}
 
 export const descriptionForRoute = (path: string) =>
   ChartRoutes.find((r) => r.path.includes(path))?.description || "";
+
+export const urlForRoute = (path: string) =>
+  ChartRoutes.find((r) => r.path.includes(path))?.url;

@@ -1,17 +1,27 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, Linking } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
+import { Button } from "example/components/Button";
 import { appColors } from "../consts/colors";
 import inter from "../../assets/inter-medium.ttf";
+import { urlForRoute } from "../consts/routes";
 
-export default function GettingStartedScreen() {
+export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState(["highTmp"]);
+  const url = urlForRoute(props.segment);
+
+  const handleDocsButtonPress = React.useCallback(async () => {
+    url && (await Linking.canOpenURL(url)) && Linking.openURL(url);
+  }, [url]);
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <View style={{ margin: 20 }}>
+        <Button onPress={handleDocsButtonPress} title="Read Docs" />
+      </View>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
         <CartesianChart
           data={DATA}
