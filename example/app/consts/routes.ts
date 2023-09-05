@@ -46,6 +46,11 @@ export const ChartRoutes: {
       "Basic chart example with a line chart and a tooltip. Referenced in Getting Started documentation",
     path: "/guides/getting-started",
   },
+  {
+    title: "Multi Press",
+    description: "Guide for supporting multi-press interactions.",
+    path: "/guides/multi-press",
+  },
 ];
 
 export const descriptionForRoute = (path: string) =>
