@@ -23,6 +23,12 @@ export const ChartRoutes: {
     path: "/bar-group",
   },
   {
+    title: "Scatter Plot",
+    description:
+      "This is a Scatter plot in Victory Native that supports custom shapes and sizes.",
+    path: "/scatter",
+  },
+  {
     title: "Custom Drawing",
     description:
       "Victory provides the developer full access to all the transformed data points. This chart shows off using that data to draw custom shapes using Skia directly in Victory.",
