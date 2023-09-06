@@ -4,8 +4,6 @@ import {
   Skia,
   type PathProps,
   type SkiaDefaultProps,
-  SkPoint,
-  vec,
 } from "@shopify/react-native-skia";
 import type { PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
@@ -76,9 +74,10 @@ const calculateStarPath = (
   }
 
   const path = Skia.Path.Make();
-  path.moveTo(...vectors[0]);
-  for (let i = 1; i < vectors.length; i++) {
-    path.lineTo(...vectors[i]);
+  const firstVec = vectors[0];
+  firstVec && path.moveTo(firstVec[0], firstVec[1]);
+  for (const vec of vectors.slice(1)) {
+    path.lineTo(vec[0], vec[1]);
   }
   path.close();
   return path;

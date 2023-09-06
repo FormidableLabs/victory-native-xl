@@ -6,7 +6,6 @@
     "example"
   ],
   "license": "MIT",
-  "TODO: entries": "Setup main/module/types",
   "react-native": "src/index",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx example lib",
