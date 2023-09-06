@@ -39,7 +39,7 @@ export { useAreaPath } from "./cartesian/hooks/useAreaPath";
 export { Area } from "./cartesian/components/Area";
 
 // Scatter
-export { Scatter } from "./cartesian/components/Scatter";
+export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
