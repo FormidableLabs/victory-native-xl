@@ -13,13 +13,16 @@ export type ScatterShape = "circle" | "square" | "star";
 type ScatterProps = {
   points: PointsArray;
   animate?: PathAnimationConfig;
-  radius?: number;
+  radius?: number | ((pt: PointsArray[number]) => number);
   shape?: ScatterShape;
 } & SkiaDefaultProps<
   Pick<
     PathProps,
     | "style"
     | "color"
+    | "blendMode"
+    | "opacity"
+    | "antiAlias"
     | "start"
     | "end"
     | "strokeWidth"
@@ -40,13 +43,14 @@ export function Scatter({
   const path = React.useMemo(() => {
     const p = Skia.Path.Make();
 
-    points.forEach(({ x, y }) => {
-      if (shape === "circle") p.addCircle(x, y, radius);
+    points.forEach((pt) => {
+      const { x, y } = pt;
+      const r = typeof radius === "function" ? radius(pt) : radius;
+
+      if (shape === "circle") p.addCircle(x, y, r);
       else if (shape === "square")
-        p.addRect(
-          Skia.XYWHRect(x - radius, y - radius, radius * 2, radius * 2),
-        );
-      else if (shape === "star") p.addPath(calculateStarPath(x, y, radius, 5));
+        p.addRect(Skia.XYWHRect(x - r, y - r, r * 2, r * 2));
+      else if (shape === "star") p.addPath(calculateStarPath(x, y, r, 5));
     });
 
     return p;
