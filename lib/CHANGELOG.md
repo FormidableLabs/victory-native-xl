@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.1
+
+### Patch Changes
+
+- Include src files in distribution tarball ([#100](https://github.com/FormidableLabs/victory-native-xl/pull/100))
+
 ## 40.0.0-next.0
 
 ### Major Changes
