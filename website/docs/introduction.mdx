@@ -3,29 +3,29 @@ slug: /
 ---
 
 import ReactPlayer from "react-player/lazy";
-import barMp4 from './img/bar-fps.mp4';
-import areaMp4 from './img/area-fps.mp4';
+import barMp4 from "./img/bar-fps.mp4";
+import areaMp4 from "./img/area-fps.mp4";
 
 # Introduction
 
 Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flexibility, ease of use, and **performance**. Currently, this is a pre-release project, and we are looking for feedback from the community. Please open issues for any bugs or feature requests you have.
 
 <div className="flex flex-col pb-5 md:pb-10 items-center">
-  <div className="flex flex-col md:flex-row gap-5 items-center">
-    <div className="rounded-md overflow-hidden border shadow">
+  <div className="flex flex-col md:flex-row gap-5 items-center max-w-full">
+    <div className="rounded-md overflow-hidden border shadow aspect-[320/450]">
       <ReactPlayer
-        width={320}
-        height={450}
+        width="100%"
+        height="100%"
         playing={true}
         loop={true}
         controls={true}
         url={areaMp4}
       />
     </div>
-    <div className="rounded-md overflow-hidden border shadow">
+    <div className="rounded-md overflow-hidden border shadow aspect-[350/390]">
       <ReactPlayer
-        width={350}
-        height={390}
+        width="100%"
+        height="100%"
         playing={true}
         loop={true}
         controls={true}
@@ -34,7 +34,6 @@ Victory Native (XL) is a from-scratch rewrite of Victory Native that favors flex
     </div>
   </div>
 </div>
-
 
 Under the hood it's using:
 
