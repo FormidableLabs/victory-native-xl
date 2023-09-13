@@ -1,6 +1,6 @@
 # Multi Press
 
-In this guide, we'll take the end-result of [the Getting Started guide](../../getting-started.md) and add multi-press interaction to it.
+In this guide, we'll take the end-result of [the Getting Started guide](../../getting-started.mdx) and add multi-press interaction to it.
 
 The final code of the Getting Started guide is shown below:
 

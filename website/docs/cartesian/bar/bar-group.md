@@ -2,6 +2,12 @@
 
 The `BarGroup` component takes a `ChartBounds` object, some options for spacing, and some `BarGroup.Bar` children and returns an array of Skia `Path` elements to draw the grouped bar chart.
 
+<div className="w-96 mx-auto rounded-md overflow-hidden">
+
+![Example output of a bar chart](../../assets/bar-group-preview.jpg)
+
+</div>
+
 ## Example
 
 ```tsx

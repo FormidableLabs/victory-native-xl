@@ -2,6 +2,12 @@
 
 The `Scatter` component takes a `PointsArray` prop, as well as some options for styling/animating, and returns a Skia `Path` element to draw the scatter plot.
 
+<div className="w-96 mx-auto rounded-md overflow-hidden">
+
+![Example output of a bar chart](../../assets/scatter-chart-preview.jpg)
+
+</div>
+
 ## Example
 
 ```tsx

@@ -2,6 +2,12 @@
 
 The `Bar` component takes a `PointsArray` prop, a `ChartBounds` object, as well as some options for styling/animating, and returns a Skia `Path` element to draw the bar chart.
 
+<div className="w-96 mx-auto rounded-md overflow-hidden">
+
+![Example output of a bar chart](../../assets/bar-chart-preview.jpg)
+
+</div>
+
 ## Example
 
 ```tsx
