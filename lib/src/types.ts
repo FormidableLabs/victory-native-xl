@@ -100,4 +100,6 @@ export type AxisProps<
   axisSide: { x: XAxisSide; y: YAxisSide };
   formatXLabel: (label: T[XK]) => string;
   formatYLabel: (label: T[YK]) => string;
+  isNumericalData?: boolean;
+  ix: number[];
 };

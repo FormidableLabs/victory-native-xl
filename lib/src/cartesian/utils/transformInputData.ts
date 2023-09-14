@@ -49,13 +49,17 @@ export const transformInputData = <
 }): TransformedData<RawData, T, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
+  isNumericalData: boolean;
 } => {
   const data = [...(_data as unknown as T[])].sort(
     (a, b) => +a[xKey] - +b[xKey],
   );
 
+  // TODO: use index if non-numerical
   // Input x is just extracting the xKey from each datum
-  const ix = data.map((datum) => asNumber(datum[xKey]));
+  const ix = data.map((datum) => datum[xKey]);
+  const isNumericalData = ix.every((x) => typeof x === "number");
+  const ixNum = ix.map((val, i) => (isNumericalData ? val : i));
 
   // Then we find min/max of y values across all yKeys, use that for y range.
   // (if user provided a domain, use that instead)
@@ -144,8 +148,8 @@ export const transformInputData = <
     String(yScale.domain().at(0));
 
   // Generate our x-scale
-  const ixMin = asNumber(domain?.x?.[0] ?? ix.at(0)),
-    ixMax = asNumber(domain?.x?.[1] ?? ix.at(-1));
+  const ixMin = asNumber(domain?.x?.[0] ?? ixNum.at(0)),
+    ixMax = asNumber(domain?.x?.[1] ?? ixNum.at(-1));
   const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
@@ -191,7 +195,7 @@ export const transformInputData = <
     padEnd:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.right,
   });
-  const ox = ix.map((x) => xScale(x)!);
+  const ox = ixNum.map((x) => xScale(x)!);
 
   return {
     ix,
@@ -199,5 +203,6 @@ export const transformInputData = <
     y,
     xScale,
     yScale,
+    isNumericalData,
   };
 };

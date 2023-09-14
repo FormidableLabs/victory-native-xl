@@ -33,6 +33,8 @@ export const CartesianAxis = <
   yScale,
   xScale,
   font,
+  isNumericalData = false,
+  ix,
 }: AxisProps<RawData, T, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
@@ -137,7 +139,8 @@ export const CartesianAxis = <
   });
 
   const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
-    const contentX = formatXLabel(tick as never);
+    const val = isNumericalData ? tick : ix[tick];
+    const contentX = formatXLabel(val as never); // TODO: Need to tweak this? tick needs a lookup?
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
@@ -219,4 +222,5 @@ CartesianAxis.defaultProps = {
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
+  ix: [],
 } satisfies Partial<AxisProps<never, never, never, never>>;

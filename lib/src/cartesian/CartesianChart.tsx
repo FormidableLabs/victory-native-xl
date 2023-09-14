@@ -86,45 +86,48 @@ export function CartesianChart<
     ),
   });
 
-  const { xScale, yScale, chartBounds, _tData } = React.useMemo(() => {
-    const { xScale, yScale, ..._tData } = transformInputData({
+  const { xScale, yScale, chartBounds, isNumericalData, _tData } =
+    React.useMemo(() => {
+      const { xScale, yScale, isNumericalData, ..._tData } = transformInputData(
+        {
+          data,
+          xKey,
+          yKeys,
+          axisOptions: axisOptions
+            ? Object.assign({}, CartesianAxis.defaultProps, axisOptions)
+            : undefined,
+          outputWindow: {
+            xMin: valueFromSidedNumber(padding, "left"),
+            xMax: size.width - valueFromSidedNumber(padding, "right"),
+            yMin: valueFromSidedNumber(padding, "top"),
+            yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+          },
+          domain,
+          domainPadding,
+        },
+      );
+      tData.value = _tData;
+
+      const chartBounds = {
+        left: xScale(xScale.domain().at(0) || 0),
+        right: xScale(xScale.domain().at(-1) || 0),
+        top: yScale(yScale.domain().at(0) || 0),
+        bottom: yScale(yScale.domain().at(-1) || 0),
+      };
+
+      return { tData, xScale, yScale, chartBounds, isNumericalData, _tData };
+    }, [
       data,
       xKey,
       yKeys,
-      axisOptions: axisOptions
-        ? Object.assign({}, CartesianAxis.defaultProps, axisOptions)
-        : undefined,
-      outputWindow: {
-        xMin: valueFromSidedNumber(padding, "left"),
-        xMax: size.width - valueFromSidedNumber(padding, "right"),
-        yMin: valueFromSidedNumber(padding, "top"),
-        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-      },
+      axisOptions,
+      padding,
+      size.width,
+      size.height,
       domain,
       domainPadding,
-    });
-    tData.value = _tData;
-
-    const chartBounds = {
-      left: xScale(xScale.domain().at(0) || 0),
-      right: xScale(xScale.domain().at(-1) || 0),
-      top: yScale(yScale.domain().at(0) || 0),
-      bottom: yScale(yScale.domain().at(-1) || 0),
-    };
-
-    return { tData, xScale, yScale, chartBounds, _tData };
-  }, [
-    data,
-    xKey,
-    yKeys,
-    axisOptions,
-    padding,
-    size.width,
-    size.height,
-    domain,
-    domainPadding,
-    tData,
-  ]);
+      tData,
+    ]);
 
   /**
    * Pan gesture handling
@@ -142,7 +145,7 @@ export function CartesianChart<
     // Shared value
     if (v) {
       try {
-        v.x.value.value = asNumber(tData.value.ix[idx]);
+        v.x.value.value = tData.value.ix[idx]; // TODO: touched, any cascading effects?
         v.x.position.value = asNumber(tData.value.ox[idx]);
         for (const yk in v.y) {
           if (isInYs(yk)) {
@@ -327,7 +330,15 @@ export function CartesianChart<
       {hasMeasuredLayoutSize && (
         <>
           {axisOptions ? (
-            <CartesianAxis {...{ ...axisOptions, xScale, yScale }} />
+            <CartesianAxis
+              {...{
+                ...axisOptions,
+                xScale,
+                yScale,
+                isNumericalData,
+                ix: _tData.ix,
+              }}
+            />
           ) : null}
         </>
       )}
