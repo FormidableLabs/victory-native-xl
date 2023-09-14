@@ -43,7 +43,7 @@ Victory Native XL is set to replace the current stable version. However, please 
 Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
 
 ```shell
-yarn add react-native-reanimated react-native-gesture-handler react-native-skia
+yarn add react-native-reanimated react-native-gesture-handler @shopify/react-native-skia
 ```
 
 For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
