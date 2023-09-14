@@ -93,6 +93,7 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      image: "/img/victory-native-social.png",
     }),
 };
 
