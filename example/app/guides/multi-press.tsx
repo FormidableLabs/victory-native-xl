@@ -8,14 +8,14 @@ import { appColors } from "../consts/colors";
 import inter from "../../assets/inter-medium.ttf";
 import { urlForRoute } from "../consts/routes";
 
-const YKEYS = ["highTmp" as const];
+const initChartPressState = { x: 0, y: { highTmp: 0 } } as const;
 
 export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const { state: firstPress, isActive: isFirstPressActive } =
-    useChartPressState(YKEYS);
+    useChartPressState(initChartPressState);
   const { state: secondPress, isActive: isSecondPressActive } =
-    useChartPressState(YKEYS);
+    useChartPressState(initChartPressState);
 
   const url = urlForRoute(props.segment);
 
@@ -32,7 +32,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
         <CartesianChart
           data={DATA}
           xKey="day"
-          yKeys={YKEYS}
+          yKeys={["highTmp"]}
           axisOptions={{
             font,
           }}

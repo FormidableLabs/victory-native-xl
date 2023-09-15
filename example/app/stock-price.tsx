@@ -41,6 +41,7 @@ import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "./consts/routes";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
+const initChartPressState = { x: 0, y: { high: 0 } } as const;
 
 export default function StockPriceScreen(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
@@ -49,9 +50,9 @@ export default function StockPriceScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
   const { state: firstTouch, isActive: isFirstPressActive } =
-    useChartPressState(["high"]);
+    useChartPressState(initChartPressState);
   const { state: secondTouch, isActive: isSecondPressActive } =
-    useChartPressState(["high"]);
+    useChartPressState(initChartPressState);
 
   // On activation of gesture, play haptic feedback
   React.useEffect(() => {
