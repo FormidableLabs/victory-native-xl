@@ -140,7 +140,7 @@ export const CartesianAxis = <
 
   const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
-    const contentX = formatXLabel(val as never); // TODO: Need to tweak this? tick needs a lookup?
+    const contentX = formatXLabel(val as never);
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
