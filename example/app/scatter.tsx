@@ -15,7 +15,6 @@ import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "./consts/routes";
 import { InputSegment } from "../components/InputSegment";
-import { useAnimatedReaction } from "react-native-reanimated";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -32,7 +31,10 @@ export default function ScatterPage(props: { segment: string }) {
   const [data, setData] = useState(DATA(5));
   const [radius, setRadius] = useState(10);
   const [shape, setShape] = useState("circle" as ScatterShape);
-  const { state, isActive } = useChartPressState(["listenCount"]);
+  const { state, isActive } = useChartPressState({
+    x: "",
+    y: { listenCount: 0 },
+  });
 
   return (
     <>

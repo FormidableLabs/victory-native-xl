@@ -11,6 +11,7 @@ import {
 import type {
   AxisProps,
   CartesianChartRenderArg,
+  InputFields,
   NumericalFields,
   SidedNumber,
   TransformedData,
@@ -24,9 +25,8 @@ import type { ChartPressState } from "./hooks/useChartPressState";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 > = {
   data: RawData[];
   xKey: XK;
@@ -35,22 +35,19 @@ type CartesianChartProps<
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   chartPressState?:
-    | ChartPressState<YK & string>
-    | ChartPressState<YK & string>[];
-  children: (args: CartesianChartRenderArg<RawData, T, YK>) => React.ReactNode;
+    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
+    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside: (
-    args: CartesianChartRenderArg<RawData, T, YK>,
+    args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
-  axisOptions?: Partial<
-    Omit<AxisProps<RawData, T, XK, YK>, "xScale" | "yScale">
-  >;
+  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
 };
 
 export function CartesianChart<
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 >({
   data,
   xKey,
@@ -62,7 +59,7 @@ export function CartesianChart<
   axisOptions,
   domain,
   chartPressState,
-}: CartesianChartProps<RawData, T, XK, YK>) {
+}: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
@@ -74,7 +71,7 @@ export function CartesianChart<
     [],
   );
 
-  const tData = useSharedValue<TransformedData<RawData, T, YK>>({
+  const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
     ox: [],
     y: yKeys.reduce(
@@ -82,7 +79,7 @@ export function CartesianChart<
         acc[key] = { i: [], o: [] };
         return acc;
       },
-      {} as TransformedData<RawData, T, YK>["y"],
+      {} as TransformedData<RawData, XK, YK>["y"],
     ),
   });
 
@@ -136,7 +133,10 @@ export function CartesianChart<
   /**
    * Take a "press value" and an x-value and update the shared values accordingly.
    */
-  const handleTouch = (v: ChartPressState<YK & string>, x: number) => {
+  const handleTouch = (
+    v: ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
+    x: number,
+  ) => {
     "worklet";
     const idx = findClosestPoint(tData.value.ox, x);
     if (typeof idx !== "number") return;
@@ -145,7 +145,7 @@ export function CartesianChart<
     // Shared value
     if (v) {
       try {
-        v.x.value.value = tData.value.ix[idx]; // TODO: touched, any cascading effects?
+        v.x.value.value = tData.value.ix[idx]!;
         v.x.position.value = asNumber(tData.value.ox[idx]);
         for (const yk in v.y) {
           if (isInYs(yk)) {
@@ -177,7 +177,10 @@ export function CartesianChart<
     : [chartPressState];
   const gestureState = useSharedValue({
     isGestureActive: false,
-    bootstrap: [] as [ChartPressState<YK & string>, TouchData][],
+    bootstrap: [] as [
+      ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
+      TouchData,
+    ][],
   });
 
   const touchGesture = Gesture.Pan()
@@ -286,7 +289,7 @@ export function CartesianChart<
    * Allow end-user to request "raw-ish" data for a given yKey.
    * Generate this on demand using a proxy.
    */
-  type PointsArg = CartesianChartRenderArg<RawData, T, YK>["points"];
+  type PointsArg = CartesianChartRenderArg<RawData, YK>["points"];
   const points = React.useMemo<PointsArg>(() => {
     const cache = {} as Record<YK, PointsArg[keyof PointsArg]>;
     return new Proxy(
@@ -310,7 +313,7 @@ export function CartesianChart<
     ) as PointsArg;
   }, [_tData, yKeys]);
 
-  const renderArg: CartesianChartRenderArg<RawData, T, YK> = {
+  const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,
     yScale,
     chartBounds,

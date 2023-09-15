@@ -1,9 +1,15 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../tsconfig.json",
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts"],
   "compilerOptions": {
-    "outDir": "dist",
+    "target": "ES2016",
+    "jsx": "react-native",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
     "declaration": true
   }
 }

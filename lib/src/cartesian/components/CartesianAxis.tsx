@@ -13,13 +13,13 @@ import type {
   NumericalFields,
   InputDatum,
   AxisProps,
+  InputFields,
 } from "../../types";
 
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 >({
   tickCount,
   labelPosition,
@@ -35,7 +35,7 @@ export const CartesianAxis = <
   font,
   isNumericalData = false,
   ix,
-}: AxisProps<RawData, T, XK, YK>) => {
+}: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
       xTicks: typeof tickCount === "number" ? tickCount : tickCount.x,
@@ -223,4 +223,4 @@ CartesianAxis.defaultProps = {
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   ix: [],
-} satisfies Partial<AxisProps<never, never, never, never>>;
+} satisfies Partial<AxisProps<never, never, never>>;
