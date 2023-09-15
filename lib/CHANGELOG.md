@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.2
+
+### Patch Changes
+
+- Updates to signature of useChartPressState, internal changes, to support non-numerical input values. ([#105](https://github.com/FormidableLabs/victory-native-xl/pull/105))
+
 ## 40.0.0-next.1
 
 ### Patch Changes
