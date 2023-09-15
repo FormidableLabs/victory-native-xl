@@ -27,10 +27,9 @@ const colors = [appColors.tint, "#818cf8"];
 export default function OrdinalDataScreen(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
-  const { state: activePress } = useChartPressState({ x: 0, y: { high: 0 } });
-  const activeX = activePress.x.value;
-  const activeXValue = useDerivedValue(() => activeX.value);
-  const day = useDerivedValue(() => DATA?.[activeX.value]?.day || "");
+  const { state } = useChartPressState({ x: "", y: { high: 0 } });
+  const activeX = state.x.value;
+  const day = useDerivedValue(() => activeX.value || "");
   const isDark = useDarkMode();
 
   return (
@@ -38,19 +37,19 @@ export default function OrdinalDataScreen(props: { segment: string }) {
       <View style={styles.chart}>
         <CartesianChart
           data={DATA}
-          xKey="x"
+          xKey="day"
           domainPadding={40}
           padding={{ top: 25, left: 10, right: 10, bottom: 10 }}
           yKeys={["high"]}
           axisOptions={{
             font,
-            formatXLabel: (i) => DATA?.[i]?.day || "",
+            formatXLabel: (i) => i || "",
             formatYLabel: (i) => `${i}°`,
             tickCount: { x: 7, y: 10 },
             lineColor: isDark ? "#71717a" : "#d4d4d8",
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
-          chartPressState={activePress}
+          chartPressState={state}
         >
           {({ chartBounds, points, yScale }) => {
             return (
@@ -69,12 +68,12 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                   />
                 </Line>
 
-                {points.high.map(({ x, y, xValue, yValue }) => (
+                {points.high.map(({ x, y, yValue }) => (
                   <AnimatedCircle
                     key={`circle-${x}-${y}`}
                     x={x}
                     y={y}
-                    radius={activeXValue.value === xValue ? 12 : 0}
+                    radius={state.x.position.value === x ? 12 : 0}
                     color={interpolateColor(
                       yValue,
                       [yScale.domain().at(0)!, yScale.domain().at(-1)!],
@@ -127,7 +126,7 @@ const DATA = [
   { day: "Fri", high: 50 + 20 * Math.random() },
   { day: "Sat", high: 50 + 20 * Math.random() },
   { day: "Sun", high: 50 + 20 * Math.random() },
-].map((dat, i) => ({ ...dat, x: i }));
+];
 
 const styles = StyleSheet.create({
   safeView: {
