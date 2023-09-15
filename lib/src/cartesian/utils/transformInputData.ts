@@ -53,7 +53,7 @@ export const transformInputData = <
   const isNumericalData = data.every(
     (datum) => typeof datum[xKey as keyof RawData] === "number",
   );
-  if (!isNumericalData) {
+  if (isNumericalData) {
     data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
   }
 
