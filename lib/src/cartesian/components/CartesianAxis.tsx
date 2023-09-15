@@ -13,13 +13,13 @@ import type {
   NumericalFields,
   InputDatum,
   AxisProps,
+  InputFields,
 } from "../../types";
 
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 >({
   tickCount,
   labelPosition,
@@ -33,7 +33,9 @@ export const CartesianAxis = <
   yScale,
   xScale,
   font,
-}: AxisProps<RawData, T, XK, YK>) => {
+  isNumericalData = false,
+  ix,
+}: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
       xTicks: typeof tickCount === "number" ? tickCount : tickCount.x,
@@ -137,7 +139,8 @@ export const CartesianAxis = <
   });
 
   const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
-    const contentX = formatXLabel(tick as never);
+    const val = isNumericalData ? tick : ix[tick];
+    const contentX = formatXLabel(val as never);
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
@@ -219,4 +222,5 @@ CartesianAxis.defaultProps = {
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
-} satisfies Partial<AxisProps<never, never, never, never>>;
+  ix: [],
+} satisfies Partial<AxisProps<never, never, never>>;

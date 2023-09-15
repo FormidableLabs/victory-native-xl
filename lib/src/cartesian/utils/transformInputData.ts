@@ -5,6 +5,7 @@ import type {
   PrimitiveViewWindow,
   SidedNumber,
   TransformedData,
+  InputFields,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
@@ -25,9 +26,8 @@ import { makeScale } from "./makeScale";
  */
 export const transformInputData = <
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 >({
   data: _data,
   xKey,
@@ -41,21 +41,27 @@ export const transformInputData = <
   xKey: XK;
   yKeys: YK[];
   outputWindow: PrimitiveViewWindow;
-  axisOptions?: Partial<
-    Omit<AxisProps<RawData, T, XK, YK>, "xScale" | "yScale">
-  >;
+  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   domainPadding?: SidedNumber;
-}): TransformedData<RawData, T, YK> & {
+}): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
+  isNumericalData: boolean;
 } => {
-  const data = [...(_data as unknown as T[])].sort(
-    (a, b) => +a[xKey] - +b[xKey],
+  const data = [..._data];
+  const isNumericalData = data.every(
+    (datum) => typeof datum[xKey as keyof RawData] === "number",
   );
+  if (isNumericalData) {
+    data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
+  }
 
   // Input x is just extracting the xKey from each datum
-  const ix = data.map((datum) => asNumber(datum[xKey]));
+  const ix = data.map(
+    (datum) => datum[xKey as keyof RawData],
+  ) as InputFields<RawData>[XK][];
+  const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
 
   // Then we find min/max of y values across all yKeys, use that for y range.
   // (if user provided a domain, use that instead)
@@ -80,7 +86,7 @@ export const transformInputData = <
       acc[k] = { i: [], o: [] };
       return acc;
     },
-    {} as TransformedData<RawData, T, YK>["y"],
+    {} as TransformedData<RawData, XK, YK>["y"],
   );
 
   // Set up our y-scale, notice how domain is "flipped" because
@@ -140,12 +146,12 @@ export const transformInputData = <
   // Measure our top-most y-label if we have grid options so we can
   //  compensate for it in our x-scale.
   const topYLabel =
-    axisOptions?.formatYLabel?.(yScale.domain().at(0) as T[YK]) ||
+    axisOptions?.formatYLabel?.(yScale.domain().at(0) as RawData[YK]) ||
     String(yScale.domain().at(0));
 
   // Generate our x-scale
-  const ixMin = asNumber(domain?.x?.[0] ?? ix.at(0)),
-    ixMax = asNumber(domain?.x?.[1] ?? ix.at(-1));
+  const ixMin = asNumber(domain?.x?.[0] ?? ixNum.at(0)),
+    ixMax = asNumber(domain?.x?.[1] ?? ixNum.at(-1));
   const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
@@ -191,7 +197,7 @@ export const transformInputData = <
     padEnd:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.right,
   });
-  const ox = ix.map((x) => xScale(x)!);
+  const ox = ixNum.map((x) => xScale(x)!);
 
   return {
     ix,
@@ -199,5 +205,6 @@ export const transformInputData = <
     y,
     xScale,
     yScale,
+    isNumericalData,
   };
 };

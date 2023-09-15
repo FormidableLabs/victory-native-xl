@@ -14,7 +14,7 @@ import inter from "../../assets/inter-medium.ttf"; // Wherever your font actuall
 
 function MyChart() {
   const font = useFont(inter, 12);
-  const { state, isActive } = useChartPressState(["highTmp"]);
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
   return (
     <View style={{ height: 300 }}>
@@ -55,13 +55,15 @@ To track multiple press gestures on our chart, we create multiple `ChartPressSta
 ```tsx
 // ... imports
 
+const INIT_STATE = { x: 0, y: { highTmp: 0 } } as const;
+
 function MyChart() {
   // ...
   // 👇 Create two "chart press state" values
   const { state: firstPress, isActive: isFirstPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
   const { state: secondPress, isActive: isSecondPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
 
   return (
     <View style={{ height: 300 }}>
@@ -99,9 +101,9 @@ We'll use the same `ToolTip` component, but pass it values from our `secondPress
 function MyChart() {
   // ...
   const { state: firstPress, isActive: isFirstPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
   const { state: secondPress, isActive: isSecondPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
 
   return (
     <View style={{ height: 300 }}>
@@ -140,12 +142,14 @@ import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf";
 
+const INIT_STATE = { x: 0, y: { highTmp: 0 } } as const;
+
 function MyChart() {
   const font = useFont(inter, 12);
   const { state: firstPress, isActive: isFirstPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
   const { state: secondPress, isActive: isSecondPressActive } =
-    useChartPressState(["highTmp"]);
+    useChartPressState(INIT_STATE);
 
   return (
     <View style={{ height: 300 }}>

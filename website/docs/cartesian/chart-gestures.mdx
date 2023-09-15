@@ -26,17 +26,21 @@ This "press gesture" support is outlined below.
 
 ## `useChartPressState`
 
-At a high level, `useChartPressState` takes a list of y-keys (from your chart elements [`yKeys` prop](./cartesian-chart.md#ykeys-required)) you'd like to track and returns a `ChartPressState` value, which is effectively a wrapper around a group of Reanimated `SharedValue`s used to track the user's press gesture.
+At a high level, `useChartPressState` takes an initial state object and returns a `ChartPressState` value, which is effectively a wrapper around a group of Reanimated `SharedValue`s used to track the user's press gesture (and the corresponding x/y values and positions).
 
 The signature for this function is:
 
 ```ts
-useChartPressState<YK extends string>(yKeys: YK[]): { isActive: boolean; state: ChartPressState<YK> }
+useChartPressState<Init extends ChartPressStateInit>(init: Init): { isActive: boolean; state: ChartPressState<Init> }
 
-type ChartPressState<YK extends string> = {
+type ChartPressStateInit = { x: InputFieldType; y: Record<string, number> };
+export type ChartPressState<Init extends ChartPressStateInit> = {
   isActive: SharedValue<boolean>;
-  x: { value: SharedValue<number>; position: SharedValue<number> };
-  y: Record<YK, { value: SharedValue<number>; position: SharedValue<number> }>;
+  x: { value: SharedValue<Init["x"]>; position: SharedValue<number> };
+  y: Record<
+    keyof Init["y"],
+    { value: SharedValue<number>; position: SharedValue<number> }
+  >;
 };
 ```
 
@@ -55,20 +59,20 @@ To support multi-press gestures, you merely generate multiple `ChartPressState` 
 ```tsx
 import { useChartPressState, CartesianChart } from "victory-native";
 
-const yKeys = ["highTmp"];
+const INIT_STATE = { x: 0, y: { highTmp: 0 } } as const;
 
 function MyChart() {
   // 👇 create multiple press states
   const { state: firstPress, isActive: isFirstPressActive } =
-    useChartPressState(yKeys);
+    useChartPressState(INIT_STATE);
   const { state: secondPress, isActive: isSecondPressActive } =
-    useChartPressState(yKeys);
+    useChartPressState(INIT_STATE);
 
 
   return (
     <CartesianChart
       // ...
-      yKeys={yKeys}
+      yKeys={["highTmp"]}
       // 👇 pass them both into chartPressState to be tracked
       chartPressState={[firstPress, secondPress]}
     >

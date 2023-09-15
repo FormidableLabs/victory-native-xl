@@ -27,7 +27,7 @@ const colors = [appColors.tint, "#818cf8"];
 export default function OrdinalDataScreen(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
-  const { state: activePress } = useChartPressState(["high"]);
+  const { state: activePress } = useChartPressState({ x: 0, y: { high: 0 } });
   const activeX = activePress.x.value;
   const activeXValue = useDerivedValue(() => activeX.value);
   const day = useDerivedValue(() => DATA?.[activeX.value]?.day || "");

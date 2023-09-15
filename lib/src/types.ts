@@ -29,10 +29,10 @@ export type ScatterOptions = {
 export type ValueOf<T> = T[keyof T];
 export type TransformedData<
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 > = {
-  ix: number[];
+  ix: InputFields<RawData>[XK][];
   ox: number[];
   y: { [K in YK]: { i: number[]; o: number[] } };
 };
@@ -55,8 +55,7 @@ export type ChartBounds = {
 };
 export type CartesianChartRenderArg<
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  YK extends keyof T,
+  YK extends keyof NumericalFields<RawData>,
 > = {
   xScale: Scale;
   yScale: Scale;
@@ -71,20 +70,25 @@ export type Scale = ScaleLinear<number, number>;
 
 export type PointsArray = {
   x: number;
-  xValue: number;
+  xValue: InputFieldType;
   y: number;
   yValue: number;
 }[];
 
+export type InputFieldType = number | string;
+export type InputFields<T> = {
+  [K in keyof T as T[K] extends InputFieldType
+    ? K
+    : never]: T[K] extends InputFieldType ? T[K] : never;
+};
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends number ? K : never]: T[K];
 };
 
 export type AxisProps<
   RawData extends Record<string, unknown>,
-  T extends NumericalFields<RawData>,
-  XK extends keyof T,
-  YK extends keyof T,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
 > = {
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
@@ -98,6 +102,8 @@ export type AxisProps<
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
   axisSide: { x: XAxisSide; y: YAxisSide };
-  formatXLabel: (label: T[XK]) => string;
-  formatYLabel: (label: T[YK]) => string;
+  formatXLabel: (label: InputFields<RawData>[XK]) => string;
+  formatYLabel: (label: RawData[YK]) => string;
+  isNumericalData?: boolean;
+  ix: InputFields<RawData>[XK][];
 };

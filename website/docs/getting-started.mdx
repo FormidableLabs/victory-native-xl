@@ -141,7 +141,7 @@ import { /*...*/ useChartPressState } from "victory-native";
 function MyChart() {
   // ...
   // 👇 create our chart press state
-  const { state, isActive } = useChartPressState(["highTmp"]);
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
   return (
     // ...
@@ -177,7 +177,7 @@ import { /*...*/ useChartPressState } from "victory-native";
 
 function MyChart() {
   // ...
-  const { state, isActive } = useChartPressState(["highTmp"]);
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
   return (
     // ...
@@ -230,7 +230,7 @@ import inter from "../../assets/inter-medium.ttf"; // Wherever your font actuall
 
 function MyChart() {
   const font = useFont(inter, 12);
-  const { state, isActive } = useChartPressState(["highTmp"]);
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
   return (
     <View style={{ height: 300 }}>

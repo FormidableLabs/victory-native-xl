@@ -10,7 +10,7 @@ import { urlForRoute } from "../consts/routes";
 
 export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
-  const { state, isActive } = useChartPressState(["highTmp"]);
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const url = urlForRoute(props.segment);
 
   const handleDocsButtonPress = React.useCallback(async () => {

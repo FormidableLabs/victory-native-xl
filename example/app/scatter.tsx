@@ -1,7 +1,12 @@
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, Text, useFont, vec } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { CartesianChart, Scatter, type ScatterShape } from "victory-native";
+import {
+  CartesianChart,
+  Scatter,
+  useChartPressState,
+  type ScatterShape,
+} from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
@@ -13,7 +18,9 @@ import { InputSegment } from "../components/InputSegment";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
-    month: index + 1,
+    month: new Date(2020, index + 1).toLocaleString("default", {
+      month: "long",
+    }),
     listenCount: Math.floor(Math.random() * (100 - 50 + 1)) + 50,
   }));
 
@@ -24,6 +31,10 @@ export default function ScatterPage(props: { segment: string }) {
   const [data, setData] = useState(DATA(5));
   const [radius, setRadius] = useState(10);
   const [shape, setShape] = useState("circle" as ScatterShape);
+  const { state, isActive } = useChartPressState({
+    x: "",
+    y: { listenCount: 0 },
+  });
 
   return (
     <>
@@ -35,13 +46,10 @@ export default function ScatterPage(props: { segment: string }) {
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
+            chartPressState={state}
             axisOptions={{
               font,
               tickCount: 5,
-              formatXLabel: (value) => {
-                const date = new Date(2023, value - 1);
-                return date.toLocaleString("default", { month: "short" });
-              },
               lineColor: isDark ? "#71717a" : "#d4d4d8",
               labelColor: isDark ? appColors.text.dark : appColors.text.light,
             }}
@@ -71,6 +79,14 @@ export default function ScatterPage(props: { segment: string }) {
                     strokeWidth={1}
                     color="black"
                   />
+                  {isActive && (
+                    <Text
+                      x={state.x.position}
+                      y={state.y.listenCount.position}
+                      text={state.x.value}
+                      font={font}
+                    />
+                  )}
                 </>
               );
             }}
