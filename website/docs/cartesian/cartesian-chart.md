@@ -54,11 +54,19 @@ An array of objects to be used as data points for the chart.
 
 A `string` value indicating the _key_ of each `data[number]` object to be used on the independent (x) axis for charting. E.g. `"day"` if you want to use the `"day"` field of the data points for the x-axis.
 
+:::info
+The `xKey` prop must point to a field that has either a `number` or `string` type, as these are the values that can be reasonably serialized by Reanimated.
+:::
+
 ### `yKeys` (required)
 
 A `string[]` array of string indicating the _keys_ of each `data[number]` object to be used on the dependent (y) axis for charting. E.g. `yKeys={["lowTmp", "highTmp"]}` if you want to chart both high and low temperatures on the y-axis and those values have keys of `lowTmp` and `highTmp` respectively.
 
 This prop accepts an _array_ of strings because the `CartesianChart` supports multiple ranges (e.g. plotting both high and low temperatures), and the `CartesianChart` component needs to know about all of the slices of the dataset you plan to plot (to e.g. determine the total range of the chart).
+
+:::info
+The `yKeys` prop must point to fields that have `number` values. That is, only `number`s can be used as dependent values for charting purposes.
+:::
 
 ### `children` (required)
 
