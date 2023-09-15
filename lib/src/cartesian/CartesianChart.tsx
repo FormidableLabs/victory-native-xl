@@ -302,7 +302,7 @@ export function CartesianChart<
 
           cache[key] = _tData.ix.map((x, i) => ({
             x: asNumber(_tData.ox[i]),
-            xValue: asNumber(x),
+            xValue: x,
             y: asNumber(_tData.y[key].o[i]),
             yValue: asNumber(_tData.y[key].i[i]),
           }));

@@ -70,7 +70,7 @@ export type Scale = ScaleLinear<number, number>;
 
 export type PointsArray = {
   x: number;
-  xValue: number;
+  xValue: InputFieldType;
   y: number;
   yValue: number;
 }[];
