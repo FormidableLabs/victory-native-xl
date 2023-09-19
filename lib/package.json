@@ -35,13 +35,12 @@
     "d3-shape": "^3.2.0",
     "react-fast-compare": "^3.2.2"
   },
-  "TODO:peerDeps": "I think skia/reanimated/rngh peerDeps are pretty aggressive right now, probably need to relax them",
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "@shopify/react-native-skia": ">=0.1.196",
-    "react-native-reanimated": ">=3.3.0",
-    "react-native-gesture-handler": ">=2.12.0"
+    "@shopify/react-native-skia": ">=0.1.190",
+    "react-native-reanimated": ">=3.0.0",
+    "react-native-gesture-handler": ">=2.0.0"
   },
   "devDependencies": {
     "@types/d3-scale": "^4.0.3",
