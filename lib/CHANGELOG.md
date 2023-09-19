@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.3
+
+### Patch Changes
+
+- Add package provenance ([#108](https://github.com/FormidableLabs/victory-native-xl/pull/108))
+
 ## 40.0.0-next.2
 
 ### Patch Changes
