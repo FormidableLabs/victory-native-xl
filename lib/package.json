@@ -45,5 +45,8 @@
     "@types/react": "~18.2.14",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
