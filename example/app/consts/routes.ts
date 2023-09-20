@@ -23,6 +23,11 @@ export const ChartRoutes: {
     path: "/bar-group",
   },
   {
+    title: "Bar Group with Tooltip",
+    description: "TODO:",
+    path: "/bar-with-tooltip",
+  },
+  {
     title: "Scatter Plot",
     description:
       "This is a Scatter plot in Victory Native that supports custom shapes and sizes.",

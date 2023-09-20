@@ -15,7 +15,11 @@ export {
 export { type CurveType } from "./cartesian/utils/curves";
 export { type RoundedCorners } from "./utils/createRoundedRectPath";
 
-export { useAnimatedPath } from "./hooks/useAnimatedPath";
+export {
+  useAnimatedPath,
+  useAnimatedDerivedPath,
+} from "./hooks/useAnimatedPath";
+export { AnimatedPath } from "./cartesian/components/AnimatedPath";
 export { usePrevious } from "./utils/usePrevious";
 export {
   useChartPressState,
