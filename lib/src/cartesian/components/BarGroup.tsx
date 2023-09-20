@@ -5,6 +5,7 @@ import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { AnimatedPath } from "./AnimatedPath";
 import { useBarGroupPaths } from "../hooks/useBarGroupPaths";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
+import { useFunctionRef } from "../../hooks/useFunctionRef";
 
 type BarGroupProps = {
   chartBounds: ChartBounds;
@@ -45,13 +46,10 @@ export function BarGroup({
   );
 
   // Handle bar size change
-  const onBarSizeChangeRef = React.useRef(onBarSizeChange);
-  React.useEffect(() => {
-    onBarSizeChangeRef.current = onBarSizeChange;
-  }, [onBarSizeChange]);
+  const onBarSizeChangeRef = useFunctionRef(onBarSizeChange);
   React.useEffect(() => {
     onBarSizeChangeRef.current?.({ barWidth, groupWidth, gapWidth });
-  }, [barWidth, gapWidth, groupWidth]);
+  }, [barWidth, gapWidth, groupWidth, onBarSizeChangeRef]);
 
   // If no bars, short-circuit
   const firstBar = bars[0];

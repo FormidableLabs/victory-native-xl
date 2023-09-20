@@ -15,6 +15,7 @@ import type {
   NumericalFields,
   SidedNumber,
   TransformedData,
+  ChartBounds,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
@@ -22,6 +23,7 @@ import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
+import { useFunctionRef } from "../hooks/useFunctionRef";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -42,6 +44,7 @@ type CartesianChartProps<
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
+  onChartBoundsChange?: (bounds: ChartBounds) => void;
 };
 
 export function CartesianChart<
@@ -59,6 +62,7 @@ export function CartesianChart<
   axisOptions,
   domain,
   chartPressState,
+  onChartBoundsChange,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -312,6 +316,12 @@ export function CartesianChart<
       },
     ) as PointsArg;
   }, [_tData, yKeys]);
+
+  // On bounds change, emit
+  const onChartBoundsRef = useFunctionRef(onChartBoundsChange);
+  React.useEffect(() => {
+    onChartBoundsRef.current?.(chartBounds);
+  }, [chartBounds, onChartBoundsRef]);
 
   const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,

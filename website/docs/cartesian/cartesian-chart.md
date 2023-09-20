@@ -121,6 +121,10 @@ The `renderOutside` prop is identical to [the `children` prop](#children-require
 
 </div>
 
+### `onChartBoundsChange`
+
+The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?: (bounds: ChartBounds) => void;` that exposes the chart bounds, useful if you need access to the chart's bounds for your own custom drawing purposes.
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.
