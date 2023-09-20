@@ -6,7 +6,9 @@
     "victory-native": "39.0.0"
   },
   "changesets": [
+    "angry-ways-trade",
     "metal-otters-occur",
+    "moody-pants-applaud",
     "ninety-shirts-play",
     "serious-spiders-invent",
     "serious-trees-provide"

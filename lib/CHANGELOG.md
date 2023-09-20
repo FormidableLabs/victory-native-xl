@@ -1,5 +1,13 @@
 # victory-native
 
+## 40.0.0-next.4
+
+### Patch Changes
+
+- Add 'roundedCorners' prop to 'BarGroup' component ([#115](https://github.com/FormidableLabs/victory-native-xl/pull/115))
+
+- Loosen peer dependency requirements ([#111](https://github.com/FormidableLabs/victory-native-xl/pull/111))
+
 ## 40.0.0-next.3
 
 ### Patch Changes
