@@ -1,18 +1,11 @@
 import {
   BackdropBlur,
-  Blur,
-  BlurMask,
   DashPathEffect,
   Fill,
-  Group,
   Line,
   LinearGradient,
-  Path,
   Rect,
-  RoundedRect,
-  Shadow,
   Skia,
-  Text,
   useFont,
   vec,
 } from "@shopify/react-native-skia";
@@ -20,19 +13,14 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useDarkMode } from "react-native-dark";
 import {
+  type SharedValue,
+  useAnimatedProps,
   useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import {
-  AnimatedPath,
-  BarGroup,
-  CartesianChart,
-  useAnimatedDerivedPath,
-  useAnimatedPath,
-  useChartPressState,
-} from "victory-native";
+import { BarGroup, CartesianChart, useChartPressState } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { InfoCard } from "../components/InfoCard";
 import { appColors } from "./consts/colors";
@@ -43,7 +31,7 @@ const DATA = Array.from({ length: 6 }, (_, index) => {
   const high = Math.round(low + 3 + 20 * Math.random());
 
   return {
-    month: new Date(2020, index + 1).toLocaleString("default", {
+    month: new Date(2020, index).toLocaleString("default", {
       month: "short",
     }),
     low,
@@ -54,7 +42,6 @@ const DATA = Array.from({ length: 6 }, (_, index) => {
 export default function BarGroupWithTooltipPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const [groupWidth, setGroupWidth] = React.useState(0);
-  const [barWidth, setBarWidth] = React.useState(0);
   const [chartBottom, setChartBottom] = React.useState(0);
   const [chartLeft, setChartLeft] = React.useState(0);
   const font = useFont(inter, 12);
@@ -83,30 +70,18 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
     },
   );
 
-  // Trace lines
-  const traceWidth = 1;
-  const traceLine1 = useDerivedValue(() => {
-    const barOffset = groupWidth / 2 - barWidth;
-    const p = Skia.Path.Make();
-    p.moveTo(chartLeft, state.y.low.position.value + traceWidth / 2);
-    p.lineTo(
-      state.x.position.value - barOffset,
-      state.y.low.position.value + traceWidth / 2,
-    );
-    return p;
-  });
-  // const traceLine2 = useDerivedValue(() => {
-  //   const barOffset = groupWidth / 2 - barWidth;
-  //   const p = Skia.Path.Make();
-  //   p.moveTo(chartLeft, state.y.high.position.value + traceWidth / 2);
-  //   p.lineTo(
-  //     state.x.position.value + 2 * barOffset,
-  //     state.y.high.position.value + traceWidth / 2,
-  //   );
-  //   return p;
-  // });
+  // Trace for low
+  const low$ = useTiming(state.y.low.position);
+  const w1 = useDerivedValue(() => ttX.value - chartLeft + groupWidth / 2);
+  const p1Low = useDerivedValue(() => vec(chartLeft, low$.value));
+  const p2Low = useDerivedValue(() => vec(chartLeft + w1.value, low$.value));
+  // Trace for high
+  const high$ = useTiming(state.y.high.position);
+  const w2 = useDerivedValue(() => ttX.value + groupWidth / 2 - barGap);
+  const p1High = useDerivedValue(() => vec(chartLeft, high$.value));
+  const p2High = useDerivedValue(() => vec(chartLeft + w2.value, high$.value));
 
-  const h = useDerivedValue(() => {
+  const tooltipClip = useDerivedValue(() => {
     const p = Skia.Path.Make();
     p.addRRect(
       Skia.RRectXY(
@@ -143,12 +118,29 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
         >
           {({ points, chartBounds }) => (
             <>
+              {isActive && (
+                <>
+                  <Line
+                    p1={p1Low}
+                    p2={p2Low}
+                    strokeWidth={StyleSheet.hairlineWidth}
+                  >
+                    <DashPathEffect intervals={[8, 4]} />
+                  </Line>
+                  <Line
+                    p1={p1High}
+                    p2={p2High}
+                    strokeWidth={StyleSheet.hairlineWidth}
+                  >
+                    <DashPathEffect intervals={[8, 4]} />
+                  </Line>
+                </>
+              )}
               <BarGroup
                 chartBounds={chartBounds}
                 betweenGroupPadding={0.4}
                 withinGroupPadding={0.1}
-                onBarSizeChange={({ groupWidth, barWidth }) => {
-                  setBarWidth(barWidth);
+                onBarSizeChange={({ groupWidth }) => {
                   setGroupWidth(groupWidth);
                 }}
               >
@@ -170,7 +162,7 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
               {isActive && (
                 <>
                   {/*<Blur clip={h} blur={1} />*/}
-                  <BackdropBlur clip={h} blur={10}>
+                  <BackdropBlur clip={tooltipClip} blur={10}>
                     <Fill color="gray" opacity={0.3} />
                   </BackdropBlur>
                 </>
@@ -214,3 +206,14 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
 });
+
+const useTiming = (val: SharedValue<number>) => {
+  const value = useSharedValue(0);
+  useAnimatedReaction(
+    () => val.value,
+    (v) => {
+      value.value = withTiming(v, { duration: 300 });
+    },
+  );
+  return value;
+};

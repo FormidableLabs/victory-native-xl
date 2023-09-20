@@ -24,7 +24,8 @@ export const ChartRoutes: {
   },
   {
     title: "Bar Group with Tooltip",
-    description: "TODO:",
+    description:
+      "This chart demonstrates a Bar Group chart with a custom tooltip.",
     path: "/bar-with-tooltip",
   },
   {
