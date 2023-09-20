@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.5
+
+### Patch Changes
+
+- Adds onChartBoundsChange prop to CartesianChart ([#117](https://github.com/FormidableLabs/victory-native-xl/pull/117))
+
 ## 40.0.0-next.4
 
 ### Patch Changes
