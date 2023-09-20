@@ -4,11 +4,13 @@ import type { ChartBounds, PointsArray } from "../../types";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { AnimatedPath } from "./AnimatedPath";
 import { useBarGroupPaths } from "../hooks/useBarGroupPaths";
+import type { RoundedCorners } from "../../utils/createRoundedRectPath";
 
 type BarGroupProps = {
   chartBounds: ChartBounds;
   betweenGroupPadding?: number;
   withinGroupPadding?: number;
+  roundedCorners?: RoundedCorners;
   children: React.ReactElement[];
   onBarSizeChange?: (values: {
     barWidth: number;
@@ -21,6 +23,7 @@ export function BarGroup({
   betweenGroupPadding = 0.25,
   withinGroupPadding = 0.25,
   chartBounds,
+  roundedCorners,
   children,
   onBarSizeChange,
 }: BarGroupProps) {
@@ -38,6 +41,7 @@ export function BarGroup({
     chartBounds,
     betweenGroupPadding,
     withinGroupPadding,
+    roundedCorners,
   );
 
   // Handle bar size change

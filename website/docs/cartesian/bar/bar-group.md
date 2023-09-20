@@ -60,6 +60,15 @@ onBarSizeChange: (values: {
 
 That alerts the consumer when the size of the bars/groups changes, useful for if you're building a custom tooltip and need to know the size of the groups/bars.
 
+### `roundedCorners`
+
+The `roundedCorners` prop allows you to customize the roundedness of each corner of a `BarGroup.Bar` component. It's an object type that defines the radii for the top-left, top-right, bottom-right, and bottom-left corners.
+
+- `topLeft?: number`: Defines the radius of the top-left corner of the Bar. If not provided, the default is 0 (no rounding).
+- `topRight?: number`: Defines the radius of the top-right corner of the Bar. If not provided, the default is 0 (no rounding).
+- `bottomRight?: number`: Defines the radius of the bottom-right corner of the Bar. If not provided, the default is 0 (no rounding).
+- `bottomLeft?: number`: Defines the radius of the bottom-left corner of the Bar. If not provided, the default is 0 (no rounding).
+
 ### `children`
 
 An array of `BarGroup.Bar` elements (see below) that represent the bars to add to the bar group.
