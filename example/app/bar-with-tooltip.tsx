@@ -4,7 +4,6 @@ import {
   Fill,
   Line,
   LinearGradient,
-  Rect,
   Skia,
   useFont,
   vec,
@@ -14,7 +13,6 @@ import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useDarkMode } from "react-native-dark";
 import {
   type SharedValue,
-  useAnimatedProps,
   useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
