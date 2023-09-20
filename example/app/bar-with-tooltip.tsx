@@ -99,7 +99,7 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
           data={DATA}
           xKey="month"
           yKeys={["low", "high"]}
-          domain={{ y: [0, 50] }}
+          domain={{ y: [0] }}
           padding={{ left: 10, right: 10, bottom: 5, top: 15 }}
           domainPadding={{ left: 50, right: 50, top: 30 }}
           axisOptions={{
