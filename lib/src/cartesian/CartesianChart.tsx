@@ -23,6 +23,7 @@ import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { CartesianAxis } from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
+import { useFunctionRef } from "../hooks/useFunctionRef";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -317,10 +318,10 @@ export function CartesianChart<
   }, [_tData, yKeys]);
 
   // On bounds change, emit
+  const onChartBoundsRef = useFunctionRef(onChartBoundsChange);
   React.useEffect(() => {
-    onChartBoundsChange?.(chartBounds);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartBounds]);
+    onChartBoundsRef.current?.(chartBounds);
+  }, [chartBounds, onChartBoundsRef]);
 
   const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,

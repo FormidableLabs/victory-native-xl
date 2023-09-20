@@ -159,7 +159,6 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
               </BarGroup>
               {isActive && (
                 <>
-                  {/*<Blur clip={h} blur={1} />*/}
                   <BackdropBlur clip={tooltipClip} blur={10}>
                     <Fill color="gray" opacity={0.3} />
                   </BackdropBlur>
