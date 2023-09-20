@@ -23,6 +23,7 @@ export default function BarGroupPage(props: { segment: string }) {
   const [data, setData] = React.useState(DATA(5));
   const [betweenGroupPadding, setBetweenGroupPadding] = React.useState(0.4);
   const [withinGroupPadding, setWithinGroupPadding] = React.useState(0.1);
+  const [roundedCorner, setRoundedCorner] = React.useState(0);
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
 
@@ -48,6 +49,10 @@ export default function BarGroupPage(props: { segment: string }) {
               chartBounds={chartBounds}
               betweenGroupPadding={betweenGroupPadding}
               withinGroupPadding={withinGroupPadding}
+              roundedCorners={{
+                topLeft: roundedCorner,
+                topRight: roundedCorner,
+              }}
             >
               <BarGroup.Bar points={points.y} animate={{ type: "timing" }}>
                 <LinearGradient
@@ -107,6 +112,14 @@ export default function BarGroupPage(props: { segment: string }) {
           step={0.1}
           value={withinGroupPadding}
           onChange={setWithinGroupPadding}
+        />
+        <InputSlider
+          label="Top Corner Radius"
+          maxValue={16}
+          minValue={0}
+          step={1}
+          value={roundedCorner}
+          onChange={setRoundedCorner}
         />
       </ScrollView>
     </SafeAreaView>

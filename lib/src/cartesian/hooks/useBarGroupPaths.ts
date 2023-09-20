@@ -1,12 +1,17 @@
 import * as React from "react";
 import { Skia } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "../../types";
+import {
+  createRoundedRectPath,
+  type RoundedCorners,
+} from "../../utils/createRoundedRectPath";
 
 export const useBarGroupPaths = (
   points: PointsArray[],
   chartBounds: ChartBounds,
   betweenGroupPadding = 0,
   withinGroupPadding = 0,
+  roundedCorners?: RoundedCorners,
 ) => {
   const numGroups = points[0]?.length || 0;
 
@@ -33,13 +38,33 @@ export const useBarGroupPaths = (
       const offset = -groupWidth / 2 + i * (barWidth + gapWidth);
 
       pointSet.forEach(({ x, y }) => {
-        p.addRect(
-          Skia.XYWHRect(x + offset, y, barWidth, chartBounds.bottom - y),
-        );
+        if (!roundedCorners) {
+          p.addRect(
+            Skia.XYWHRect(x + offset, y, barWidth, chartBounds.bottom - y),
+          );
+        } else {
+          const roundedRectPath = Skia.Path.MakeFromSVGString(
+            createRoundedRectPath(
+              x + offset,
+              y,
+              barWidth,
+              chartBounds.bottom - y,
+              roundedCorners,
+            ),
+          );
+          roundedRectPath && p.addPath(roundedRectPath);
+        }
       });
       return p;
     });
-  }, [barWidth, chartBounds.bottom, gapWidth, groupWidth, points]);
+  }, [
+    barWidth,
+    chartBounds.bottom,
+    gapWidth,
+    groupWidth,
+    points,
+    roundedCorners,
+  ]);
 
   return { barWidth, groupWidth, gapWidth, paths };
 };
