@@ -30,7 +30,7 @@
 <div align="center">
 
 https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-9903-4fe1-9b5f-3b516c0d7428
-  
+
 </div>
 
 
@@ -65,11 +65,3 @@ MIT
 **Active:** Formidable is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
 
 [maintenance-image]: https://img.shields.io/badge/maintenance-active-green.svg
-
-
-## Core Contributors
-
-Victory Native (XL) was grown in the Midwest 🌽 by:
-- [Grant Sander](https://github.com/gksander)
-- [Keith Luchtel](https://github.com/keithluchtel)
-- [Carlos Kelly](http://github.com/carloskelly13)
