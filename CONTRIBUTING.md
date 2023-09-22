@@ -63,7 +63,7 @@ We use [changesets](https://github.com/changesets/changesets) to create package 
 If your work contributes changes that require a change in version to any of the packages, add a changeset by running:
 
 ```sh
-$ pnpm changeset
+$ yarn changeset
 ```
 
 which will open an interactive CLI menu. Use this menu to select which packages need versioning, which semantic version changes are needed, and add appropriate messages accordingly.
@@ -101,11 +101,11 @@ This streamlines releasing too: ensuring PRs have changeset files added as neces
 
 For exceptional circumstances, here is a quick guide to manually publish from a local machine using changesets.
 
-1. Add a changeset with `pnpm changeset`. Generate the changeset file, review it, and commit it.
+1. Add a changeset with `yarn changeset`. Generate the changeset file, review it, and commit it.
 2. Make a version. Due to our changelog formatting package you will need to create a personal token and pass it to the environment.
 
    ```sh
-   $ GITHUB_TOKEN=<INSERT TOKEN> pnpm run version
+   $ GITHUB_TOKEN=<INSERT TOKEN> yarn run version
    ```
 
    Review git changes, tweak, and commit.
@@ -115,17 +115,17 @@ For exceptional circumstances, here is a quick guide to manually publish from a 
    First, build necessary files:
 
    ```sh
-   $ pnpm run build
+   $ yarn run build
    ```
 
    Then publish:
 
    ```sh
    # Test things out first
-   $ pnpm -r publish --dry-run
+   $ yarn -r publish --dry-run
 
    # The real publish
-   $ pnpm changeset publish --otp=<insert otp code>
+   $ yarn changeset publish --otp=<insert otp code>
    ```
 
    Note that publishing multiple pacakges via `changeset` to npm with an OTP code can often fail with `429 Too Many Requests` rate limiting error. Take a 5+ minute coffee break, then come back and try again.
