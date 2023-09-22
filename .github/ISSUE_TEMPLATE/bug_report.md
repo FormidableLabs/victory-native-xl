@@ -21,13 +21,13 @@ Have you read Formidable's Code of Conduct? By filing an Issue, you are expected
 
 **What version of victory-native-xl are you using?** (can be found by running `npm list --depth 0 victory-native`)
 
-**What version of React are you using?** (can be found by running `npm list --depth 0 react`)
+**What version of React and React Native are you using?**
 
 **What version of Reanimated and React Native Skia are you using?**
 
-**Are you using Expo or React Native CLI**
+**Are you using Expo or React Native CLI?**
 
-**What platform are you on?** (e.g., Windows, macOS, iOS, Android)
+**What platform are you on?** (e.g., iOS, Android)
 
 ### Describe the Problem
 
