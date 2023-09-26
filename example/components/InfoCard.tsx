@@ -12,7 +12,7 @@ export const InfoCard = ({
 }: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>) => {
   const isDark = useDarkMode();
   return (
-    <View style={[style, styles.card]}>
+    <View style={[styles.card, style]}>
       <View style={styles.content}>
         <Ionicons
           name="information-circle-sharp"

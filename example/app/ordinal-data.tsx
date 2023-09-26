@@ -27,7 +27,7 @@ const colors = [appColors.tint, "#818cf8"];
 export default function OrdinalDataScreen(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
-  const { state } = useChartPressState({ x: "", y: { high: 0 } });
+  const { state } = useChartPressState({ x: "Nothing", y: { high: 0 } });
   const activeX = state.x.value;
   const day = useDerivedValue(() => activeX.value || "");
   const isDark = useDarkMode();

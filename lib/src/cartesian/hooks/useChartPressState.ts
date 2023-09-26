@@ -15,7 +15,7 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
   const state = React.useMemo(() => {
     return {
       isActive: makeMutable(false),
-      x: { value: makeMutable(0), position: makeMutable(0) },
+      x: { value: makeMutable(initialValues.x), position: makeMutable(0) },
       y: Object.entries(initialValues.y).reduce(
         (acc, [key, initVal]) => {
           acc[key as keyof Init["y"]] = {
