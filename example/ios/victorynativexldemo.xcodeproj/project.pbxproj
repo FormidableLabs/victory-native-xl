@@ -365,7 +365,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.formidable.victorynativexldemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.formidable.VictoryNativeUIExplorer;
 				PRODUCT_NAME = victorynativexldemo;
 				SWIFT_OBJC_BRIDGING_HEADER = "victorynativexldemo/victorynativexldemo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -399,7 +399,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.formidable.victorynativexldemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.formidable.VictoryNativeUIExplorer;
 				PRODUCT_NAME = victorynativexldemo;
 				SWIFT_OBJC_BRIDGING_HEADER = "victorynativexldemo/victorynativexldemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

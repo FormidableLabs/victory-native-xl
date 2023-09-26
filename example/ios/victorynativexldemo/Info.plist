@@ -28,7 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>foobar</string>
-				<string>com.formidable.victorynativexldemo</string>
+				<string>com.formidable.VictoryNativeUIExplorer</string>
 			</array>
 		</dict>
 	</array>
