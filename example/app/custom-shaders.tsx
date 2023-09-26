@@ -6,7 +6,7 @@ import {
 } from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Area, CartesianChart } from "victory-native";
+import { Area, CartesianChart, Line } from "victory-native";
 import {
   Easing,
   useDerivedValue,
@@ -44,7 +44,7 @@ export default function CustomShadersPage(props: { segment: string }) {
   const time = useSharedValue(0);
   React.useEffect(() => {
     time.value = withRepeat(
-      withTiming(30, { duration: 20 * 1000, easing: Easing.linear }),
+      withTiming(30, { duration: 60 * 1000, easing: Easing.linear }),
       -1,
     );
   }, [time]);
@@ -62,10 +62,10 @@ export default function CustomShadersPage(props: { segment: string }) {
             data={data}
             xKey="month"
             yKeys={["low", "high"]}
-            padding={32}
+            padding={16}
             domain={{ y: [0] }}
             domainPadding={{ top: 20 }}
-            axisOptions={{ font }}
+            axisOptions={{ font, labelOffset: { x: 4, y: 8 } }}
             onChartBoundsChange={({ left, right, top, bottom }) => {
               setW(right - left);
               setH(bottom - top);
@@ -95,6 +95,13 @@ export default function CustomShadersPage(props: { segment: string }) {
                     colors={["#000000", "#00000080"]}
                   />
                 </Area>
+                <Line
+                  points={points.low}
+                  color="black"
+                  strokeWidth={4}
+                  curveType="catmullRom"
+                  animate={{ type: "timing" }}
+                />
               </>
             )}
           </CartesianChart>
@@ -146,7 +153,8 @@ const styles = StyleSheet.create({
     },
   },
   chart: {
-    flex: 1.5,
+    flex: 1,
+    maxHeight: 350,
   },
   optionsScrollView: {
     flex: 1,
