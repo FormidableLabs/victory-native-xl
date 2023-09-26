@@ -122,6 +122,7 @@ export default function CustomShadersPage(props: { segment: string }) {
   );
 }
 
+// Modified from here: https://shaders.skia.org/?id=de2a4d7d893a7251eb33129ddf9d76ea517901cec960db116a1bbd7832757c1f
 const mindbend = Skia.RuntimeEffect.Make(`
 uniform float time;
 uniform float resW;
