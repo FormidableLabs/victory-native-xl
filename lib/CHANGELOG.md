@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.6
+
+### Patch Changes
+
+- Fixed initial x value for useChartStatePress() ([#121](https://github.com/FormidableLabs/victory-native-xl/pull/121))
+
 ## 40.0.0-next.5
 
 ### Patch Changes
