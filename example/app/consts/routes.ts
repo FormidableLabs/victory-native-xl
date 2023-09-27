@@ -52,6 +52,12 @@ export const ChartRoutes: {
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
     path: "/ordinal-data",
   },
+  {
+    title: "Custom Shaders",
+    description:
+      "This chart showcases using custom shaders from Skia, leveraging shader uniforms derived from Reanimated shared values.",
+    path: "/custom-shaders",
+  },
 ];
 
 if (__DEV__) {
