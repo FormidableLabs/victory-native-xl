@@ -63,8 +63,8 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       announcementBar: {
-        id: "supportus",
-        content: `These docs are for version 40 of Victory Native. If you're looking for docs on versions &le;36, please <a href="https://formidable.com/open-source/victory/docs/native" rel="noreferrer" target="_blank">see here</a>.`,
+        id: "legacy_docs",
+        content: `These docs are for version &ge;40 of Victory Native. If you're looking for docs on versions &le;36, please <a href="https://formidable.com/open-source/victory/docs/native" rel="noreferrer" target="_blank">see here</a>.`,
         textColor: "var(--banner-text)",
         backgroundColor: "var(--banner-bg)",
       },
