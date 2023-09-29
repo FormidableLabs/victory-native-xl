@@ -7,4 +7,10 @@ export const stitch = (xs: number[], ys: number[]): [number, number][] =>
   xs.map((x, i) => [x, ys[i] || NaN]);
 
 export const stitchDataArray = (data: PointsArray): [number, number][] =>
-  data.map(({ x, y }) => [x, y]);
+  data.reduce(
+    (acc, { x, y }) => {
+      if (typeof y === "number") acc.push([x, y]);
+      return acc;
+    },
+    [] as [number, number][],
+  );

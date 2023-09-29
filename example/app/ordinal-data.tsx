@@ -72,10 +72,10 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                   <AnimatedCircle
                     key={`circle-${x}-${y}`}
                     x={x}
-                    y={y}
+                    y={y ?? 0}
                     radius={state.x.position.value === x ? 12 : 0}
                     color={interpolateColor(
-                      yValue,
+                      yValue ?? 0,
                       [yScale.domain().at(0)!, yScale.domain().at(-1)!],
                       colors,
                     )}

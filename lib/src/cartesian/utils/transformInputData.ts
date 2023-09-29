@@ -69,15 +69,21 @@ export const transformInputData = <
     domain?.y?.[0] ??
     Math.min(
       ...yKeys.map((key) => {
-        return Math.min(...data.map((datum) => asNumber(datum[key])));
+        return data.reduce((min, curr) => {
+          if (typeof curr[key] !== "number") return min;
+          return Math.min(min, curr[key] as number);
+        }, Infinity);
       }),
     );
   const yMax =
     domain?.y?.[1] ??
     Math.max(
-      ...yKeys.map((key) =>
-        Math.max(...data.map((datum) => asNumber(datum[key]))),
-      ),
+      ...yKeys.map((key) => {
+        return data.reduce((max, curr) => {
+          if (typeof curr[key] !== "number") return max;
+          return Math.max(max, curr[key] as number);
+        }, -Infinity);
+      }),
     );
 
   // Set up our y-output data structure

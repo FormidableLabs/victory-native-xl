@@ -38,6 +38,8 @@ export const useBarGroupPaths = (
       const offset = -groupWidth / 2 + i * (barWidth + gapWidth);
 
       pointSet.forEach(({ x, y }) => {
+        if (typeof y !== "number") return;
+
         if (!roundedCorners) {
           p.addRect(
             Skia.XYWHRect(x + offset, y, barWidth, chartBounds.bottom - y),

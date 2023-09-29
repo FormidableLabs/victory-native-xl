@@ -45,6 +45,8 @@ export function Scatter({
 
     points.forEach((pt) => {
       const { x, y } = pt;
+      if (typeof y !== "number") return;
+
       const r = typeof radius === "function" ? radius(pt) : radius;
 
       if (shape === "circle") p.addCircle(x, y, r);

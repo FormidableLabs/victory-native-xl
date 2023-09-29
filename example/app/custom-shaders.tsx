@@ -63,7 +63,7 @@ export default function CustomShadersPage(props: { segment: string }) {
             xKey="month"
             yKeys={["low", "high"]}
             padding={16}
-            domain={{ y: [0] }}
+            domain={{ y: [0, 65] }}
             domainPadding={{ top: 20 }}
             axisOptions={{ font, labelOffset: { x: 4, y: 8 } }}
             onChartBoundsChange={({ left, right, top, bottom }) => {
