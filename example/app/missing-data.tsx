@@ -1,60 +1,65 @@
 import * as React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { Bar, CartesianChart, Line } from "victory-native";
+import { Area, Bar, CartesianChart, Line, Scatter } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
+import { Button } from "../components/Button";
 
 export default function MissingDataScreen() {
   const font = useFont(inter, 12);
+  const [data, setData] = React.useState(DATA);
 
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
         <CartesianChart
-          data={DATA}
+          data={data}
           xKey="x"
-          yKeys={["low", "high"]}
-          domain={{ y: [0] }}
+          yKeys={["y"]}
+          domain={{ y: [0, 100] }}
           axisOptions={{ font }}
-          domainPadding={{ left: 44, right: 44 }}
         >
           {({ points, chartBounds }) => (
             <>
-              <Bar
-                points={points.high}
-                chartBounds={chartBounds}
-                innerPadding={0.5}
+              <Area
+                points={points.y}
+                color="pink"
+                y0={chartBounds.bottom}
+                curveType="catmullRom"
+                animate={{ type: "timing" }}
               />
-              <Line points={points.low} color="red" strokeWidth={3} />
+              <Line
+                points={points.y}
+                color="blue"
+                strokeWidth={3}
+                curveType="catmullRom"
+                animate={{ type: "timing" }}
+              />
+              <Bar
+                points={points.y}
+                chartBounds={chartBounds}
+                color="black"
+                opacity={0.3}
+              />
+              <Scatter points={points.y} radius={10} shape="star" />
             </>
           )}
         </CartesianChart>
       </View>
+      <Button title="Shuffle data" onPress={() => setData(DATA())} />
     </SafeAreaView>
   );
 }
 
-const DATA = [
-  {
-    x: 0,
-    low: 3,
-    high: 5,
-  },
-  {
-    x: 1,
-    low: 4,
-    high: 7,
-  },
-  {
-    x: 2,
-    low: 3,
-  },
-  {
-    x: 3,
-    low: 6,
-  },
-];
+const SKIP = [7, 8, 15];
+const DATA = () =>
+  Array.from({ length: 20 }, (_, i) => {
+    return {
+      x: i,
+      y: SKIP.includes(i) ? undefined : Math.random() * 100,
+    };
+  });
 
 const styles = StyleSheet.create({
   safeView: {

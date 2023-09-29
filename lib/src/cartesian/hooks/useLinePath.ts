@@ -4,6 +4,7 @@ import { Skia } from "@shopify/react-native-skia";
 import type { PointsArray } from "../../types";
 import { stitchDataArray } from "../../utils/stitchDataArray";
 import { CURVES, type CurveType } from "../utils/curves";
+import { groupPointsArray } from "../../utils/groupPointsArray";
 
 export type LinePathOptions = {
   curveType?: CurveType;
@@ -14,10 +15,17 @@ export const useLinePath = (
   { curveType = "linear" }: LinePathOptions = {},
 ) => {
   const path = React.useMemo(() => {
-    const svgPath = line().curve(CURVES[curveType])(stitchDataArray(points));
-    if (!svgPath) return Skia.Path.Make();
+    const groups = groupPointsArray(points);
+    const p = Skia.Path.Make();
 
-    return Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make();
+    groups.forEach((group) => {
+      const svgPath = line().curve(CURVES[curveType])(stitchDataArray(group));
+      if (!svgPath) return;
+
+      p.addPath(Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make());
+    });
+
+    return p;
   }, [points, curveType]);
 
   return { path };
