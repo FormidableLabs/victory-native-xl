@@ -139,11 +139,14 @@ export const transformInputData = <
   });
 
   yKeys.forEach((yKey) => {
-    y[yKey].i = data.map((datum) => asNumber(datum[yKey]));
-    y[yKey].o = data.map((datum) => yScale(asNumber(datum[yKey])));
+    // Filter out non-numerical values (i.e. if the bar shouldn't exist)
+    const filtered = data.filter((datum) => typeof datum[yKey] === "number");
+
+    y[yKey].i = filtered.map((datum) => asNumber(datum[yKey]));
+    y[yKey].o = filtered.map((datum) => yScale(asNumber(datum[yKey])));
   });
 
-  // Measure our top-most y-label if we have grid options so we can
+  // Measure our top-most y-label if we have grid options, so we can
   //  compensate for it in our x-scale.
   const topYLabel =
     axisOptions?.formatYLabel?.(yScale.domain().at(0) as RawData[YK]) ||

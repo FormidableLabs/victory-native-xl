@@ -22,6 +22,9 @@ export const useBarPath = (
     const path = Skia.Path.Make();
 
     points.forEach(({ x, y }) => {
+      // Skip drawing bar if no y value provided (see also transformInputData)
+      if (isNaN(y)) return;
+
       if (!roundedCorners) {
         path.addRect(
           Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),
