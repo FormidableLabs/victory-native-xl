@@ -39,14 +39,14 @@ The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.m
 
 [A `CurveType` value](./use-line-path.md#options) that indicates the type of curve should be drawn (e.g. `linear` or `natural`).
 
-### `interpolateMissingData`
+### `connectMissingData`
 
-[The `interpolateMissingData: boolean` value](./use-line-path.md#options) that indicates whether missing data should be interpolated for the resulting `Path`. If set to `true`, the output will be a single, connected line chart path (even if there are missing data values). If set to `false`, if there is missing data values – the path will consist of multiple disconnected "parts".
+[The `connectMissingData: boolean` value](./use-line-path.md#options) that indicates whether missing data should be interpolated for the resulting `Path`. If set to `true`, the output will be a single, connected line chart path (even if there are missing data values). If set to `false`, if there is missing data values – the path will consist of multiple disconnected "parts".
 
 <div class="flex flex-col md:flex-row gap-4">
 <div class="flex-1">
 
-`interpolateMissingData={false}`
+`connectMissingData={false}`
 
 ![Interpolate missing data](../../assets/line-interpolate-false.png)
 
@@ -54,7 +54,7 @@ The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.m
 
 <div class="flex-1">
 
-`interpolateMissingData={true}`
+`connectMissingData={true}`
 
 ![Interpolate missing data](../../assets/line-interpolate-true.png)
 

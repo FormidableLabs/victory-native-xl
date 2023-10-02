@@ -17,12 +17,12 @@ export function Area({
   y0,
   animate,
   curveType,
-  interpolateMissingData,
+  connectMissingData,
   ...ops
 }: React.PropsWithChildren<AreaProps>) {
   const { path } = useAreaPath(points, y0, {
     curveType,
-    interpolateMissingData,
+    connectMissingData,
   });
 
   return React.createElement(animate ? AnimatedPath : Path, {

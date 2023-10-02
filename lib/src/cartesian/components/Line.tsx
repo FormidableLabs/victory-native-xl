@@ -34,10 +34,13 @@ export function Line({
   points,
   animate,
   curveType,
-  interpolateMissingData,
+  connectMissingData,
   ...ops
 }: React.PropsWithChildren<CartesianLinePathProps>) {
-  const { path } = useLinePath(points, { curveType, interpolateMissingData });
+  const { path } = useLinePath(points, {
+    curveType,
+    connectMissingData,
+  });
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,
