@@ -68,6 +68,7 @@ The `options` argument object has the following fields:
   - `catmullRom0`
   - `catmullRom100`
   - `step`
+- `interpolateMissingData: boolean`: whether or not to interpolate missing data for this path (default is `false`). If set to `true`, the output will be a single, connected path (even if there are missing data values).
 
 ## Returns
 

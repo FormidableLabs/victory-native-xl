@@ -42,7 +42,7 @@ The `points` argument is a `PointsArray` array used to generate the line's path.
 The `options` argument object has the following fields:
 
 - `curveType: CurveType`: the type of curve to use for the path, powered by `d3-shape`. The options are:
-  - `linear`
+  - `linear` (default)
   - `natural`
   - `bumpX`
   - `bumpY`
@@ -52,6 +52,7 @@ The `options` argument object has the following fields:
   - `catmullRom0`
   - `catmullRom100`
   - `step`
+- `interpolateMissingData: boolean`: whether or not to interpolate missing data for this path (default is `false`). If set to `true`, the output will be a single, connected path (even if there are missing data values).
 
 ## Returns
 
