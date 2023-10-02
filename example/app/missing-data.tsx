@@ -24,26 +24,25 @@ export default function MissingDataScreen() {
             <>
               <Area
                 points={points.y}
-                color="gray"
+                color="pink"
                 y0={chartBounds.bottom}
                 curveType="catmullRom"
                 animate={{ type: "timing" }}
-                interpolateMissingData
               />
-              {/*<Line*/}
-              {/*  points={points.y}*/}
-              {/*  color="blue"*/}
-              {/*  strokeWidth={4}*/}
-              {/*  curveType="catmullRom"*/}
-              {/*  animate={{ type: "timing" }}*/}
-              {/*/>*/}
-              {/*<Bar*/}
-              {/*  points={points.y}*/}
-              {/*  chartBounds={chartBounds}*/}
-              {/*  color="black"*/}
-              {/*  opacity={0.3}*/}
-              {/*/>*/}
-              {/*<Scatter points={points.y} radius={10} shape="star" />*/}
+              <Line
+                points={points.y}
+                color="blue"
+                strokeWidth={3}
+                curveType="catmullRom"
+                animate={{ type: "timing" }}
+              />
+              <Bar
+                points={points.y}
+                chartBounds={chartBounds}
+                color="black"
+                opacity={0.3}
+              />
+              <Scatter points={points.y} radius={10} shape="star" />
             </>
           )}
         </CartesianChart>
