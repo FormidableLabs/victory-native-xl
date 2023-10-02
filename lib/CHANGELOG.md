@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.0-next.7
+
+### Patch Changes
+
+- Support "misisng data", add `connectMissingData` prop to line/area charts. Allows for null/undefined y-values. ([#129](https://github.com/FormidableLabs/victory-native-xl/pull/129))
+
 ## 40.0.0-next.6
 
 ### Patch Changes
