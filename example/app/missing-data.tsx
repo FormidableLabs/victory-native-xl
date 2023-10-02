@@ -1,14 +1,16 @@
 import * as React from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Area, Bar, CartesianChart, Line, Scatter } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
+import { InputSegment } from "../components/InputSegment";
 
 export default function MissingDataScreen() {
   const font = useFont(inter, 12);
   const [data, setData] = React.useState(DATA);
+  const [connectedData, setConnectedData] = React.useState(VALUES[0]!);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -28,6 +30,7 @@ export default function MissingDataScreen() {
                 y0={chartBounds.bottom}
                 curveType="catmullRom"
                 animate={{ type: "timing" }}
+                connectMissingData={connectedData === "connected"}
               />
               <Line
                 points={points.y}
@@ -35,22 +38,43 @@ export default function MissingDataScreen() {
                 strokeWidth={3}
                 curveType="catmullRom"
                 animate={{ type: "timing" }}
+                connectMissingData={connectedData === "connected"}
               />
               <Bar
                 points={points.y}
                 chartBounds={chartBounds}
                 color="black"
                 opacity={0.3}
+                animate={{ type: "timing" }}
               />
-              <Scatter points={points.y} radius={10} shape="star" />
+              <Scatter
+                points={points.y}
+                radius={10}
+                shape="star"
+                animate={{ type: "timing" }}
+              />
             </>
           )}
         </CartesianChart>
       </View>
-      <Button title="Shuffle data" onPress={() => setData(DATA())} />
+      <ScrollView style={styles.controls}>
+        <Button
+          title="Shuffle data"
+          onPress={() => setData(DATA())}
+          style={{ marginBottom: 16 }}
+        />
+        <InputSegment
+          label="Connect Missing Data"
+          values={VALUES}
+          value={connectedData}
+          onChange={setConnectedData}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
+
+const VALUES = ["connected", "gap"];
 
 const SKIP = [7, 8, 15];
 const DATA = () =>
@@ -68,5 +92,8 @@ const styles = StyleSheet.create({
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
+  },
+  controls: {
+    padding: 16,
   },
 });
