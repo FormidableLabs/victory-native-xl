@@ -6,18 +6,25 @@ import type { PointsArray } from "../../types";
 import type { CurveType } from "../utils/curves";
 import { CURVES } from "../utils/curves";
 import { groupPointsArray } from "../../utils/groupPointsArray";
+import { cleanPointsArray } from "../../utils/cleanPointsArray";
 
 export type AreaPathOptions = {
   curveType?: CurveType;
+  interpolateMissingData?: boolean;
 };
 
 export const useAreaPath = (
   points: PointsArray,
   y0: number,
-  { curveType = "linear" }: AreaPathOptions = {},
+  {
+    curveType = "linear",
+    interpolateMissingData = false,
+  }: AreaPathOptions = {},
 ) => {
   const path = React.useMemo(() => {
-    const groups = groupPointsArray(points);
+    const groups = interpolateMissingData
+      ? [cleanPointsArray(points)]
+      : groupPointsArray(points);
     const p = Skia.Path.Make();
 
     groups.forEach((group) => {
@@ -30,7 +37,7 @@ export const useAreaPath = (
     });
 
     return p;
-  }, [points, curveType, y0]);
+  }, [interpolateMissingData, points, y0, curveType]);
 
   return { path };
 };
