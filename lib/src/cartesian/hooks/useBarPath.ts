@@ -22,6 +22,8 @@ export const useBarPath = (
     const path = Skia.Path.Make();
 
     points.forEach(({ x, y }) => {
+      if (typeof y !== "number") return;
+
       if (!roundedCorners) {
         path.addRect(
           Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),

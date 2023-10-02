@@ -17,9 +17,13 @@ export function Area({
   y0,
   animate,
   curveType,
+  connectMissingData,
   ...ops
 }: React.PropsWithChildren<AreaProps>) {
-  const { path } = useAreaPath(points, y0, { curveType });
+  const { path } = useAreaPath(points, y0, {
+    curveType,
+    connectMissingData,
+  });
 
   return React.createElement(animate ? AnimatedPath : Path, {
     path,

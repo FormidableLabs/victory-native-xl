@@ -63,7 +63,7 @@ export default function CustomDrawingPage(props: { segment: string }) {
                     return (
                       <React.Fragment key={`point-${x}-${y}`}>
                         <Points
-                          points={calculateStarPoints(x, y, 5, numPoints)}
+                          points={calculateStarPoints(x, y ?? 0, 5, numPoints)}
                           mode="polygon"
                           color={shapeColor}
                           strokeCap="round"

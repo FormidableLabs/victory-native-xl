@@ -16,6 +16,8 @@ export type ViewWindow = {
   yMax: SharedValue<number>;
 };
 
+export type MaybeNumber = number | null | undefined;
+
 export type InputDatum = Record<string, unknown>;
 
 export type XAxisSide = "top" | "bottom";
@@ -34,7 +36,7 @@ export type TransformedData<
 > = {
   ix: InputFields<RawData>[XK][];
   ox: number[];
-  y: { [K in YK]: { i: number[]; o: number[] } };
+  y: { [K in YK]: { i: MaybeNumber[]; o: MaybeNumber[] } };
 };
 
 /**
@@ -71,8 +73,8 @@ export type Scale = ScaleLinear<number, number>;
 export type PointsArray = {
   x: number;
   xValue: InputFieldType;
-  y: number;
-  yValue: number;
+  y: MaybeNumber;
+  yValue: MaybeNumber;
 }[];
 
 export type InputFieldType = number | string;
@@ -82,7 +84,7 @@ export type InputFields<T> = {
     : never]: T[K] extends InputFieldType ? T[K] : never;
 };
 export type NumericalFields<T> = {
-  [K in keyof T as T[K] extends number ? K : never]: T[K];
+  [K in keyof T as T[K] extends MaybeNumber ? K : never]: T[K];
 };
 
 export type AxisProps<
