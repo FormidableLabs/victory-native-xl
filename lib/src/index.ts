@@ -11,6 +11,7 @@ export {
   type XAxisSide,
   type PointsArray,
   type Scale,
+  type MaybeNumber,
 } from "./types";
 export { type CurveType } from "./cartesian/utils/curves";
 export { type RoundedCorners } from "./utils/createRoundedRectPath";

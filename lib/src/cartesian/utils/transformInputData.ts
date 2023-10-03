@@ -6,6 +6,7 @@ import type {
   SidedNumber,
   TransformedData,
   InputFields,
+  MaybeNumber,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
@@ -145,8 +146,13 @@ export const transformInputData = <
   });
 
   yKeys.forEach((yKey) => {
-    y[yKey].i = data.map((datum) => asNumber(datum[yKey]));
-    y[yKey].o = data.map((datum) => yScale(asNumber(datum[yKey])));
+    y[yKey].i = data.map((datum) => datum[yKey] as MaybeNumber);
+    y[yKey].o = data.map(
+      (datum) =>
+        (typeof datum[yKey] === "number"
+          ? yScale(datum[yKey] as number)
+          : datum[yKey]) as MaybeNumber,
+    );
   });
 
   // Measure our top-most y-label if we have grid options so we can
