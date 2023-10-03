@@ -111,6 +111,10 @@ The `chartPressState` prop allows you to pass in Reanimated `SharedValue`s that 
 
 The `chartPressState` prop has a type of `ChartPressState | ChartPressState[]`, where `ChartPressState` is an object generated from the `useChartPressState` hook.
 
+:::info
+If you have a data point whose y-value is `null` or `undefined`, when that point is "active" the gesture state will return `NaN` for the y-value and y-position.
+:::
+
 ### `renderOutside`
 
 The `renderOutside` prop is identical to [the `children` prop](#children-required) in form, but it will render elements at the root of the Skia canvas (not inside of a clipping group). This allows you to render elements outside of the bounds of any axes that you have configured.

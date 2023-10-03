@@ -1,7 +1,14 @@
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Area, Bar, CartesianChart, Line, Scatter } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import {
+  Area,
+  Bar,
+  CartesianChart,
+  Line,
+  Scatter,
+  useChartPressState,
+} from "victory-native";
+import { Circle, useFont } from "@shopify/react-native-skia";
 import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
@@ -10,7 +17,8 @@ import { InputSegment } from "../components/InputSegment";
 export default function MissingDataScreen() {
   const font = useFont(inter, 12);
   const [data, setData] = React.useState(DATA);
-  const [connectedData, setConnectedData] = React.useState(VALUES[0]!);
+  const [connectedData, setConnectedData] = React.useState(VALUES[1]!);
+  const { state, isActive } = useChartPressState({ x: 0, y: { y: 0 } });
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -21,6 +29,7 @@ export default function MissingDataScreen() {
           yKeys={["y"]}
           domain={{ y: [0, 100] }}
           axisOptions={{ font }}
+          chartPressState={state}
         >
           {({ points, chartBounds }) => (
             <>
@@ -53,6 +62,10 @@ export default function MissingDataScreen() {
                 shape="star"
                 animate={{ type: "timing" }}
               />
+
+              {isActive && (
+                <Circle r={20} cx={state.x.position} cy={state.y.y.position} />
+              )}
             </>
           )}
         </CartesianChart>
@@ -81,7 +94,7 @@ const DATA = () =>
   Array.from({ length: 20 }, (_, i) => {
     return {
       x: i,
-      y: SKIP.includes(i) ? undefined : Math.random() * 100,
+      y: SKIP.includes(i) ? null : Math.random() * 100,
     };
   });
 
