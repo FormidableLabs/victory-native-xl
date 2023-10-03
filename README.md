@@ -33,11 +33,6 @@ https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-990
 
 </div>
 
-
-## ⚠️ Pre-Production Disclamer
-
-Victory Native XL is set to replace the current stable version. However, please be advised that it's currently in a pre-production release (beta stage). While many of the new features and improvements are exciting, there might still be some shifts in APIs or bugs that need to be ironed out. We encourage users to test it and provide feedback, but also to be cautious and avoid using it in critical production environments until it has been further stabilized. Your feedback and contributions during this phase will be invaluable in ensuring the robustness of the next stable release.
-
 ## Installation
 
 Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
@@ -48,10 +43,10 @@ yarn add react-native-reanimated react-native-gesture-handler @shopify/react-nat
 
 For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
 
-Then install `victory-native@next`:
+Then install `victory-native`:
 
 ```shell
-yarn add victory-native@next
+yarn add victory-native
 ```
 
 To get started and read more about the API, view the [docs here](https://formidable.com/open-source/victory-native).
