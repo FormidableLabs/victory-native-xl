@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.2
+
+### Patch Changes
+
+- Fix asNumber per #135 so that null values don't get coerced to 0 ([#138](https://github.com/FormidableLabs/victory-native-xl/pull/138))
+
 ## 40.0.1
 
 ### Patch Changes
