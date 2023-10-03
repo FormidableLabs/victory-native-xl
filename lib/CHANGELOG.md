@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.1
+
+### Patch Changes
+
+- Remove pre-production disclaimer from README ([#134](https://github.com/FormidableLabs/victory-native-xl/pull/134))
+
 ## 40.0.0
 
 ### Major Changes
