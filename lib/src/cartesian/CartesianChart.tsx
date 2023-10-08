@@ -1,7 +1,7 @@
 import * as React from "react";
-import { type LayoutChangeEvent } from "react-native";
+import { Vibration, type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
-import { useSharedValue } from "react-native-reanimated";
+import { runOnJS, useSharedValue } from "react-native-reanimated";
 import {
   Gesture,
   GestureDetector,
@@ -37,8 +37,8 @@ type CartesianChartProps<
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   chartPressState?:
-    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
-    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
+  | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, YK>,
@@ -187,8 +187,10 @@ export function CartesianChart<
     ][],
   });
 
+  const vibrationMs = 10;
+  const longPressMs = 300;
+
   const touchGesture = Gesture.Pan()
-    .manualActivation(true)
     /**
      * When a finger goes down, either update the state or store in the bootstrap array.
      */
@@ -213,15 +215,16 @@ export function CartesianChart<
         }
       }
 
-      if (gestureState.value.isGestureActive) manager.activate();
-    })
-    /**
-     * On start, check if we have any bootstraped updates we need to apply.
-     */
-    .onBegin(() => {
-      gestureState.value.isGestureActive = true;
+      if (gestureState.value.isGestureActive) {
+        manager.activate();
+      } else {
+        gestureState.value.isGestureActive = true;
+      }
     })
     .onStart(() => {
+      if (vibrationMs) {
+        runOnJS(Vibration.vibrate)(vibrationMs)
+      }
       for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
         const [v, touch] = gestureState.value.bootstrap[i]!;
         // Update the mapping
@@ -287,7 +290,8 @@ export function CartesianChart<
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */
-    .activateAfterLongPress(100);
+    .activateAfterLongPress(longPressMs)
+
 
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
