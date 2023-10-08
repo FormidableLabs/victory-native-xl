@@ -39,6 +39,10 @@ type CartesianChartProps<
   chartPressState?:
   | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
   | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  chartPressOptions?: {
+    vibrationDuration?: number,
+    longPressDuration?: number
+  };
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside: (
     args: CartesianChartRenderArg<RawData, YK>,
@@ -62,6 +66,7 @@ export function CartesianChart<
   axisOptions,
   domain,
   chartPressState,
+  chartPressOptions,
   onChartBoundsChange,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -187,9 +192,6 @@ export function CartesianChart<
     ][],
   });
 
-  const vibrationMs = 10;
-  const longPressMs = 300;
-
   const touchGesture = Gesture.Pan()
     /**
      * When a finger goes down, either update the state or store in the bootstrap array.
@@ -222,8 +224,8 @@ export function CartesianChart<
       }
     })
     .onStart(() => {
-      if (vibrationMs) {
-        runOnJS(Vibration.vibrate)(vibrationMs)
+      if (chartPressOptions?.vibrationDuration) {
+        runOnJS(Vibration.vibrate)(chartPressOptions.vibrationDuration)
       }
       for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
         const [v, touch] = gestureState.value.bootstrap[i]!;
@@ -290,7 +292,7 @@ export function CartesianChart<
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */
-    .activateAfterLongPress(longPressMs)
+    .activateAfterLongPress(chartPressOptions?.longPressDuration ? chartPressOptions.longPressDuration : 200)
 
 
   /**
