@@ -22,6 +22,7 @@ export const CartesianAxis = <
   YK extends keyof NumericalFields<RawData>,
 >({
   tickCount,
+  ticks,
   labelPosition,
   labelOffset,
   axisSide,
@@ -38,8 +39,8 @@ export const CartesianAxis = <
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
-      xTicks: typeof tickCount === "number" ? tickCount : tickCount.x,
-      yTicks: typeof tickCount === "number" ? tickCount : tickCount.y,
+      xTicks: /* ticks?.x ? ticks.x : */typeof tickCount === "number" ? tickCount : tickCount.x,
+      yTicks: /* ticks?.y ? ticks.y : */ typeof tickCount === "number" ? tickCount : tickCount.y,
       xLabelOffset:
         typeof labelOffset === "number" ? labelOffset : labelOffset.x,
       yLabelOffset:
@@ -61,7 +62,10 @@ export const CartesianAxis = <
         typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
     } as const;
   }, [
+    xScale,
+    yScale,
     tickCount,
+    ticks,
     labelOffset,
     axisSide.x,
     axisSide.y,
@@ -90,7 +94,7 @@ export const CartesianAxis = <
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
 
-  const yAxisNodes = yScale.ticks(yTicks).map((tick) => {
+  const yAxisNodes = (ticks?.y ? ticks.y : yScale.ticks(yTicks)).map((tick) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
     const labelY = yScale(tick) + fontSize / 3;
@@ -123,22 +127,22 @@ export const CartesianAxis = <
         />
         {font
           ? canFitLabelContent && (
-              <Text
-                color={
-                  typeof labelColor === "string" ? labelColor : labelColor.y
-                }
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
-            )
+            <Text
+              color={
+                typeof labelColor === "string" ? labelColor : labelColor.y
+              }
+              text={contentY}
+              font={font}
+              y={labelY}
+              x={labelX}
+            />
+          )
           : null}
       </React.Fragment>
     );
   });
 
-  const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
+  const xAxisNodes = (ticks?.x ? ticks.x : xScale.ticks(xTicks)).map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;

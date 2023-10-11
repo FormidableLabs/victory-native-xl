@@ -80,8 +80,8 @@ export type PointsArray = {
 export type InputFieldType = number | string;
 export type InputFields<T> = {
   [K in keyof T as T[K] extends InputFieldType
-    ? K
-    : never]: T[K] extends InputFieldType ? T[K] : never;
+  ? K
+  : never]: T[K] extends InputFieldType ? T[K] : never;
 };
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends MaybeNumber ? K : never]: T[K];
@@ -99,10 +99,11 @@ export type AxisProps<
   lineWidth: number | { grid: number; frame: number };
   labelColor: string | { x: string; y: string };
   tickCount: number | { x: number; y: number };
+  ticks?: { x?: Array<number>, y?: Array<number> };
   labelOffset: number | { x: number; y: number };
   labelPosition:
-    | AxisLabelPosition
-    | { x: AxisLabelPosition; y: AxisLabelPosition };
+  | AxisLabelPosition
+  | { x: AxisLabelPosition; y: AxisLabelPosition };
   axisSide: { x: XAxisSide; y: YAxisSide };
   formatXLabel: (label: InputFields<RawData>[XK]) => string;
   formatYLabel: (label: RawData[YK]) => string;
