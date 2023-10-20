@@ -32,7 +32,7 @@ export function MyChart() {
   return (
     <CartesianChart data={DATA} xKey="x" yKeys={["y"]}>
       {/* 👇 pass a PointsArray to our custom component */}
-      {({ points }) => <MyCustomBars points={points.y} />}
+      {({ points, chartBounds }) => <MyCustomBars points={points.y} chartBounds={chartBounds} />}
     </CartesianChart>
   );
 }
