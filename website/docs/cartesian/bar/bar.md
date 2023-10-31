@@ -62,7 +62,7 @@ The `roundedCorners` prop allows you to customize the roundedness of each corner
 
 An optional `dataLength` prop allows you to set the desired data length when calculating bar width. 
 
-This overrides the default calculation of `points.length`. Most useful in when dealing with time series, and rendering a known amount of time, but with various amounts of data so the bar widths can stay consistent across graphs.
+This overrides the default calculation of `points.length`. Usually used when rendering a static `x` domain and you want the bar widths to be the same across multiple graphs with various amounts of missing data.
 
 ### `children`
 
