@@ -13,6 +13,12 @@ type CartesianBarProps = {
   innerPadding?: number;
   animate?: PathAnimationConfig;
   roundedCorners?: RoundedCorners;
+  /**
+   * Known data length to calculate bar width.
+   *
+   * Set if you'd like to override the default `points.length` check.
+   */
+  dataLength?: number;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export const Bar = ({
