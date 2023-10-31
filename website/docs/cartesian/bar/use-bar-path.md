@@ -58,6 +58,12 @@ A `ChartBounds` object needed to appropriately draw the bars. This generally com
 
 An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars should be "white space". Defaults to `0.2`. Use `0` for no gap between bars, and values closer to `1` to make bars increasingly narrow.
 
+### `dataLength`
+
+An optional `dataLength` prop allows you to set the desired data length when calculating bar width.
+
+This overrides the default calculation of `points.length`. Usually used when rendering a static `x` domain and you want the bar widths to be the same across multiple graphs with various amounts of missing data.
+
 ## Returns
 
 Returns an object with the following fields.
