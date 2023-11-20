@@ -103,6 +103,7 @@ export default function LineChartPage(props: { segment: string }) {
                 animate={{ type: "spring" }}
               />
               <Scatter
+                radius={scatterRadius}
                 points={points.sales}
                 animate={{ type: "spring" }}
                 color={colors.scatter!}
