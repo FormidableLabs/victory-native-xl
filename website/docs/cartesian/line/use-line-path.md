@@ -2,7 +2,7 @@
 
 The `useLinePath` hook takes a `PointsArray` input, as well as some options, and returns a Skia `SkPath` path object that represents the path for that line chart.
 
-## Exmaple
+## Example
 
 ```tsx
 import { CartesianChart, useLinePath, type PointsArray } from "victory-native";
