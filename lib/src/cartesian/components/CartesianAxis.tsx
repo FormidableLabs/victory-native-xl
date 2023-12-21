@@ -58,7 +58,7 @@ export const CartesianAxis = <
         : lineColor) as Color,
       gridLineWidth: typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
       frameLineWidth:
-        typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
+        typeof lineWidth === "number" ? lineWidth : lineWidth.frame,
     } as const;
   }, [
     tickCount,
@@ -214,7 +214,10 @@ export const CartesianAxis = <
 
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: { grid: StyleSheet.hairlineWidth, frame: 1 },
+  lineWidth: {
+    grid: StyleSheet.hairlineWidth,
+    frame: StyleSheet.hairlineWidth,
+  },
   tickCount: 5,
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },
