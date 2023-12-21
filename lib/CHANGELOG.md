@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.3
+
+### Patch Changes
+
+- Fixed grid and frame lineWidth prop. ([#174](https://github.com/FormidableLabs/victory-native-xl/pull/174))
+
 ## 40.0.2
 
 ### Patch Changes
