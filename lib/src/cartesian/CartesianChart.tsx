@@ -46,6 +46,7 @@ type CartesianChartProps<
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   gestureLongPressDelay?: number;
+  gestureBehavior?: "pan" | "tap";
 };
 
 export function CartesianChart<
@@ -65,6 +66,7 @@ export function CartesianChart<
   chartPressState,
   onChartBoundsChange,
   gestureLongPressDelay = 100,
+  gestureBehavior = "pan",
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -280,6 +282,26 @@ export function CartesianChart<
      */
     .activateAfterLongPress(gestureLongPressDelay);
 
+  const tapGesture = () =>
+    Gesture.Race(
+      panGesture,
+      Gesture.Tap()
+        .simultaneousWithExternalGesture(panGesture)
+        .maxDelay(gestureLongPressDelay)
+        .maxDistance(10)
+        .onStart((event) => {
+          if (activePressSharedValues.length === 0) return;
+          gestureState.value.isGestureActive = true;
+          handleTouch(activePressSharedValues[0]!, event.x);
+        })
+        .onFinalize(() => {
+          gestureState.value.isGestureActive = false;
+          gestureState.value.bootstrap = [];
+        }),
+    );
+
+  const touchGesture = gestureBehavior === "tap" ? tapGesture() : panGesture;
+
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
    * Generate this on demand using a proxy.
@@ -356,7 +378,7 @@ export function CartesianChart<
   // Conditionally wrap the body in gesture handler based on activePressSharedValue
   return chartPressState ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={panGesture}>{body}</GestureDetector>
+      <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
     </GestureHandlerRootView>
   ) : (
     body

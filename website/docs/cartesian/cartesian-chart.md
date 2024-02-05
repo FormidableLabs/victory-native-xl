@@ -139,6 +139,10 @@ The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?:
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
 
+### `gestureBehavior`
+
+The `gestureBehavior` prop has a type of `'pan' | 'tap'`. Allows you to set the behavior of the gesture. Default: `pan`.
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.
