@@ -85,6 +85,12 @@ if (__DEV__) {
         "This page shows multiple charts with gestures inside a scrollview to ensure both platforms allow for this behavior.",
       path: "/scrollview-charts",
     },
+    {
+      title: "Pie Chart (in progres)",
+      description:
+        "This is a simple Pie chart in Victory that supports insets between each slice. No labels, no gestures...yet!! (coming soon ™️)",
+      path: "/pie-chart",
+    },
   );
 }
 

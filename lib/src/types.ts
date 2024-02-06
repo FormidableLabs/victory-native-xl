@@ -86,6 +86,9 @@ export type InputFields<T> = {
 export type NumericalFields<T> = {
   [K in keyof T as T[K] extends MaybeNumber ? K : never]: T[K];
 };
+export type ColorFields<T> = {
+  [K in keyof T as T[K] extends Color ? K : never]: T[K];
+};
 
 export type AxisProps<
   RawData extends Record<string, unknown>,
