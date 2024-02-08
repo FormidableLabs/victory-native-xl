@@ -8,24 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  matrix:
-    name: 'Node ${{ matrix.node }}'
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [18]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-          cache: yarn
-      - name: Install dependencies
-        run: yarn install
+      - uses: ./.github/actions/setup
+
       - name: Lint
         run: yarn run lint
+
       - name: Typecheck
         run: yarn run typecheck
+
       - name: Unit Test
         run: yarn run test
-
