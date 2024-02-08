@@ -79,6 +79,12 @@ if (__DEV__) {
       description: "Example showing missing data points.",
       path: "/missing-data",
     },
+    {
+      title: "Scrolling Charts with Gestures",
+      description:
+        "This page shows multiple charts with gestures inside a scrollview to ensure both platforms allow for this behavior.",
+      path: "/scrollview-charts",
+    },
   );
 }
 
