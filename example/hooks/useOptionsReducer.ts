@@ -17,6 +17,8 @@ type State = {
   colors: Record<string, string>;
   domainPadding: number;
   curveType: CurveType;
+  customXLabel: string | undefined;
+  customYLabel: string | undefined;
 };
 
 type Action =
@@ -34,7 +36,9 @@ type Action =
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_COLORS"; payload: Record<string, string> }
   | { type: "SET_DOMAIN_PADDING"; payload: number }
-  | { type: "SET_CURVE_TYPE"; payload: CurveType };
+  | { type: "SET_CURVE_TYPE"; payload: CurveType }
+  | { type: "SET_X_LABEL"; payload: string }
+  | { type: "SET_Y_LABEL"; payload: string };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -68,6 +72,10 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, domainPadding: action.payload };
     case "SET_CURVE_TYPE":
       return { ...state, curveType: action.payload };
+    case "SET_X_LABEL":
+      return { ...state, customXLabel: action.payload };
+    case "SET_Y_LABEL":
+      return { ...state, customYLabel: action.payload };
 
     default:
       throw new Error(`Unhandled action type`);
@@ -90,4 +98,6 @@ export const optionsInitialState: State = {
   colors: {},
   domainPadding: 0,
   curveType: "linear",
+  customXLabel: undefined,
+  customYLabel: undefined,
 };

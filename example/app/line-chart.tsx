@@ -1,7 +1,13 @@
 import { useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import {
   CartesianChart,
   type CurveType,
@@ -53,6 +59,8 @@ export default function LineChartPage(props: { segment: string }) {
       colors,
       domainPadding,
       curveType,
+      customXLabel,
+      customYLabel,
     },
     dispatch,
   ] = React.useReducer(optionsReducer, {
@@ -88,6 +96,12 @@ export default function LineChartPage(props: { segment: string }) {
             labelPosition: {
               x: xAxisLabelPosition,
               y: yAxisLabelPosition,
+            },
+            formatXLabel: (value) => {
+              return customXLabel ? `${value} ${customXLabel}` : `${value}`;
+            },
+            formatYLabel: (value) => {
+              return customYLabel ? `${value} ${customYLabel}` : `${value}`;
             },
           }}
           data={data}
@@ -143,6 +157,17 @@ export default function LineChartPage(props: { segment: string }) {
             title="Add Point"
           />
         </View>
+
+        <View>
+          <TextInput
+            placeholder="X Label Text"
+            value={customXLabel}
+            onChangeText={(val) =>
+              dispatch({ type: "SET_X_LABEL", payload: val })
+            }
+          />
+        </View>
+
         <InputSegment<CurveType>
           label="Curve Type"
           onChange={(val) => dispatch({ type: "SET_CURVE_TYPE", payload: val })}
