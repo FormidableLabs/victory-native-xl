@@ -1,10 +1,33 @@
-import React from "react";
-import { TextInput } from "react-native";
+import React, { type ComponentProps } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
-export const InputText = () => {
+type Props = { label: string } & ComponentProps<typeof TextInput>;
+
+export const InputText = ({ label, ...props }: Props) => {
   return (
-    <>
-      <TextInput />
-    </>
+    <View style={styles.container}>
+      <Text style={styles.labelStyles}>{label}</Text>
+      <TextInput style={styles.inputStyles} {...props} />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 10,
+    width: "48%",
+  },
+  inputStyles: {
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: "lightgray",
+    fontSize: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: "100%",
+  },
+  labelStyles: {
+    fontWeight: "bold",
+    paddingBottom: 10,
+  },
+});

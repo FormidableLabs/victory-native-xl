@@ -25,6 +25,7 @@ import {
   optionsReducer,
 } from "example/hooks/useOptionsReducer";
 import { InputColor } from "example/components/InputColor";
+import { InputText } from "example/components/InputText";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { Button } from "../components/Button";
@@ -158,16 +159,6 @@ export default function LineChartPage(props: { segment: string }) {
           />
         </View>
 
-        <View>
-          <TextInput
-            placeholder="X Label Text"
-            value={customXLabel}
-            onChangeText={(val) =>
-              dispatch({ type: "SET_X_LABEL", payload: val })
-            }
-          />
-        </View>
-
         <InputSegment<CurveType>
           label="Curve Type"
           onChange={(val) => dispatch({ type: "SET_CURVE_TYPE", payload: val })}
@@ -235,6 +226,28 @@ export default function LineChartPage(props: { segment: string }) {
             dispatch({ type: "SET_COLORS", payload: { line: val } })
           }
         />
+
+        <View style={{ flexDirection: "row" }}>
+          <InputText
+            label="X Label Text"
+            placeholder="Label text here..."
+            value={customXLabel}
+            onChangeText={(val) =>
+              dispatch({ type: "SET_X_LABEL", payload: val })
+            }
+          />
+          {/** Spacer */}
+          <View style={{ width: 10 }} />
+          <InputText
+            label="Y Label Text"
+            placeholder="Label text here..."
+            value={customYLabel}
+            onChangeText={(val) =>
+              dispatch({ type: "SET_Y_LABEL", payload: val })
+            }
+          />
+        </View>
+
         <InputSlider
           label="Axis Label Font Size"
           maxValue={24}
