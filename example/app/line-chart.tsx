@@ -1,13 +1,7 @@
 import { useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
   CartesianChart,
   type CurveType,
