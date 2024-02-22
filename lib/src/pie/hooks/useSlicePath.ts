@@ -1,4 +1,4 @@
-import { Skia, vec, type SkPath } from "@shopify/react-native-skia";
+import { Skia, type SkPath } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {
   calculatePointOnCircumference,
@@ -7,14 +7,12 @@ import {
 import type { PieSliceData } from "../PieSlice";
 
 type SlicePathArgs = {
-  size: number;
   inset?: number;
   slice: PieSliceData;
 };
-export const useSlicePath = ({ slice, size }: SlicePathArgs): SkPath => {
+export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
   const path = useMemo(() => {
-    const radius = size / 2;
-    const center = vec(radius, radius);
+    const { radius, center } = slice;
 
     const path = Skia.Path.Make();
 
@@ -65,7 +63,7 @@ export const useSlicePath = ({ slice, size }: SlicePathArgs): SkPath => {
     // Close the path
     path.close();
     return path;
-  }, [slice, size]);
+  }, [slice]);
 
   return path;
 };

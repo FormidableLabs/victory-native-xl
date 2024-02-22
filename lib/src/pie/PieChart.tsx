@@ -1,8 +1,18 @@
 import * as React from "react";
-import { Canvas, type Color } from "@shopify/react-native-skia";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { Canvas, vec, type Color } from "@shopify/react-native-skia";
+import {
+  StyleSheet,
+  View,
+  type ViewStyle,
+  type LayoutChangeEvent,
+  type StyleProp,
+} from "react-native";
 import type { ColorFields, InputFields, NumericalFields } from "../types";
 import { type PieSliceData } from "./PieSlice";
+import {
+  PieChartProvider,
+  usePieChartContext,
+} from "./contexts/PieChartContext";
 
 const CIRCLE_SWEEP_DEGREES = 360;
 
@@ -12,15 +22,17 @@ type PieChartProps<
   ValueKey extends keyof NumericalFields<RawData>,
   ColorKey extends keyof ColorFields<RawData>,
 > = {
+  children: (args: { slice: PieSliceData }) => React.ReactNode;
+  colorKey: ColorKey;
+  containerStyle?: StyleProp<ViewStyle>;
+  canvasStyle?: StyleProp<ViewStyle>;
   data: RawData[];
   labelKey: LabelKey;
+  renderLegend?: (data: PieSliceData[]) => React.ReactNode;
   valueKey: ValueKey;
-  colorKey: ColorKey;
-  size?: number;
-  children: (args: { slice: PieSliceData; size: number }) => React.ReactNode;
 };
 
-export const PieChart = <
+const PieChartBase = <
   RawData extends Record<string, unknown>,
   LabelKey extends keyof InputFields<RawData>,
   ValueKey extends keyof NumericalFields<RawData>,
@@ -28,23 +40,43 @@ export const PieChart = <
 >(
   props: PieChartProps<RawData, LabelKey, ValueKey, ColorKey>,
 ) => {
-  const { width } = useWindowDimensions();
-
   const {
-    size = width * 0.8,
+    containerStyle,
     data: _data,
     labelKey,
     valueKey,
     colorKey,
+    canvasStyle,
+    renderLegend,
     children,
   } = props;
 
+  const { position: legendPosition } = usePieChartContext();
+
   const label = labelKey as keyof RawData;
 
+  // The sum all the slices' values
   const totalCircleValue = _data.reduce(
     (sum, entry) => sum + Number(entry[valueKey]),
     0,
-  ); // The sum all the slices' values
+  );
+
+  const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 });
+
+  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
+    React.useState(false);
+
+  const onLayout = React.useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      setHasMeasuredLayoutSize(true);
+      setCanvasSize(layout);
+    },
+    [],
+  );
+
+  const { width, height } = canvasSize; // Get the dynamic canvas size
+  const radius = Math.min(width, height) / 2; // Calculate the radius based on canvas size
+  const center = vec(width / 2, height / 2);
 
   const data = React.useMemo(() => {
     let startAngle = 0; // Initialize the start angle for the first slice
@@ -67,27 +99,65 @@ export const PieChart = <
         endAngle: endAngle,
         sweepAngle,
         sliceIsEntireCircle: _data.length === 1,
+        radius,
+        center,
       };
     });
 
     return enhanced;
-  }, [valueKey, _data, totalCircleValue, colorKey, label]);
+  }, [valueKey, _data, totalCircleValue, colorKey, label, radius, center]);
+
+  // Determine the container's flexDirection based on the legend's position prop
+  const baseFlexDirection =
+    legendPosition === "left" || legendPosition === "right" ? "row" : "column";
+  const isReverse = legendPosition === "left" || legendPosition === "top";
+  const dynamicStyle: ViewStyle = {
+    flexDirection: isReverse
+      ? `${baseFlexDirection}-reverse`
+      : baseFlexDirection,
+  };
 
   return (
-    <Canvas style={[styles.container, { width: size, height: size }]}>
-      {data.map((slice, index) => {
-        return (
-          <React.Fragment key={index}>
-            {children({ size, slice })}
-          </React.Fragment>
-        );
-      })}
-    </Canvas>
+    <View style={[styles.baseContainer, dynamicStyle, containerStyle]}>
+      <Canvas
+        onLayout={onLayout}
+        style={[
+          styles.canvasContainer,
+          hasMeasuredLayoutSize ? { width, height } : null,
+          canvasStyle,
+        ]}
+      >
+        {data.map((slice, index) => {
+          return (
+            <React.Fragment key={index}>{children({ slice })}</React.Fragment>
+          );
+        })}
+      </Canvas>
+      {renderLegend?.(data)}
+    </View>
+  );
+};
+
+export const PieChart = <
+  RawData extends Record<string, unknown>,
+  LabelKey extends keyof InputFields<RawData>,
+  ValueKey extends keyof NumericalFields<RawData>,
+  ColorKey extends keyof ColorFields<RawData>,
+>(
+  props: PieChartProps<RawData, LabelKey, ValueKey, ColorKey>,
+) => {
+  return (
+    <PieChartProvider>
+      <PieChartBase {...props} />
+    </PieChartProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  baseContainer: {
+    flex: 1,
+  },
+  canvasContainer: {
     flex: 1,
   },
 });

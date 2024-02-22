@@ -86,9 +86,9 @@ if (__DEV__) {
       path: "/scrollview-charts",
     },
     {
-      title: "Pie Chart (in progres)",
+      title: "Pie Chart (in progress)",
       description:
-        "This is a simple Pie chart in Victory that supports insets between each slice. No labels, no gestures...yet!! (coming soon ™️)",
+        "This is a simple Pie chart in Victory. It has support for a displaying a legend, and customizing each slice. No gestures are supported yet. This is a work in progress.",
       path: "/pie-chart",
     },
   );

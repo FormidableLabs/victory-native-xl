@@ -1,4 +1,4 @@
-import { Skia, vec, PaintStyle } from "@shopify/react-native-skia";
+import { Skia, PaintStyle } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {
   calculatePointOnCircumference,
@@ -8,18 +8,12 @@ import type { PieSliceData } from "../PieSlice";
 import type { PieSliceInsetData } from "../PieSliceInset";
 
 type SliceInsetPathArgs = {
-  size: number;
   slice: PieSliceData;
   inset: PieSliceInsetData;
 };
-export const useSliceInsetPath = ({
-  inset,
-  slice,
-  size,
-}: SliceInsetPathArgs) => {
+export const useSliceInsetPath = ({ inset, slice }: SliceInsetPathArgs) => {
   const [path, paint] = useMemo(() => {
-    const radius = size / 2;
-    const center = vec(radius, radius);
+    const { radius, center } = slice;
 
     const path = Skia.Path.Make();
 
@@ -48,6 +42,7 @@ export const useSliceInsetPath = ({
     insetPaint.setStrokeWidth(inset.width);
 
     return [path, insetPaint] as const;
-  }, [slice, inset, size]);
+  }, [slice, inset]);
+
   return [path, paint] as const;
 };

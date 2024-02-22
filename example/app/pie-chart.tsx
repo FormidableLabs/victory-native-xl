@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { PieChart, PieSlice, PieSliceInset } from "victory-native";
+import { Pie } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
@@ -8,7 +8,7 @@ import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { descriptionForRoute } from "./consts/routes";
 
-const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 125;
 function generateRandomColor(): string {
   // Generating a random number between 0 and 0xFFFFFF
   const randomColor = Math.floor(Math.random() * 0xffffff);
@@ -20,7 +20,7 @@ const DATA = (numberPoints = 5) =>
   Array.from({ length: numberPoints }, (_, index) => ({
     value: randomNumber(),
     color: generateRandomColor(),
-    label: index % 2 ? "Even Label" : "Odd Label",
+    label: `Label ${index + 1}`,
   }));
 
 export default function PieChartPlayground(props: { segment: string }) {
@@ -32,33 +32,44 @@ export default function PieChartPlayground(props: { segment: string }) {
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
-        <View style={styles.chart}>
-          <PieChart
+        <View
+          style={{
+            height: "45%",
+          }}
+        >
+          <Pie.Chart
             data={data}
             labelKey={"label"}
             valueKey={"value"}
             colorKey={"color"}
+            renderLegend={(data) => (
+              <Pie.ChartLegend
+                containerStyle={{ alignSelf: "center" }}
+                position="bottom"
+                data={data}
+              >
+                {({ slice }) => <Pie.ChartLegendItem slice={slice} />}
+              </Pie.ChartLegend>
+            )}
           >
-            {({ slice, size }) => {
+            {({ slice }) => {
               return (
-                <>
-                  <PieSlice slice={slice} size={size} />
-                  <PieSliceInset
-                    size={size}
-                    slice={slice}
+                <Pie.SliceProvider slice={slice}>
+                  <Pie.Slice />
+                  <Pie.SliceInset
                     inset={{ width: insetWidth, color: insetColor }}
                   />
-                </>
+                </Pie.SliceProvider>
               );
             }}
-          </PieChart>
+          </Pie.Chart>
         </View>
 
-        <ScrollView
-          style={styles.optionsScrollView}
-          contentContainerStyle={styles.options}
-        >
-          <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
+        <View style={{ flexGrow: 1, padding: 15 }}>
+          <InfoCard style={{ flex: 0, marginBottom: 16 }}>
+            {description}
+          </InfoCard>
+
           <View
             style={{
               flexDirection: "row",
@@ -75,8 +86,8 @@ export default function PieChartPlayground(props: { segment: string }) {
           </View>
           <InputSlider
             label="Inset width"
-            maxValue={8}
-            minValue={3}
+            maxValue={6}
+            minValue={0}
             step={1}
             value={insetWidth}
             onChange={setInsetWidth}
@@ -86,7 +97,7 @@ export default function PieChartPlayground(props: { segment: string }) {
             color={insetColor}
             onChange={setInsetColor}
           />
-        </ScrollView>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -99,24 +110,5 @@ const styles = StyleSheet.create({
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
-  },
-  chart: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  optionsScrollView: {
-    flex: 1,
-    backgroundColor: appColors.cardBackground.light,
-    $dark: {
-      backgroundColor: appColors.cardBackground.dark,
-    },
-  },
-  options: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
   },
 });

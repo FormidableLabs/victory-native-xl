@@ -49,8 +49,6 @@ export { CartesianAxis } from "./cartesian/components/CartesianAxis";
 /**
  * Pie chart exports (including useful types)
  */
-export { PieChart } from "./pie/PieChart";
-export { PieSlice } from "./pie/PieSlice";
-export { PieSliceInset } from "./pie/PieSliceInset";
+export { Pie } from "./pie";
 export { useSlicePath } from "./pie/hooks/useSlicePath";
 export { useSliceInsetPath } from "./pie/hooks/useSliceInsetPath";

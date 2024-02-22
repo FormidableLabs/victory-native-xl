@@ -1,6 +1,12 @@
 import React from "react";
-import { type Color, Path, type PathProps } from "@shopify/react-native-skia";
+import {
+  type Color,
+  Path,
+  type PathProps,
+  type SkPoint,
+} from "@shopify/react-native-skia";
 import { useSlicePath } from "./hooks/useSlicePath";
+import { usePieSliceContext } from "./contexts/PieSliceContext";
 
 export type PieSliceData = {
   value: number;
@@ -10,18 +16,22 @@ export type PieSliceData = {
   endAngle: number;
   sweepAngle: number;
   sliceIsEntireCircle: boolean;
+  radius: number;
+  center: SkPoint;
 };
 
 type AdditionalPathProps = Partial<Omit<PathProps, "color" | "path">>;
-
-type PieSliceProps = {
-  slice: PieSliceData;
-  size: number;
-} & AdditionalPathProps;
+type PieSliceProps = AdditionalPathProps;
 
 export const PieSlice = (props: PieSliceProps) => {
-  const { size, slice, ...rest } = props;
-  const path = useSlicePath({ size, slice });
+  const { children, ...rest } = props;
+  const { slice } = usePieSliceContext();
 
-  return <Path path={path} color={slice.color} style="fill" {...rest} />;
+  const path = useSlicePath({ slice });
+
+  return (
+    <Path path={path} color={slice.color} style="fill" {...rest}>
+      {children}
+    </Path>
+  );
 };
