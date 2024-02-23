@@ -27,7 +27,7 @@ export const PieChartLegendItem = (props: PieChartLegendItemProps) => {
       <Canvas style={[styles.canvas, canvasStyle]}>
         <Circle
           c={vec(styles.canvas.height / 2, styles.canvas.height / 2)}
-          r={styles.canvas.height / 2}
+          r={styles.canvas.height / 2 - 1} // - 1 to prevent clipping
           color={color}
         />
       </Canvas>
@@ -39,13 +39,13 @@ export const PieChartLegendItem = (props: PieChartLegendItemProps) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    margin: 5,
+    padding: 5,
     justifyContent: "center",
     alignItems: "center",
   },
   canvas: {
-    height: 10,
-    width: 10,
-    marginRight: 5,
+    height: 12,
+    width: 12,
+    marginRight: 2,
   },
 });

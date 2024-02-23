@@ -40,11 +40,9 @@ const styles = StyleSheet.create({
   containerRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    overflow: "hidden",
   },
   containerColumn: {
     justifyContent: "center",
     flexDirection: "column",
-    overflow: "hidden",
   },
 });
