@@ -1,5 +1,11 @@
 # victory-native
 
+## 40.0.4
+
+### Patch Changes
+
+- Fixes interaction between gestures and scrolling for charts on Android. Added prop `gestureLongPressDelay` to `CartesianChart` . ([#186](https://github.com/FormidableLabs/victory-native-xl/pull/186))
+
 ## 40.0.3
 
 ### Patch Changes

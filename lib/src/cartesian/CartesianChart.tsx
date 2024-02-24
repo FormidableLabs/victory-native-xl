@@ -45,6 +45,7 @@ type CartesianChartProps<
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
+  gestureLongPressDelay?: number;
 };
 
 export function CartesianChart<
@@ -63,6 +64,7 @@ export function CartesianChart<
   domain,
   chartPressState,
   onChartBoundsChange,
+  gestureLongPressDelay = 100,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -187,12 +189,11 @@ export function CartesianChart<
     ][],
   });
 
-  const touchGesture = Gesture.Pan()
-    .manualActivation(true)
+  const panGesture = Gesture.Pan()
     /**
      * When a finger goes down, either update the state or store in the bootstrap array.
      */
-    .onTouchesDown((e, manager) => {
+    .onTouchesDown((e) => {
       const vals = activePressSharedValues || [];
       if (!vals.length || e.numberOfTouches === 0) return;
 
@@ -212,16 +213,13 @@ export function CartesianChart<
           gestureState.value.bootstrap.push([v, touch]);
         }
       }
-
-      if (gestureState.value.isGestureActive) manager.activate();
     })
     /**
      * On start, check if we have any bootstraped updates we need to apply.
      */
-    .onBegin(() => {
-      gestureState.value.isGestureActive = true;
-    })
     .onStart(() => {
+      gestureState.value.isGestureActive = true;
+
       for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
         const [v, touch] = gestureState.value.bootstrap[i]!;
         // Update the mapping
@@ -237,8 +235,6 @@ export function CartesianChart<
      */
     .onFinalize(() => {
       gestureState.value.isGestureActive = false;
-    })
-    .onEnd(() => {
       gestureState.value.bootstrap = [];
     })
     /**
@@ -262,7 +258,7 @@ export function CartesianChart<
     /**
      * On each finger up, start to update values and "free up" the touch map.
      */
-    .onTouchesUp((e, manager) => {
+    .onTouchesUp((e) => {
       for (const touch of e.changedTouches) {
         const vals = activePressSharedValues || [];
 
@@ -277,17 +273,12 @@ export function CartesianChart<
         // Free up touch map for this touch
         touchMap.value[touch.id] = undefined;
       }
-
-      // All fingers up, end the gesture
-      if (e.numberOfTouches === 0) {
-        manager.end();
-      }
     })
     /**
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */
-    .activateAfterLongPress(100);
+    .activateAfterLongPress(gestureLongPressDelay);
 
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
@@ -365,7 +356,7 @@ export function CartesianChart<
   // Conditionally wrap the body in gesture handler based on activePressSharedValue
   return chartPressState ? (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={touchGesture}>{body}</GestureDetector>
+      <GestureDetector gesture={panGesture}>{body}</GestureDetector>
     </GestureHandlerRootView>
   ) : (
     body
