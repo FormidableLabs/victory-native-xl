@@ -82,6 +82,12 @@ A `number` or an object of shape `{ left?: number; right?: number; top?: number;
 
 For example, passing `padding={{ left: 20, bottom: 20 }}` will add 20 Density Independent Pixels (DIPs) of space to the bottom and left of the chart, but have the chart "bleed" to the right and top. Passing `padding={20}` will add 20 DIPs of space to all sides.
 
+### `domain`
+
+An object of shape `{ x?: [number] | [number, number]; y?: [number] | [number, number] }` that can be specified to control the upper and lower bounds of each axis. It defaults to the min and max of each range respectively.
+
+For example, passing `domain={{y: [-10, 100]}}` will result in a y-axis with a lower bound of `-10` and an upper bound of `100`. For `domain={{x: [1, 4]}}`, will result in an x-axis contained within those bounds.
+
 ### `domainPadding`
 
 A `number` or an object of shape `{ left?: number; right?: number; top?: number; bottom?: number; }` that specifies that padding between the outer bounds of the _charting area_ (e.g. where the axes lie) and where chart elements will be plotted.
@@ -128,6 +134,10 @@ The `renderOutside` prop is identical to [the `children` prop](#children-require
 ### `onChartBoundsChange`
 
 The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?: (bounds: ChartBounds) => void;` that exposes the chart bounds, useful if you need access to the chart's bounds for your own custom drawing purposes.
+
+### `gestureLongPressDelay`
+
+The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
 
 ## Render Function Fields
 
