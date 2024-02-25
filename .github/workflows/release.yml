@@ -1,9 +1,7 @@
 name: Victory Native Release Workflow
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   release:
@@ -31,5 +29,5 @@ jobs:
           version: yarn run version
           publish: yarn run changeset publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.USER_TOKEN_GITHUB_ACTIONS }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

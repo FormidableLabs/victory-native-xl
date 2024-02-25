@@ -36,3 +36,6 @@ yarn-error.*
 *.tsbuildinfo
 .expo/README.md
 .expo/devices.json
+
+.package-lock.json
+.yarn.lock
