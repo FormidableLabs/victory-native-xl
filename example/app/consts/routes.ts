@@ -86,10 +86,16 @@ if (__DEV__) {
       path: "/scrollview-charts",
     },
     {
-      title: "Pie Chart (in progress)",
+      title: "Pie Chart",
       description:
-        "This is a simple Pie chart in Victory. It has support for a displaying a legend, and customizing each slice. No gestures are supported yet. This is a work in progress.",
+        "This is a Pie chart in Victory. It has support for a displaying a legend, customizing each slice and adding insets.",
       path: "/pie-chart",
+    },
+    {
+      title: "Donut Chart",
+      description:
+        "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop.",
+      path: "/donut-chart",
     },
   );
 }

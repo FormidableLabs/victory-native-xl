@@ -9,15 +9,16 @@ import { useSlicePath } from "./hooks/useSlicePath";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 
 export type PieSliceData = {
-  value: number;
-  label: string;
-  color: Color;
-  startAngle: number;
-  endAngle: number;
-  sweepAngle: number;
-  sliceIsEntireCircle: boolean;
-  radius: number;
   center: SkPoint;
+  color: Color;
+  endAngle: number;
+  innerRadius: number;
+  label: string;
+  radius: number;
+  sliceIsEntireCircle: boolean;
+  startAngle: number;
+  sweepAngle: number;
+  value: number;
 };
 
 type AdditionalPathProps = Partial<Omit<PathProps, "color" | "path">>;

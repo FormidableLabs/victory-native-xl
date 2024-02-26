@@ -13,6 +13,7 @@ import {
   PieChartProvider,
   usePieChartContext,
 } from "./contexts/PieChartContext";
+import { handleTranslateInnerRadius } from "./utils/innerRadius";
 
 const CIRCLE_SWEEP_DEGREES = 360;
 
@@ -30,6 +31,7 @@ type PieChartProps<
   labelKey: LabelKey;
   renderLegend?: (data: PieSliceData[]) => React.ReactNode;
   valueKey: ValueKey;
+  innerRadius?: number | string;
 };
 
 const PieChartBase = <
@@ -47,6 +49,7 @@ const PieChartBase = <
     valueKey,
     colorKey,
     canvasStyle,
+    innerRadius = 0,
     renderLegend,
     children,
   } = props;
@@ -81,7 +84,7 @@ const PieChartBase = <
   const data = React.useMemo(() => {
     let startAngle = 0; // Initialize the start angle for the first slice
 
-    const enhanced: PieSliceData[] = _data.map((datum) => {
+    const enhanced = _data.map((datum): PieSliceData => {
       const sliceValue = datum[valueKey] as number;
       const sliceLabel = datum[label] as string;
       const sliceColor = datum[colorKey] as Color;
@@ -95,6 +98,7 @@ const PieChartBase = <
         value: sliceValue,
         label: sliceLabel,
         color: sliceColor,
+        innerRadius: handleTranslateInnerRadius(innerRadius, radius),
         startAngle: initialStartAngle,
         endAngle: endAngle,
         sweepAngle,
@@ -105,7 +109,16 @@ const PieChartBase = <
     });
 
     return enhanced;
-  }, [valueKey, _data, totalCircleValue, colorKey, label, radius, center]);
+  }, [
+    valueKey,
+    _data,
+    totalCircleValue,
+    colorKey,
+    label,
+    radius,
+    center,
+    innerRadius,
+  ]);
 
   // Determine the container's flexDirection based on the legend's position prop
   const baseFlexDirection =

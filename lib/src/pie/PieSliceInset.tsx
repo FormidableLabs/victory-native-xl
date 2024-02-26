@@ -19,6 +19,10 @@ export const PieSliceInset = (props: PieSliceInsetProps) => {
   const { slice } = usePieSliceContext();
   const [path, insetPaint] = useSliceInsetPath({ slice, inset });
 
+  if (inset.width === 0) {
+    return null;
+  }
+
   return (
     <Path path={path} paint={insetPaint} {...rest}>
       {children}
