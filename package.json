@@ -1,6 +1,8 @@
 {
   "name": "victory-native-xl-monorepo",
-  "private": true,
+  "engines": {
+    "node": "18.16.0"
+  },
   "workspaces": [
     "lib",
     "example"
