@@ -47,7 +47,7 @@ const DATA = (numberPoints = 5) =>
     label: `Label ${index + 1}`,
   }));
 
-export default function PieChartPlayground(props: { segment: string }) {
+export default function DonutChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const [data, setData] = useState(DATA(5));
 

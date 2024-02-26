@@ -97,6 +97,12 @@ if (__DEV__) {
         "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop.",
       path: "/donut-chart",
     },
+    {
+      title: "Pie and Donut Assortment",
+      description:
+        "This is mixture of Pie and Donut charts, showing off the different ways to customize the charts.",
+      path: "/pie-and-donut-charts",
+    },
   );
 }
 
