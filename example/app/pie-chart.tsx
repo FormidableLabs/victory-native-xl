@@ -42,26 +42,21 @@ export default function PieChart(props: { segment: string }) {
             labelKey={"label"}
             valueKey={"value"}
             colorKey={"color"}
-            renderLegend={(data) => (
+            renderLegend={() => (
               <Pie.ChartLegend
                 containerStyle={{ alignSelf: "center" }}
                 position="bottom"
-                data={data}
-              >
-                {({ slice }) => <Pie.ChartLegendItem slice={slice} />}
-              </Pie.ChartLegend>
+              />
             )}
           >
-            {({ slice }) => {
-              return (
-                <Pie.SliceProvider slice={slice}>
-                  <Pie.Slice />
-                  <Pie.SliceInset
-                    inset={{ width: insetWidth, color: insetColor }}
-                  />
-                </Pie.SliceProvider>
-              );
-            }}
+            {() => (
+              <>
+                <Pie.Slice />
+                <Pie.SliceInset
+                  inset={{ width: insetWidth, color: insetColor }}
+                />
+              </>
+            )}
           </Pie.Chart>
         </View>
 

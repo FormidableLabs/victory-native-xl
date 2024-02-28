@@ -5,23 +5,28 @@ import React, {
   type PropsWithChildren,
 } from "react";
 import type { PieLegendPosition } from "../PieChartLegend";
+import type { PieSliceData } from "../PieSlice";
 
 interface PieChartContext {
+  data: PieSliceData[];
   position: PieLegendPosition;
   setPosition: React.Dispatch<React.SetStateAction<PieLegendPosition>>;
 }
 
 const PieChartContext = createContext<PieChartContext | undefined>(undefined);
 
-interface PieChartProviderProps {}
+interface PieChartProviderProps {
+  data: PieSliceData[];
+}
 
-export const PieChartProvider = ({
-  children,
-}: PropsWithChildren<PieChartProviderProps>) => {
+export const PieChartProvider = (
+  props: PropsWithChildren<PieChartProviderProps>,
+) => {
   const [position, setPosition] = useState<PieLegendPosition>("bottom");
+  const { children, data } = props;
 
   return (
-    <PieChartContext.Provider value={{ position, setPosition }}>
+    <PieChartContext.Provider value={{ data, position, setPosition }}>
       {children}
     </PieChartContext.Provider>
   );

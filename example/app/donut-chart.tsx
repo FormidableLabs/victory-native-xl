@@ -61,13 +61,12 @@ export default function DonutChart(props: { segment: string }) {
             valueKey={"value"}
             colorKey={"color"}
             innerRadius={"50%"}
-            renderLegend={(data) => (
+            renderLegend={() => (
               <Pie.ChartLegend
                 containerStyle={{
                   justifyContent: "center",
                 }}
                 position="bottom"
-                data={data}
               >
                 {({ slice }) => (
                   <Pie.ChartLegendItem
@@ -90,7 +89,7 @@ export default function DonutChart(props: { segment: string }) {
               );
 
               return (
-                <Pie.SliceProvider slice={slice}>
+                <>
                   <Pie.Slice>
                     <LinearGradient
                       start={vec(startX, startY)}
@@ -105,7 +104,7 @@ export default function DonutChart(props: { segment: string }) {
                       color: "white",
                     }}
                   />
-                </Pie.SliceProvider>
+                </>
               );
             }}
           </Pie.Chart>

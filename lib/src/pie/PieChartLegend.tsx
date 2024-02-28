@@ -2,19 +2,19 @@ import * as React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import type { PieSliceData } from "./PieSlice";
 import { usePieChartContext } from "./contexts/PieChartContext";
+import { PieChartLegendItem } from "./PieChartLegendItem";
 
 export type PieLegendPosition = "top" | "bottom" | "left" | "right";
 type PieChartLegendProps = {
-  data: PieSliceData[];
   position?: PieLegendPosition;
   containerStyle?: StyleProp<ViewStyle>;
-  children: (args: { slice: PieSliceData }) => React.ReactNode;
+  children?: (args: { slice: PieSliceData }) => React.ReactNode;
 };
 
 export const PieChartLegend = (props: PieChartLegendProps) => {
-  const { data, position = "bottom", containerStyle, children } = props;
+  const { position = "bottom", containerStyle, children } = props;
 
-  const { setPosition } = usePieChartContext();
+  const { setPosition, data } = usePieChartContext();
   React.useLayoutEffect(() => {
     setPosition(position);
     return () => {};
@@ -28,8 +28,10 @@ export const PieChartLegend = (props: PieChartLegendProps) => {
   return (
     <View style={[baseContainerStyle, containerStyle]}>
       {data.map((slice, index) => {
-        return (
+        return children ? (
           <React.Fragment key={index}>{children({ slice })}</React.Fragment>
+        ) : (
+          <PieChartLegendItem key={index} slice={slice} />
         );
       })}
     </View>
