@@ -5,13 +5,16 @@ import {
   degreesToRadians,
 } from "../utils/radians";
 import type { PieSliceData } from "../PieSlice";
-import type { PieSliceInsetData } from "../PieSliceInset";
+import type { PieSliceAngularInsetData } from "../PieSliceAngularInset";
 
-type SliceInsetPathArgs = {
+type SliceAngularInsetPathArgs = {
   slice: PieSliceData;
-  inset: PieSliceInsetData;
+  angularInset: PieSliceAngularInsetData;
 };
-export const useSliceInsetPath = ({ inset, slice }: SliceInsetPathArgs) => {
+export const useSliceAngularInsetPath = ({
+  angularInset,
+  slice,
+}: SliceAngularInsetPathArgs) => {
   const [path, paint] = useMemo(() => {
     const { radius, center, innerRadius } = slice;
 
@@ -72,11 +75,11 @@ export const useSliceInsetPath = ({ inset, slice }: SliceInsetPathArgs) => {
 
     // Create Paint for inset
     const insetPaint = Skia.Paint();
-    insetPaint.setColor(Skia.Color(inset.color));
+    insetPaint.setColor(Skia.Color(angularInset.angularStrokeColor));
     insetPaint.setStyle(PaintStyle.Stroke);
-    insetPaint.setStrokeWidth(inset.width);
+    insetPaint.setStrokeWidth(angularInset.angularStrokeWidth);
     return [path, insetPaint] as const;
-  }, [slice, inset]);
+  }, [slice, angularInset]);
 
   return [path, paint] as const;
 };

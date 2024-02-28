@@ -52,8 +52,11 @@ export default function PieChart(props: { segment: string }) {
             {() => (
               <>
                 <Pie.Slice />
-                <Pie.SliceInset
-                  inset={{ width: insetWidth, color: insetColor }}
+                <Pie.SliceAngularInset
+                  angularInset={{
+                    angularStrokeWidth: insetWidth,
+                    angularStrokeColor: insetColor,
+                  }}
                 />
               </>
             )}

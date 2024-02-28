@@ -200,7 +200,12 @@ const PieChartWithInsets = () => {
                 positions={[0, 1]}
               />
             </Pie.Slice>
-            <Pie.SliceInset inset={{ width: 4, color: "white" }} />
+            <Pie.SliceAngularInset
+              angularInset={{
+                angularStrokeWidth: 4,
+                angularStrokeColor: "white",
+              }}
+            />
           </>
         );
       }}
@@ -251,10 +256,10 @@ const DonutChartWithInsets = () => {
                 positions={[0, 1]}
               />
             </Pie.Slice>
-            <Pie.SliceInset
-              inset={{
-                width: 5,
-                color: "white",
+            <Pie.SliceAngularInset
+              angularInset={{
+                angularStrokeWidth: 5,
+                angularStrokeColor: "white",
               }}
             />
           </>

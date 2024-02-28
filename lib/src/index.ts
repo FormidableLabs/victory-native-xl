@@ -51,4 +51,4 @@ export { CartesianAxis } from "./cartesian/components/CartesianAxis";
  */
 export { Pie } from "./pie";
 export { useSlicePath } from "./pie/hooks/useSlicePath";
-export { useSliceInsetPath } from "./pie/hooks/useSliceInsetPath";
+export { useSliceAngularInsetPath } from "./pie/hooks/useSliceAngularInsetPath";

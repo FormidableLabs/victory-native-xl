@@ -98,10 +98,10 @@ export default function DonutChart(props: { segment: string }) {
                       positions={[0, 1]}
                     />
                   </Pie.Slice>
-                  <Pie.SliceInset
-                    inset={{
-                      width: 5,
-                      color: "white",
+                  <Pie.SliceAngularInset
+                    angularInset={{
+                      angularStrokeWidth: 5,
+                      angularStrokeColor: "white",
                     }}
                   />
                 </>
