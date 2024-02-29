@@ -48,6 +48,22 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Pie Charts",
+      collapsed: false,
+      collapsible: false,
+      items: [
+        "pie/pie-charts",
+        {
+          type: "category",
+          label: "Legends",
+          items: ["pie/pie-chart-legend", "pie/pie-chart-legend-item"],
+        },
+        "pie/use-slice-path",
+        "pie/use-slice-angular-inset-path",
+      ],
+    },
 
     "animated-paths",
   ],
