@@ -8,10 +8,9 @@ import {
 } from "react-native";
 import { Canvas, Circle, vec } from "@shopify/react-native-skia";
 import { Text } from "example/components/Text";
-import type { PieSliceData } from "./PieSlice";
+import { usePieSliceContext } from "./contexts/PieSliceContext";
 
 type PieChartLegendItemProps = {
-  slice: PieSliceData;
   formatLabel?: (label: string) => string;
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
@@ -19,7 +18,8 @@ type PieChartLegendItemProps = {
 };
 
 export const PieChartLegendItem = (props: PieChartLegendItemProps) => {
-  const { slice, formatLabel, containerStyle, canvasStyle, textStyle } = props;
+  const { formatLabel, containerStyle, canvasStyle, textStyle } = props;
+  const { slice } = usePieSliceContext();
   const { color, label } = slice;
   const displayLabel = formatLabel ? formatLabel(label) : label;
   return (

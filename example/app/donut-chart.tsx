@@ -70,7 +70,6 @@ export default function DonutChart(props: { segment: string }) {
               >
                 {({ slice }) => (
                   <Pie.ChartLegendItem
-                    slice={slice}
                     formatLabel={(label) =>
                       `${label} - ${Math.round(slice.value)}`
                     }

@@ -3,6 +3,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import type { PieSliceData } from "./PieSlice";
 import { usePieChartContext } from "./contexts/PieChartContext";
 import { PieChartLegendItem } from "./PieChartLegendItem";
+import { PieSliceProvider } from "./contexts/PieSliceContext";
 
 export type PieLegendPosition = "top" | "bottom" | "left" | "right";
 type PieChartLegendProps = {
@@ -28,10 +29,10 @@ export const PieChartLegend = (props: PieChartLegendProps) => {
   return (
     <View style={[baseContainerStyle, containerStyle]}>
       {data.map((slice, index) => {
-        return children ? (
-          <React.Fragment key={index}>{children({ slice })}</React.Fragment>
-        ) : (
-          <PieChartLegendItem key={index} slice={slice} />
+        return (
+          <PieSliceProvider key={index} slice={slice}>
+            {children ? children({ slice }) : <PieChartLegendItem />}
+          </PieSliceProvider>
         );
       })}
     </View>

@@ -65,7 +65,6 @@ const DonutChartSingleDataPoint = () => {
         >
           {({ slice }) => (
             <Pie.ChartLegendItem
-              slice={slice}
               formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
             />
           )}
@@ -113,7 +112,6 @@ const PieChartSingleDataPoint = () => {
         >
           {({ slice }) => (
             <Pie.ChartLegendItem
-              slice={slice}
               formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
             />
           )}
@@ -230,7 +228,6 @@ const DonutChartWithInsets = () => {
         >
           {({ slice }) => (
             <Pie.ChartLegendItem
-              slice={slice}
               formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
             />
           )}
