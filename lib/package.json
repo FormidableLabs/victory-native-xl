@@ -1,11 +1,14 @@
 {
-  "name": "victory-native",
-  "version": "40.0.4",
+  "name": "@sunrun/victory-native-xl",
+  "version": "40.0.4-0.0.1",
   "private": false,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FormidableLabs/victory-native-xl"
+    "url": "https://github.com/SunRun/victory-native-xl.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/SunRun"
   },
   "react-native": "src/index",
   "types": "dist/index.d.ts",
@@ -48,8 +51,5 @@
     "@types/react": "~18.2.14",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
-  },
-  "publishConfig": {
-    "provenance": true
   }
 }

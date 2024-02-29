@@ -1,6 +1,9 @@
 {
   "name": "victory-native-xl-monorepo",
   "private": true,
+  "engines": {
+    "node": ">=16.14"
+  },
   "workspaces": [
     "lib",
     "example"
@@ -17,13 +20,13 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx example lib",
     "typecheck": "tsc --noEmit",
-    "build": "shx cp README.md ./lib/README.md && yarn workspace victory-native build",
-    "dev:lib": "yarn workspace victory-native dev",
+    "build": "shx cp README.md ./lib/README.md && yarn workspace @sunrun/victory-native-xl build",
+    "dev:lib": "yarn workspace @sunrun/victory-native-xl dev",
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
     "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\"",
-    "test": "yarn workspace victory-native test",
-    "test:watch": "yarn workspace victory-native test:watch",
+    "test": "yarn workspace @sunrun/victory-native-xl test",
+    "test:watch": "yarn workspace @sunrun/victory-native-xl test:watch",
     "changeset": "changeset",
     "check:code": "yarn lint && yarn typecheck && yarn test",
     "version": "yarn changeset version && yarn install --no-frozen-lockfile"

@@ -17,24 +17,29 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 18.16.0
+          cache: 'npm'
       - name: Install dependencies
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          echo "always-auth=true" > .npmrc
           yarn install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build
+        run: | 
+          npm run build
       - name: Publish to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.USER_TOKEN_GITHUB_ACTIONS_PACKAGES }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.USER_TOKEN_GITHUB_ACTIONS_PACKAGES }}" > ~/.npmrc
+          echo "@sunrun:registry=https://npm.pkg.github.com/sunrun" >> ~/.npmrc
           npm config set registry https://npm.pkg.github.com/SunRun
-          npm config set always-auth true
           sudo mkdir ~/.npm || true
           sudo chown -R $USER:$GROUP ~/.npm || true
           sudo chown -R $USER:$GROUP ~/.config || true
-          npm publish --verbose
+          npm publish --verbose -workspace lib
