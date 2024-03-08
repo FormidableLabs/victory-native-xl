@@ -27,6 +27,8 @@ export const CartesianAxis = <
   axisSide,
   lineColor,
   lineWidth,
+  xLineWidth,
+  yLineWidth,
   labelColor,
   formatYLabel,
   formatXLabel,
@@ -57,6 +59,10 @@ export const CartesianAxis = <
         ? lineColor.frame
         : lineColor) as Color,
       gridLineWidth: typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
+      gridXLineWidth:
+        typeof xLineWidth === "number" ? xLineWidth : xLineWidth.grid,
+      gridYLineWidth:
+        typeof yLineWidth === "number" ? yLineWidth : yLineWidth.grid,
       frameLineWidth:
         typeof lineWidth === "number" ? lineWidth : lineWidth.frame,
     } as const;
@@ -68,6 +74,8 @@ export const CartesianAxis = <
     labelPosition,
     lineColor,
     lineWidth,
+    xLineWidth,
+    yLineWidth,
   ]);
 
   const {
@@ -80,8 +88,11 @@ export const CartesianAxis = <
     xLabelOffset,
     yLabelOffset,
     gridLineColor,
+    // gridXLineColor,
+    // gridYLineColor,
     frameLineColor,
-    gridLineWidth,
+    gridXLineWidth,
+    gridYLineWidth,
     frameLineWidth,
   } = axisConfiguration;
 
@@ -119,7 +130,7 @@ export const CartesianAxis = <
           p1={vec(xScale(x1), yScale(tick))}
           p2={vec(xScale(x2), yScale(tick))}
           color={gridLineColor}
-          strokeWidth={gridLineWidth}
+          strokeWidth={gridYLineWidth}
         />
         {font
           ? canFitLabelContent && (
@@ -169,7 +180,7 @@ export const CartesianAxis = <
           p1={vec(xScale(tick), yScale(y2))}
           p2={vec(xScale(tick), yScale(y1))}
           color={gridLineColor}
-          strokeWidth={gridLineWidth}
+          strokeWidth={gridXLineWidth}
         />
         {font && labelWidth && canFitLabelContent ? (
           <Text
@@ -215,6 +226,14 @@ export const CartesianAxis = <
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   lineWidth: {
+    grid: StyleSheet.hairlineWidth,
+    frame: StyleSheet.hairlineWidth,
+  },
+  xLineWidth: {
+    grid: StyleSheet.hairlineWidth,
+    frame: StyleSheet.hairlineWidth,
+  },
+  yLineWidth: {
     grid: StyleSheet.hairlineWidth,
     frame: StyleSheet.hairlineWidth,
   },

@@ -97,6 +97,8 @@ export type AxisProps<
   font?: SkFont | null;
   lineColor: Color | { grid: Color; frame: Color };
   lineWidth: number | { grid: number; frame: number };
+  xLineWidth: number | { grid: number; frame: number };
+  yLineWidth: number | { grid: number; frame: number };
   labelColor: string | { x: string; y: string };
   tickCount: number | { x: number; y: number };
   labelOffset: number | { x: number; y: number };
