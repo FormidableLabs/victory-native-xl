@@ -96,6 +96,8 @@ export type AxisProps<
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
   lineColor: Color | { grid: Color; frame: Color };
+  xLineColor: Color | { grid: Color; frame: Color };
+  yLineColor: Color | { grid: Color; frame: Color };
   lineWidth: number | { grid: number; frame: number };
   xLineWidth: number | { grid: number; frame: number };
   yLineWidth: number | { grid: number; frame: number };

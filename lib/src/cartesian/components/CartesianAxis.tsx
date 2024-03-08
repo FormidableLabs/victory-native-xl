@@ -26,6 +26,8 @@ export const CartesianAxis = <
   labelOffset,
   axisSide,
   lineColor,
+  xLineColor,
+  yLineColor,
   lineWidth,
   xLineWidth,
   yLineWidth,
@@ -55,6 +57,12 @@ export const CartesianAxis = <
       gridLineColor: (typeof lineColor === "object" && "grid" in lineColor
         ? lineColor.grid
         : lineColor) as Color,
+      gridXLineColor: (typeof xLineColor === "object" && "grid" in xLineColor
+        ? xLineColor.grid
+        : xLineColor) as Color,
+      gridYLineColor: (typeof yLineColor === "object" && "grid" in yLineColor
+        ? yLineColor.grid
+        : yLineColor) as Color,
       frameLineColor: (typeof lineColor === "object" && "frame" in lineColor
         ? lineColor.frame
         : lineColor) as Color,
@@ -73,6 +81,8 @@ export const CartesianAxis = <
     axisSide.y,
     labelPosition,
     lineColor,
+    xLineColor,
+    yLineColor,
     lineWidth,
     xLineWidth,
     yLineWidth,
@@ -87,9 +97,9 @@ export const CartesianAxis = <
     yLabelPosition,
     xLabelOffset,
     yLabelOffset,
-    gridLineColor,
-    // gridXLineColor,
-    // gridYLineColor,
+    // gridLineColor,
+    gridXLineColor,
+    gridYLineColor,
     frameLineColor,
     gridXLineWidth,
     gridYLineWidth,
@@ -129,7 +139,7 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(x1), yScale(tick))}
           p2={vec(xScale(x2), yScale(tick))}
-          color={gridLineColor}
+          color={gridYLineColor}
           strokeWidth={gridYLineWidth}
         />
         {font
@@ -179,7 +189,7 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(tick), yScale(y2))}
           p2={vec(xScale(tick), yScale(y1))}
-          color={gridLineColor}
+          color={gridXLineColor}
           strokeWidth={gridXLineWidth}
         />
         {font && labelWidth && canFitLabelContent ? (
@@ -225,6 +235,8 @@ export const CartesianAxis = <
 
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
+  xLineColor: "hsla(0, 0%, 0%, 0.25)",
+  yLineColor: "hsla(0, 0%, 0%, 0.25)",
   lineWidth: {
     grid: StyleSheet.hairlineWidth,
     frame: StyleSheet.hairlineWidth,
