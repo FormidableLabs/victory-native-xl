@@ -95,12 +95,8 @@ export type AxisProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  lineColor: Color | { grid: Color; frame: Color };
-  xLineColor: Color | { grid: Color; frame: Color };
-  yLineColor: Color | { grid: Color; frame: Color };
-  lineWidth: number | { grid: number; frame: number };
-  xLineWidth: number | { grid: number; frame: number };
-  yLineWidth: number | { grid: number; frame: number };
+  lineColor: Color | { x: Color; y: Color; frame: Color };
+  lineWidth: number | { x: number; y: number; frame: number };
   labelColor: string | { x: string; y: string };
   tickCount: number | { x: number; y: number };
   labelOffset: number | { x: number; y: number };
