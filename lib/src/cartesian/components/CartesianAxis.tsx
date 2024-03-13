@@ -52,9 +52,13 @@ export const CartesianAxis = <
         typeof labelPosition === "string" ? labelPosition : labelPosition.y,
       gridXLineColor: (typeof lineColor === "object" && "x" in lineColor
         ? lineColor.x
+        : typeof lineColor === "object" && "grid" in lineColor
+        ? lineColor.grid
         : lineColor) as Color,
       gridYLineColor: (typeof lineColor === "object" && "y" in lineColor
         ? lineColor.y
+        : typeof lineColor === "object" && "grid" in lineColor
+        ? lineColor.grid
         : lineColor) as Color,
       gridFrameLineColor: (typeof lineColor === "object" && "frame" in lineColor
         ? lineColor.frame
@@ -62,10 +66,14 @@ export const CartesianAxis = <
       gridXLineWidth:
         typeof lineWidth === "object" && "x" in lineWidth
           ? lineWidth.x
+          : typeof lineWidth === "object" && "grid" in lineWidth
+          ? lineWidth.grid
           : lineWidth,
       gridYLineWidth:
         typeof lineWidth === "object" && "y" in lineWidth
           ? lineWidth.y
+          : typeof lineWidth === "object" && "grid" in lineWidth
+          ? lineWidth.grid
           : lineWidth,
       gridFrameLineWidth:
         typeof lineWidth === "object" && "frame" in lineWidth
