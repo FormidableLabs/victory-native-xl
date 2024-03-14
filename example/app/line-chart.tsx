@@ -85,10 +85,12 @@ export default function LineChartPage(props: { segment: string }) {
           yKeys={["sales"]}
           axisOptions={{
             font,
-            lineWidth: { x: 0, y: 2, frame: 0 },
+            lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
             lineColor: {
-              x: colors.xLine!,
-              y: colors.yLine!,
+              grid: {
+                x: colors.xLine!,
+                y: colors.yLine!,
+              },
               frame: colors.frameLine!,
             },
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },

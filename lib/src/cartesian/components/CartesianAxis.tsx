@@ -50,30 +50,30 @@ export const CartesianAxis = <
         typeof labelPosition === "string" ? labelPosition : labelPosition.x,
       yLabelPosition:
         typeof labelPosition === "string" ? labelPosition : labelPosition.y,
-      gridXLineColor: (typeof lineColor === "object" && "x" in lineColor
-        ? lineColor.x
-        : typeof lineColor === "object" && "grid" in lineColor
-        ? lineColor.grid
+      gridXLineColor: (typeof lineColor === "object" && "grid" in lineColor
+        ? typeof lineColor.grid === "object" && "x" in lineColor.grid
+          ? lineColor.grid.x
+          : lineColor.grid
         : lineColor) as Color,
-      gridYLineColor: (typeof lineColor === "object" && "y" in lineColor
-        ? lineColor.y
-        : typeof lineColor === "object" && "grid" in lineColor
-        ? lineColor.grid
+      gridYLineColor: (typeof lineColor === "object" && "grid" in lineColor
+        ? typeof lineColor.grid === "object" && "y" in lineColor.grid
+          ? lineColor.grid.y
+          : lineColor.grid
         : lineColor) as Color,
       gridFrameLineColor: (typeof lineColor === "object" && "frame" in lineColor
         ? lineColor.frame
         : lineColor) as Color,
       gridXLineWidth:
-        typeof lineWidth === "object" && "x" in lineWidth
-          ? lineWidth.x
-          : typeof lineWidth === "object" && "grid" in lineWidth
-          ? lineWidth.grid
+        typeof lineWidth === "object" && "grid" in lineWidth
+          ? typeof lineWidth.grid === "object" && "x" in lineWidth.grid
+            ? lineWidth.grid.x
+            : lineWidth.grid
           : lineWidth,
       gridYLineWidth:
-        typeof lineWidth === "object" && "y" in lineWidth
-          ? lineWidth.y
-          : typeof lineWidth === "object" && "grid" in lineWidth
-          ? lineWidth.grid
+        typeof lineWidth === "object" && "grid" in lineWidth
+          ? typeof lineWidth.grid === "object" && "y" in lineWidth.grid
+            ? lineWidth.grid.y
+            : lineWidth.grid
           : lineWidth,
       gridFrameLineWidth:
         typeof lineWidth === "object" && "frame" in lineWidth
