@@ -43,7 +43,7 @@ export default function PieChart(props: { segment: string }) {
             valueKey={"value"}
             labelKey={"label"}
           >
-            <Pie.Chart></Pie.Chart>
+            <Pie.Chart />
           </PolarChart>
         </View>
 

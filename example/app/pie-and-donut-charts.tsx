@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { LinearGradient, vec } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  Circle,
+  LinearGradient,
+  Rect,
+  vec,
+} from "@shopify/react-native-skia";
 import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Text } from "example/components/Text";
@@ -98,35 +104,54 @@ const PieChartSingleDataPoint = () => {
 const PieChartMultipleDataPoints = () => {
   const [data] = useState(DATA(10));
   return (
-    <PolarChart
-      data={data}
-      labelKey={"label"}
-      valueKey={"value"}
-      colorKey={"color"}
-    >
-      <Pie.Chart>
-        {({ slice }) => {
-          const { startX, startY, endX, endY } = calculateGradientPoints(
-            slice.radius,
-            slice.startAngle,
-            slice.endAngle,
-            slice.center.x,
-            slice.center.y,
-          );
+    <View style={{ flex: 1 }}>
+      <PolarChart
+        data={data}
+        labelKey={"label"}
+        valueKey={"value"}
+        colorKey={"color"}
+      >
+        <Pie.Chart>
+          {({ slice }) => {
+            const { startX, startY, endX, endY } = calculateGradientPoints(
+              slice.radius,
+              slice.startAngle,
+              slice.endAngle,
+              slice.center.x,
+              slice.center.y,
+            );
 
-          return (
-            <Pie.Slice>
-              <LinearGradient
-                start={vec(startX, startY)}
-                end={vec(endX, endY)}
-                colors={[slice.color, `${slice.color}50`]}
-                positions={[0, 1]}
+            return (
+              <Pie.Slice>
+                <LinearGradient
+                  start={vec(startX, startY)}
+                  end={vec(endX, endY)}
+                  colors={[slice.color, `${slice.color}50`]}
+                  positions={[0, 1]}
+                />
+              </Pie.Slice>
+            );
+          }}
+        </Pie.Chart>
+      </PolarChart>
+      <View style={styles.legend}>
+        {data.map((d, i) => (
+          <View key={i} style={[styles.legendItemContainer]}>
+            <Canvas style={[styles.legendItemCanvas]}>
+              <Circle
+                c={vec(
+                  styles.legendItemCanvas.height / 2,
+                  styles.legendItemCanvas.height / 2,
+                )}
+                r={styles.legendItemCanvas.height / 2 - 1} // - 1 to prevent clipping
+                color={d.color}
               />
-            </Pie.Slice>
-          );
-        }}
-      </Pie.Chart>
-    </PolarChart>
+            </Canvas>
+            <Text style={[]}>{d.label}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 };
 const PieChartWithInsets = () => {
@@ -214,7 +239,7 @@ const DonutChartWithInsets = () => {
   );
 };
 
-const PieChartSimpleNoLegendNoRenderProps = () => {
+const PieChartSimpleNoCustomizations = () => {
   const [data] = useState(DATA(5));
   return (
     <PolarChart
@@ -230,14 +255,38 @@ const PieChartSimpleNoLegendNoRenderProps = () => {
 const PieChartSimpleCustomLegend = () => {
   const [data] = useState(DATA(5));
   return (
-    <PolarChart
-      data={data}
-      labelKey={"label"}
-      valueKey={"value"}
-      colorKey={"color"}
-    >
-      <Pie.Chart />
-    </PolarChart>
+    <View style={{ flex: 1 }}>
+      <PolarChart
+        data={data}
+        labelKey={"label"}
+        valueKey={"value"}
+        colorKey={"color"}
+      >
+        <Pie.Chart />
+      </PolarChart>
+      <View style={{ flexDirection: "row", alignSelf: "center", marginTop: 5 }}>
+        {data.map((d, index) => {
+          return (
+            <View
+              key={index}
+              style={{
+                marginRight: 8,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Canvas style={[{ height: 12, width: 12, marginRight: 4 }]}>
+                <Rect
+                  rect={{ x: 0, y: 0, width: 12, height: 12 }}
+                  color={d.color}
+                />
+              </Canvas>
+              <Text style={{}}>{d.label}</Text>
+            </View>
+          );
+        })}
+      </View>
+    </View>
   );
 };
 
@@ -251,10 +300,8 @@ export default function PieAndDonutCharts(props: { segment: string }) {
           <InfoCard style={{ flex: 0 }}>{description}</InfoCard>
         </View>
         <View style={styles.chartContainer}>
-          <Text style={styles.title}>
-            Pie Chart with No Legend or Render Props
-          </Text>
-          <PieChartSimpleNoLegendNoRenderProps />
+          <Text style={styles.title}>Pie Chart with No Customizations</Text>
+          <PieChartSimpleNoCustomizations />
         </View>
         <View style={styles.chartContainer}>
           <Text style={styles.title}>Donut Chart with Insets</Text>
@@ -304,4 +351,16 @@ const styles = StyleSheet.create({
     },
   },
   title: { marginBottom: 10, fontSize: 16, fontWeight: "bold" },
+  legend: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
+  legendItemContainer: {
+    flexDirection: "row",
+    padding: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  legendItemCanvas: {
+    height: 12,
+    width: 12,
+    marginRight: 2,
+  },
 });
