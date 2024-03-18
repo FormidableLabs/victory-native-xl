@@ -1,18 +1,14 @@
 # Pie.Chart (Component)
 
-The `Pie.Chart` component provides another kind of charting component in `victory-native`. Its core responsibilities are:
-
-- transforming raw data into a format that can be easily accessed and used for charting `Pie` and `Donut` charts.
-- display metadata via the `Pie.ChartLegend` component.
-- offers sensible defaults with the ability to customize the chart, slices, and legend as needed.
+The `Pie.Chart` component is a child component of the `PolarChart` component and is responsible for rendering the `Pie` or `Donut` chart.
 
 :::info
-This chart does not yet support gestures or animations.
+This chart does not yet support labels. We are working on adding support for labels in the future. In the meantime, you can easily add your own legend next to the chart. See the [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/example) for more details.
 :::
 
 :::tip
 
-The example app inside this repo has a lot of examples of how to use the `Pie.Chart` and its associated components!
+The [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/example) inside this repo has a lot of examples of how to use the `Pie.Chart` and its associated components!
 
 :::
 
@@ -27,12 +23,14 @@ import { Pie } from "victory-native";
 function MyChart() {
   return (
     <View style={{ height: 300 }}>
-      <Pie.Chart
+      <PolarChart
         data={DATA} // 👈 specify your data
         labelKey={"label"} // 👈 specify data key for labels
         valueKey={"value"} // 👈 specify data key for values
         colorKey={"color"} // 👈 specify data key for color
-      />
+      >
+        <Pie.Chart />
+      </PolarChart>
     </View>
   );
 }
@@ -56,20 +54,12 @@ const DATA = (numberPoints = 5) =>
 
 ## Props
 
-### `data` (required)
+### `innerRadius`
 
-An array of objects to be used as data points for the chart.
+A `number` or `string` (as a percentage) which turns the `Pie` chart into a `Donut` chart. The `innerRadius` prop is the radius of the inner circle of the donut chart. If not provided, the chart will remain a `Pie` chart.
 
-### `labelKey` (required)
-
-A `string` value indicating the _key_ of each `data[number]` object to be used. Currently only used on the legend part of the chart. In the future we may add support for a variety of labels within the chart. The value of the label can be a `string` | `number`
-
-### `valueKey` (required)
-
-A `string` value indicating the _key_ of each `data[number]` object to be used to draw a slice of the Pie.
-
-:::info
-The `valueKey` prop must be a key for a field that has a `number` value. That is, only `number`s can be used as dependent values for charting purposes.
+:::tip
+The `innerRadius` prop must be a `number` or a `string` like `50%`.
 :::
 
 ### `children`
@@ -177,26 +167,6 @@ const DATA = (numberPoints = 5) =>
     label: `Label ${index + 1}`,
   }));
 ```
-
-### `containerStyle`
-
-A `StyleProp<ViewStyle>` that styles the `View` which wraps the `Canvas` and `Legend` of the `Pie` chart.
-
-### `canvasStyle`
-
-A `StyleProp<ViewStyle>` that styles the `Canvas` upon which the `Pie` chart is drawn.
-
-### `innerRadius`
-
-A `number` or `string` (as a percentage) which turns the `Pie` chart into a `Donut` chart. The `innerRadius` prop is the radius of the inner circle of the donut chart. If not provided, the chart will remain a `Pie` chart.
-
-:::tip
-The `innerRadius` prop must be a `number` or a `string` like `50%`.
-:::
-
-### `renderLegend`
-
-A render prop that allows you to customize the legend. See the [Pie.ChartLegend](/pie/pie-chart-legend) section for more information.
 
 ## Render Function Fields
 

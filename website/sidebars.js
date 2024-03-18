@@ -50,18 +50,20 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Pie Charts",
+      label: "Polar Charts",
       collapsed: false,
       collapsible: false,
       items: [
-        "pie/pie-charts",
+        "polar/polar-chart",
         {
           type: "category",
-          label: "Legends",
-          items: ["pie/pie-chart-legend", "pie/pie-chart-legend-item"],
+          label: "Pie / Donut Paths",
+          items: [
+            "polar/pie/pie-charts",
+            "polar/pie/use-slice-path",
+            "polar/pie/use-slice-angular-inset-path",
+          ],
         },
-        "pie/use-slice-path",
-        "pie/use-slice-angular-inset-path",
       ],
     },
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
-import { Pie } from "victory-native";
+import { LinearGradient, vec } from "@shopify/react-native-skia";
+import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Text } from "example/components/Text";
 import { appColors } from "./consts/colors";
@@ -50,268 +50,194 @@ const DATA = (numberPoints = 5) =>
 const DonutChartSingleDataPoint = () => {
   const [data] = useState(DATA(1));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      innerRadius={"50%"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            justifyContent: "center",
-          }}
-          position="top"
-        >
-          {({ slice }) => (
-            <Pie.ChartLegendItem
-              formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
-            />
-          )}
-        </Pie.ChartLegend>
-      )}
     >
-      {({ slice }) => {
-        const { startX, startY, endX, endY } = calculateGradientPoints(
-          slice.radius,
-          slice.startAngle,
-          slice.endAngle,
-          slice.center.x,
-          slice.center.y,
-        );
+      <Pie.Chart innerRadius={"50%"}>
+        {({ slice }) => {
+          const { startX, startY, endX, endY } = calculateGradientPoints(
+            slice.radius,
+            slice.startAngle,
+            slice.endAngle,
+            slice.center.x,
+            slice.center.y,
+          );
 
-        return (
-          <Pie.Slice>
-            <LinearGradient
-              start={vec(startX, startY)}
-              end={vec(endX, endY)}
-              colors={[slice.color, `${slice.color}50`]}
-              positions={[0, 1]}
-            />
-          </Pie.Slice>
-        );
-      }}
-    </Pie.Chart>
+          return (
+            <Pie.Slice>
+              <LinearGradient
+                start={vec(startX, startY)}
+                end={vec(endX, endY)}
+                colors={[slice.color, `${slice.color}50`]}
+                positions={[0, 1]}
+              />
+            </Pie.Slice>
+          );
+        }}
+      </Pie.Chart>
+    </PolarChart>
   );
 };
 
 const PieChartSingleDataPoint = () => {
   const [data] = useState(DATA(1));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            justifyContent: "center",
-          }}
-          position="bottom"
-        >
-          {({ slice }) => (
-            <Pie.ChartLegendItem
-              formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
-            />
-          )}
-        </Pie.ChartLegend>
-      )}
-    />
+    >
+      <Pie.Chart />
+    </PolarChart>
   );
 };
 const PieChartMultipleDataPoints = () => {
   const [data] = useState(DATA(10));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            marginLeft: 25,
-            justifyContent: "center",
-          }}
-          position="right"
-        />
-      )}
     >
-      {({ slice }) => {
-        const { startX, startY, endX, endY } = calculateGradientPoints(
-          slice.radius,
-          slice.startAngle,
-          slice.endAngle,
-          slice.center.x,
-          slice.center.y,
-        );
+      <Pie.Chart>
+        {({ slice }) => {
+          const { startX, startY, endX, endY } = calculateGradientPoints(
+            slice.radius,
+            slice.startAngle,
+            slice.endAngle,
+            slice.center.x,
+            slice.center.y,
+          );
 
-        return (
-          <Pie.Slice>
-            <LinearGradient
-              start={vec(startX, startY)}
-              end={vec(endX, endY)}
-              colors={[slice.color, `${slice.color}50`]}
-              positions={[0, 1]}
-            />
-          </Pie.Slice>
-        );
-      }}
-    </Pie.Chart>
+          return (
+            <Pie.Slice>
+              <LinearGradient
+                start={vec(startX, startY)}
+                end={vec(endX, endY)}
+                colors={[slice.color, `${slice.color}50`]}
+                positions={[0, 1]}
+              />
+            </Pie.Slice>
+          );
+        }}
+      </Pie.Chart>
+    </PolarChart>
   );
 };
 const PieChartWithInsets = () => {
   const [data] = useState(DATA(6));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            marginRight: 25,
-            justifyContent: "center",
-          }}
-          position="left"
-        />
-      )}
     >
-      {({ slice }) => {
-        const { startX, startY, endX, endY } = calculateGradientPoints(
-          slice.radius,
-          slice.startAngle,
-          slice.endAngle,
-          slice.center.x,
-          slice.center.y,
-        );
+      <Pie.Chart>
+        {({ slice }) => {
+          const { startX, startY, endX, endY } = calculateGradientPoints(
+            slice.radius,
+            slice.startAngle,
+            slice.endAngle,
+            slice.center.x,
+            slice.center.y,
+          );
 
-        return (
-          <>
-            <Pie.Slice>
-              <LinearGradient
-                start={vec(startX, startY)}
-                end={vec(endX, endY)}
-                colors={[slice.color, `${slice.color}50`]}
-                positions={[0, 1]}
+          return (
+            <>
+              <Pie.Slice>
+                <LinearGradient
+                  start={vec(startX, startY)}
+                  end={vec(endX, endY)}
+                  colors={[slice.color, `${slice.color}50`]}
+                  positions={[0, 1]}
+                />
+              </Pie.Slice>
+              <Pie.SliceAngularInset
+                angularInset={{
+                  angularStrokeWidth: 4,
+                  angularStrokeColor: "white",
+                }}
               />
-            </Pie.Slice>
-            <Pie.SliceAngularInset
-              angularInset={{
-                angularStrokeWidth: 4,
-                angularStrokeColor: "white",
-              }}
-            />
-          </>
-        );
-      }}
-    </Pie.Chart>
+            </>
+          );
+        }}
+      </Pie.Chart>
+    </PolarChart>
   );
 };
 const DonutChartWithInsets = () => {
   const [data] = useState(DATA(5));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      innerRadius={"50%"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            justifyContent: "center",
-          }}
-          position="bottom"
-        >
-          {({ slice }) => (
-            <Pie.ChartLegendItem
-              formatLabel={(label) => `${label} - ${Math.round(slice.value)}`}
-            />
-          )}
-        </Pie.ChartLegend>
-      )}
     >
-      {({ slice }) => {
-        const { startX, startY, endX, endY } = calculateGradientPoints(
-          slice.radius,
-          slice.startAngle,
-          slice.endAngle,
-          slice.center.x,
-          slice.center.y,
-        );
+      <Pie.Chart innerRadius={"50%"}>
+        {({ slice }) => {
+          const { startX, startY, endX, endY } = calculateGradientPoints(
+            slice.radius,
+            slice.startAngle,
+            slice.endAngle,
+            slice.center.x,
+            slice.center.y,
+          );
 
-        return (
-          <>
-            <Pie.Slice>
-              <LinearGradient
-                start={vec(startX, startY)}
-                end={vec(endX, endY)}
-                colors={[slice.color, `${slice.color}50`]}
-                positions={[0, 1]}
+          return (
+            <>
+              <Pie.Slice>
+                <LinearGradient
+                  start={vec(startX, startY)}
+                  end={vec(endX, endY)}
+                  colors={[slice.color, `${slice.color}50`]}
+                  positions={[0, 1]}
+                />
+              </Pie.Slice>
+              <Pie.SliceAngularInset
+                angularInset={{
+                  angularStrokeWidth: 5,
+                  angularStrokeColor: "white",
+                }}
               />
-            </Pie.Slice>
-            <Pie.SliceAngularInset
-              angularInset={{
-                angularStrokeWidth: 5,
-                angularStrokeColor: "white",
-              }}
-            />
-          </>
-        );
-      }}
-    </Pie.Chart>
+            </>
+          );
+        }}
+      </Pie.Chart>
+    </PolarChart>
   );
 };
 
 const PieChartSimpleNoLegendNoRenderProps = () => {
   const [data] = useState(DATA(5));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-    />
+    >
+      <Pie.Chart />
+    </PolarChart>
   );
 };
 const PieChartSimpleCustomLegend = () => {
   const [data] = useState(DATA(5));
   return (
-    <Pie.Chart
+    <PolarChart
       data={data}
       labelKey={"label"}
       valueKey={"value"}
       colorKey={"color"}
-      renderLegend={() => (
-        <Pie.ChartLegend
-          containerStyle={{
-            justifyContent: "center",
-          }}
-          position="bottom"
-        >
-          {({ slice }) => (
-            <View
-              style={{
-                marginRight: 8,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Canvas style={[{ height: 12, width: 12, marginRight: 4 }]}>
-                <Rect
-                  rect={{ x: 0, y: 0, width: 12, height: 12 }}
-                  color={slice.color}
-                />
-              </Canvas>
-              <Text style={{}}>{slice.label}</Text>
-            </View>
-          )}
-        </Pie.ChartLegend>
-      )}
-    />
+    >
+      <Pie.Chart />
+    </PolarChart>
   );
 };
 

@@ -47,6 +47,11 @@ export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
 
 /**
+ * Polar chart exports
+ */
+export { PolarChart } from "./polar/PolarChart";
+
+/**
  * Pie chart exports (including useful types)
  */
 export { Pie } from "./pie";

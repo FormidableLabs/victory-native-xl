@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Pie } from "victory-native";
+import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
@@ -37,30 +37,14 @@ export default function PieChart(props: { segment: string }) {
             height: "45%",
           }}
         >
-          <Pie.Chart
+          <PolarChart
             data={data}
-            labelKey={"label"}
-            valueKey={"value"}
             colorKey={"color"}
-            renderLegend={() => (
-              <Pie.ChartLegend
-                containerStyle={{ alignSelf: "center" }}
-                position="bottom"
-              />
-            )}
+            valueKey={"value"}
+            labelKey={"label"}
           >
-            {() => (
-              <>
-                <Pie.Slice />
-                <Pie.SliceAngularInset
-                  angularInset={{
-                    angularStrokeWidth: insetWidth,
-                    angularStrokeColor: insetColor,
-                  }}
-                />
-              </>
-            )}
-          </Pie.Chart>
+            <Pie.Chart></Pie.Chart>
+          </PolarChart>
         </View>
 
         <View style={{ flexGrow: 1, padding: 15 }}>

@@ -88,7 +88,7 @@ if (__DEV__) {
     {
       title: "Pie Chart",
       description:
-        "This is a Pie chart in Victory. It has support for a displaying a legend, customizing each slice and adding insets.",
+        "This is a Pie chart in Victory. It has support for customizing each slice and adding insets.",
       path: "/pie-chart",
     },
     {
