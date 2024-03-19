@@ -58,6 +58,24 @@ export const ChartRoutes: {
       "This chart showcases using custom shaders from Skia, leveraging shader uniforms derived from Reanimated shared values.",
     path: "/custom-shaders",
   },
+  {
+    title: "Pie Chart",
+    description:
+      "This is a Pie chart in Victory. It has support for customizing each slice and adding insets.",
+    path: "/pie-chart",
+  },
+  {
+    title: "Donut Chart",
+    description:
+      "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop.",
+    path: "/donut-chart",
+  },
+  {
+    title: "Pie and Donut Assortment",
+    description:
+      "This is mixture of Pie and Donut charts, showing off the different ways to customize the charts.",
+    path: "/pie-and-donut-charts",
+  },
 ];
 
 if (__DEV__) {
@@ -84,24 +102,6 @@ if (__DEV__) {
       description:
         "This page shows multiple charts with gestures inside a scrollview to ensure both platforms allow for this behavior.",
       path: "/scrollview-charts",
-    },
-    {
-      title: "Pie Chart",
-      description:
-        "This is a Pie chart in Victory. It has support for customizing each slice and adding insets.",
-      path: "/pie-chart",
-    },
-    {
-      title: "Donut Chart",
-      description:
-        "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop.",
-      path: "/donut-chart",
-    },
-    {
-      title: "Pie and Donut Assortment",
-      description:
-        "This is mixture of Pie and Donut charts, showing off the different ways to customize the charts.",
-      path: "/pie-and-donut-charts",
     },
   );
 }
