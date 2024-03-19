@@ -83,7 +83,7 @@ The `valueKey` prop must be a key for a field that has a Skia `Color` value.
 
 ### `children`
 
-The only supported `children` of a `PolarChart` is currently a `Pie.Chart` **See the [Pie Chart](<(/pie/pie-charts)>) for more details.**
+The only supported `children` of a `PolarChart` is currently a `Pie.Chart` **See the [Pie Chart](/polar/pie/pie-charts) for more details.**
 
 ### `containerStyle`
 
