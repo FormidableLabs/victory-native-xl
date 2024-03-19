@@ -65,7 +65,9 @@ export default function LineChartPage(props: { segment: string }) {
     strokeWidth: 2,
     colors: {
       stroke: isDark ? "#fafafa" : "#71717a",
-      line: isDark ? "#71717a" : "#d4d4d8",
+      xLine: isDark ? "#71717a" : "#ffffff",
+      yLine: isDark ? "#aabbcc" : "#ddfa55",
+      frameLine: isDark ? "#444" : "#aaa",
       xLabel: isDark ? appColors.text.dark : appColors.text.light,
       yLabel: isDark ? appColors.text.dark : appColors.text.light,
       scatter: "#a78bfa",
@@ -83,7 +85,14 @@ export default function LineChartPage(props: { segment: string }) {
           yKeys={["sales"]}
           axisOptions={{
             font,
-            lineColor: colors.line,
+            lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
+            lineColor: {
+              grid: {
+                x: colors.xLine!,
+                y: colors.yLine!,
+              },
+              frame: colors.frameLine!,
+            },
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             labelOffset: { x: xLabelOffset, y: yLabelOffset },
             tickCount: { x: xTickCount, y: yTickCount },
