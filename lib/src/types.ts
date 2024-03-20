@@ -87,6 +87,12 @@ export type NumericalFields<T> = {
   [K in keyof T as T[K] extends MaybeNumber ? K : never]: T[K];
 };
 
+export type ColorFields<T> = {
+  [K in keyof T as T[K] extends Color ? K : never]: T[K];
+};
+
+export type StringKeyOf<T> = Extract<keyof T, string>;
+
 export type AxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -95,8 +101,10 @@ export type AxisProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  lineColor: Color | { grid: Color; frame: Color };
-  lineWidth: number | { grid: number; frame: number };
+  lineColor: Color | { grid: Color | { x: Color; y: Color }; frame: Color };
+  lineWidth:
+    | number
+    | { grid: number | { x: number; y: number }; frame: number };
   labelColor: string | { x: string; y: string };
   tickCount: number | { x: number; y: number };
   labelOffset: number | { x: number; y: number };

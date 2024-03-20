@@ -50,15 +50,35 @@ export const CartesianAxis = <
         typeof labelPosition === "string" ? labelPosition : labelPosition.x,
       yLabelPosition:
         typeof labelPosition === "string" ? labelPosition : labelPosition.y,
-      gridLineColor: (typeof lineColor === "object" && "grid" in lineColor
-        ? lineColor.grid
+      gridXLineColor: (typeof lineColor === "object" && "grid" in lineColor
+        ? typeof lineColor.grid === "object" && "x" in lineColor.grid
+          ? lineColor.grid.x
+          : lineColor.grid
         : lineColor) as Color,
-      frameLineColor: (typeof lineColor === "object" && "frame" in lineColor
+      gridYLineColor: (typeof lineColor === "object" && "grid" in lineColor
+        ? typeof lineColor.grid === "object" && "y" in lineColor.grid
+          ? lineColor.grid.y
+          : lineColor.grid
+        : lineColor) as Color,
+      gridFrameLineColor: (typeof lineColor === "object" && "frame" in lineColor
         ? lineColor.frame
         : lineColor) as Color,
-      gridLineWidth: typeof lineWidth === "number" ? lineWidth : lineWidth.grid,
-      frameLineWidth:
-        typeof lineWidth === "number" ? lineWidth : lineWidth.frame,
+      gridXLineWidth:
+        typeof lineWidth === "object" && "grid" in lineWidth
+          ? typeof lineWidth.grid === "object" && "x" in lineWidth.grid
+            ? lineWidth.grid.x
+            : lineWidth.grid
+          : lineWidth,
+      gridYLineWidth:
+        typeof lineWidth === "object" && "grid" in lineWidth
+          ? typeof lineWidth.grid === "object" && "y" in lineWidth.grid
+            ? lineWidth.grid.y
+            : lineWidth.grid
+          : lineWidth,
+      gridFrameLineWidth:
+        typeof lineWidth === "object" && "frame" in lineWidth
+          ? lineWidth.frame
+          : lineWidth,
     } as const;
   }, [
     tickCount,
@@ -79,10 +99,12 @@ export const CartesianAxis = <
     yLabelPosition,
     xLabelOffset,
     yLabelOffset,
-    gridLineColor,
-    frameLineColor,
-    gridLineWidth,
-    frameLineWidth,
+    gridXLineColor,
+    gridYLineColor,
+    gridFrameLineColor,
+    gridXLineWidth,
+    gridYLineWidth,
+    gridFrameLineWidth,
   } = axisConfiguration;
 
   const [x1 = 0, x2 = 0] = xScale.domain();
@@ -118,8 +140,8 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(x1), yScale(tick))}
           p2={vec(xScale(x2), yScale(tick))}
-          color={gridLineColor}
-          strokeWidth={gridLineWidth}
+          color={gridYLineColor}
+          strokeWidth={gridYLineWidth}
         />
         {font
           ? canFitLabelContent && (
@@ -168,8 +190,8 @@ export const CartesianAxis = <
         <Line
           p1={vec(xScale(tick), yScale(y2))}
           p2={vec(xScale(tick), yScale(y1))}
-          color={gridLineColor}
-          strokeWidth={gridLineWidth}
+          color={gridXLineColor}
+          strokeWidth={gridXLineWidth}
         />
         {font && labelWidth && canFitLabelContent ? (
           <Text
@@ -204,9 +226,9 @@ export const CartesianAxis = <
       {yTicks > 0 ? yAxisNodes : null}
       <Path
         path={boundingFrame}
-        strokeWidth={frameLineWidth}
+        strokeWidth={gridFrameLineWidth}
         style="stroke"
-        color={frameLineColor}
+        color={gridFrameLineColor}
       />
     </>
   );
@@ -214,10 +236,7 @@ export const CartesianAxis = <
 
 CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: {
-    grid: StyleSheet.hairlineWidth,
-    frame: StyleSheet.hairlineWidth,
-  },
+  lineWidth: StyleSheet.hairlineWidth,
   tickCount: 5,
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },

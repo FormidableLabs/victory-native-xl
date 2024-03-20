@@ -45,3 +45,15 @@ export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
+
+/**
+ * Polar chart exports
+ */
+export { PolarChart } from "./polar/PolarChart";
+
+/**
+ * Pie chart exports (including useful types)
+ */
+export { Pie } from "./pie";
+export { useSlicePath } from "./pie/hooks/useSlicePath";
+export { useSliceAngularInsetPath } from "./pie/hooks/useSliceAngularInsetPath";
