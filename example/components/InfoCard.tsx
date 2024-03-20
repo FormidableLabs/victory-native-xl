@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     },
   },
   content: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "flex-start",

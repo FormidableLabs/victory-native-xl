@@ -48,6 +48,24 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Polar Charts",
+      collapsed: false,
+      collapsible: false,
+      items: [
+        "polar/polar-chart",
+        {
+          type: "category",
+          label: "Pie / Donut Paths",
+          items: [
+            "polar/pie/pie-charts",
+            "polar/pie/use-slice-path",
+            "polar/pie/use-slice-angular-inset-path",
+          ],
+        },
+      ],
+    },
 
     "animated-paths",
   ],
