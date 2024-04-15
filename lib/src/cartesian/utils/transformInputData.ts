@@ -87,6 +87,8 @@ export const transformInputData = <
       }),
     );
 
+  console.log({ domain, ix, ixNum, yMin, yMax });
+
   // Set up our y-output data structure
   const y = yKeys.reduce(
     (acc, k) => {
@@ -98,7 +100,9 @@ export const transformInputData = <
 
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
-  const yScaleDomain = [yMax, yMin] as [number, number];
+  const yScaleDomain = (
+    yMax === yMin ? [yMax + 1, yMin - 1] : [yMax, yMin]
+  ) as [number, number];
   const fontHeight = axisOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
   const yScaleRange: [number, number] = (() => {
@@ -202,7 +206,7 @@ export const transformInputData = <
   })();
 
   const xScale = makeScale({
-    inputBounds: [ixMin, ixMax],
+    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
     outputBounds: oRange,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,

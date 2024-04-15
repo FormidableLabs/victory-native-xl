@@ -74,7 +74,11 @@ export default function LineChartPage(props: { segment: string }) {
     },
   });
   const font = useFont(inter, fontSize);
-  const [data, setData] = useState(DATA());
+  const [data, setData] = useState([
+    { day: 3, sales: 18 },
+    // { day: 4, sales: 11 },
+    { day: 5, sales: 18 },
+  ]);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -95,7 +99,7 @@ export default function LineChartPage(props: { segment: string }) {
             },
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             labelOffset: { x: xLabelOffset, y: yLabelOffset },
-            tickCount: { x: xTickCount, y: yTickCount },
+            tickCount: { x: 3, y: yTickCount },
             axisSide: { x: xAxisSide, y: yAxisSide },
             labelPosition: {
               x: xAxisLabelPosition,
