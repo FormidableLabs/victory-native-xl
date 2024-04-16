@@ -160,8 +160,6 @@ export const CartesianAxis = <
     );
   });
 
-  console.log({ xTicks, tickCount });
-
   const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
@@ -187,8 +185,6 @@ export const CartesianAxis = <
       return yScale(y1) + fontSize + xLabelOffset;
     })();
 
-    console.log("TICK_VALUE:", tick);
-
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         <Line
@@ -212,8 +208,6 @@ export const CartesianAxis = <
 
   const boundingFrame = React.useMemo(() => {
     const framePath = Skia.Path.Make();
-
-    console.log({ x1, y1, x2, y2 });
 
     framePath.addRect(
       Skia.XYWHRect(

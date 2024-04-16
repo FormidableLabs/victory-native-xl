@@ -87,8 +87,6 @@ export const transformInputData = <
       }),
     );
 
-  console.log({ domain, ix, ixNum, yMin, yMax });
-
   // Set up our y-output data structure
   const y = yKeys.reduce(
     (acc, k) => {
