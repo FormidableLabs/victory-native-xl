@@ -275,6 +275,18 @@ export function CartesianChart<
       }
     })
     /**
+     * Once the gesture ends, ensure all active values are falsified.
+     */
+    .onEnd(() => {
+      const vals = activePressSharedValues || [];
+      // Set active state to false for all vals
+      for (const val of vals) {
+        if (val) {
+          val.isActive.value = false;
+        }
+      }
+    })
+    /**
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */

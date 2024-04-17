@@ -1,5 +1,13 @@
 # victory-native
 
+## 40.1.0
+
+### Minor Changes
+
+- Extend axisOptions lineWidth & lineColor API to allow for custom axis configuration ([#209](https://github.com/FormidableLabs/victory-native-xl/pull/209))
+
+- Add Pie/Donut charts ([#191](https://github.com/FormidableLabs/victory-native-xl/pull/191))
+
 ## 40.0.4
 
 ### Patch Changes

@@ -75,7 +75,7 @@ This guide will show you how to create this bar chart with some customization li
         xKey="month"
         yKeys={["listenCount"]}
         // 👇 Add domain padding to the chart to prevent the first and last bar from being cut off.
-        domainPadding={{ left: 50, right: 50, top: 30 }}}
+        domainPadding={{ left: 50, right: 50, top: 30 }}
         axisOptions={{
           /**
            * 👇 Pass the font object to the axisOptions.
