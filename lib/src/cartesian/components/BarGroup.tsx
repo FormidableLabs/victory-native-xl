@@ -13,6 +13,7 @@ type BarGroupProps = {
   withinGroupPadding?: number;
   roundedCorners?: RoundedCorners;
   children: React.ReactElement[];
+  barWidth?: number;
   onBarSizeChange?: (values: {
     barWidth: number;
     groupWidth: number;
@@ -27,6 +28,7 @@ export function BarGroup({
   roundedCorners,
   children,
   onBarSizeChange,
+  barWidth: customBarWidth,
 }: BarGroupProps) {
   // Collect the bar props
   const bars = [] as BarGroupBarProps[];
@@ -43,6 +45,7 @@ export function BarGroup({
     betweenGroupPadding,
     withinGroupPadding,
     roundedCorners,
+    customBarWidth,
   );
 
   // Handle bar size change

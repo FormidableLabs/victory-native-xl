@@ -12,6 +12,7 @@ export const useBarGroupPaths = (
   betweenGroupPadding = 0,
   withinGroupPadding = 0,
   roundedCorners?: RoundedCorners,
+  customBarWidth?: number,
 ) => {
   const numGroups = points[0]?.length || 0;
 
@@ -23,8 +24,9 @@ export const useBarGroupPaths = (
   }, [betweenGroupPadding, chartBounds.left, chartBounds.right, numGroups]);
 
   const barWidth = React.useMemo(() => {
+    if (customBarWidth) return customBarWidth;
     return ((1 - withinGroupPadding) * groupWidth) / Math.max(1, points.length);
-  }, [groupWidth, points.length, withinGroupPadding]);
+  }, [customBarWidth, groupWidth, points.length, withinGroupPadding]);
 
   const gapWidth = React.useMemo(() => {
     return (

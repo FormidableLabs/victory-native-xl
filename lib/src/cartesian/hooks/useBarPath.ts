@@ -11,12 +11,27 @@ export const useBarPath = (
   chartBounds: ChartBounds,
   innerPadding = 0.2,
   roundedCorners?: RoundedCorners,
+  customBarWidth?: number,
 ) => {
   const barWidth = React.useMemo(() => {
+    if (customBarWidth) return customBarWidth;
     const domainWidth = chartBounds.right - chartBounds.left;
-    const barWidth = ((1 - innerPadding) * domainWidth) / (points.length - 1);
+
+    const numerator = (1 - innerPadding) * domainWidth;
+    // don't divide by 0 if there's only one data point
+    const denominator =
+      points.length - 1 <= 0 ? points.length : points.length - 1;
+
+    const barWidth = numerator / denominator;
+
     return barWidth;
-  }, [chartBounds.left, chartBounds.right, innerPadding, points.length]);
+  }, [
+    customBarWidth,
+    chartBounds.left,
+    chartBounds.right,
+    innerPadding,
+    points.length,
+  ]);
 
   const path = React.useMemo(() => {
     const path = Skia.Path.Make();
