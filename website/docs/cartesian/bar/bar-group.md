@@ -46,6 +46,10 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 
 An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars _within a group_ should be "white space". Defaults to `0.2`. Use `0` for no gap between bars within a group, and values closer to `1` to make bars increasingly narrow.
 
+### `barWidth`
+
+The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by a combination of the total available width for the group of bars, the number of bars in the group, and the padding between the bars within the group.
+
 ### `onBarSizeChange`
 
 An optional callback of the form:
