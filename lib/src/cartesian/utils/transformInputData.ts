@@ -98,7 +98,10 @@ export const transformInputData = <
 
   // Set up our y-scale, notice how domain is "flipped" because
   //  we're moving from cartesian to canvas coordinates
-  const yScaleDomain = [yMax, yMin] as [number, number];
+  // Also, if single data point, manually add upper & lower bounds so chart renders properly
+  const yScaleDomain = (
+    yMax === yMin ? [yMax + 1, yMin - 1] : [yMax, yMin]
+  ) as [number, number];
   const fontHeight = axisOptions?.font?.getSize?.() ?? 0;
   // Our yScaleRange is impacted by our grid options
   const yScaleRange: [number, number] = (() => {
@@ -202,7 +205,8 @@ export const transformInputData = <
   })();
 
   const xScale = makeScale({
-    inputBounds: [ixMin, ixMax],
+    // if single data point, manually add upper & lower bounds so chart renders properly
+    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
     outputBounds: oRange,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
