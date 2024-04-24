@@ -48,7 +48,11 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 
 ### `barWidth`
 
-The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by a combination of the total available width for the group of bars, the number of bars in the group, and the padding between the bars within the group.
+The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by a combination of the total available width for the group of bars, the number of bars in the group, and the padding between the bars within the group. Takes precedence over `barCount` prop. Use this for the most fine grained control of bar width.
+
+### `barCount`
+
+The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
 
 ### `onBarSizeChange`
 

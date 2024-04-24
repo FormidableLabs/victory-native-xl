@@ -14,6 +14,7 @@ type CartesianBarProps = {
   animate?: PathAnimationConfig;
   roundedCorners?: RoundedCorners;
   barWidth?: number;
+  barCount?: number;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export const Bar = ({
@@ -23,6 +24,7 @@ export const Bar = ({
   innerPadding = 0.25,
   roundedCorners,
   barWidth,
+  barCount,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
   const { path } = useBarPath(
@@ -31,6 +33,7 @@ export const Bar = ({
     innerPadding,
     roundedCorners,
     barWidth,
+    barCount,
   );
 
   return React.createElement(animate ? AnimatedPath : Path, {

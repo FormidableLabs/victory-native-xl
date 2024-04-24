@@ -12,15 +12,20 @@ export const useBarPath = (
   innerPadding = 0.2,
   roundedCorners?: RoundedCorners,
   customBarWidth?: number,
+  barCount?: number,
 ) => {
   const barWidth = React.useMemo(() => {
     if (customBarWidth) return customBarWidth;
     const domainWidth = chartBounds.right - chartBounds.left;
 
     const numerator = (1 - innerPadding) * domainWidth;
-    // don't divide by 0 if there's only one data point
-    const denominator =
-      points.length - 1 <= 0 ? points.length : points.length - 1;
+
+    const denominator = barCount
+      ? barCount
+      : points.length - 1 <= 0
+      ? // don't divide by 0 if there's only one data point
+        points.length
+      : points.length - 1;
 
     const barWidth = numerator / denominator;
 
@@ -31,6 +36,7 @@ export const useBarPath = (
     chartBounds.right,
     innerPadding,
     points.length,
+    barCount,
   ]);
 
   const path = React.useMemo(() => {

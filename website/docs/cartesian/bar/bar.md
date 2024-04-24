@@ -60,7 +60,11 @@ The `roundedCorners` prop allows you to customize the roundedness of each corner
 
 ### `barWidth`
 
-The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by the `chartBounds` and number of data points.
+The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by the `chartBounds` and number of data points. Takes precendence over the `barCount` prop. Use this for the most fine grained control of bar width
+
+### `barCount`
+
+The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
 
 ### `children`
 
