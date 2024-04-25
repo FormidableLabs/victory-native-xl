@@ -1,5 +1,13 @@
 # victory-native
 
+## 40.1.1
+
+### Patch Changes
+
+- fix: add onEnd callback for cartesian pangesture ([#230](https://github.com/FormidableLabs/victory-native-xl/pull/230))
+
+- resolve single data point dupe keys warning ([#237](https://github.com/FormidableLabs/victory-native-xl/pull/237))
+
 ## 40.1.0
 
 ### Minor Changes
