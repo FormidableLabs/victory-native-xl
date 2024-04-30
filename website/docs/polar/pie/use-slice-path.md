@@ -19,20 +19,22 @@ function MyCustomSlice({ slice }: { slice: PieSliceData }) {
   // 👇 use the hook to generate a path object.
   const path = useSlicePath(slice);
   /* 👇 experiment wtih any other customizations you want */
-  return <Path path={path} color={slice.color} style="fill">
+  return <Path path={path} color={slice.color} style="fill" />;
 }
 
 export function MyChart() {
   return (
-    <Pie.Chart
+    <PolarChart
       data={DATA}
-      labelKey="title"
-      colorKey="palette"
-      valueKey="high"
+      colorKey={"color"}
+      valueKey={"value"}
+      labelKey={"label"}
     >
-      {/* 👇 pass the PieSliceData to our custom component */}
-      {({ slice }) => <MyCustomSlice slice={slice} />}
-    </Pie.Chart>
+      <Pie.Chart>
+        {/* 👇 pass the PieSliceData to our custom component */}
+        {({ slice }) => <MyCustomSlice slice={slice} />}
+      </Pie.Chart>
+    </PolarChart>
   );
 }
 ```
