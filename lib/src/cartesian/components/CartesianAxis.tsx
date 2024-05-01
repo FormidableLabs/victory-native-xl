@@ -8,6 +8,7 @@ import {
   type Color,
 } from "@shopify/react-native-skia";
 import { StyleSheet } from "react-native";
+import { downsampleTicks } from "../../utils/tickHelpers";
 import type {
   ValueOf,
   NumericalFields,
@@ -22,6 +23,7 @@ export const CartesianAxis = <
   YK extends keyof NumericalFields<RawData>,
 >({
   tickCount,
+  tickValues,
   labelPosition,
   labelOffset,
   axisSide,
@@ -40,6 +42,8 @@ export const CartesianAxis = <
     return {
       xTicks: typeof tickCount === "number" ? tickCount : tickCount.x,
       yTicks: typeof tickCount === "number" ? tickCount : tickCount.y,
+      xTickValues: Array.isArray(tickValues) ? tickValues : tickValues?.x,
+      yTickValues: Array.isArray(tickValues) ? tickValues : tickValues?.y,
       xLabelOffset:
         typeof labelOffset === "number" ? labelOffset : labelOffset.x,
       yLabelOffset:
@@ -81,6 +85,7 @@ export const CartesianAxis = <
           : lineWidth,
     } as const;
   }, [
+    tickValues,
     tickCount,
     labelOffset,
     axisSide.x,
@@ -93,6 +98,8 @@ export const CartesianAxis = <
   const {
     xTicks,
     yTicks,
+    xTickValues,
+    yTickValues,
     xAxisPosition,
     yAxisPosition,
     xLabelPosition,
@@ -112,7 +119,9 @@ export const CartesianAxis = <
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
 
-  const yAxisNodes = yScale.ticks(yTicks).map((tick) => {
+  const yAxisNodes = (
+    yTickValues ? downsampleTicks(yTickValues, yTicks) : yScale.ticks(yTicks)
+  ).map((tick) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
     const labelY = yScale(tick) + fontSize / 3;
@@ -160,7 +169,9 @@ export const CartesianAxis = <
     );
   });
 
-  const xAxisNodes = xScale.ticks(xTicks).map((tick) => {
+  const xAxisNodes = (
+    xTickValues ? downsampleTicks(xTickValues, xTicks) : xScale.ticks(xTicks)
+  ).map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
@@ -238,6 +249,7 @@ CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   lineWidth: StyleSheet.hairlineWidth,
   tickCount: 5,
+  tickValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },
   labelPosition: "outset",

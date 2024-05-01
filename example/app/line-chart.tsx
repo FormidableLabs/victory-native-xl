@@ -84,6 +84,10 @@ export default function LineChartPage(props: { segment: string }) {
           padding={chartPadding}
           yKeys={["sales"]}
           axisOptions={{
+            // tickValues: {
+            //   x: [0, 8, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+            //   y: [0, 10, 15, 30, 50],
+            // },
             font,
             lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
             lineColor: {
@@ -95,6 +99,7 @@ export default function LineChartPage(props: { segment: string }) {
             },
             labelColor: { x: colors.xLabel!, y: colors.yLabel! },
             labelOffset: { x: xLabelOffset, y: yLabelOffset },
+            // tickCount: { x: 3, y: 4 },
             tickCount: { x: xTickCount, y: yTickCount },
             axisSide: { x: xAxisSide, y: yAxisSide },
             labelPosition: {
@@ -109,7 +114,9 @@ export default function LineChartPage(props: { segment: string }) {
             },
           }}
           data={data}
+          // data={[{ day: 4, sales: 5 }]}
           domainPadding={domainPadding}
+          // domain={{ x: [0, 20], y: [0, 50] }}
         >
           {({ points }) => (
             <>
