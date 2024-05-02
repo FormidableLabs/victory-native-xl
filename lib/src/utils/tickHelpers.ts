@@ -1,11 +1,30 @@
-export function downsampleTicks(ticks: number[], tickCount: number) {
-  if (!tickCount || !Array.isArray(ticks) || ticks.length <= tickCount) {
-    return ticks;
-  }
-  const k = Math.floor(ticks.length / tickCount);
-
-  return ticks.filter((_, i) => i % k === 0);
+function coerceNumArray<T>(collection: Array<T>) {
+  return collection.map((item, idx) =>
+    Number.isNaN(Number(item)) ? idx : (item as number),
+  );
 }
+
+const containsNonNumbers = (arr: unknown[] | undefined): boolean => {
+  return Array.isArray(arr) && arr.some((t) => Number.isNaN(Number(t)));
+};
+
+export const downsampleTicks = (tickValues: number[], tickCount: number) => {
+  if (containsNonNumbers(tickValues)) {
+    // Throw Error here until we expand tickValues to accept string and date types, like Victory web
+    throw new Error("TickValues array must only contain numbers.");
+  }
+
+  if (
+    !tickCount ||
+    !Array.isArray(tickValues) ||
+    tickValues.length <= tickCount
+  ) {
+    return tickValues;
+  }
+  const k = Math.floor(tickValues.length / tickCount);
+
+  return tickValues.filter((_, i) => i % k === 0);
+};
 
 const getMinValue = (arr: Array<number>): number => {
   return Math.min(...arr);
@@ -15,11 +34,20 @@ const getMaxValue = (arr: Array<number>): number => {
   return Math.max(...arr);
 };
 
-export const getDomainFromTicks = (ticks: number[] | undefined) => {
-  if (!Array.isArray(ticks)) return;
+export const getDomainFromTicks = (tickValues: number[] | undefined) => {
+  // Check if undefined OR if its not an array of numbers
+  if (!tickValues) return;
 
-  const min = getMinValue(ticks);
-  const max = getMaxValue(ticks);
+  let numTicksArr;
+  if (containsNonNumbers(tickValues)) {
+    // Currently, we should ONLY accept numbers in the tickValues array (accepting strings and dates TBD); however, we want to catch any non-numbers and coerce them to numbers for domain purposes.
+    numTicksArr = coerceNumArray(tickValues);
+  } else {
+    numTicksArr = tickValues;
+  }
+
+  const min = getMinValue(numTicksArr);
+  const max = getMaxValue(numTicksArr);
 
   return [min, max];
 };
