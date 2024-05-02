@@ -76,6 +76,8 @@ export default function LineChartPage(props: { segment: string }) {
   const font = useFont(inter, fontSize);
   const [data, setData] = useState(DATA());
 
+  // console.log({data})
+
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>

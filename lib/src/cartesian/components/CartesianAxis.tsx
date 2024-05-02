@@ -249,7 +249,6 @@ CartesianAxis.defaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   lineWidth: StyleSheet.hairlineWidth,
   tickCount: 5,
-  tickValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },
   labelPosition: "outset",
