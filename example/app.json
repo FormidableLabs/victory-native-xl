@@ -21,10 +21,12 @@
       "bundleIdentifier": "com.formidable.victorynativexldemo"
     },
     "android": {
-      "userInterfaceStyle": "automatic"
+      "userInterfaceStyle": "automatic",
+      "package": "com.formidable.victorynativexldemo"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-asset"
     ],
     "extra": {
       "router": {

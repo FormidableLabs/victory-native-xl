@@ -38,5 +38,8 @@
     "prettier": "^3.0.1",
     "shx": "^0.3.4",
     "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.17"
   }
 }

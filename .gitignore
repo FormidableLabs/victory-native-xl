@@ -7,6 +7,8 @@ node_modules/
 example/.expo/
 dist/
 web-build/
+example/android/*
+example/ios/*
 
 # Native
 *.orig.*
