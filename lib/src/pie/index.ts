@@ -1,5 +1,5 @@
 import { PieChart } from "./PieChart";
-import { PieSlice } from "./PieSlice";
+import { PieSlice, type PieSliceData } from "./PieSlice";
 import { PieSliceAngularInset } from "./PieSliceAngularInset";
 
 const Pie = {
@@ -8,4 +8,4 @@ const Pie = {
   SliceAngularInset: PieSliceAngularInset,
 };
 
-export { Pie };
+export { Pie, type PieSliceData };
