@@ -178,6 +178,9 @@ export const transformInputData = <
     String(yScale.domain().at(0));
 
   // Generate our x-scale
+  // If user provides a domain, use that as our min / max
+  // Else if, tickValues are provided, we use that instead
+  // Else, we find min / max of y values across all yKeys, and use that for y range instead.
   const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
     ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
   const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;

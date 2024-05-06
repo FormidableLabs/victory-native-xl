@@ -119,9 +119,11 @@ export const CartesianAxis = <
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
 
-  const yAxisNodes = (
-    yTickValues ? downsampleTicks(yTickValues, yTicks) : yScale.ticks(yTicks)
-  ).map((tick) => {
+  // Normalize yTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
+  const yTicksNormalized = yTickValues
+    ? downsampleTicks(yTickValues, yTicks)
+    : yScale.ticks(yTicks);
+  const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
     const labelY = yScale(tick) + fontSize / 3;
@@ -169,9 +171,11 @@ export const CartesianAxis = <
     );
   });
 
-  const xAxisNodes = (
-    xTickValues ? downsampleTicks(xTickValues, xTicks) : xScale.ticks(xTicks)
-  ).map((tick) => {
+  // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
+  const xTicksNormalized = xTickValues
+    ? downsampleTicks(xTickValues, xTicks)
+    : xScale.ticks(xTicks);
+  const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
     const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
