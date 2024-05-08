@@ -1,7 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
