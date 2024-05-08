@@ -104,9 +104,9 @@ export const PolarChart = <
   return (
     <PolarChartProvider
       data={data}
-      labelKey={labelKey}
-      colorKey={colorKey}
-      valueKey={valueKey}
+      labelKey={labelKey.toString()}
+      colorKey={colorKey.toString()}
+      valueKey={valueKey.toString()}
       canvasSize={canvasSize}
     >
       <PolarChartBase
