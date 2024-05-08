@@ -1,4 +1,5 @@
 import { type ScaleLinear } from "d3-scale";
+import { getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
@@ -51,6 +52,15 @@ export const transformInputData = <
   isNumericalData: boolean;
 } => {
   const data = [..._data];
+  const tickValues = axisOptions?.tickValues;
+  const tickDomainsX =
+    tickValues && typeof tickValues === "object" && "x" in tickValues
+      ? getDomainFromTicks(tickValues.x)
+      : getDomainFromTicks(tickValues);
+  const tickDomainsY =
+    tickValues && typeof tickValues === "object" && "y" in tickValues
+      ? getDomainFromTicks(tickValues.y)
+      : getDomainFromTicks(tickValues);
   const isNumericalData = data.every(
     (datum) => typeof datum[xKey as keyof RawData] === "number",
   );
@@ -64,10 +74,12 @@ export const transformInputData = <
   ) as InputFields<RawData>[XK][];
   const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
 
-  // Then we find min/max of y values across all yKeys, use that for y range.
-  // (if user provided a domain, use that instead)
+  // If user provides a domain, use that as our min / max
+  // Else if, tickValues are provided, we use that instead
+  // Else, we find min / max of y values across all yKeys, and use that for y range instead.
   const yMin =
     domain?.y?.[0] ??
+    tickDomainsY?.[0] ??
     Math.min(
       ...yKeys.map((key) => {
         return data.reduce((min, curr) => {
@@ -78,6 +90,7 @@ export const transformInputData = <
     );
   const yMax =
     domain?.y?.[1] ??
+    tickDomainsY?.[1] ??
     Math.max(
       ...yKeys.map((key) => {
         return data.reduce((max, curr) => {
@@ -165,8 +178,11 @@ export const transformInputData = <
     String(yScale.domain().at(0));
 
   // Generate our x-scale
-  const ixMin = asNumber(domain?.x?.[0] ?? ixNum.at(0)),
-    ixMax = asNumber(domain?.x?.[1] ?? ixNum.at(-1));
+  // If user provides a domain, use that as our min / max
+  // Else if, tickValues are provided, we use that instead
+  // Else, we find min / max of y values across all yKeys, and use that for y range instead.
+  const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
+    ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
   const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
