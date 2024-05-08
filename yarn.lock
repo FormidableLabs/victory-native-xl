@@ -7461,10 +7461,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-dark@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/react-native-dark/-/react-native-dark-0.1.3.tgz#04cc8016ddc7dd707563424e707bb0d98837c35d"
-  integrity sha512-GV31Cs2zJYHIN5dcCUdrl+DuqSzdc0qwfa7Ij2Nuqq371f+POIuhpT89BsCDiPVP+GujKv23sdw2Z4hlx/CzyA==
+react-native-dark@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-dark/-/react-native-dark-0.1.4.tgz#06c79af39918ff48c4eb92457347e2b23a35e7fc"
+  integrity sha512-xCcZE/rKQy0N+ocQr3uLFPJ+66pRObIL8zNLlQW1mSXxeoanUO+O0eSEpQjCBPsyR1vEnqTfCWDIbHwWIFbbRA==
   dependencies:
     "@babel/core" "^7.19.0"
     "@babel/helper-module-imports" "^7.18.6"
