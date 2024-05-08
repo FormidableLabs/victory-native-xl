@@ -8,6 +8,7 @@ import {
   withTiming,
   type WithTimingConfig,
   type WithDecayConfig,
+  withDecay,
 } from "react-native-reanimated";
 import { usePrevious } from "../utils/usePrevious";
 
@@ -15,6 +16,24 @@ export type PathAnimationConfig =
   | ({ type: "timing" } & WithTimingConfig)
   | ({ type: "spring" } & WithSpringConfig)
   | ({ type: "decay" } & WithDecayConfig);
+
+function isWithDecayConfig(
+  config: PathAnimationConfig,
+): config is WithDecayConfig & { type: "decay" } {
+  return config.type === "decay";
+}
+
+function isWithTimingConfig(
+  config: PathAnimationConfig,
+): config is WithTimingConfig & { type: "timing" } {
+  return config.type === "timing";
+}
+
+function isWithSpringConfig(
+  config: PathAnimationConfig,
+): config is WithSpringConfig & { type: "spring" } {
+  return config.type === "spring";
+}
 
 export const useAnimatedPath = (
   path: SkPath,
@@ -24,9 +43,14 @@ export const useAnimatedPath = (
   const prevPath = usePrevious(path);
 
   React.useEffect(() => {
-    const { type, ...rest } = animConfig;
     t.value = 0;
-    t.value = (type === "timing" ? withTiming : withSpring)(1, rest);
+    if (isWithTimingConfig(animConfig)) {
+      t.value = withTiming(1, animConfig);
+    } else if (isWithSpringConfig(animConfig)) {
+      t.value = withSpring(1, animConfig);
+    } else if (isWithDecayConfig(animConfig)) {
+      t.value = withDecay(animConfig);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path, t]);
 
