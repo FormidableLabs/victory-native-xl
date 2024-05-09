@@ -1,5 +1,17 @@
 # victory-native
 
+## 40.2.0
+
+### Minor Changes
+
+- add tickValues to axisOptions prop ([#255](https://github.com/FormidableLabs/victory-native-xl/pull/255))
+
+- Add `barWidth` and `barCount` prop for `Bar` and `BarGroup` ([#238](https://github.com/FormidableLabs/victory-native-xl/pull/238))
+
+### Patch Changes
+
+- export `PieSliceData` type ([#249](https://github.com/FormidableLabs/victory-native-xl/pull/249))
+
 ## 40.1.1
 
 ### Patch Changes
