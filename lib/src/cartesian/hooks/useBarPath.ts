@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Skia } from "@shopify/react-native-skia";
-import type { ChartBounds, PointsArray } from "../../types";
 import {
   createRoundedRectPath,
   type RoundedCorners,
-} from "../../utils/createRoundedRectPath";
+} from "lib/src/utils/createRoundedRectPath";
+import type { ChartBounds, PointsArray } from "../../types";
+import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
 export const useBarPath = (
   points: PointsArray,
@@ -14,6 +15,7 @@ export const useBarPath = (
   customBarWidth?: number,
   barCount?: number,
 ) => {
+  const { yScale } = useCartesianChartContext();
   const barWidth = React.useMemo(() => {
     if (customBarWidth) return customBarWidth;
     const domainWidth = chartBounds.right - chartBounds.left;
@@ -41,30 +43,32 @@ export const useBarPath = (
 
   const path = React.useMemo(() => {
     const path = Skia.Path.Make();
+    const hasNegativeYValues = points.some(
+      ({ yValue }) => yValue && yValue < 0,
+    );
 
-    points.forEach(({ x, y }) => {
+    points.forEach(({ x, y, yValue }) => {
       if (typeof y !== "number") return;
-
-      if (!roundedCorners) {
-        path.addRect(
-          Skia.XYWHRect(x - barWidth / 2, y, barWidth, chartBounds.bottom - y),
-        );
-        return;
-      }
-      const roundedRectPath = Skia.Path.MakeFromSVGString(
-        createRoundedRectPath(
-          x - barWidth / 2,
+      const barHeight = hasNegativeYValues
+        ? yScale(0) - y
+        : chartBounds.bottom - y;
+      if (roundedCorners) {
+        const nonUniformRoundedRect = createRoundedRectPath(
+          x,
           y,
           barWidth,
-          chartBounds.bottom - y,
+          barHeight,
           roundedCorners,
-        ),
-      );
-      roundedRectPath && path.addPath(roundedRectPath);
+          Number(yValue),
+        );
+        path.addRRect(nonUniformRoundedRect);
+      } else {
+        path.addRect(Skia.XYWHRect(x - barWidth / 2, y, barWidth, barHeight));
+      }
     });
 
     return path;
-  }, [barWidth, chartBounds.bottom, points, roundedCorners]);
+  }, [barWidth, chartBounds.bottom, points, roundedCorners, yScale]);
 
   return { path, barWidth };
 };

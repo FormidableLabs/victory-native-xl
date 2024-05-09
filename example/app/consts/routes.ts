@@ -29,6 +29,12 @@ export const ChartRoutes: {
     path: "/bar-with-tooltip",
   },
   {
+    title: "Negative Bar Charts",
+    description:
+      "These charts demonstrate how negative values look with Bar and Bar Group charts.",
+    path: "/negative-bar-charts",
+  },
+  {
     title: "Scatter Plot",
     description:
       "This is a Scatter plot in Victory Native that supports custom shapes and sizes.",

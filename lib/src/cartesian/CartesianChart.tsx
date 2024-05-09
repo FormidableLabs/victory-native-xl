@@ -27,6 +27,7 @@ import {
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
+import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -361,9 +362,11 @@ export function CartesianChart<
           ) : null}
         </>
       )}
-      <Group clip={clipRect}>
-        {hasMeasuredLayoutSize && children(renderArg)}
-      </Group>
+      <CartesianChartProvider yScale={yScale} xScale={xScale}>
+        <Group clip={clipRect}>
+          {hasMeasuredLayoutSize && children(renderArg)}
+        </Group>
+      </CartesianChartProvider>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </Canvas>
   );
