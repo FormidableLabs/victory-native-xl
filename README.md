@@ -1,7 +1,5 @@
 <div align="center">
-  <a href="https://formidable.com/open-source/" target="_blank">
-    <img alt="Victory — Formidable, We build the modern web" src="https://raw.githubusercontent.com/FormidableLabs/victory-native-xl/main/victory-hero.png" />
-  </a>
+  [![Victory Native](https://oss.nearform.com/api/banner?badge=victory&text=victory+native&bg=9c2f1e)](https://commerce.nearform.com/open-source/victory-native/)
 
   <strong>
     high-performance charts powered by D3, Skia, and Reanimated for React Native.
