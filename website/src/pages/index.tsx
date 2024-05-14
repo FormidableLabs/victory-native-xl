@@ -10,28 +10,29 @@ import {
   feature1,
   feature2,
   feature3,
+  example1,
+  example2,
+  example3,
+  example4,
 } from "../components/landing/landing-images";
-import { Divider } from "../components/landing/divider";
 
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
-      <div className="dark:bg-gray-500 bg-gray-200 dark:text-white text-theme-2">
         <LandingHero
           heading={siteConfig.title}
           body={siteConfig.tagline}
-          copyText="npm install groqd"
+          copyText="yarn add victory-native"
           navItems={[
-            { link: "/open-source/groqd/docs", title: "Documentation" },
-            { link: "/open-source/groqd/arcade", title: "Demo" },
+            { link: "/open-source/victory-native/docs", title: "Documentation" },
+            { link: "https://github.com/FormidableLabs/victory-native-xl/tree/main/example", title: "Example App" },
             {
-              link: "https://github.com/FormidableLabs/groqd",
+              link: "https://github.com/FormidableLabs/victory-native-xl",
               title: "Github",
             },
           ]}
         ></LandingHero>
-      </div>
       <LandingFeatures
         heading="Features"
         list={[
@@ -40,40 +41,55 @@ export default function Home(): JSX.Element {
             alt: "Flexible",
             title: "Flexible",
             html: {
-              __html: "GROQD maintains the flexibility of GROQ.",
+              __html: "Fully contained, reusable data visualization elements are responsible for their own styles and behaviors.",
             },
           },
           {
             imgSrc: feature2,
-            alt: "Runtime Safe",
-            title: "Runtime Safe",
+            alt: "Easy to Use",
+            title: "Easy to Use",
             html: {
               __html:
-                "Automatically layers in the runtime safety of <a href='https://github.com/colinhacks/zod' target='_blank'>Zod</a>.",
+                "Comprehensive component and hook based elements make setting up and configuring a custom chart simple.",
             },
           },
           {
             imgSrc: feature3,
-            alt: "Type Safe",
-            title: "Type Safe",
-            body: "Leverages the type safety of TypeScript.",
+            alt: "Performant",
+            title: "Performant",
+            body: "A foundation for building high-end data visualizations that can animate at over 100 FPS even on low-end devices.",
           },
         ]}
       />
-      <Divider />
-      <div className="flex gap-20 flex-col md:flex-row mx-16 lg:mx-32 xl:mx-64">
-        <LandingBanner
-          heading="Get Started"
-          body="Get the flexibility of GROQ with the runtime/type safety of Zod and TypeScript today!"
-          cta={{ link: "/open-source/groqd/docs", text: "Documentation" }}
-        />
-        <LandingBanner
-          heading="GROQD Arcade"
-          body="View sample queries, and play with live examples in the GROQD Arcade."
-          cta={{ link: "/open-source/groqd/arcade", text: "Arcade" }}
-        />
-      </div>
-      <Divider />
+      <LandingBanner
+        heading="Get Started with Examples"
+        list={[
+          {
+            imgSrc: example1,
+            alt: "Line",
+            title: "Line",
+            link: "/open-source/victory-native/docs/cartesian/line/",
+          },
+          {
+            imgSrc: example2,
+            alt: "Area",
+            title: "Area",
+            link: "/open-source/victory-native/docs/cartesian/area/",
+          },
+          {
+            imgSrc: example3,
+            alt: "Bar",
+            title: "Bar",
+            link: "/open-source/victory-native/docs/cartesian/bar/",
+          },
+          {
+            imgSrc: example4,
+            alt: "Pie",
+            title: "Pie",
+            link: "/open-source/victory-native/docs/polar/pie/pie-charts",
+          },
+        ]}
+      />
       <LandingFeaturedProjects
         heading="Other Open Source"
         projects={[

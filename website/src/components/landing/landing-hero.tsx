@@ -14,7 +14,7 @@ export const LandingHero = ({
 }) => {
   const [buttonText, setButtonText] = useState("Copy");
 
-  const changeText = (text) => {
+  const changeText = (text: string) => {
     setButtonText(text);
   };
 
@@ -23,7 +23,7 @@ export const LandingHero = ({
       <div className="py-12 lg:py-24 mx-16 lg:mx-32 xl:mx-64 relative">
         <div className="flex-col md:flex-row flex justify-between gap-16 lg:gap-24 mx-auto">
           <div className="self-center md:self-left">
-            <FeaturedBadge name="groqd" className="h-[320px] w-[320px]" />
+            <FeaturedBadge name="victory" className="h-[320px] w-[320px]" />
           </div>
           <div className="text-left lg:w-6/12 text-white">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
