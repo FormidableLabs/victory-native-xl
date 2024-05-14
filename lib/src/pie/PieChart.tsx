@@ -53,7 +53,8 @@ export const PieChart = (props: PieChartProps) => {
         startAngle: initialStartAngle,
         endAngle: endAngle,
         sweepAngle,
-        sliceIsEntireCircle: _data.length === 1,
+        sliceIsEntireCircle:
+          sweepAngle === CIRCLE_SWEEP_DEGREES || _data.length === 1,
         radius,
         center,
       };

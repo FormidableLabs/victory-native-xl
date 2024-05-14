@@ -43,7 +43,21 @@ export default function PieChart(props: { segment: string }) {
             valueKey={"value"}
             labelKey={"label"}
           >
-            <Pie.Chart />
+            <Pie.Chart>
+              {() => {
+                return (
+                  <>
+                    <Pie.Slice />
+                    <Pie.SliceAngularInset
+                      angularInset={{
+                        angularStrokeWidth: insetWidth,
+                        angularStrokeColor: insetColor,
+                      }}
+                    />
+                  </>
+                );
+              }}
+            </Pie.Chart>
           </PolarChart>
         </View>
 
