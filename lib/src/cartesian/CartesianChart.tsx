@@ -20,7 +20,10 @@ import type {
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { CartesianAxis } from "./components/CartesianAxis";
+import {
+  CartesianAxis,
+  CartesianAxisDefaultProps,
+} from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
@@ -96,7 +99,9 @@ export function CartesianChart<
           data,
           xKey,
           yKeys,
-          axisOptions: axisOptions ? axisOptions : undefined,
+          axisOptions: axisOptions
+            ? Object.assign({}, CartesianAxisDefaultProps, axisOptions)
+            : undefined,
           outputWindow: {
             xMin: valueFromSidedNumber(padding, "left"),
             xMax: size.width - valueFromSidedNumber(padding, "right"),

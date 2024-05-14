@@ -248,3 +248,16 @@ export const CartesianAxis = <
     </>
   );
 };
+
+export const CartesianAxisDefaultProps = {
+  lineColor: "hsla(0, 0%, 0%, 0.25)",
+  lineWidth: StyleSheet.hairlineWidth,
+  tickCount: 5,
+  labelOffset: { x: 2, y: 4 },
+  axisSide: { x: "bottom", y: "left" },
+  labelPosition: "outset",
+  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+  formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+  labelColor: "#000000",
+  ix: [],
+} satisfies Partial<AxisProps<never, never, never>>;
