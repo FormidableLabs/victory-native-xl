@@ -40,7 +40,7 @@ type CartesianChartProps<
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
-  renderOutside: (
+  renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
@@ -96,9 +96,7 @@ export function CartesianChart<
           data,
           xKey,
           yKeys,
-          axisOptions: axisOptions
-            ? Object.assign({}, CartesianAxis.defaultProps, axisOptions)
-            : undefined,
+          axisOptions: axisOptions ? axisOptions : undefined,
           outputWindow: {
             xMin: valueFromSidedNumber(padding, "left"),
             xMax: size.width - valueFromSidedNumber(padding, "right"),
@@ -374,11 +372,3 @@ export function CartesianChart<
     body
   );
 }
-
-CartesianChart.defaultProps = {
-  curve: "linear",
-  chartType: "line",
-  xScaleType: "linear",
-  yScaleType: "linear",
-  renderOutside: () => null,
-};

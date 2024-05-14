@@ -43,7 +43,3 @@ export const Bar = ({
     ...ops,
   });
 };
-
-Bar.defaultProps = {
-  innerPadding: 0.25,
-} satisfies Partial<CartesianBarProps>;

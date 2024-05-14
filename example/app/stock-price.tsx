@@ -140,7 +140,6 @@ export default function StockPriceScreen(props: { segment: string }) {
           xKey="date"
           yKeys={["high"]}
           chartPressState={[firstTouch, secondTouch]}
-          curve="linear"
           axisOptions={{
             font,
             tickCount: 5,
