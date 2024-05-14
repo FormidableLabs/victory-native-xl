@@ -59,7 +59,7 @@ export function CartesianChart<
   padding,
   domainPadding,
   children,
-  renderOutside,
+  renderOutside = () => null,
   axisOptions,
   domain,
   chartPressState,
