@@ -101,20 +101,20 @@ export type AxisProps<
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;
-  lineColor: Color | { grid: Color | { x: Color; y: Color }; frame: Color };
-  lineWidth:
+  lineColor?: Color | { grid: Color | { x: Color; y: Color }; frame: Color };
+  lineWidth?:
     | number
     | { grid: number | { x: number; y: number }; frame: number };
-  labelColor: string | { x: string; y: string };
-  tickCount: number | { x: number; y: number };
+  labelColor?: string | { x: string; y: string };
+  tickCount?: number | { x: number; y: number };
   tickValues?: number[] | { x: number[]; y: number[] };
-  labelOffset: number | { x: number; y: number };
-  labelPosition:
+  labelOffset?: number | { x: number; y: number };
+  labelPosition?:
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
-  axisSide: { x: XAxisSide; y: YAxisSide };
-  formatXLabel: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel: (label: RawData[YK]) => string;
+  axisSide?: { x: XAxisSide; y: YAxisSide };
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  formatYLabel?: (label: RawData[YK]) => string;
   isNumericalData?: boolean;
-  ix: InputFields<RawData>[XK][];
+  ix?: InputFields<RawData>[XK][];
 };
