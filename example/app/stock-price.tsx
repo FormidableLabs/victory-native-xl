@@ -325,14 +325,14 @@ const StockArea = ({
                 !isWindowActive
                   ? [appColors.tint, `${appColors.tint}33`]
                   : isDeltaPositive.value
-                  ? [
-                      appColors.success[colorPrefix],
-                      `${appColors.success[colorPrefix]}33`,
-                    ]
-                  : [
-                      appColors.error[colorPrefix],
-                      `${appColors.error[colorPrefix]}33`,
-                    ]
+                    ? [
+                        appColors.success[colorPrefix],
+                        `${appColors.success[colorPrefix]}33`,
+                      ]
+                    : [
+                        appColors.error[colorPrefix],
+                        `${appColors.error[colorPrefix]}33`,
+                      ]
               }
             />
           </Path>
