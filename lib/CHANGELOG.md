@@ -1,5 +1,13 @@
 # victory-native
 
+## 40.2.1
+
+### Patch Changes
+
+- remove defaultProps ([#273](https://github.com/FormidableLabs/victory-native-xl/pull/273))
+
+- Fix pie chart rendering when multiple elements have 0 values ([#266](https://github.com/FormidableLabs/victory-native-xl/pull/266))
+
 ## 40.2.0
 
 ### Minor Changes
