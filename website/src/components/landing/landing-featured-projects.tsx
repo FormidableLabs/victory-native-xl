@@ -1,18 +1,7 @@
 import React from "react";
-import { FeaturedBadge } from "formidable-oss-badges";
+import { FeaturedBadge, ProjectBadge, featuredBadgeNames } from "formidable-oss-badges";
 import { NFLinkButton } from "./nf-link-button";
 import { Divider } from "./divider";
-
-type featuredProject =
-  | "renature"
-  | "spectacle"
-  | "urql"
-  | "victory"
-  | "nuka"
-  | "owl"
-  | "groqd"
-  | "envy"
-  | "figlog";
 
 export const LandingFeaturedProjects = ({
   heading,
@@ -21,7 +10,7 @@ export const LandingFeaturedProjects = ({
 }: {
   heading: string;
   projects: {
-    name: featuredProject;
+    name: string;
     link: string;
     description: string;
     title?: string;
@@ -38,7 +27,12 @@ export const LandingFeaturedProjects = ({
           key={link}
           className="col-span-2 sm:col-span-1 flex flex-col lg:flex-row gap-6 align-center items-center text-theme-2 hover:text-theme-2 dark:text-white dark:hover:text-white"
         >
-          <FeaturedBadge name={name} isHoverable className="lg:basis-1/3 max-w-xs md:justify-self-end" />
+          {featuredBadgeNames.includes(name.toLocaleLowerCase()) ? (
+            // @ts-ignore
+            <FeaturedBadge name={name} isHoverable className="lg:basis-1/3 max-w-xs md:justify-self-end" />
+          ) : (
+            <ProjectBadge abbreviation={name.slice(0,2)} description={name} isHoverable color="#F04D21" className="lg:basis-1/3 max-w-xs md:justify-self-end"/>
+          )}
           <span className="flex flex-col lg:basis-2/3 text-center md:text-left">
             <span className="text-xl font-semibold capitalize">
               {title || name}

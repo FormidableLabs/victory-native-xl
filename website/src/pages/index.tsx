@@ -95,7 +95,7 @@ export default function Home(): JSX.Element {
         projects={[
           {
             name: "nuka",
-            link: "https://github.com/FormidableLabs/nuka-carousel", // todo: update with docs site once one exists
+            link: "https://commerce.nearform.com/open-source/nuka-carousel/",
             description:
               "Small, fast and accessibility-first React carousel library with easily customizable UI and behavior to fit your brand and site.",
           },
@@ -106,16 +106,16 @@ export default function Home(): JSX.Element {
               "The easiest and most efficient way to document team decisions and the evolution of your changes in Figma.",
           },
           {
-            name: "envy",
-            link: "https://github.com/FormidableLabs/envy", // todo: update with docs site once one exists
+            name: "React Native App Auth",
+            link: "https://github.com/FormidableLabs/react-native-app-auth",
             description:
-              "Envy will trace the network calls from every application in your stack and allow you to view them in a central place.",
+              "React native bridge for AppAuth - an SDK for communicating with OAuth2 providers",
           },
           {
-            name: "victory",
-            link: "https://commerce.nearform.com/open-source/victory/",
+            name: "urql",
+            link: "https://commerce.nearform.com/open-source/urql/",
             description:
-              "React.js components for modular charting and data visualization.",
+              "The highly customizable and versatile GraphQL client for React, Svelte, Vue, or plain JavaScript, with which you add on features like normalized caching as you grow.",
           },
         ]}
       />
