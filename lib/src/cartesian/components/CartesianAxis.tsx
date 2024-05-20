@@ -22,21 +22,21 @@ export const CartesianAxis = <
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 >({
-  tickCount,
+  tickCount = 5,
   tickValues,
-  labelPosition,
-  labelOffset,
-  axisSide,
-  lineColor,
-  lineWidth,
-  labelColor,
-  formatYLabel,
-  formatXLabel,
+  labelPosition = "outset",
+  labelOffset = { x: 2, y: 4 },
+  axisSide = { x: "bottom", y: "left" },
+  lineColor = "hsla(0, 0%, 0%, 0.25)",
+  lineWidth = StyleSheet.hairlineWidth,
+  labelColor = "#000000",
+  formatYLabel = (label: ValueOf<InputDatum>) => String(label),
+  formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   yScale,
   xScale,
   font,
   isNumericalData = false,
-  ix,
+  ix = [],
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
@@ -249,7 +249,7 @@ export const CartesianAxis = <
   );
 };
 
-CartesianAxis.defaultProps = {
+export const CartesianAxisDefaultProps = {
   lineColor: "hsla(0, 0%, 0%, 0.25)",
   lineWidth: StyleSheet.hairlineWidth,
   tickCount: 5,

@@ -20,7 +20,10 @@ import type {
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { CartesianAxis } from "./components/CartesianAxis";
+import {
+  CartesianAxis,
+  CartesianAxisDefaultProps,
+} from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
@@ -40,7 +43,7 @@ type CartesianChartProps<
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
-  renderOutside: (
+  renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
@@ -59,7 +62,7 @@ export function CartesianChart<
   padding,
   domainPadding,
   children,
-  renderOutside,
+  renderOutside = () => null,
   axisOptions,
   domain,
   chartPressState,
@@ -97,7 +100,7 @@ export function CartesianChart<
           xKey,
           yKeys,
           axisOptions: axisOptions
-            ? Object.assign({}, CartesianAxis.defaultProps, axisOptions)
+            ? Object.assign({}, CartesianAxisDefaultProps, axisOptions)
             : undefined,
           outputWindow: {
             xMin: valueFromSidedNumber(padding, "left"),
@@ -374,11 +377,3 @@ export function CartesianChart<
     body
   );
 }
-
-CartesianChart.defaultProps = {
-  curve: "linear",
-  chartType: "line",
-  xScaleType: "linear",
-  yScaleType: "linear",
-  renderOutside: () => null,
-};
