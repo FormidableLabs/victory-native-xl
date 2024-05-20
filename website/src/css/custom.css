@@ -73,6 +73,7 @@
   color: white;
 }
 
+/* Custom Landing Page */
 .hero-pattern {
   background-image: url("/img/background-banner.png");
 }
@@ -83,6 +84,21 @@
 
 .landing-banner-link {
   color: var(--ifm-font-color-base);
+}
+
+/* Custom Footer */
+.footer__bottom.text--center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer__bottom.text--center a {
+  opacity: 1 !important;
+}
+
+.footer__copyright {
+  color: white;
 }
 
 article h1 {
