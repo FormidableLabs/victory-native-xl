@@ -29,7 +29,7 @@ export const LandingFeaturedProjects = ({
         <a
           href={link}
           key={link}
-          className="col-span-2 sm:col-span-1 flex flex-col lg:flex-row gap-6 align-center items-center text-theme-2 hover:text-theme-2 dark:text-white dark:hover:text-white"
+          className="col-span-2 sm:col-span-1 flex flex-col lg:flex-row gap-6 align-center items-center text-theme-2 hover:text-theme-2"
         >
           {featuredBadgeNames.includes(name.toLocaleLowerCase()) ? (
             <FeaturedBadge

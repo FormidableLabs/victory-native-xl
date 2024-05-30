@@ -85,7 +85,6 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "dark",
       logo: {
         alt: "Nearform logo",
         src: "img/nearform-logo-white.svg",
