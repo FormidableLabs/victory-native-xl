@@ -56,5 +56,9 @@ module.exports = {
         groups: ["builtin", "external", "internal"],
       },
     ],
+    "import/no-unresolved": [
+      2,
+      { ignore: ["^@theme", "^@docusaurus", "^@site"] },
+    ],
   },
 };
