@@ -19,11 +19,11 @@ export const LandingBanner = ({
       <h2 className="my-8 text-4xl font-semibold">{heading}</h2>
       <ul className="flex flex-col md:flex-row flex-wrap items-start content-center md:content-start justify-items-center justify-between gap-6 md:gap-12 list-none pl-0">
         {list.map(({ alt, body, imgSrc, title, html, link }, i) => (
-          <li
-            key={i}
-            className="flex flex-col items-center text-center"
-          >
-            <a href={link} className="landing-banner-link flex flex-col items-center text-center">
+          <li key={i} className="flex flex-col items-center text-center">
+            <a
+              href={link}
+              className="landing-banner-link flex flex-col items-center text-center"
+            >
               <img src={imgSrc} alt={alt} className="max-h-72" />
               <span className="mt-8 text-2xl font-semibold">{title}</span>
               <span
