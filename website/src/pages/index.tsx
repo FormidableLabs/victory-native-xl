@@ -20,19 +20,22 @@ export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
-        <LandingHero
-          heading={siteConfig.title}
-          body={siteConfig.tagline}
-          copyText="yarn add victory-native"
-          navItems={[
-            { link: "/open-source/victory-native/docs", title: "Documentation" },
-            { link: "https://github.com/FormidableLabs/victory-native-xl/tree/main/example", title: "Example App" },
-            {
-              link: "https://github.com/FormidableLabs/victory-native-xl",
-              title: "Github",
-            },
-          ]}
-        ></LandingHero>
+      <LandingHero
+        heading={siteConfig.title}
+        body={siteConfig.tagline}
+        copyText="yarn add victory-native"
+        navItems={[
+          { link: "/open-source/victory-native/docs", title: "Documentation" },
+          {
+            link: "https://github.com/FormidableLabs/victory-native-xl/tree/main/example",
+            title: "Example App",
+          },
+          {
+            link: "https://github.com/FormidableLabs/victory-native-xl",
+            title: "Github",
+          },
+        ]}
+      ></LandingHero>
       <LandingFeatures
         heading="Features"
         list={[
@@ -41,7 +44,8 @@ export default function Home(): JSX.Element {
             alt: "Flexible",
             title: "Flexible",
             html: {
-              __html: "Fully contained, reusable data visualization elements are responsible for their own styles and behaviors.",
+              __html:
+                "Fully contained, reusable data visualization elements are responsible for their own styles and behaviors.",
             },
           },
           {
