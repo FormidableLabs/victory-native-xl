@@ -1,5 +1,9 @@
 import React from "react";
-import { FeaturedBadge, ProjectBadge, featuredBadgeNames } from "formidable-oss-badges";
+import {
+  FeaturedBadge,
+  ProjectBadge,
+  featuredBadgeNames,
+} from "formidable-oss-badges";
 import { NFLinkButton } from "./nf-link-button";
 import { Divider } from "./divider";
 
@@ -28,10 +32,20 @@ export const LandingFeaturedProjects = ({
           className="col-span-2 sm:col-span-1 flex flex-col lg:flex-row gap-6 align-center items-center text-theme-2 hover:text-theme-2 dark:text-white dark:hover:text-white"
         >
           {featuredBadgeNames.includes(name.toLocaleLowerCase()) ? (
-            // @ts-ignore
-            <FeaturedBadge name={name} isHoverable className="lg:basis-1/3 max-w-xs md:justify-self-end" />
+            <FeaturedBadge
+              // @ts-ignore
+              name={name}
+              isHoverable
+              className="lg:basis-1/3 max-w-xs md:justify-self-end"
+            />
           ) : (
-            <ProjectBadge abbreviation={name.slice(0,2)} description={name} isHoverable color="#F04D21" className="lg:basis-1/3 max-w-xs md:justify-self-end"/>
+            <ProjectBadge
+              abbreviation={name.slice(0, 2)}
+              description={name}
+              isHoverable
+              color="#F04D21"
+              className="lg:basis-1/3 max-w-xs md:justify-self-end"
+            />
           )}
           <span className="flex flex-col lg:basis-2/3 text-center md:text-left">
             <span className="text-xl font-semibold capitalize">
