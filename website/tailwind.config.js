@@ -16,6 +16,7 @@ const NearFormColors = {
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./docs/**/*.{md,mdx}"],
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {

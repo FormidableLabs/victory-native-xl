@@ -43,7 +43,7 @@ export const LandingFeaturedProjects = ({
               abbreviation={name.slice(0, 2)}
               description={name}
               isHoverable
-              color="#F04D21"
+              color="#166BFF"
               className="lg:basis-1/3 max-w-xs md:justify-self-end"
             />
           )}

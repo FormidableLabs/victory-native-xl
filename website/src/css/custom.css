@@ -38,7 +38,7 @@
   --ifm-color-primary-lighter: #EA6E5B;
   --ifm-color-primary-lightest: #F08673;
   --ifm-color-emphasis: #E04126;
-  --announce-bg: #591608;
+  --announce-bg: #f0e47a;
   --announce-text: white;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
   --ifm-navbar-background-color: #242526;
@@ -75,7 +75,7 @@
 
 /* Custom Landing Page */
 .hero-pattern {
-  background-image: url("/img/background-banner.png");
+  background-image: url("/img/hero-background.svg");
 }
 
 .landing-banner {

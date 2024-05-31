@@ -27,10 +27,6 @@ export default function Home(): JSX.Element {
         navItems={[
           { link: "/open-source/victory-native/docs", title: "Documentation" },
           {
-            link: "https://github.com/FormidableLabs/victory-native-xl/tree/main/example",
-            title: "Example App",
-          },
-          {
             link: "https://github.com/FormidableLabs/victory-native-xl",
             title: "Github",
           },

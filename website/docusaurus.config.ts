@@ -31,8 +31,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          editUrl:
-            "https://github.com/FormidableLabs/victory-native-xl/tree/master/website",
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -56,30 +54,17 @@ const config: Config = {
   ],
 
   themeConfig: {
-    announcementBar: {
-      id: "legacy_docs",
-      content: `These docs are for version &ge;40 of Victory Native. If you're looking for docs on versions &le;36, please <a href="https://commerce.nearform/open-source/victory/docs/native" rel="noreferrer" target="_blank">see here</a>.`,
-      textColor: "var(--announce-text)",
-      backgroundColor: "var(--announce-bg)",
-    },
-
     navbar: {
       title: "VICTORY NATIVE XL",
       logo: {
-        alt: "Victory Native",
-        src: "img/victory-icon.svg",
+        alt: "Nearform Commerce",
+        src: "img/nearform-logo-white.svg",
       },
       items: [
         {
           href: "https://github.com/FormidableLabs/victory-native-xl",
           className: "header-github-link",
           "aria-label": "GitHub Repository",
-          position: "right",
-        },
-        {
-          href: "https://commerce.nearform.com/",
-          className: "header-nearform-link",
-          "aria-label": "Nearform Commerce Website",
           position: "right",
         },
       ],
