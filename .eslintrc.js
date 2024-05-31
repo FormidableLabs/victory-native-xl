@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  ignorePatterns: ["node_modules/", "**/node_modules/"],
+  ignorePatterns: ["node_modules/", "**/node_modules/", "**/.docusaurus/**/*"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -21,6 +21,7 @@ module.exports = {
     {
       env: {
         node: true,
+        browser: true,
       },
       files: [".eslintrc.{js,cjs}"],
       parserOptions: {
@@ -38,6 +39,7 @@ module.exports = {
     "prettier/prettier": ["error"],
     "react/react-in-jsx-scope": 0,
     "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -53,6 +55,10 @@ module.exports = {
       {
         groups: ["builtin", "external", "internal"],
       },
+    ],
+    "import/no-unresolved": [
+      2,
+      { ignore: ["^@theme", "^@docusaurus", "^@site"] },
     ],
   },
 };

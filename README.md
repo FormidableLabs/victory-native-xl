@@ -1,8 +1,6 @@
-<div align="center">
-  <a href="https://formidable.com/open-source/" target="_blank">
-    <img alt="Victory — Formidable, We build the modern web" src="https://raw.githubusercontent.com/FormidableLabs/victory-native-xl/main/victory-hero.png" />
-  </a>
+[![Victory Native](https://oss.nearform.com/api/banner?badge=victory&text=victory+native&bg=9c2f1e)](https://commerce.nearform.com/open-source/victory-native/)
 
+<div align="center">
   <strong>
     high-performance charts powered by D3, Skia, and Reanimated for React Native.
   </strong>
@@ -57,6 +55,6 @@ MIT
 
 ## Maintenance Status
 
-**Active:** Formidable is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
+**Active:** Nearform is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
 
 [maintenance-image]: https://img.shields.io/badge/maintenance-active-green.svg
