@@ -5,7 +5,11 @@ import type {
   SkiaDefaultProps,
 } from "@shopify/react-native-skia";
 import { Path } from "@shopify/react-native-skia";
-import { makeMutable, type SharedValue } from "react-native-reanimated";
+import {
+  isSharedValue,
+  makeMutable,
+  type SharedValue,
+} from "react-native-reanimated";
 import isEqual from "react-fast-compare";
 import { usePrevious } from "../../utils/usePrevious";
 import {
@@ -71,13 +75,12 @@ const syncPropsToSharedValues = (
 
     // Shared value missing, create it
     if (!sharVal) {
-      sharedValues[key] =
-        propVal instanceof Object && "value" in propVal
-          ? propVal
-          : makeMutable(propVal);
+      sharedValues[key] = isSharedValue(propVal)
+        ? propVal
+        : makeMutable(propVal);
     }
     // Shared value exists, update it if not already a shared value
-    else if (!(propVal instanceof Object && "value" in propVal)) {
+    else if (!isSharedValue(propVal)) {
       sharVal.value = propVal;
     }
   }

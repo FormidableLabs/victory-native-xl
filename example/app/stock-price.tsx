@@ -281,14 +281,6 @@ const StockArea = ({
     return path;
   });
 
-  const gradColors = useDerivedValue(() => {
-    if (!isWindowActive) return [appColors.tint, `${appColors.tint}33`];
-
-    return isDeltaPositive.value
-      ? [appColors.success[colorPrefix], `${appColors.success[colorPrefix]}33`]
-      : [appColors.error[colorPrefix], `${appColors.error[colorPrefix]}33`];
-  });
-
   const windowLineColor = useDerivedValue(() => {
     return isDeltaPositive.value
       ? appColors.success[colorPrefix]
@@ -329,7 +321,19 @@ const StockArea = ({
             <LinearGradient
               start={vec(0, 0)}
               end={vec(top, bottom)}
-              colors={gradColors}
+              colors={
+                !isWindowActive
+                  ? [appColors.tint, `${appColors.tint}33`]
+                  : isDeltaPositive.value
+                    ? [
+                        appColors.success[colorPrefix],
+                        `${appColors.success[colorPrefix]}33`,
+                      ]
+                    : [
+                        appColors.error[colorPrefix],
+                        `${appColors.error[colorPrefix]}33`,
+                      ]
+              }
             />
           </Path>
           <Path

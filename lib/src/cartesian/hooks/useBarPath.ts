@@ -23,9 +23,9 @@ export const useBarPath = (
     const denominator = barCount
       ? barCount
       : points.length - 1 <= 0
-      ? // don't divide by 0 if there's only one data point
-        points.length
-      : points.length - 1;
+        ? // don't divide by 0 if there's only one data point
+          points.length
+        : points.length - 1;
 
     const barWidth = numerator / denominator;
 

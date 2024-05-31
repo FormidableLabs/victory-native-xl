@@ -1,7 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
@@ -13,7 +12,7 @@ const DATA = Array.from({ length: 31 }, (_, i) => ({
   highTmp: 40 + 30 * Math.random(),
 }));
 
-const BarChart = () => {
+const LineChart = () => {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   return (
@@ -45,7 +44,7 @@ export default function GettingStartedScreen() {
         {Array.from({ length: 5 }, (_, i) => (
           <React.Fragment key={i}>
             <View style={styles.chart}>
-              <BarChart />
+              <LineChart />
             </View>
             <InfoCard style={styles.card}>
               Just a page with a number of charts nested within a ScrollView
