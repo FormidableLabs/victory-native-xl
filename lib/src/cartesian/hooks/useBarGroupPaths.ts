@@ -5,6 +5,7 @@ import {
   createRoundedRectPath,
   type RoundedCorners,
 } from "../../utils/createRoundedRectPath";
+import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
 export const useBarGroupPaths = (
   points: PointsArray[],
@@ -16,6 +17,8 @@ export const useBarGroupPaths = (
   barCount?: number,
 ) => {
   const numGroups = points[0]?.length || 0;
+
+  const { yScale } = useCartesianChartContext();
 
   const groupWidth = React.useMemo(() => {
     return (
@@ -41,25 +44,26 @@ export const useBarGroupPaths = (
     return points.map((pointSet, i) => {
       const p = Skia.Path.Make();
       const offset = -groupWidth / 2 + i * (barWidth + gapWidth);
-
-      pointSet.forEach(({ x, y }) => {
+      const hasNegativeYValues = pointSet.some(
+        ({ yValue }) => yValue && yValue < 0,
+      );
+      pointSet.forEach(({ x, y, yValue }) => {
         if (typeof y !== "number") return;
-
-        if (!roundedCorners) {
-          p.addRect(
-            Skia.XYWHRect(x + offset, y, barWidth, chartBounds.bottom - y),
+        const barHeight = hasNegativeYValues
+          ? yScale(0) - y
+          : chartBounds.bottom - y;
+        if (roundedCorners) {
+          const nonUniformRoundedRect = createRoundedRectPath(
+            x + offset,
+            y,
+            barWidth,
+            barHeight,
+            roundedCorners,
+            Number(yValue),
           );
+          p.addRRect(nonUniformRoundedRect);
         } else {
-          const roundedRectPath = Skia.Path.MakeFromSVGString(
-            createRoundedRectPath(
-              x + offset,
-              y,
-              barWidth,
-              chartBounds.bottom - y,
-              roundedCorners,
-            ),
-          );
-          roundedRectPath && p.addPath(roundedRectPath);
+          p.addRect(Skia.XYWHRect(x + offset, y, barWidth, barHeight));
         }
       });
       return p;
@@ -71,6 +75,7 @@ export const useBarGroupPaths = (
     groupWidth,
     points,
     roundedCorners,
+    yScale,
   ]);
 
   return { barWidth, groupWidth, gapWidth, paths };
