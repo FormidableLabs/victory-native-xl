@@ -183,7 +183,7 @@ export const transformInputData = <
   // Else, we find min / max of y values across all yKeys, and use that for y range instead.
   const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
     ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
-  const topYLabelWidth = axisOptions?.font?.getTextWidth(topYLabel) ?? 0;
+  const topYLabelWidth = axisOptions?.font?.measureText(topYLabel).width ?? 0;
   // Determine our x-output range based on yAxis/label options
   const oRange: [number, number] = (() => {
     const yTickCount =

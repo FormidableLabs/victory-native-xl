@@ -125,7 +125,7 @@ export const CartesianAxis = <
     : yScale.ticks(yTicks);
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
-    const labelWidth = font?.getTextWidth?.(contentY) ?? 0;
+    const labelWidth = font?.measureText?.(contentY).width ?? 0;
     const labelY = yScale(tick) + fontSize / 3;
     const labelX = (() => {
       // left, outset
@@ -178,7 +178,7 @@ export const CartesianAxis = <
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
-    const labelWidth = font?.getTextWidth?.(contentX) ?? 0;
+    const labelWidth = font?.measureText?.(contentX).width ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
       yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
