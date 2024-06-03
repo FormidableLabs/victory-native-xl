@@ -3,7 +3,7 @@ import { Skia } from "@shopify/react-native-skia";
 import {
   createRoundedRectPath,
   type RoundedCorners,
-} from "lib/src/utils/createRoundedRectPath";
+} from "../../utils/createRoundedRectPath";
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
