@@ -98,6 +98,8 @@ export type AxisProps<
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 > = {
+  xTicksNormalized: number[];
+  yTicksNormalized: number[];
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   font?: SkFont | null;

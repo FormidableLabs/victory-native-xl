@@ -19,6 +19,8 @@ type State = {
   curveType: CurveType;
   customXLabel: string | undefined;
   customYLabel: string | undefined;
+  xAxisValues: string | undefined;
+  yAxisValues: string | undefined;
 };
 
 type Action =
@@ -38,7 +40,9 @@ type Action =
   | { type: "SET_DOMAIN_PADDING"; payload: number }
   | { type: "SET_CURVE_TYPE"; payload: CurveType }
   | { type: "SET_X_LABEL"; payload: string }
-  | { type: "SET_Y_LABEL"; payload: string };
+  | { type: "SET_Y_LABEL"; payload: string }
+  | { type: "SET_X_AXIS_VALUES"; payload: string | undefined }
+  | { type: "SET_Y_AXIS_VALUES"; payload: string | undefined };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -76,6 +80,10 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, customXLabel: action.payload };
     case "SET_Y_LABEL":
       return { ...state, customYLabel: action.payload };
+    case "SET_X_AXIS_VALUES":
+      return { ...state, xAxisValues: action.payload };
+    case "SET_Y_AXIS_VALUES":
+      return { ...state, yAxisValues: action.payload };
 
     default:
       throw new Error(`Unhandled action type`);
@@ -100,4 +108,6 @@ export const optionsInitialState: State = {
   curveType: "linear",
   customXLabel: undefined,
   customYLabel: undefined,
+  xAxisValues: undefined,
+  yAxisValues: undefined,
 };

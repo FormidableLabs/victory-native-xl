@@ -59,6 +59,12 @@ export const ChartRoutes: {
     path: "/ordinal-data",
   },
   {
+    title: "Axis Configuration",
+    description:
+      "This shows off the various ways to configure custom axis rendering.",
+    path: "/axis-configuration",
+  },
+  {
     title: "Custom Shaders",
     description:
       "This chart showcases using custom shaders from Skia, leveraging shader uniforms derived from Reanimated shared values.",
