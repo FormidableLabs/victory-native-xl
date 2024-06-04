@@ -1,16 +1,15 @@
-import * as React from "react";
 import type { SkPath } from "@shopify/react-native-skia";
+import * as React from "react";
 import {
   useDerivedValue,
   useSharedValue,
-  withSpring,
-  type WithSpringConfig,
-  withTiming,
-  type WithTimingConfig,
-  type WithDecayConfig,
   withDecay,
+  withSpring,
+  withTiming,
+  type WithDecayConfig,
+  type WithSpringConfig,
+  type WithTimingConfig,
 } from "react-native-reanimated";
-import { usePrevious } from "../utils/usePrevious";
 
 export type PathAnimationConfig =
   | ({ type: "timing" } & WithTimingConfig)
@@ -40,7 +39,7 @@ export const useAnimatedPath = (
   animConfig: PathAnimationConfig = { type: "timing", duration: 300 },
 ) => {
   const t = useSharedValue(0);
-  const prevPath = usePrevious(path);
+  const [prevPath, setPrevPath] = React.useState(path);
 
   React.useEffect(() => {
     t.value = 0;
@@ -54,10 +53,16 @@ export const useAnimatedPath = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path, t]);
 
-  return useDerivedValue<SkPath>(() => {
+  const currentPath = useDerivedValue<SkPath>(() => {
     if (t.value !== 1 && path.isInterpolatable(prevPath)) {
       return path.interpolate(prevPath, t.value) || path;
     }
     return path;
   });
+
+  React.useEffect(() => {
+    setPrevPath(currentPath.value);
+  }, [currentPath, path]);
+
+  return currentPath;
 };
