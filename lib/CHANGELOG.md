@@ -1,5 +1,15 @@
 # victory-native
 
+## 41.0.0
+
+### Major Changes
+
+- Bump Expo 51, RN 74, Skia 1.0+ ([#259](https://github.com/FormidableLabs/victory-native-xl/pull/259))
+
+### Minor Changes
+
+- Add negative bar value support ([#262](https://github.com/FormidableLabs/victory-native-xl/pull/262))
+
 ## 40.2.1
 
 ### Patch Changes
