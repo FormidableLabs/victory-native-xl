@@ -1,3 +1,5 @@
+export const DEFAULT_TICK_COUNT = 5;
+
 function coerceNumArray<T>(collection: Array<T>) {
   return collection.map((item, idx) =>
     Number.isNaN(Number(item)) ? idx : (item as number),
@@ -33,6 +35,7 @@ const getMinValue = (arr: Array<number>): number => {
 const getMaxValue = (arr: Array<number>): number => {
   return Math.max(...arr);
 };
+
 
 export const getDomainFromTicks = (tickValues: number[] | undefined) => {
   // Check if undefined OR if its not an array of numbers

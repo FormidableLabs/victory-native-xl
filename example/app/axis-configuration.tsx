@@ -97,7 +97,7 @@ export default function AxisConfiguration(props: { segment: string }) {
     [yAxisValues],
   );
 
-  const data = useMemo(() => DATA(ticksX, ticksY), [xAxisValues, yAxisValues]);
+  const data = useMemo(() => DATA(ticksX, ticksY), [ticksX, ticksY]);
 
   return (
     <SafeAreaView style={styles.safeView}>

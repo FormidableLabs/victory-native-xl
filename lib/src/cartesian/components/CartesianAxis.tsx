@@ -15,14 +15,14 @@ import type {
   AxisProps,
   InputFields,
 } from "../../types";
+import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
 
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 >({
-  tickCount = 5,
-  tickValues,
+  tickCount = DEFAULT_TICK_COUNT,
   xTicksNormalized,
   yTicksNormalized,
   labelPosition = "outset",
@@ -84,7 +84,6 @@ export const CartesianAxis = <
           : lineWidth,
     } as const;
   }, [
-    tickValues,
     tickCount,
     labelOffset,
     axisSide.x,

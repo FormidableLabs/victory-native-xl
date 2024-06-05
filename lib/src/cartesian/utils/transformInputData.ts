@@ -1,5 +1,5 @@
 import { type ScaleLinear } from "d3-scale";
-import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
+import { DEFAULT_TICK_COUNT, downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
@@ -55,7 +55,7 @@ export const transformInputData = <
 } => {
   const data = [..._data];
   const tickValues = axisOptions?.tickValues;
-  const tickCount = axisOptions?.tickCount ?? 5;
+  const tickCount = axisOptions?.tickCount ?? DEFAULT_TICK_COUNT;
 
   const xTickValues =
     tickValues && typeof tickValues === "object" && "x" in tickValues
