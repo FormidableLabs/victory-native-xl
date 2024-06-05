@@ -1,5 +1,9 @@
 import { type ScaleLinear } from "d3-scale";
-import { DEFAULT_TICK_COUNT, downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
+import {
+  DEFAULT_TICK_COUNT,
+  downsampleTicks,
+  getDomainFromTicks,
+} from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
