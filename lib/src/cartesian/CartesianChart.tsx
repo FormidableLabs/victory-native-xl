@@ -93,48 +93,69 @@ export function CartesianChart<
     ),
   });
 
-  const { xScale, yScale, chartBounds, isNumericalData, _tData } =
-    React.useMemo(() => {
-      const { xScale, yScale, isNumericalData, ..._tData } = transformInputData(
-        {
-          data,
-          xKey,
-          yKeys,
-          axisOptions: axisOptions
-            ? Object.assign({}, CartesianAxisDefaultProps, axisOptions)
-            : undefined,
-          outputWindow: {
-            xMin: valueFromSidedNumber(padding, "left"),
-            xMax: size.width - valueFromSidedNumber(padding, "right"),
-            yMin: valueFromSidedNumber(padding, "top"),
-            yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-          },
-          domain,
-          domainPadding,
-        },
-      );
-      tData.value = _tData;
-
-      const chartBounds = {
-        left: xScale(xScale.domain().at(0) || 0),
-        right: xScale(xScale.domain().at(-1) || 0),
-        top: yScale(yScale.domain().at(0) || 0),
-        bottom: yScale(yScale.domain().at(-1) || 0),
-      };
-
-      return { tData, xScale, yScale, chartBounds, isNumericalData, _tData };
-    }, [
+  const {
+    xTicksNormalized,
+    yTicksNormalized,
+    xScale,
+    yScale,
+    chartBounds,
+    isNumericalData,
+    _tData,
+  } = React.useMemo(() => {
+    const {
+      xScale,
+      yScale,
+      isNumericalData,
+      xTicksNormalized,
+      yTicksNormalized,
+      ..._tData
+    } = transformInputData({
       data,
       xKey,
       yKeys,
-      axisOptions,
-      padding,
-      size.width,
-      size.height,
+      axisOptions: axisOptions
+        ? Object.assign({}, CartesianAxisDefaultProps, axisOptions)
+        : undefined,
+      outputWindow: {
+        xMin: valueFromSidedNumber(padding, "left"),
+        xMax: size.width - valueFromSidedNumber(padding, "right"),
+        yMin: valueFromSidedNumber(padding, "top"),
+        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+      },
       domain,
       domainPadding,
+    });
+    tData.value = _tData;
+
+    const chartBounds = {
+      left: xScale(xScale.domain().at(0) || 0),
+      right: xScale(xScale.domain().at(-1) || 0),
+      top: yScale(yScale.domain().at(0) || 0),
+      bottom: yScale(yScale.domain().at(-1) || 0),
+    };
+
+    return {
+      xTicksNormalized,
+      yTicksNormalized,
       tData,
-    ]);
+      xScale,
+      yScale,
+      chartBounds,
+      isNumericalData,
+      _tData,
+    };
+  }, [
+    data,
+    xKey,
+    yKeys,
+    axisOptions,
+    padding,
+    size.width,
+    size.height,
+    domain,
+    domainPadding,
+    tData,
+  ]);
 
   /**
    * Pan gesture handling
@@ -356,6 +377,8 @@ export function CartesianChart<
                 xScale,
                 yScale,
                 isNumericalData,
+                xTicksNormalized,
+                yTicksNormalized,
                 ix: _tData.ix,
               }}
             />

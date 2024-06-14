@@ -1,3 +1,5 @@
+export const DEFAULT_TICK_COUNT = 5;
+
 function coerceNumArray<T>(collection: Array<T>) {
   return collection.map((item, idx) =>
     Number.isNaN(Number(item)) ? idx : (item as number),
