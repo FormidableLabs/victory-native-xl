@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.0.1
+
+### Patch Changes
+
+- Fix yLabel width calculation to better align x-scale ([#291](https://github.com/FormidableLabs/victory-native-xl/pull/291))
+
+- Replace getTextWidth with measureText ([#290](https://github.com/FormidableLabs/victory-native-xl/pull/290))
+
+- fix: `useAnimatedPath` no longer jumps when path changes during animation ([#287](https://github.com/FormidableLabs/victory-native-xl/pull/287))
+
+- fix negative bar charts for bar groups ([#295](https://github.com/FormidableLabs/victory-native-xl/pull/295))
+
 ## 41.0.0
 
 ### Major Changes
