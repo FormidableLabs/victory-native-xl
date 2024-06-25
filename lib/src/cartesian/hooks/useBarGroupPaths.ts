@@ -41,17 +41,12 @@ export const useBarGroupPaths = (
   }, [barWidth, groupWidth, points.length]);
 
   const paths = React.useMemo(() => {
-    const hasNegativeYValues = points.some((pointSet) => {
-      return pointSet.some(({ yValue }) => yValue && yValue < 0);
-    });
     return points.map((pointSet, i) => {
       const p = Skia.Path.Make();
       const offset = -groupWidth / 2 + i * (barWidth + gapWidth);
       pointSet.forEach(({ x, y, yValue }) => {
         if (typeof y !== "number") return;
-        const barHeight = hasNegativeYValues
-          ? yScale(0) - y
-          : chartBounds.bottom - y;
+        const barHeight = yScale(0) - y;
         if (roundedCorners) {
           const nonUniformRoundedRect = createRoundedRectPath(
             x + offset,
@@ -68,15 +63,7 @@ export const useBarGroupPaths = (
       });
       return p;
     });
-  }, [
-    barWidth,
-    chartBounds.bottom,
-    gapWidth,
-    groupWidth,
-    points,
-    roundedCorners,
-    yScale,
-  ]);
+  }, [barWidth, gapWidth, groupWidth, points, roundedCorners, yScale]);
 
   return { barWidth, groupWidth, gapWidth, paths };
 };
