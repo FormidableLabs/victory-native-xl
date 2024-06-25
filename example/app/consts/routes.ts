@@ -35,6 +35,11 @@ export const ChartRoutes: {
     path: "/negative-bar-charts",
   },
   {
+    title: "Bar Charts Custom Bar",
+    description: "These charts demonstrate how to customize individual bars.",
+    path: "/bar-charts-custom-bars",
+  },
+  {
     title: "Scatter Plot",
     description:
       "This is a Scatter plot in Victory Native that supports custom shapes and sizes.",
