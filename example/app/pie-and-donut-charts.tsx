@@ -290,6 +290,35 @@ const PieChartSimpleCustomLegend = () => {
   );
 };
 
+const HalfDonutChart = () => {
+  const [data] = useState(DATA(2));
+
+  return (
+    <PolarChart
+      data={data}
+      labelKey={"label"}
+      valueKey={"value"}
+      colorKey={"color"}
+    >
+      <Pie.Chart innerRadius={"50%"} circleSweepDegrees={180} startAngle={180}>
+        {() => {
+          return (
+            <>
+              <Pie.Slice />
+              <Pie.SliceAngularInset
+                angularInset={{
+                  angularStrokeWidth: 5,
+                  angularStrokeColor: "white",
+                }}
+              />
+            </>
+          );
+        }}
+      </Pie.Chart>
+    </PolarChart>
+  );
+};
+
 export default function PieAndDonutCharts(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
 
@@ -327,6 +356,10 @@ export default function PieAndDonutCharts(props: { segment: string }) {
         <View style={[styles.chartContainer]}>
           <Text style={styles.title}>Pie Chart with Custom Legend</Text>
           <PieChartSimpleCustomLegend />
+        </View>
+        <View style={[styles.chartContainer]}>
+          <Text style={styles.title}>Half Donut Chart</Text>
+          <HalfDonutChart />
         </View>
       </ScrollView>
     </SafeAreaView>
