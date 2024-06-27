@@ -77,6 +77,8 @@ export const PieChart = (props: PieChartProps) => {
     radius,
     center,
     innerRadius,
+    circleSweepDegrees,
+    _startAngle,
   ]);
 
   return data.map((slice, index) => {
