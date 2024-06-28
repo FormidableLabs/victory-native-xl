@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Skia } from "@shopify/react-native-skia";
+import { Skia, type SkPath } from "@shopify/react-native-skia";
 import {
   createRoundedRectPath,
   type RoundedCorners,
@@ -41,12 +41,11 @@ export const useBarPath = (
     barCount,
   ]);
 
-  const path = React.useMemo(() => {
-    const path = Skia.Path.Make();
-
+  const paths = React.useMemo(() => {
+    const paths: SkPath[] = [];
     points.forEach(({ x, y, yValue }) => {
+      const path = Skia.Path.Make();
       if (typeof y !== "number") return;
-
       const barHeight = yScale(0) - y;
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
@@ -61,10 +60,10 @@ export const useBarPath = (
       } else {
         path.addRect(Skia.XYWHRect(x - barWidth / 2, y, barWidth, barHeight));
       }
+      paths.push(path);
     });
-
-    return path;
+    return paths;
   }, [barWidth, points, roundedCorners, yScale]);
 
-  return { path, barWidth };
+  return { paths, barWidth };
 };

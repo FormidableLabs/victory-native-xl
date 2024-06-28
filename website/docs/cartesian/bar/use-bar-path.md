@@ -2,7 +2,7 @@
 
 The `useBarPath` hook takes a `PointsArray` input, a `ChartBounds` object, and an "inner padding" value, and returns a Skia `SkPath` path object that represents the path for that bar chart.
 
-## Exmaple
+## Example
 
 ```tsx
 import {
@@ -24,15 +24,19 @@ function MyCustomBars({
   innerPadding?: number;
 }) {
   // 👇 use the hook to generate a path object.
-  const { path } = useBarPath(points, chartBounds, innerPadding);
-  return <Path path={path} style="fill" color="red" />;
+  const { paths } = useBarPath(points, chartBounds, innerPadding);
+  return paths.map((path, i) => (
+    <Path key={i} path={path} style="fill" color="red" />
+  ));
 }
 
 export function MyChart() {
   return (
     <CartesianChart data={DATA} xKey="x" yKeys={["y"]}>
       {/* 👇 pass a PointsArray to our custom component */}
-      {({ points, chartBounds }) => <MyCustomBars points={points.y} chartBounds={chartBounds} />}
+      {({ points, chartBounds }) => (
+        <MyCustomBars points={points.y} chartBounds={chartBounds} />
+      )}
     </CartesianChart>
   );
 }
@@ -62,9 +66,9 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 
 Returns an object with the following fields.
 
-### `path`
+### `paths`
 
-The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element.
+An array of `SkPath` path objects to be used as the `path` argument of a Skia `<Path />` element.
 
 ### `barWidth`
 

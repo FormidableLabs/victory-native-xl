@@ -1,7 +1,15 @@
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, Path, useFont, vec } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Bar, BarGroup, CartesianChart } from "victory-native";
+import {
+  Bar,
+  BarGroup,
+  CartesianChart,
+  useBarPath,
+  type ChartBounds,
+  type PointsArray,
+  type RoundedCorners,
+} from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
@@ -22,6 +30,33 @@ const DATA = (length: number = 10) =>
     month: index + 1,
     listenCount: Math.floor(Math.random() * 801) - 300,
   }));
+
+function MyCustomBars({
+  points,
+  chartBounds,
+  innerPadding,
+  roundedCorners,
+}: {
+  points: PointsArray;
+  chartBounds: ChartBounds;
+  innerPadding?: number;
+  roundedCorners?: RoundedCorners;
+}) {
+  const { paths } = useBarPath(
+    points,
+    chartBounds,
+    innerPadding,
+    roundedCorners,
+  );
+  return paths.map((path, i) => (
+    <Path
+      key={i}
+      path={path}
+      style="fill"
+      color={(points[i]?.yValue ?? 0) >= 0 ? "#c084fc" : "#a5f3fc"}
+    />
+  ));
+}
 
 export default function NegativeBarChartsPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
@@ -122,6 +157,32 @@ export default function NegativeBarChartsPage(props: { segment: string }) {
                   />
                 </BarGroup.Bar>
               </BarGroup>
+            )}
+          </CartesianChart>
+        </View>
+        <View style={styles.chart}>
+          <CartesianChart
+            xKey="month"
+            padding={5}
+            yKeys={["listenCount"]}
+            domainPadding={{ left: 50, right: 50, top: 30, bottom: 20 }}
+            axisOptions={{
+              font,
+              lineColor: isDark ? "#71717a" : "#d4d4d8",
+              labelColor: isDark ? appColors.text.dark : appColors.text.light,
+            }}
+            data={data}
+          >
+            {({ points, chartBounds }) => (
+              <MyCustomBars
+                points={points.listenCount}
+                chartBounds={chartBounds}
+                innerPadding={innerPadding}
+                roundedCorners={{
+                  topLeft: roundedCorner,
+                  topRight: roundedCorner,
+                }}
+              />
             )}
           </CartesianChart>
         </View>

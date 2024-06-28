@@ -27,7 +27,7 @@ export const Bar = ({
   barCount,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
-  const { path } = useBarPath(
+  const { paths } = useBarPath(
     points,
     chartBounds,
     innerPadding,
@@ -36,10 +36,13 @@ export const Bar = ({
     barCount,
   );
 
-  return React.createElement(animate ? AnimatedPath : Path, {
-    path,
-    style: "fill",
-    ...(Boolean(animate) && { animate }),
-    ...ops,
-  });
+  return paths.map((path, i) =>
+    React.createElement(animate ? AnimatedPath : Path, {
+      key: i,
+      path,
+      style: "fill",
+      ...(Boolean(animate) && { animate }),
+      ...ops,
+    }),
+  );
 };
