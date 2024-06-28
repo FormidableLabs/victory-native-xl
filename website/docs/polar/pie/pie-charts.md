@@ -62,6 +62,14 @@ A `number` or `string` (as a percentage) which turns the `Pie` chart into a `Don
 The `innerRadius` prop must be a `number` or a `string` like `50%`.
 :::
 
+### `circleSweepDegrees`
+
+A `number` which defines how many degrees of the chart should be drawn. The default is `360` which will draw a full circle. If you want to draw a partial circle, you can set this prop to a value between `0` and `360`.
+
+### `startAngle`
+
+A `number` which defines the starting angle of the chart. Changing this prop will rotate the chart.
+
 ### `children`
 
 The `children` prop is a render function which maps through the data and whose sole argument is each individual `slice` of the pie, allowing you to customize each slice as needed. E.g. this slice will have all the data needed to render a `Pie.Slice />`.
