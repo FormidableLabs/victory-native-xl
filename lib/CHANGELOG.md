@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.0.2
+
+### Patch Changes
+
+- fix domain padding bottom on bar charts ([#303](https://github.com/FormidableLabs/victory-native-xl/pull/303))
+
+- Add circleSweepDegrees and startAngle props to PieChart ([#307](https://github.com/FormidableLabs/victory-native-xl/pull/307))
+
 ## 41.0.1
 
 ### Patch Changes
