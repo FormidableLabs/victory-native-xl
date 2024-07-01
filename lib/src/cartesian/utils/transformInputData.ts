@@ -168,7 +168,8 @@ export const transformInputData = <
   const yScale = makeScale({
     inputBounds: yScaleDomain,
     outputBounds: yScaleRange,
-    isNice: true,
+    // If user provided a domain, don't modify it
+    isNice: domain?.y?.[1] ? false : true,
     padEnd:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.bottom,
     padStart:
