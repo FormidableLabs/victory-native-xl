@@ -2,7 +2,7 @@
 
 The `useAreaPath` hook takes a `PointsArray` input, a value for the "bottom" of the area chart, and some options, and returns a Skia `SkPath` path object that represents the path for that line chart.
 
-## Exmaple
+## Example
 
 ```tsx
 import { CartesianChart, useAreaPath, type PointsArray } from "victory-native";

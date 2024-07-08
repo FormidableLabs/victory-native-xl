@@ -2,7 +2,7 @@
 
 The `useBarGroupPaths` hook takes an _array_ of `PointsArray`, a `ChartBounds` object, and some padding options, and returns a list of `SkPath` paths and some details about the spacing of the bars.
 
-## Exmaple
+## Example
 
 ```tsx
 import {
