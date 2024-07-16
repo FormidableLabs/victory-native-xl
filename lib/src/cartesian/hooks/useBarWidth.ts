@@ -1,5 +1,6 @@
 import React from "react";
-import type { ChartBounds, PointsArray, RoundedCorners } from "lib/dist";
+import type { ChartBounds, PointsArray } from "lib/src/types";
+import type { RoundedCorners } from "lib/src/utils/createRoundedRectPath";
 
 type Props = {
   points: PointsArray | PointsArray[];
