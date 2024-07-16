@@ -54,8 +54,8 @@ export default function StackedBarChartPage(props: { segment: string }) {
                   innerPadding={innerPadding}
                   chartBounds={chartBounds}
                   points={[
-                    points.favouriteCount,
                     points.listenCount,
+                    points.favouriteCount,
                     points.sales,
                   ]}
                   colors={["orange", "gold", "sienna"]}
