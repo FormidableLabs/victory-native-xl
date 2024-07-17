@@ -99,7 +99,7 @@ The `animate` prop takes [a `PathAnimationConfig` object](../../animated-paths.m
 
 ### `colors`
 
-The `colors` prop takes an array of `Color` values to use for the bars. The order of the colors should match the order of the `points` prop. 
+The `colors` prop takes an array of `Color` values to use for the bars. The order of the colors should match the order of the `points` prop.
 
 ### `barWidth`
 
@@ -108,10 +108,6 @@ The `barWidth` prop takes a number and sets the width of the bar to that number.
 ### `barCount`
 
 The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
-
-### `children`
-
-A `children` pass-thru that will be rendered inside of the Skia `Path` element, useful if you'd like to make e.g. a gradient path.
 
 ### `barOptions`
 
@@ -134,4 +130,4 @@ barOptions?: ({
   }) => CustomizablePathProps & { roundedCorners?: RoundedCorners };
 ```
 
-This prop allows you to customize each individual bar in the stacked bar chart. You can use this to customize the children of each bar as well, allowing for things like `LinearGradients`, etc. See the example repo for more information.
+This prop allows you to customize each individual bar in the stacked bar chart. You can use this to customize the `children` of each bar as well, allowing for things like `LinearGradients`, etc. See the example repo for more information.
