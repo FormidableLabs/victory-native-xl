@@ -50,6 +50,7 @@ type CartesianChartProps<
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   gestureLongPressDelay?: number;
+  disableDragging?: boolean;
 };
 
 export function CartesianChart<
@@ -69,6 +70,7 @@ export function CartesianChart<
   chartPressState,
   onChartBoundsChange,
   gestureLongPressDelay = 100,
+  disableDragging = false,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -266,6 +268,7 @@ export function CartesianChart<
      * As fingers move, update the shared values accordingly.
      */
     .onTouchesMove((e) => {
+      if (disableDragging) return;
       const vals = activePressSharedValues || [];
       if (!vals.length || e.numberOfTouches === 0) return;
 

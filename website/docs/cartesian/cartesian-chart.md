@@ -140,6 +140,10 @@ The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?:
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
 
+### `disableDragging`
+
+`DisableDragging` supports activation of drag functions while touching the screen. The default value is true and if you want to deactivate it, you can deliver false.
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.
