@@ -7,6 +7,11 @@ import {
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
+type BarPosition = {
+  x: number;
+  y: number;
+};
+
 export const useBarPath = (
   points: PointsArray,
   chartBounds: ChartBounds,
@@ -41,8 +46,9 @@ export const useBarPath = (
     barCount,
   ]);
 
-  const path = React.useMemo(() => {
+  const { path, barPositions } = React.useMemo(() => {
     const path = Skia.Path.Make();
+    const barPositions: BarPosition[] = [];
 
     points.forEach(({ x, y, yValue }) => {
       if (typeof y !== "number") return;
@@ -61,10 +67,12 @@ export const useBarPath = (
       } else {
         path.addRect(Skia.XYWHRect(x - barWidth / 2, y, barWidth, barHeight));
       }
+
+      barPositions.push({ x: x - barWidth / 2 + barWidth / 2, y: y });
     });
 
-    return path;
+    return { path, barPositions };
   }, [barWidth, points, roundedCorners, yScale]);
 
-  return { path, barWidth };
+  return { path, barPositions, barWidth };
 };

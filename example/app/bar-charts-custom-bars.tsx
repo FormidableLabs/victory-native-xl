@@ -1,4 +1,9 @@
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import {
+  LinearGradient,
+  useFont,
+  vec,
+  Text as SkiaText,
+} from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useDerivedValue } from "react-native-reanimated";
@@ -32,6 +37,12 @@ export default function BarChartCustomBarsPage() {
     activeXItem = 2;
   }
 
+  // 폰트가 로드되지 않았을 경우
+  if (!font) {
+    return null;
+  }
+
+  console.log(data);
   return (
     <>
       <SafeAreaView style={styles.safeView}>
@@ -56,14 +67,22 @@ export default function BarChartCustomBarsPage() {
                 lineColor: isDark ? "#71717a" : "#d4d4d8",
                 labelColor: isDark ? appColors.text.dark : appColors.text.light,
               }}
-              data={data}
+              data={[
+                { listenCount: 61, month: 1 },
+                { listenCount: 55, month: 2 },
+                { listenCount: 77, month: 3 },
+                { listenCount: 91, month: 4 },
+                { listenCount: 52, month: 5 },
+              ]}
             >
               {({ points, chartBounds }) => {
                 return points.listenCount.map((p, i) => {
+                  const text = `Value`;
                   return (
                     <Bar
                       barCount={points.listenCount.length}
                       key={i}
+                      barWidth={30}
                       points={[p]}
                       chartBounds={chartBounds}
                       animate={{ type: "spring" }}
@@ -72,64 +91,10 @@ export default function BarChartCustomBarsPage() {
                         topLeft: roundedCorner,
                         topRight: roundedCorner,
                       }}
-                      color={i === data.length - 1 ? "red" : "black"}
-                    ></Bar>
-                  );
-                });
-              }}
-            </CartesianChart>
-          </View>
-          <View style={styles.chart}>
-            <Text style={styles.title}>
-              Bar Chart with children + gesture customization (press a bar)
-            </Text>
-            <CartesianChart
-              chartPressState={state}
-              xKey="month"
-              padding={5}
-              yKeys={["listenCount"]}
-              domainPadding={{ left: 50, right: 50, top: 30 }}
-              domain={{ y: [0, 100] }}
-              axisOptions={{
-                font,
-                tickCount: 5,
-                formatXLabel: (value) => {
-                  const date = new Date(2023, value - 1);
-                  return date.toLocaleString("default", { month: "short" });
-                },
-                lineColor: isDark ? "#71717a" : "#d4d4d8",
-                labelColor: isDark ? appColors.text.dark : appColors.text.light,
-              }}
-              data={data}
-            >
-              {({ points, chartBounds }) => {
-                return points.listenCount.map((p, i) => {
-                  return (
-                    <Bar
-                      barCount={points.listenCount.length}
-                      key={i}
-                      points={[p]}
-                      chartBounds={chartBounds}
-                      animate={{ type: "spring" }}
-                      innerPadding={innerPadding}
-                      roundedCorners={{
-                        topLeft: roundedCorner,
-                        topRight: roundedCorner,
-                      }}
+                      // textOffsetY={-10} // 텍스트의 y 좌표 오프셋
+                      color={i === data.length - 1 ? "blue" : "green"}
                     >
-                      {i == activeXItem ? (
-                        <LinearGradient
-                          start={vec(0, 0)}
-                          end={vec(0, 400)}
-                          colors={["green", "blue"]}
-                        />
-                      ) : (
-                        <LinearGradient
-                          start={vec(0, 0)}
-                          end={vec(0, 400)}
-                          colors={["#a78bfa", "#a78bfa50"]}
-                        />
-                      )}
+                      <SkiaText font={font} color="blue" text={text} />
                     </Bar>
                   );
                 });
