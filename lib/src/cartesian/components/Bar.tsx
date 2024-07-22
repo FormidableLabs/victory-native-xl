@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  Path,
-  Rect,
-  Text as SkiaText,
-  type PathProps,
-} from "@shopify/react-native-skia";
+import { Path, type PathProps } from "@shopify/react-native-skia";
 import type { PropsWithChildren, ReactNode } from "react";
 import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
@@ -24,6 +19,11 @@ type CartesianBarProps = {
   textOffsetY?: number;
   children?: ReactNode;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
+
+type CustomBarProps = React.SVGAttributes<SVGElement> & {
+  x?: number;
+  y?: number;
+};
 
 export const Bar = ({
   points,
@@ -58,22 +58,22 @@ export const Bar = ({
         {...ops}
       />
       {barPositions.map((barPosition, index) =>
-        React.Children.map(children, (child) => {
+        React.Children.map(children, (child, childIndex) => {
           if (React.isValidElement(child)) {
             const textX =
               barPosition.x - barWidth! / 2 + textOffsetX + barWidth! / 2;
-            const textY = barPosition.y - 20 + textOffsetY + 10; // 중앙으로 이동
+            const textY = barPosition.y - 20 + textOffsetY + 10;
 
-            const textWidth = child.props.text.length * 6; // 임의의 텍스트 너비 계산 (조정 필요)
-            const textHeight = 12; // 폰트 크기 기반 높이 (조정 필요)
+            const textWidth = child.props.text.length * 6;
+            const textHeight = 12;
 
             return (
-              <>
+              <React.Fragment key={`bar-${index}-child-${childIndex}`}>
                 {React.cloneElement(child, {
                   x: textX - textWidth / 2,
                   y: textY + textHeight / 2,
-                } as any)}
-              </>
+                } as CustomBarProps)}
+              </React.Fragment>
             );
           }
           return child;
