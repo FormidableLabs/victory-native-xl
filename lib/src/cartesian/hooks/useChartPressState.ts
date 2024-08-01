@@ -29,6 +29,7 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
           { value: SharedValue<number>; position: SharedValue<number> }
         >,
       ),
+      yIndex: makeMutable(-1), // used for stacked bar charts
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keys]);
@@ -46,6 +47,7 @@ export type ChartPressState<Init extends ChartPressStateInit> = {
     keyof Init["y"],
     { value: SharedValue<number>; position: SharedValue<number> }
   >;
+  yIndex: SharedValue<number>;
 };
 
 const useIsPressActive = <Init extends ChartPressStateInit>(

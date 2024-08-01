@@ -157,6 +157,12 @@ export function CartesianChart<
     tData,
   ]);
 
+  // stacked bar values
+  const chartHeight = chartBounds.bottom;
+  const yScaleTop = yScale.domain().at(0);
+  const yScaleBottom = yScale.domain().at(-1);
+  // end stacked bar values
+
   /**
    * Pan gesture handling
    */
@@ -167,13 +173,50 @@ export function CartesianChart<
   const handleTouch = (
     v: ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
     x: number,
+    y: number,
   ) => {
     "worklet";
     const idx = findClosestPoint(tData.value.ox, x);
+
     if (typeof idx !== "number") return;
 
     const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
-    // Shared value
+
+    // begin stacked bar handling:
+    // store the heights of each bar segment
+    const barHeights: number[] = [];
+    for (const yk in v.y) {
+      if (isInYs(yk)) {
+        const height = asNumber(tData.value.y[yk].i[idx]);
+        barHeights.push(height);
+      }
+    }
+
+    const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
+    // Calculate the actual yValue of the touch within the domain of the yScale
+    const yDomainValue =
+      (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
+
+    // track the cumulative height and the y-index of the touched segment
+    let cumulativeHeight = 0;
+    let yIndex = -1;
+
+    // loop through the bar heights to find which bar was touched
+    for (let i = 0; i < barHeights.length; i++) {
+      // Accumulate the height as we go along
+      cumulativeHeight += barHeights[i]!;
+      // Check if the y-value touched falls within the current segment
+      if (yDomainValue <= cumulativeHeight) {
+        // If it does, set yIndex to the current segment index and break
+        yIndex = i;
+        break;
+      }
+    }
+
+    // Update the yIndex value in the state or context
+    v.yIndex.value = yIndex;
+    // end stacked bar handling
+
     if (v) {
       try {
         v.x.value.value = tData.value.ix[idx]!;
@@ -233,7 +276,7 @@ export function CartesianChart<
             touchMap.value[touch.id] = i;
 
           v.isActive.value = true;
-          handleTouch(v, touch.x);
+          handleTouch(v, touch.x, touch.y);
         } else {
           gestureState.value.bootstrap.push([v, touch]);
         }
@@ -252,7 +295,7 @@ export function CartesianChart<
           touchMap.value[touch.id] = i;
 
         v.isActive.value = true;
-        handleTouch(v, touch.x);
+        handleTouch(v, touch.x, touch.y);
       }
     })
     /**
@@ -277,7 +320,7 @@ export function CartesianChart<
 
         if (!v || !touch) continue;
         if (!v.isActive.value) v.isActive.value = true;
-        handleTouch(v, touch.x);
+        handleTouch(v, touch.x, touch.y);
       }
     })
     /**

@@ -32,6 +32,10 @@ export { Line } from "./cartesian/components/Line";
 export { useBarPath } from "./cartesian/hooks/useBarPath";
 export { Bar } from "./cartesian/components/Bar";
 
+// StackedBar
+export { useStackedBarPaths } from "./cartesian/hooks/useStackedBarPaths";
+export { StackedBar } from "./cartesian/components/StackedBar";
+
 // Bar group
 export { useBarGroupPaths } from "./cartesian/hooks/useBarGroupPaths";
 export { BarGroup } from "./cartesian/components/BarGroup";
