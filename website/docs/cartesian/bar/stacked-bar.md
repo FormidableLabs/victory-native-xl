@@ -53,7 +53,7 @@ export function MyChart() {
             animate={{ type: "spring" }}
             innerPadding={innerPadding}
             chartBounds={chartBounds}
-            points={[points.favouriteCount, points.listenCount, points.sales]} // 👈 the order here must match the order above
+            points={[points.listenCount, points.favouriteCount, points.sales]} // 👈 the order here must match the order above
             colors={["orange", "gold", "sienna"]} // 👈 specify your colors
             barOptions={({ isBottom, isTop }) => {
               // 👇 customize each individual bar as desired
