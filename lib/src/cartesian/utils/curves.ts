@@ -4,6 +4,7 @@ import {
   curveCardinal,
   curveCatmullRom,
   curveLinear,
+  curveMonotoneX,
   curveNatural,
   curveStep,
 } from "d3-shape";
@@ -21,6 +22,7 @@ export const CURVES = {
   catmullRom: curveCatmullRom,
   catmullRom0: curveCatmullRom.alpha(0),
   catmullRom100: curveCatmullRom.alpha(1),
+  monotoneX: curveMonotoneX,
   step: curveStep,
 } as const;
 export type CurveType = keyof typeof CURVES;
