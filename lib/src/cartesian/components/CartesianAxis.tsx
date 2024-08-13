@@ -117,7 +117,10 @@ export const CartesianAxis = <
 
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
-    const labelWidth = font?.getGlyphWidths?.(font.getGlyphIDs(contentY)).reduce((sum, value) => sum + value, 0) ?? 0
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
     const labelY = yScale(tick) + fontSize / 3;
     const labelX = (() => {
       // left, outset
@@ -166,7 +169,10 @@ export const CartesianAxis = <
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
-    const labelWidth = font?.getGlyphWidths?.(font.getGlyphIDs(contentX)).reduce((sum, value) => sum + value, 0) ?? 0;
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
       yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
