@@ -42,7 +42,7 @@ const PolarChartBase = (
   const ctx = usePolarChartContext();
 
   return (
-    <View style={[styles.baseContainer, {}, containerStyle]}>
+    <View style={[styles.baseContainer, containerStyle]}>
       <Canvas
         onLayout={onLayout}
         style={StyleSheet.flatten([

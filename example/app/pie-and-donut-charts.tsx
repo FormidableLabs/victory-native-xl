@@ -136,7 +136,7 @@ const PieChartMultipleDataPoints = () => {
       </PolarChart>
       <View style={styles.legend}>
         {data.map((d, i) => (
-          <View key={i} style={[styles.legendItemContainer]}>
+          <View key={i} style={styles.legendItemContainer}>
             <Canvas style={styles.legendItemCanvas}>
               <Circle
                 c={vec(
@@ -147,7 +147,7 @@ const PieChartMultipleDataPoints = () => {
                 color={d.color}
               />
             </Canvas>
-            <Text style={[]}>{d.label}</Text>
+            <Text>{d.label}</Text>
           </View>
         ))}
       </View>
@@ -281,7 +281,7 @@ const PieChartSimpleCustomLegend = () => {
                   color={d.color}
                 />
               </Canvas>
-              <Text style={{}}>{d.label}</Text>
+              <Text>{d.label}</Text>
             </View>
           );
         })}
@@ -344,20 +344,20 @@ export default function PieAndDonutCharts(props: { segment: string }) {
           <Text style={styles.title}>Pie Chart with Single Data Point</Text>
           <PieChartSingleDataPoint />
         </View>
-        <View style={[styles.chartContainer]}>
+        <View style={styles.chartContainer}>
           <Text style={styles.title}>Pie Chart with Multiple Data Points</Text>
           <PieChartMultipleDataPoints />
         </View>
 
-        <View style={[styles.chartContainer]}>
+        <View style={styles.chartContainer}>
           <Text style={styles.title}>Pie Chart with Insets</Text>
           <PieChartWithInsets />
         </View>
-        <View style={[styles.chartContainer]}>
+        <View style={styles.chartContainer}>
           <Text style={styles.title}>Pie Chart with Custom Legend</Text>
           <PieChartSimpleCustomLegend />
         </View>
-        <View style={[styles.chartContainer]}>
+        <View style={styles.chartContainer}>
           <Text style={styles.title}>Half Donut Chart</Text>
           <HalfDonutChart />
         </View>
