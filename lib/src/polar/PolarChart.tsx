@@ -45,11 +45,11 @@ const PolarChartBase = (
     <View style={[styles.baseContainer, {}, containerStyle]}>
       <Canvas
         onLayout={onLayout}
-        style={[
+        style={StyleSheet.flatten([
           styles.canvasContainer,
           hasMeasuredLayoutSize ? { width, height } : null,
           canvasStyle,
-        ]}
+        ])}
       >
         {/* https://shopify.github.io/react-native-skia/docs/canvas/contexts/
             we have to re-inject our context to make it available in the skia renderer

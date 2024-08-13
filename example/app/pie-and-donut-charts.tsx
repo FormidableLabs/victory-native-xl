@@ -137,7 +137,7 @@ const PieChartMultipleDataPoints = () => {
       <View style={styles.legend}>
         {data.map((d, i) => (
           <View key={i} style={[styles.legendItemContainer]}>
-            <Canvas style={[styles.legendItemCanvas]}>
+            <Canvas style={styles.legendItemCanvas}>
               <Circle
                 c={vec(
                   styles.legendItemCanvas.height / 2,
@@ -275,7 +275,7 @@ const PieChartSimpleCustomLegend = () => {
                 alignItems: "center",
               }}
             >
-              <Canvas style={[{ height: 12, width: 12, marginRight: 4 }]}>
+              <Canvas style={{ height: 12, width: 12, marginRight: 4 }}>
                 <Rect
                   rect={{ x: 0, y: 0, width: 12, height: 12 }}
                   color={d.color}
