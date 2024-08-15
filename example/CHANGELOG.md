@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Added support for Expo web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
+- Update example to support Expo web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
 
 ## 1.0.3
 
