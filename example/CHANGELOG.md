@@ -1,5 +1,11 @@
 # example
 
+## 1.1.0
+
+### Minor Changes
+
+- Added support for Expo web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
+
 ## 1.0.3
 
 ### Patch Changes
