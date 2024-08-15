@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.1.0
+
+### Minor Changes
+
+- Added support for web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
+
 ## 41.0.2
 
 ### Patch Changes
