@@ -11,6 +11,11 @@ export const ChartRoutes: {
     path: "/line-chart",
   },
   {
+    title: "Constant Line Chart",
+    description: "This chart shows off constant lines with scatter points. ",
+    path: "/constant-line-chart",
+  },
+  {
     title: "Bar Chart",
     description:
       "This is a single Bar chart in Victory that supports customized spacing between each bar.",
