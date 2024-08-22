@@ -119,4 +119,8 @@ export type AxisProps<
   formatYLabel?: (label: RawData[YK]) => string;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
+  yKeys?: YK[];
+  hideXAxis?: boolean;
 };
+
+export type NonEmptyArray<T> = [T, ...T[]];

@@ -36,7 +36,9 @@ const getMaxValue = (arr: Array<number>): number => {
   return Math.max(...arr);
 };
 
-export const getDomainFromTicks = (tickValues: number[] | undefined) => {
+export const getDomainFromTicks = (
+  tickValues: number[] | undefined,
+): [number, number] | undefined => {
   // Check if undefined OR if its not an array of numbers
   if (!tickValues) return;
 

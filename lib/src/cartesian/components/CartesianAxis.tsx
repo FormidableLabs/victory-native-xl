@@ -38,6 +38,7 @@ export const CartesianAxis = <
   font,
   isNumericalData = false,
   ix = [],
+  hideXAxis,
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
@@ -143,12 +144,14 @@ export const CartesianAxis = <
 
     return (
       <React.Fragment key={`y-tick-${tick}`}>
-        <Line
-          p1={vec(xScale(x1), yScale(tick))}
-          p2={vec(xScale(x2), yScale(tick))}
-          color={gridYLineColor}
-          strokeWidth={gridYLineWidth}
-        />
+        {gridYLineWidth > 0 ? (
+          <Line
+            p1={vec(xScale(x1), yScale(tick))}
+            p2={vec(xScale(x2), yScale(tick))}
+            color={gridYLineColor}
+            strokeWidth={gridYLineWidth}
+          />
+        ) : null}
         {font
           ? canFitLabelContent && (
               <Text
@@ -196,13 +199,15 @@ export const CartesianAxis = <
 
     return (
       <React.Fragment key={`x-tick-${tick}`}>
-        <Line
-          p1={vec(xScale(tick), yScale(y2))}
-          p2={vec(xScale(tick), yScale(y1))}
-          color={gridXLineColor}
-          strokeWidth={gridXLineWidth}
-        />
-        {font && labelWidth && canFitLabelContent ? (
+        {gridXLineWidth > 0 ? (
+          <Line
+            p1={vec(xScale(tick), yScale(y2))}
+            p2={vec(xScale(tick), yScale(y1))}
+            color={gridXLineColor}
+            strokeWidth={gridXLineWidth}
+          />
+        ) : null}
+        {!hideXAxis && font && labelWidth && canFitLabelContent ? (
           <Text
             color={typeof labelColor === "string" ? labelColor : labelColor.x}
             text={contentX}

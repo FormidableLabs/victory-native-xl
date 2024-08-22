@@ -28,6 +28,7 @@ import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
+import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -47,7 +48,9 @@ type CartesianChartProps<
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
-  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
+  axisOptions?:
+    | Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>
+    | Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>[];
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   gestureLongPressDelay?: number;
 };
@@ -80,6 +83,22 @@ export function CartesianChart<
     },
     [],
   );
+  // For backwards compatibility we allow an object to be passed still, and if so, we just turn it into an array for now
+  const axisOptionsNormalized = React.useMemo(() => {
+    if (axisOptions) {
+      if (Array.isArray(axisOptions)) {
+        return axisOptions.map((opt) => ({
+          ...CartesianAxisDefaultProps,
+          ...opt,
+        }));
+      } else {
+        return [
+          Object.assign({ yKeys }, CartesianAxisDefaultProps, axisOptions),
+        ];
+      }
+    }
+    return undefined;
+  }, [axisOptions, yKeys]);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -95,51 +114,43 @@ export function CartesianChart<
 
   const {
     xTicksNormalized,
-    yTicksNormalized,
+    yAxes,
     xScale,
-    yScale,
     chartBounds,
     isNumericalData,
     _tData,
   } = React.useMemo(() => {
-    const {
-      xScale,
-      yScale,
-      isNumericalData,
-      xTicksNormalized,
-      yTicksNormalized,
-      ..._tData
-    } = transformInputData({
-      data,
-      xKey,
-      yKeys,
-      axisOptions: axisOptions
-        ? Object.assign({}, CartesianAxisDefaultProps, axisOptions)
-        : undefined,
-      outputWindow: {
-        xMin: valueFromSidedNumber(padding, "left"),
-        xMax: size.width - valueFromSidedNumber(padding, "right"),
-        yMin: valueFromSidedNumber(padding, "top"),
-        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-      },
-      domain,
-      domainPadding,
-    });
+    const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
+      transformInputData({
+        data,
+        xKey,
+        yKeys,
+        axisOptions: axisOptionsNormalized ? axisOptionsNormalized : undefined,
+        outputWindow: {
+          xMin: valueFromSidedNumber(padding, "left"),
+          xMax: size.width - valueFromSidedNumber(padding, "right"),
+          yMin: valueFromSidedNumber(padding, "top"),
+          yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+        },
+        domain,
+        domainPadding,
+      });
     tData.value = _tData;
 
+    const primaryYAxis = yAxes[0];
+    const primaryYScale = primaryYAxis.yScale;
     const chartBounds = {
       left: xScale(xScale.domain().at(0) || 0),
       right: xScale(xScale.domain().at(-1) || 0),
-      top: yScale(yScale.domain().at(0) || 0),
-      bottom: yScale(yScale.domain().at(-1) || 0),
+      top: primaryYScale(primaryYScale.domain().at(0) || 0),
+      bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
     };
 
     return {
       xTicksNormalized,
-      yTicksNormalized,
+      yAxes,
       tData,
       xScale,
-      yScale,
       chartBounds,
       isNumericalData,
       _tData,
@@ -148,7 +159,7 @@ export function CartesianChart<
     data,
     xKey,
     yKeys,
-    axisOptions,
+    axisOptionsNormalized,
     padding,
     size.width,
     size.height,
@@ -351,9 +362,12 @@ export function CartesianChart<
     onChartBoundsRef.current?.(chartBounds);
   }, [chartBounds, onChartBoundsRef]);
 
+  const primaryYAxis = yAxes[0];
+  const primaryYScale = primaryYAxis.yScale;
+
   const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,
-    yScale,
+    yScale: primaryYScale,
     chartBounds,
     canvasSize: size,
     points,
@@ -365,27 +379,40 @@ export function CartesianChart<
     chartBounds.bottom - chartBounds.top,
   );
 
+  const axes = hasMeasuredLayoutSize
+    ? axisOptionsNormalized?.map((axis, index) => {
+        const yAxis = yAxes[index];
+        if (!yAxis) return null;
+        return (
+          <CartesianAxis
+            key={index}
+            {...{
+              ...axis,
+              xScale,
+              yScale: yAxis.yScale,
+              isNumericalData,
+              xTicksNormalized,
+              yTicksNormalized:
+                // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
+                index > 0
+                  ? normalizeYAxisTicks(
+                      primaryYAxis.yTicksNormalized,
+                      primaryYScale,
+                      yAxis.yScale,
+                    )
+                  : yAxis.yTicksNormalized,
+              ix: _tData.ix,
+            }}
+          />
+        );
+      })
+    : null;
+
   // Body of the chart.
   const body = (
     <Canvas style={{ flex: 1 }} onLayout={onLayout}>
-      {hasMeasuredLayoutSize && (
-        <>
-          {axisOptions ? (
-            <CartesianAxis
-              {...{
-                ...axisOptions,
-                xScale,
-                yScale,
-                isNumericalData,
-                xTicksNormalized,
-                yTicksNormalized,
-                ix: _tData.ix,
-              }}
-            />
-          ) : null}
-        </>
-      )}
-      <CartesianChartProvider yScale={yScale} xScale={xScale}>
+      {axes}
+      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
         <Group clip={clipRect}>
           {hasMeasuredLayoutSize && children(renderArg)}
         </Group>
