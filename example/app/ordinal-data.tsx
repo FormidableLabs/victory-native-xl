@@ -62,8 +62,8 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                   strokeJoin="round"
                 >
                   <LinearGradient
-                    start={vec(0, 0)}
-                    end={vec(chartBounds.top, chartBounds.bottom)}
+                    start={vec(0, chartBounds.top)}
+                    end={vec(0, chartBounds.bottom - chartBounds.top)}
                     colors={colors}
                   />
                 </Line>
