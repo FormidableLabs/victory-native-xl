@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.1.1
+
+### Patch Changes
+
+- Add curve type `monotoneX` for lines ([#325](https://github.com/FormidableLabs/victory-native-xl/pull/325))
+
 ## 41.1.0
 
 ### Minor Changes
