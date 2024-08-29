@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { transformInputData } from "./transformInputData";
+import { XAxisDefaults } from "../components/XAxis";
+import { YAxisDefaults } from "../components/YAxis";
+import { FrameDefaults } from "../components/Frame";
 
 const DATA = [
   { x: 0, y: 3, z: 0 },
@@ -13,6 +16,12 @@ const OUTPUT_WINDOW = {
   xMax: 500,
 };
 
+const axes = {
+  xAxis: XAxisDefaults,
+  yAxes: [YAxisDefaults],
+  frame: FrameDefaults,
+};
+
 describe("transformInputData", () => {
   it("transforms data into internal data structure based on x/y keys", () => {
     const { ix, ox, y } = transformInputData({
@@ -20,6 +29,7 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
+      ...axes,
     });
 
     expect(ix).toEqual([0, 1, 2]);
@@ -35,12 +45,15 @@ describe("transformInputData", () => {
   });
 
   it("should generate scales based on output window", () => {
-    const { xScale, yScale } = transformInputData({
+    const { xScale, yAxes } = transformInputData({
       data: DATA,
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
+      ...axes,
     });
+
+    const yScale = yAxes[0].yScale;
 
     expect(xScale(0)).toEqual(0);
     expect(xScale(2)).toEqual(500);
@@ -58,6 +71,7 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y"],
       outputWindow: OUTPUT_WINDOW,
+      ...axes,
     });
 
     expect(ix).toEqual([0, 1, 2]);

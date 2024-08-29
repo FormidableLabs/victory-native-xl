@@ -1,9 +1,5 @@
 import { type ScaleLinear } from "d3-scale";
-import {
-  DEFAULT_TICK_COUNT,
-  downsampleTicks,
-  getDomainFromTicks,
-} from "../../utils/tickHelpers";
+import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
@@ -13,6 +9,9 @@ import type {
   InputFields,
   MaybeNumber,
   NonEmptyArray,
+  FrameProps,
+  YAxisPropsWithDefaults,
+  XAxisPropsWithDefaults,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
@@ -40,9 +39,10 @@ export const transformInputData = <
   xKey,
   yKeys,
   outputWindow,
-  axisOptions,
   domain,
   domainPadding,
+  xAxis,
+  yAxes,
 }: {
   data: RawData[];
   xKey: XK;
@@ -53,6 +53,9 @@ export const transformInputData = <
   >[];
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   domainPadding?: SidedNumber;
+  xAxis: XAxisPropsWithDefaults<RawData, XK>;
+  yAxes: YAxisPropsWithDefaults<RawData, YK>[];
+  frame: Omit<FrameProps, "xScale" | "yScale"> | undefined;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
@@ -65,9 +68,6 @@ export const transformInputData = <
 } => {
   const data = [..._data];
 
-  // primary axis (used for x axis) (this may change if we separate x/y axis props)
-  const primaryAxisOption = axisOptions?.[0] || {};
-
   // // Set up our y-output data structure
   const y = yKeys.reduce(
     (acc, k) => {
@@ -79,19 +79,14 @@ export const transformInputData = <
 
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
-  const yAxes = (axisOptions ?? [{}])?.map((axisConfig) => {
-    const fontHeight = axisConfig.font?.getSize?.() ?? 0;
-    const tickValues = axisConfig.tickValues;
-    const tickCount = axisConfig.tickCount ?? DEFAULT_TICK_COUNT;
+  const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
+    const fontHeight = yAxis.font?.getSize?.() ?? 0;
 
-    const yTickValues =
-      tickValues && typeof tickValues === "object" && "y" in tickValues
-        ? tickValues.y
-        : tickValues;
-    const yTicks = typeof tickCount === "number" ? tickCount : tickCount.y;
-    const tickDomainsY = getDomainFromTicks(yTickValues);
+    const yTickValues = yAxis.tickValues;
+    const yTicks = yAxis.tickCount;
+    const tickDomainsY = getDomainFromTicks(yAxis.tickValues);
 
-    const yKeysForAxis = axisConfig.yKeys ?? yKeys;
+    const yKeysForAxis = yAxis.yKeys ?? yKeys;
     const yMin =
       domain?.y?.[0] ??
       tickDomainsY?.[0] ??
@@ -123,18 +118,13 @@ export const transformInputData = <
 
     const yScaleRange: [number, number] = (() => {
       const xTickCount =
-        (typeof axisConfig?.tickCount === "number"
-          ? axisConfig?.tickCount
-          : axisConfig?.tickCount?.x) ?? 0;
-      const yLabelPosition =
-        typeof axisConfig?.labelPosition === "string"
-          ? axisConfig.labelPosition
-          : axisConfig?.labelPosition?.x;
-      const xAxisSide = axisConfig?.axisSide?.x;
-      const yLabelOffset =
-        (typeof axisConfig?.labelOffset === "number"
-          ? axisConfig.labelOffset
-          : axisConfig?.labelOffset?.y) ?? 0;
+        (typeof yAxis?.tickCount === "number"
+          ? yAxis?.tickCount
+          : xAxis?.tickCount) ?? 0;
+      const yLabelPosition = yAxis?.labelPosition;
+      const xAxisSide = xAxis?.axisSide;
+      const yLabelOffset = yAxis.labelOffset ?? 0;
+
       // bottom, outset
       if (xAxisSide === "bottom" && yLabelPosition === "outset") {
         return [
@@ -201,11 +191,10 @@ export const transformInputData = <
     const maxYLabel = Math.max(
       ...yTicksNormalized.map(
         (yTick) =>
-          axisConfig?.font
+          yAxis?.font
             ?.getGlyphWidths?.(
-              axisConfig.font.getGlyphIDs(
-                axisConfig?.formatYLabel?.(yTick as RawData[YK]) ||
-                  String(yTick),
+              yAxis.font.getGlyphIDs(
+                yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
               ),
             )
             .reduce((sum, value) => sum + value, 0) ?? 0,
@@ -226,23 +215,15 @@ export const transformInputData = <
     let xMinAdjustment = 0;
     let xMaxAdjustment = 0;
 
-    axisOptions?.forEach((axisOption, index) => {
-      const yTickCount =
-        (typeof axisOption?.tickCount === "number"
-          ? axisOption.tickCount
-          : axisOption?.tickCount?.y) ?? 0;
-      const yLabelPosition =
-        typeof axisOption?.labelPosition === "string"
-          ? axisOption.labelPosition
-          : axisOption?.labelPosition?.y;
-      const yAxisSide = axisOption?.axisSide?.y;
-      const yLabelOffset =
-        (typeof axisOption?.labelOffset === "number"
-          ? axisOption.labelOffset
-          : axisOption?.labelOffset?.y) ?? 0;
+    yAxes?.forEach((axis, index) => {
+      const yTickCount = axis.tickCount;
+
+      const yLabelPosition = axis.labelPosition;
+      const yAxisSide = axis.axisSide;
+      const yLabelOffset = axis.labelOffset;
 
       // Calculate label width for this axis
-      const labelWidth = yAxes?.[index]!.maxYLabel ?? 0;
+      const labelWidth = yAxesTransformed[index]?.maxYLabel ?? 0;
 
       // Adjust xMin or xMax based on the axis side and label position
       if (yAxisSide === "left" && yLabelPosition === "outset") {
@@ -259,18 +240,14 @@ export const transformInputData = <
     ];
   })();
 
-  const tickValues = primaryAxisOption.tickValues;
-  const tickCount = primaryAxisOption.tickCount ?? DEFAULT_TICK_COUNT;
+  const xTickValues = xAxis?.tickValues;
 
   // The user can specify either:
   // custom X tick values
-  const xTickValues =
-    tickValues && typeof tickValues === "object" && "x" in tickValues
-      ? tickValues.x
-      : tickValues;
+
   // OR
   // custom X tick count
-  const xTicks = typeof tickCount === "number" ? tickCount : tickCount.x;
+  const xTicks = xAxis?.tickCount;
   // x tick domain of [number, number]
   const tickDomainsX = getDomainFromTicks(xTickValues);
 
@@ -320,6 +297,6 @@ export const transformInputData = <
     xScale,
     xTicksNormalized,
     // conform to type NonEmptyArray<T>
-    yAxes: [yAxes[0]!, ...yAxes.slice(1)],
+    yAxes: [yAxesTransformed[0]!, ...yAxesTransformed.slice(1)],
   };
 };

@@ -30,49 +30,39 @@ export default function MultipleYAxesPage() {
         <View style={styles.chart}>
           <CartesianChart
             xKey="day"
-            padding={10}
+            padding={25}
             yKeys={["sales", "profit"]}
-            axisOptions={[
+            xAxis={{
+              font,
+              labelColor: "orange",
+              formatXLabel: (value) => {
+                return value.toFixed(0);
+              },
+              lineColor: "pink",
+            }}
+            frame={{
+              lineColor: "black",
+              lineWidth: 2,
+            }}
+            yAxis={[
               {
                 yKeys: ["sales"],
                 font,
-                labelColor: { x: "black", y: "red" },
+                labelColor: "orange",
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
-                lineColor: {
-                  grid: {
-                    x: "red",
-                    y: "red",
-                  },
-                  frame: "green",
-                },
+                lineColor: "pink",
               },
               {
                 yKeys: ["profit"],
                 font,
+                labelColor: "green",
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
-                labelColor: { x: "black", y: "blue" },
-
-                axisSide: { x: "bottom", y: "right" },
-
-                hideXAxis: true,
-                lineWidth: {
-                  grid: {
-                    x: 0,
-                    y: 1,
-                  },
-                  frame: 2,
-                },
-                lineColor: {
-                  grid: {
-                    x: "blue",
-                    y: "blue",
-                  },
-                  frame: "purple",
-                },
+                axisSide: "right",
+                lineColor: "green",
               },
             ]}
             data={data}
@@ -101,47 +91,37 @@ export default function MultipleYAxesPage() {
             xKey="day"
             padding={10}
             yKeys={["negative", "anotherNegativeValue"]}
-            axisOptions={[
+            xAxis={{
+              font,
+              labelColor: "red",
+              formatXLabel: (value) => {
+                return value.toFixed(0);
+              },
+              lineColor: "red",
+            }}
+            frame={{
+              lineColor: "black",
+              lineWidth: 2,
+            }}
+            yAxis={[
               {
                 yKeys: ["negative"],
                 font,
-                labelColor: { x: "black", y: "red" },
+                labelColor: "blue",
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
-                lineColor: {
-                  grid: {
-                    x: "red",
-                    y: "red",
-                  },
-                  frame: "green",
-                },
+                lineColor: "blue",
               },
               {
                 yKeys: ["anotherNegativeValue"],
                 font,
+                labelColor: "red",
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
-                labelColor: { x: "black", y: "blue" },
-
-                axisSide: { x: "bottom", y: "right" },
-
-                hideXAxis: true,
-                lineWidth: {
-                  grid: {
-                    x: 0,
-                    y: 1,
-                  },
-                  frame: 2,
-                },
-                lineColor: {
-                  grid: {
-                    x: "blue",
-                    y: "blue",
-                  },
-                  frame: "purple",
-                },
+                axisSide: "right",
+                lineColor: "red",
               },
             ]}
             data={data}
@@ -155,10 +135,10 @@ export default function MultipleYAxesPage() {
                   chartBounds={chartBounds}
                   animate={{ type: "spring" }}
                 />
-                <Bar
+                <Line
                   color={"blue"}
+                  strokeWidth={3}
                   points={points.anotherNegativeValue}
-                  chartBounds={chartBounds}
                 />
               </>
             )}

@@ -17,6 +17,9 @@ import type {
 } from "../../types";
 import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
 
+/**
+ * @deprecated This component will eventually be replaced by the new, separate x/y/frame components.
+ */
 export const CartesianAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -38,7 +41,6 @@ export const CartesianAxis = <
   font,
   isNumericalData = false,
   ix = [],
-  hideXAxis,
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
@@ -207,7 +209,7 @@ export const CartesianAxis = <
             strokeWidth={gridXLineWidth}
           />
         ) : null}
-        {!hideXAxis && font && labelWidth && canFitLabelContent ? (
+        {font && labelWidth && canFitLabelContent ? (
           <Text
             color={typeof labelColor === "string" ? labelColor : labelColor.x}
             text={contentX}
