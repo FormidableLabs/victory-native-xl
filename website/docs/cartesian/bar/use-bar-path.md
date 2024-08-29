@@ -2,7 +2,8 @@
 
 The `useBarPath` hook takes a `PointsArray` input, a `ChartBounds` object, and an "inner padding" value, and returns a Skia `SkPath` path object that represents the path for that bar chart.
 
-## Exmaple
+## Example
+
 
 ```tsx
 import {

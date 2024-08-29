@@ -161,6 +161,15 @@ This object exposes the raw data in a transformed form for drawing on the Skia c
 
 As an example, if you pass `yKeys={["highTmp"]}` to a `<CartesianChart />` element, then `points.highTmp` will give you an array of points to either use directly for drawing purposes, or to pass to an e.g. [`Line`](./line/line.md) or [`Bar`](./bar/bar.md) component.
 
+:::tip
+The points object is technically a Proxy of an empty object. When you try to log the entire points object directly, you won't see the computed results because the underlying target object is always empty. Instead, you need to log the specific key you're interested in. This is because the Proxy's get trap intercepts the property access, dynamically computing and caching the results only for accessed keys.
+
+```tsx
+console.log(points); // always {}
+console.log(points[YKey]); // [{ x: 0, xValue: 0, y: 0, yValue: 0 }, ...] etc
+```
+:::
+
 ### `canvasSize`
 
 An object of the shape `{ width: number; height: number; }` that represents the overall size of the Skia canvas that the chart renders on.

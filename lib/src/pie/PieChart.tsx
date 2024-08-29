@@ -10,10 +10,17 @@ const CIRCLE_SWEEP_DEGREES = 360;
 type PieChartProps = {
   children?: (args: { slice: PieSliceData }) => React.ReactNode;
   innerRadius?: number | string;
+  circleSweepDegrees?: number;
+  startAngle?: number;
 };
 
 export const PieChart = (props: PieChartProps) => {
-  const { innerRadius = 0, children } = props;
+  const {
+    innerRadius = 0,
+    circleSweepDegrees = CIRCLE_SWEEP_DEGREES,
+    startAngle: _startAngle = 0,
+    children,
+  } = props;
   const {
     canvasSize,
     data: _data,
@@ -33,7 +40,7 @@ export const PieChart = (props: PieChartProps) => {
   const center = vec(width / 2, height / 2);
 
   const data = React.useMemo(() => {
-    let startAngle = 0; // Initialize the start angle for the first slice
+    let startAngle = _startAngle; // Initialize the start angle for the first slice
 
     const enhanced = _data.map((datum): PieSliceData => {
       const sliceValue = datum[valueKey] as number;
@@ -41,7 +48,7 @@ export const PieChart = (props: PieChartProps) => {
       const sliceColor = datum[colorKey] as Color;
 
       const initialStartAngle = startAngle; // grab the initial start angle
-      const sweepAngle = (sliceValue / totalCircleValue) * CIRCLE_SWEEP_DEGREES; // Calculate the sweep angle for the slice as a part of the entire pie
+      const sweepAngle = (sliceValue / totalCircleValue) * circleSweepDegrees; // Calculate the sweep angle for the slice as a part of the entire pie
       const endAngle = initialStartAngle + sweepAngle; // the sum of sweep + start
 
       startAngle += sweepAngle; // the next startAngle is the accumulation of each sweep
@@ -70,6 +77,8 @@ export const PieChart = (props: PieChartProps) => {
     radius,
     center,
     innerRadius,
+    circleSweepDegrees,
+    _startAngle,
   ]);
 
   return data.map((slice, index) => {

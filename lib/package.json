@@ -1,12 +1,14 @@
 {
   "name": "victory-native",
-  "version": "41.0.1",
+  "version": "41.1.1",
   "private": false,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FormidableLabs/victory-native-xl"
+    "url": "https://github.com/FormidableLabs/victory-native-xl",
+    "directory": "lib"
   },
+  "homepage": "https://commerce.nearform.com/open-source/victory-native",
   "react-native": "src/index",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",

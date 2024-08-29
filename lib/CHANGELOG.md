@@ -1,5 +1,25 @@
 # victory-native
 
+## 41.1.1
+
+### Patch Changes
+
+- Add curve type `monotoneX` for lines ([#325](https://github.com/FormidableLabs/victory-native-xl/pull/325))
+
+## 41.1.0
+
+### Minor Changes
+
+- Added support for web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
+
+## 41.0.2
+
+### Patch Changes
+
+- fix domain padding bottom on bar charts ([#303](https://github.com/FormidableLabs/victory-native-xl/pull/303))
+
+- Add circleSweepDegrees and startAngle props to PieChart ([#307](https://github.com/FormidableLabs/victory-native-xl/pull/307))
+
 ## 41.0.1
 
 ### Patch Changes

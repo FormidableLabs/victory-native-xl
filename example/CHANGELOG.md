@@ -1,5 +1,17 @@
 # example
 
+## 1.1.0
+
+### Minor Changes
+
+- Update example to support Expo web as a platform ([#330](https://github.com/FormidableLabs/victory-native-xl/pull/330))
+
+## 1.0.3
+
+### Patch Changes
+
+- Add circleSweepDegrees and startAngle props to PieChart ([#307](https://github.com/FormidableLabs/victory-native-xl/pull/307))
+
 ## 1.0.2
 
 ### Patch Changes

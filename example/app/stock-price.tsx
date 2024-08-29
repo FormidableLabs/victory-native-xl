@@ -380,7 +380,10 @@ const ActiveValueIndicator = ({
     () => "$" + activeValue.value.toFixed(2),
   );
   const activeValueWidth = useDerivedValue(
-    () => font?.measureText(activeValueDisplay.value).width || 0,
+    () =>
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(activeValueDisplay.value))
+        .reduce((sum, value) => sum + value, 0) || 0,
   );
   const activeValueX = useDerivedValue(
     () => xPosition.value - activeValueWidth.value / 2,

@@ -194,9 +194,14 @@ export const transformInputData = <
   const maxYLabel = Math.max(
     ...yTicksNormalized.map(
       (yTick) =>
-        axisOptions?.font?.measureText(
-          axisOptions?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
-        ).width ?? 0,
+        axisOptions?.font
+          ?.getGlyphWidths?.(
+            axisOptions.font.getGlyphIDs(
+              axisOptions?.formatYLabel?.(yTick as RawData[YK]) ||
+                String(yTick),
+            ),
+          )
+          .reduce((sum, value) => sum + value, 0) ?? 0,
     ),
   );
 
