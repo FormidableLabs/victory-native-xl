@@ -55,7 +55,6 @@ export const transformInputData = <
   domainPadding?: SidedNumber;
   xAxis: XAxisPropsWithDefaults<RawData, XK>;
   yAxes: YAxisPropsWithDefaults<RawData, YK>[];
-  frame: Omit<FrameProps, "xScale" | "yScale"> | undefined;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;

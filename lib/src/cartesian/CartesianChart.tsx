@@ -128,7 +128,6 @@ export function CartesianChart<
           domainPadding,
           xAxis: normalizedAxisProps.xAxis,
           yAxes: normalizedAxisProps.yAxes,
-          frame: normalizedAxisProps.frame,
         });
       tData.value = _tData;
 

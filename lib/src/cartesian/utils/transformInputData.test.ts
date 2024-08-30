@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { transformInputData } from "./transformInputData";
 import { XAxisDefaults } from "../components/XAxis";
 import { YAxisDefaults } from "../components/YAxis";
-import { FrameDefaults } from "../components/Frame";
 
 const DATA = [
   { x: 0, y: 3, z: 0 },
@@ -19,7 +18,6 @@ const OUTPUT_WINDOW = {
 const axes = {
   xAxis: XAxisDefaults,
   yAxes: [YAxisDefaults],
-  frame: FrameDefaults,
 };
 
 describe("transformInputData", () => {
