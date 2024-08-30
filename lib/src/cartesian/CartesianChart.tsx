@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect, type Color } from "@shopify/react-native-skia";
+import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
   Gesture,
@@ -17,25 +17,21 @@ import type {
   TransformedData,
   ChartBounds,
   FrameProps,
-  AxisPropWithDefaults,
-  OptionalAxisProps,
-  YAxisPropsWithDefaults,
   YAxisInputProps,
   XAxisInputProps,
-  XAxisPropsWithDefaults,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
-import { CartesianAxisDefaultProps } from "./components/CartesianAxis";
 import { asNumber } from "../utils/asNumber";
 import type { ChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
-import { XAxis, XAxisDefaults } from "./components/XAxis";
-import { YAxis, YAxisDefaults } from "./components/YAxis";
-import { Frame, FrameDefaults } from "./components/Frame";
+import { XAxis } from "./components/XAxis";
+import { YAxis } from "./components/YAxis";
+import { Frame } from "./components/Frame";
+import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -95,138 +91,13 @@ export function CartesianChart<
     },
     [],
   );
-  const normalizeAxisProps = React.useMemo(() => {
-    // Helper functions to pick only the relevant properties for each prop type
-    const pickXAxisProps = (
-      axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-        OptionalAxisProps<RawData, XK, YK>,
-    ): XAxisPropsWithDefaults<RawData, XK> => ({
-      axisSide: axisProp.axisSide.x,
-      yAxisSide: axisProp.axisSide.y,
-      tickCount:
-        typeof axisProp.tickCount === "number"
-          ? axisProp.tickCount
-          : axisProp.tickCount.x,
-      tickValues:
-        axisProp.tickValues &&
-        typeof axisProp.tickValues === "object" &&
-        "x" in axisProp.tickValues
-          ? axisProp.tickValues.x
-          : axisProp.tickValues,
-      formatXLabel: axisProp.formatXLabel,
-      labelPosition:
-        typeof axisProp.labelPosition === "string"
-          ? axisProp.labelPosition
-          : axisProp.labelPosition.x,
-      labelOffset:
-        typeof axisProp.labelOffset === "number"
-          ? axisProp.labelOffset
-          : axisProp.labelOffset.x,
-      labelColor:
-        typeof axisProp.labelColor === "string"
-          ? axisProp.labelColor
-          : axisProp.labelColor.x,
-      lineWidth:
-        typeof axisProp.lineWidth === "object" && "grid" in axisProp.lineWidth
-          ? typeof axisProp.lineWidth.grid === "object" &&
-            "x" in axisProp.lineWidth.grid
-            ? axisProp.lineWidth.grid.x
-            : axisProp.lineWidth.grid
-          : axisProp.lineWidth,
-      lineColor: (typeof axisProp.lineColor === "object" &&
-      "grid" in axisProp.lineColor
-        ? typeof axisProp.lineColor.grid === "object" &&
-          "x" in axisProp.lineColor.grid
-          ? axisProp.lineColor.grid.x
-          : axisProp.lineColor.grid
-        : axisProp.lineColor) as Color,
-      font: axisProp.font,
-    });
-
-    const pickYAxisProps = (
-      axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-        OptionalAxisProps<RawData, XK, YK>,
-    ): YAxisPropsWithDefaults<RawData, YK> => {
-      return {
-        axisSide: axisProp.axisSide.y,
-        formatYLabel: axisProp.formatYLabel,
-        tickValues:
-          axisProp.tickValues &&
-          typeof axisProp.tickValues === "object" &&
-          "y" in axisProp.tickValues
-            ? axisProp.tickValues.y
-            : axisProp.tickValues,
-        tickCount:
-          typeof axisProp.tickCount === "number"
-            ? axisProp.tickCount
-            : axisProp.tickCount.y,
-        labelPosition:
-          typeof axisProp.labelPosition === "string"
-            ? axisProp.labelPosition
-            : axisProp.labelPosition.y,
-        labelOffset:
-          typeof axisProp.labelOffset === "number"
-            ? axisProp.labelOffset
-            : axisProp.labelOffset.y,
-        labelColor:
-          typeof axisProp.labelColor === "string"
-            ? axisProp.labelColor
-            : axisProp.labelColor.y,
-        lineWidth:
-          typeof axisProp.lineWidth === "object" && "grid" in axisProp.lineWidth
-            ? typeof axisProp.lineWidth.grid === "object" &&
-              "y" in axisProp.lineWidth.grid
-              ? axisProp.lineWidth.grid.y
-              : axisProp.lineWidth.grid
-            : axisProp.lineWidth,
-        lineColor: (typeof axisProp.lineColor === "object" &&
-        "grid" in axisProp.lineColor
-          ? typeof axisProp.lineColor.grid === "object" &&
-            "y" in axisProp.lineColor.grid
-            ? axisProp.lineColor.grid.y
-            : axisProp.lineColor.grid
-          : axisProp.lineColor) as Color,
-        font: axisProp.font,
-        yKeys: yKeys,
-      };
-    };
-
-    const pickFrameProps = (
-      axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-        OptionalAxisProps<RawData, XK, YK>,
-    ): Required<CartesianChartProps<RawData, XK, YK>["frame"]> => ({
-      lineColor:
-        typeof axisProp.lineColor === "object" && "frame" in axisProp.lineColor
-          ? axisProp.lineColor.frame
-          : axisProp.lineColor,
-      lineWidth:
-        typeof axisProp.lineWidth === "object" && "frame" in axisProp.lineWidth
-          ? axisProp.lineWidth.frame
-          : axisProp.lineWidth,
-    });
-
-    const defaultAxisOptions: AxisPropWithDefaults<RawData, XK, YK> &
-      OptionalAxisProps<RawData, XK, YK> = {
-      ...CartesianAxisDefaultProps,
-      ...axisOptions,
-    };
-    const xAxisWithDefaults: XAxisPropsWithDefaults<RawData, XK> = {
-      ...XAxisDefaults,
-      ...xAxis,
-    };
-    const yAxisWithDefaults: YAxisPropsWithDefaults<RawData, YK>[] = yAxis
-      ? yAxis.map((axis) => ({ ...YAxisDefaults, ...axis }))
-      : [{ ...YAxisDefaults, yKeys }];
-    const frameWithDefaults = frame
-      ? { ...FrameDefaults, frame }
-      : FrameDefaults;
-
-    return {
-      xAxis: xAxis ? xAxisWithDefaults : pickXAxisProps(defaultAxisOptions),
-      yAxes: yAxis ? yAxisWithDefaults : [pickYAxisProps(defaultAxisOptions)],
-      frame: frameWithDefaults ?? pickFrameProps(defaultAxisOptions),
-    };
-  }, [axisOptions, xAxis, yAxis, frame, yKeys]);
+  const normalizedAxisProps = useBuildChartAxis({
+    xAxis,
+    yAxis,
+    frame,
+    yKeys,
+    axisOptions,
+  });
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -255,9 +126,9 @@ export function CartesianChart<
           },
           domain,
           domainPadding,
-          xAxis: normalizeAxisProps.xAxis,
-          yAxes: normalizeAxisProps.yAxes,
-          frame: normalizeAxisProps.frame,
+          xAxis: normalizedAxisProps.xAxis,
+          yAxes: normalizedAxisProps.yAxes,
+          frame: normalizedAxisProps.frame,
         });
       tData.value = _tData;
 
@@ -289,7 +160,7 @@ export function CartesianChart<
       domain,
       domainPadding,
       tData,
-      normalizeAxisProps,
+      normalizedAxisProps,
     ]);
 
   /**
@@ -506,9 +377,8 @@ export function CartesianChart<
 
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
-      ? normalizeAxisProps.yAxes?.map((axis, index) => {
+      ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
-
           if (!yAxis) return null;
           return (
             <YAxis
@@ -533,11 +403,20 @@ export function CartesianChart<
   const XAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
-        {...normalizeAxisProps.xAxis}
+        {...normalizedAxisProps.xAxis}
         xScale={xScale}
         yScale={primaryYScale}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
+      />
+    ) : null;
+
+  const FrameComponent =
+    hasMeasuredLayoutSize && (axisOptions || frame) ? (
+      <Frame
+        {...normalizedAxisProps.frame}
+        xScale={xScale}
+        yScale={primaryYScale}
       />
     ) : null;
 
@@ -546,8 +425,7 @@ export function CartesianChart<
     <Canvas style={{ flex: 1 }} onLayout={onLayout}>
       {YAxisComponents}
       {XAxisComponents}
-
-      {frame && <Frame {...frame} xScale={xScale} yScale={primaryYScale} />}
+      {FrameComponent}
       <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
         <Group clip={clipRect}>
           {hasMeasuredLayoutSize && children(renderArg)}
