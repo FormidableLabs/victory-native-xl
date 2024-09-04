@@ -9,7 +9,6 @@ import type {
   InputFields,
   MaybeNumber,
   NonEmptyArray,
-  FrameProps,
   YAxisPropsWithDefaults,
   XAxisPropsWithDefaults,
 } from "../../types";
@@ -67,6 +66,14 @@ export const transformInputData = <
 } => {
   const data = [..._data];
 
+  // Determine if xKey data is numerical
+  const isNumericalData = data.every(
+    (datum) => typeof datum[xKey as keyof RawData] === "number",
+  );
+  // and sort if it is
+  if (isNumericalData) {
+    data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
+  }
   // // Set up our y-output data structure
   const y = yKeys.reduce(
     (acc, k) => {
@@ -249,15 +256,6 @@ export const transformInputData = <
   const xTicks = xAxis?.tickCount;
   // x tick domain of [number, number]
   const tickDomainsX = getDomainFromTicks(xTickValues);
-
-  // Determine if xKey data is numerical
-  const isNumericalData = data.every(
-    (datum) => typeof datum[xKey as keyof RawData] === "number",
-  );
-  // and sort if it is
-  if (isNumericalData) {
-    data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
-  }
 
   // Input x is just extracting the xKey from each datum
   const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];

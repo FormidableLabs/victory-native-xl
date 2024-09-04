@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
+import type {
+  InputDatum,
+  ValueOf,
+  XAxisPropsWithDefaults,
+  YAxisPropsWithDefaults,
+} from "lib/src/types";
 import { transformInputData } from "./transformInputData";
-import { XAxisDefaults } from "../components/XAxis";
-import { YAxisDefaults } from "../components/YAxis";
 
 const DATA = [
   { x: 0, y: 3, z: 0 },
@@ -16,8 +20,30 @@ const OUTPUT_WINDOW = {
 };
 
 const axes = {
-  xAxis: XAxisDefaults,
-  yAxes: [YAxisDefaults],
+  xAxis: {
+    lineColor: "hsla(0, 0%, 0%, 0.25)",
+    lineWidth: 0.5,
+    tickCount: 5,
+    labelOffset: 2,
+    axisSide: "bottom",
+    yAxisSide: "left",
+    labelPosition: "outset",
+    formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+    labelColor: "#000000",
+  } satisfies XAxisPropsWithDefaults<never, never>,
+  yAxes: [
+    {
+      lineColor: "hsla(0, 0%, 0%, 0.25)",
+      lineWidth: 0.5,
+      tickCount: 5,
+      labelOffset: 0,
+      axisSide: "left",
+      labelPosition: "outset",
+      formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+      labelColor: "#000000",
+      yKeys: ["y", "z"],
+    } satisfies YAxisPropsWithDefaults<(typeof DATA)[number], "y" | "z">,
+  ],
 };
 
 describe("transformInputData", () => {
@@ -27,7 +53,8 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
-      ...axes,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
     });
 
     expect(ix).toEqual([0, 1, 2]);
@@ -48,7 +75,8 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
-      ...axes,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
     });
 
     const yScale = yAxes[0].yScale;
@@ -69,7 +97,8 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y"],
       outputWindow: OUTPUT_WINDOW,
-      ...axes,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
     });
 
     expect(ix).toEqual([0, 1, 2]);
