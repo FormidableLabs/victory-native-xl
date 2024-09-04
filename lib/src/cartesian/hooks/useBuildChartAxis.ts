@@ -18,6 +18,11 @@ import { XAxisDefaults } from "../components/XAxis";
 import { YAxisDefaults } from "../components/YAxis";
 import { FrameDefaults } from "../components/Frame";
 
+/**
+ * This hook builds the chart axes + the surrounding frame based on either the new x, y, frame props, or via backwards compatability for the older axisOptions props and the associated default values it had. The defaults for the former are the new XAxisDefaults, YAxisDefaults, and FrameDefaults, while the defaults for the latter come from the older CartesianAxisDefaultProps.
+ *
+ * The hook returns a normalized object of `xAxis, yAxes, and frame` objects that are used to determine the axes to render and in the transformInputData function.
+ */
 export const useBuildChartAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
