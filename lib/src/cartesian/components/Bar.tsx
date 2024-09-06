@@ -16,7 +16,7 @@ type CartesianBarProps = {
   roundedCorners?: RoundedCorners;
   barWidth?: number;
   barCount?: number;
-  label?: BarLabelConfig;
+  labels?: BarLabelConfig;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
 
 export const Bar = ({
@@ -27,7 +27,7 @@ export const Bar = ({
   roundedCorners,
   barWidth,
   barCount,
-  label,
+  labels,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
   const { path, barWidth: bw } = useBarPath(
@@ -49,12 +49,12 @@ export const Bar = ({
 
   return (
     <>
-      {label?.enabled && (
+      {labels?.enabled && (
         <BarGraphLabels
           points={points}
           chartBounds={chartBounds}
           barWidth={barWidth ?? bw}
-          options={label}
+          options={labels}
         />
       )}
       <BarGraph />

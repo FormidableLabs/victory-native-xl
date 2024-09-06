@@ -65,7 +65,7 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  label={{
+                  labels={{
                     enabled: showLabels,
                     font: font,
                     position: labelPosition,
