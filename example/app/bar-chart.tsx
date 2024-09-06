@@ -5,10 +5,13 @@ import { Bar, CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
+import { InputCheckbox } from "../components/InputSwitch";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "./consts/routes";
+import { InputSegment } from "../components/InputSegment";
+import { InputColor } from "../components/InputColor";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -23,6 +26,11 @@ export default function BarChartPage(props: { segment: string }) {
   const [data, setData] = useState(DATA(5));
   const [innerPadding, setInnerPadding] = useState(0.33);
   const [roundedCorner, setRoundedCorner] = useState(5);
+  const [showDataLabels, setShowDataLabels] = useState(false);
+  const [dataLabelColor, setDataLabelColor] = useState<string>("#262626");
+  const [dataLabelPosition, setDataLabelPosition] = useState<
+    "top" | "bottom" | "left" | "right"
+  >("top");
 
   return (
     <>
@@ -48,24 +56,28 @@ export default function BarChartPage(props: { segment: string }) {
           >
             {({ points, chartBounds }) => {
               return (
-                <>
-                  <Bar
-                    points={points.listenCount}
-                    chartBounds={chartBounds}
-                    animate={{ type: "spring" }}
-                    innerPadding={innerPadding}
-                    roundedCorners={{
-                      topLeft: roundedCorner,
-                      topRight: roundedCorner,
-                    }}
-                  >
-                    <LinearGradient
-                      start={vec(0, 0)}
-                      end={vec(0, 400)}
-                      colors={["#a78bfa", "#a78bfa50"]}
-                    />
-                  </Bar>
-                </>
+                <Bar
+                  points={points.listenCount}
+                  chartBounds={chartBounds}
+                  animate={{ type: "spring" }}
+                  innerPadding={innerPadding}
+                  roundedCorners={{
+                    topLeft: roundedCorner,
+                    topRight: roundedCorner,
+                  }}
+                  dataLabel={{
+                    enabled: showDataLabels,
+                    font: font,
+                    position: dataLabelPosition,
+                    color: dataLabelColor,
+                  }}
+                >
+                  <LinearGradient
+                    start={vec(0, 0)}
+                    end={vec(0, 400)}
+                    colors={["#a78bfa", "#a78bfa50"]}
+                  />
+                </Bar>
               );
             }}
           </CartesianChart>
@@ -113,6 +125,26 @@ export default function BarChartPage(props: { segment: string }) {
             value={roundedCorner}
             onChange={setRoundedCorner}
           />
+          <InputCheckbox
+            label="Show Data Labels"
+            value={showDataLabels}
+            onChange={setShowDataLabels}
+          />
+          {showDataLabels && (
+            <>
+              <InputSegment<"top" | "bottom" | "left" | "right">
+                value={dataLabelPosition}
+                label="Data Label Position"
+                values={["top", "bottom", "left", "right"]}
+                onChange={setDataLabelPosition}
+              />
+              <InputColor
+                label="Inset color"
+                color={dataLabelColor}
+                onChange={setDataLabelColor}
+              />
+            </>
+          )}
         </ScrollView>
       </SafeAreaView>
     </>
