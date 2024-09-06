@@ -5,7 +5,7 @@ import { Bar, CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
-import { InputCheckbox } from "../components/InputSwitch";
+import { InputSwitch } from "../components/InputSwitch";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
@@ -125,7 +125,7 @@ export default function BarChartPage(props: { segment: string }) {
             value={roundedCorner}
             onChange={setRoundedCorner}
           />
-          <InputCheckbox
+          <InputSwitch
             label="Show Data Labels"
             value={showDataLabels}
             onChange={setShowDataLabels}

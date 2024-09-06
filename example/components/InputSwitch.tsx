@@ -8,7 +8,7 @@ type Props = {
   onChange(value: boolean): void;
 };
 
-export const InputCheckbox = ({ label, value, onChange }: Props) => (
+export const InputSwitch = ({ label, value, onChange }: Props) => (
   <View
     style={{
       width: "100%",
