@@ -65,12 +65,11 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  labels={{
-                    enabled: showLabels,
-                    font: font,
-                    position: labelPosition,
-                    color: labelColor,
-                  }}
+                  labels={
+                    showLabels
+                      ? { font, color: labelColor, position: labelPosition }
+                      : undefined
+                  }
                 >
                   <LinearGradient
                     start={vec(0, 0)}

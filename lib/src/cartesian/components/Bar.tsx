@@ -49,7 +49,7 @@ export const Bar = ({
 
   return (
     <>
-      {labels?.enabled && (
+      {labels && (
         <BarGraphLabels
           points={points}
           chartBounds={chartBounds}

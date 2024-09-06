@@ -3,7 +3,6 @@ import { Text, type SkFont } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "lib/src/types";
 
 export type BarLabelConfig = {
-  enabled: boolean;
   position: "top" | "bottom" | "left" | "right";
   font: SkFont | null;
   color?: string;
