@@ -66,6 +66,15 @@ The `barWidth` prop takes a number and sets the width of the bar to that number.
 
 The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
 
+### `labels`
+
+The `labels` prop allows you to enable and customize the data label of the Bar component. The data label text is the Y-axis value associated with the Bar component.
+
+- `enabled: boolean`: Defines if the Bar comopnent data label should be rendered.
+- `position: "top" | "bottom" | "left" | "right"`: Defines where the Bar component data label should be rendered in relationship to the rendered Bar component.
+- `font: SkFont | null`: Defines the font to use with the Skia `Text` component.
+- `color?: string`: Defines the color the data label should be.
+
 ### `children`
 
 A `children` pass-thru that will be rendered inside of the Skia `Path` element, useful if you'd like to make e.g. a gradient path.
