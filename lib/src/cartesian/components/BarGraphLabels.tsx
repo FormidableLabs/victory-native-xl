@@ -1,28 +1,28 @@
-import type { SkFont } from "@shopify/react-native-skia";
+import React from "react";
+import { Text, type SkFont } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "lib/src/types";
 
-export type DataLabelConfig = {
+export type BarLabelConfig = {
   enabled: boolean;
   position: "top" | "bottom" | "left" | "right";
   font: SkFont | null;
   color?: string;
 };
 
-export type DataLabel = {
-  x: number;
-  y: number;
-  value: string;
+type BarGraphLabelProps = {
+  points: PointsArray;
+  chartBounds: ChartBounds;
+  barWidth?: number;
+  options: BarLabelConfig;
 };
 
-const useBarLabels = (
-  points: PointsArray,
-  chartBounds: ChartBounds,
-  barWidth: number,
-  options?: DataLabelConfig,
-): DataLabel[] => {
-  if (!options?.enabled) return [];
-
-  return points.map(({ x, y, yValue }) => {
+export const BarGraphLabels = ({
+  points,
+  chartBounds,
+  barWidth = 0,
+  options,
+}: BarGraphLabelProps) => {
+  const labelPositions = points.map(({ x, y, yValue }) => {
     const yText = yValue?.toString() ?? "";
     const fontWidth = options.font?.measureText(yText).width ?? 1;
     let xOffset;
@@ -57,6 +57,17 @@ const useBarLabels = (
 
     return { x: xOffset, y: yOffset, value: yText };
   });
-};
 
-export default useBarLabels;
+  return labelPositions.map(({ x, y, value }) => {
+    return (
+      <Text
+        key={`${x}-${y}-${value}`}
+        x={x}
+        y={y}
+        text={value}
+        font={options.font}
+        color={options.color}
+      />
+    );
+  });
+};

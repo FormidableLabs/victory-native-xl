@@ -26,9 +26,9 @@ export default function BarChartPage(props: { segment: string }) {
   const [data, setData] = useState(DATA(5));
   const [innerPadding, setInnerPadding] = useState(0.33);
   const [roundedCorner, setRoundedCorner] = useState(5);
-  const [showDataLabels, setShowDataLabels] = useState(false);
-  const [dataLabelColor, setDataLabelColor] = useState<string>("#262626");
-  const [dataLabelPosition, setDataLabelPosition] = useState<
+  const [showLabels, setShowLabels] = useState(false);
+  const [labelColor, setLabelColor] = useState<string>("#262626");
+  const [labelPosition, setLabelPosition] = useState<
     "top" | "bottom" | "left" | "right"
   >("top");
 
@@ -65,11 +65,11 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  dataLabel={{
-                    enabled: showDataLabels,
+                  label={{
+                    enabled: showLabels,
                     font: font,
-                    position: dataLabelPosition,
-                    color: dataLabelColor,
+                    position: labelPosition,
+                    color: labelColor,
                   }}
                 >
                   <LinearGradient
@@ -127,21 +127,21 @@ export default function BarChartPage(props: { segment: string }) {
           />
           <InputSwitch
             label="Show Data Labels"
-            value={showDataLabels}
-            onChange={setShowDataLabels}
+            value={showLabels}
+            onChange={setShowLabels}
           />
-          {showDataLabels && (
+          {showLabels && (
             <>
               <InputSegment<"top" | "bottom" | "left" | "right">
-                value={dataLabelPosition}
-                label="Data Label Position"
+                value={labelPosition}
+                label=" Label Position"
                 values={["top", "bottom", "left", "right"]}
-                onChange={setDataLabelPosition}
+                onChange={setLabelPosition}
               />
               <InputColor
                 label="Inset color"
-                color={dataLabelColor}
-                onChange={setDataLabelColor}
+                color={labelColor}
+                onChange={setLabelColor}
               />
             </>
           )}

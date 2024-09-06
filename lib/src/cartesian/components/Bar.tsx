@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Path, Text, type PathProps } from "@shopify/react-native-skia";
+import { Path, type PathProps } from "@shopify/react-native-skia";
 import type { PropsWithChildren } from "react";
 
 import type { ChartBounds, PointsArray } from "../../types";
@@ -7,7 +7,7 @@ import { AnimatedPath } from "./AnimatedPath";
 import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { useBarPath } from "../hooks/useBarPath";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
-import useBarLabels, { type DataLabelConfig } from "../hooks/useBarLabels";
+import { BarGraphLabels, type BarLabelConfig } from "./BarGraphLabels";
 
 type CartesianBarProps = {
   points: PointsArray;
@@ -17,15 +17,8 @@ type CartesianBarProps = {
   roundedCorners?: RoundedCorners;
   barWidth?: number;
   barCount?: number;
-  dataLabel?: DataLabelConfig;
+  label?: BarLabelConfig;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
-
-type DataLabelProps = {
-  points: PointsArray;
-  chartBounds: ChartBounds;
-  barWidth?: number;
-  options: DataLabelConfig;
-};
 
 export const Bar = ({
   points,
@@ -35,7 +28,7 @@ export const Bar = ({
   roundedCorners,
   barWidth,
   barCount,
-  dataLabel,
+  label,
   ...ops
 }: PropsWithChildren<CartesianBarProps>) => {
   const { path, barWidth: bw } = useBarPath(
@@ -57,42 +50,15 @@ export const Bar = ({
 
   return (
     <>
-      {dataLabel?.enabled && (
+      {label?.enabled && (
         <BarGraphLabels
           points={points}
           chartBounds={chartBounds}
           barWidth={barWidth ?? bw}
-          options={dataLabel}
+          options={label}
         />
       )}
       <BarGraph />
     </>
   );
-};
-
-const BarGraphLabels = ({
-  points,
-  chartBounds,
-  barWidth,
-  options,
-}: DataLabelProps) => {
-  const labelPositions = useBarLabels(
-    points,
-    chartBounds,
-    barWidth ?? 0,
-    options,
-  );
-
-  return labelPositions.map(({ x, y, value }) => {
-    return (
-      <Text
-        key={`${x}-${y}-${value}`}
-        x={x}
-        y={y}
-        text={value}
-        font={options.font}
-        color={options.color}
-      />
-    );
-  });
 };
