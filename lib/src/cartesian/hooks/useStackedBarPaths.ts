@@ -8,8 +8,8 @@ import {
 import {
   createRoundedRectPath,
   type RoundedCorners,
-} from "lib/src/utils/createRoundedRectPath";
-import type { ChartBounds, InputFieldType, PointsArray } from "lib/src/types";
+} from "../../utils/createRoundedRectPath";
+import type { ChartBounds, InputFieldType, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 import { useBarWidth } from "./useBarWidth";
 
