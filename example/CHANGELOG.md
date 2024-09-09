@@ -1,5 +1,11 @@
 # example
 
+## 1.1.1
+
+### Patch Changes
+
+- Add Stacked Bars support ([#315](https://github.com/FormidableLabs/victory-native-xl/pull/315))
+
 ## 1.1.0
 
 ### Minor Changes
