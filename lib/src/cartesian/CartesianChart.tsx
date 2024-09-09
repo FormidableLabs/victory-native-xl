@@ -162,10 +162,13 @@ export function CartesianChart<
       normalizedAxisProps,
     ]);
 
+  const primaryYAxis = yAxes[0];
+  const primaryYScale = primaryYAxis.yScale;
+
   // stacked bar values
   const chartHeight = chartBounds.bottom;
-  const yScaleTop = yScale.domain().at(0);
-  const yScaleBottom = yScale.domain().at(-1);
+  const yScaleTop = primaryYAxis.yScale.domain().at(0);
+  const yScaleBottom = primaryYAxis.yScale.domain().at(-1);
   // end stacked bar values
 
   /**
@@ -398,9 +401,6 @@ export function CartesianChart<
   React.useEffect(() => {
     onChartBoundsRef.current?.(chartBounds);
   }, [chartBounds, onChartBoundsRef]);
-
-  const primaryYAxis = yAxes[0];
-  const primaryYScale = primaryYAxis.yScale;
 
   const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,
