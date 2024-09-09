@@ -35,6 +35,9 @@ const config: Config = {
         theme: {
           customCss: "./src/css/custom.css",
         },
+        gtag: {
+          trackingID: "G-M971D063B9",
+        },
       },
     ],
   ],
