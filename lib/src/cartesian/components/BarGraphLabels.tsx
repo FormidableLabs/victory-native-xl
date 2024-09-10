@@ -15,7 +15,7 @@ type BarGraphLabelProps = {
   options: BarLabelConfig;
 };
 
-// Arburtary offset so that the label is not touching the bar
+// Arbitrary offset so that the label is not touching the bar
 const LABEL_OFFSET_FROM_POSITION = 5;
 
 export const BarGraphLabels = ({
