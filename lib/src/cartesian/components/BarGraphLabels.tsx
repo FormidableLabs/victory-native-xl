@@ -1,11 +1,11 @@
 import React from "react";
-import { Text, type SkFont } from "@shopify/react-native-skia";
+import { Text, type SkColor, type SkFont } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "lib/src/types";
 
 export type BarLabelConfig = {
   position: "top" | "bottom" | "left" | "right";
   font: SkFont | null;
-  color?: string;
+  color?: SkColor;
 };
 
 type BarGraphLabelProps = {
@@ -15,42 +15,74 @@ type BarGraphLabelProps = {
   options: BarLabelConfig;
 };
 
+// Arburtary offset so that the label is not touching the bar
+const LABEL_OFFSET_FROM_POSITION = 5;
+
 export const BarGraphLabels = ({
   points,
   chartBounds,
   barWidth = 0,
   options,
 }: BarGraphLabelProps) => {
-  const labelPositions = points.map(({ x, y, yValue }) => {
+  const { position, font, color } = options;
+
+  // Loop over the data points and position each label
+  const labelPositions = points.map(({ x, y = 0, yValue }) => {
     const yText = yValue?.toString() ?? "";
-    const fontWidth = options.font?.measureText(yText).width ?? 1;
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(yText))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
+
     let xOffset;
     let yOffset;
 
-    switch (options.position) {
+    // Bar Edges
+    const barInnerLeftEdge = x - barWidth / 2;
+    const barOuterRightEdge = x + barWidth / 2;
+
+    // Chart Edges
+    const { top: chartInnerTopEdge, bottom: chartInnerBottomEdge } =
+      chartBounds;
+
+    // Bar Midpoints
+    const barVerticalMidpoint =
+      (chartInnerTopEdge + chartInnerBottomEdge + Number(y)) / 2;
+    const barHorizontalMidpoint = x - labelWidth / 2;
+
+    switch (position) {
       case "top": {
-        xOffset = x - fontWidth / 2;
-        yOffset = (y ?? 0) - 5;
+        // Position the label above the bar
+        // Move the label left by half its width to properly center the text over the bar
+        xOffset = barHorizontalMidpoint;
+        yOffset = Number(y) - LABEL_OFFSET_FROM_POSITION;
         break;
       }
       case "bottom": {
-        xOffset = x - fontWidth / 2;
-        yOffset = chartBounds.bottom - 5;
+        // Position the label at the bottom of the bar
+        xOffset = barHorizontalMidpoint;
+        // Use the chartBounds here so that the label isn't rendered under the graph
+        yOffset = chartInnerBottomEdge - LABEL_OFFSET_FROM_POSITION;
         break;
       }
       case "left": {
-        xOffset = x - barWidth / 2 - fontWidth;
-        yOffset = (chartBounds.top + (y ?? 0) + chartBounds.bottom) / 2;
+        // Position the label to the left of the bar
+        // Move the label to the inner left edge then by the labels full width so
+        // that the label is not render inside the bar
+        xOffset = barInnerLeftEdge - labelWidth - LABEL_OFFSET_FROM_POSITION;
+        yOffset = barVerticalMidpoint;
         break;
       }
       case "right": {
-        xOffset = x + barWidth / 2;
-        yOffset = (chartBounds.top + (y ?? 0) + chartBounds.bottom) / 2;
+        // Position the label to the right of the bar
+        // Move the label to the outer right edge of the bar
+        xOffset = barOuterRightEdge + LABEL_OFFSET_FROM_POSITION;
+        yOffset = barVerticalMidpoint;
         break;
       }
       default: {
         xOffset = x;
-        yOffset = y ?? 0;
+        yOffset = Number(y);
       }
     }
 
@@ -64,8 +96,8 @@ export const BarGraphLabels = ({
         x={x}
         y={y}
         text={value}
-        font={options.font}
-        color={options.color}
+        font={font}
+        color={color}
       />
     );
   });

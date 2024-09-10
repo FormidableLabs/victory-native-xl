@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Path, type PathProps } from "@shopify/react-native-skia";
+import { Path, type PathProps, type SkPath } from "@shopify/react-native-skia";
 import type { PropsWithChildren } from "react";
 import type { ChartBounds, PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
@@ -7,6 +7,10 @@ import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { useBarPath } from "../hooks/useBarPath";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
 import { BarGraphLabels, type BarLabelConfig } from "./BarGraphLabels";
+
+type BarPathProps = Partial<
+  Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">
+>;
 
 type CartesianBarProps = {
   points: PointsArray;
@@ -18,6 +22,18 @@ type CartesianBarProps = {
   barCount?: number;
   labels?: BarLabelConfig;
 } & Partial<Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">>;
+
+type BarGraphProps = {
+  animate?: PathAnimationConfig;
+  path: SkPath;
+  options: BarPathProps;
+};
+
+const BarGraph = (props: BarGraphProps) => {
+  const { options, ...pathProps } = props;
+  const PathComponent = pathProps.animate ? AnimatedPath : Path;
+  return <PathComponent style="fill" {...pathProps} {...options} />;
+};
 
 export const Bar = ({
   points,
@@ -39,14 +55,6 @@ export const Bar = ({
     barCount,
   );
 
-  const BarGraph = () =>
-    React.createElement(animate ? AnimatedPath : Path, {
-      path,
-      style: "fill",
-      ...(Boolean(animate) && { animate }),
-      ...ops,
-    });
-
   return (
     <>
       {labels && (
@@ -57,7 +65,7 @@ export const Bar = ({
           options={labels}
         />
       )}
-      <BarGraph />
+      <BarGraph path={path} animate={animate} options={ops} />
     </>
   );
 };
