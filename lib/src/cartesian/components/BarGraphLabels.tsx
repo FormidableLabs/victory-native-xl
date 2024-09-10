@@ -1,11 +1,11 @@
 import React from "react";
-import { Text, type SkColor, type SkFont } from "@shopify/react-native-skia";
+import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "lib/src/types";
 
 export type BarLabelConfig = {
   position: "top" | "bottom" | "left" | "right";
   font: SkFont | null;
-  color?: SkColor;
+  color?: Color;
 };
 
 type BarGraphLabelProps = {

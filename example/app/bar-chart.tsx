@@ -1,4 +1,9 @@
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import {
+  LinearGradient,
+  useFont,
+  vec,
+  type Color,
+} from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Bar, CartesianChart } from "victory-native";
@@ -27,7 +32,7 @@ export default function BarChartPage(props: { segment: string }) {
   const [innerPadding, setInnerPadding] = useState(0.33);
   const [roundedCorner, setRoundedCorner] = useState(5);
   const [showLabels, setShowLabels] = useState(false);
-  const [labelColor, setLabelColor] = useState<string>("#262626");
+  const [labelColor, setLabelColor] = useState<Color>("#262626");
   const [labelPosition, setLabelPosition] = useState<
     "top" | "bottom" | "left" | "right"
   >("top");
@@ -65,11 +70,7 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  labels={
-                    showLabels
-                      ? { font, color: labelColor, position: labelPosition }
-                      : undefined
-                  }
+                  labels={{ font, color: labelColor, position: labelPosition }}
                 >
                   <LinearGradient
                     start={vec(0, 0)}
@@ -139,7 +140,7 @@ export default function BarChartPage(props: { segment: string }) {
               />
               <InputColor
                 label="Inset color"
-                color={labelColor}
+                color={labelColor as string}
                 onChange={setLabelColor}
               />
             </>
