@@ -27,7 +27,7 @@ export const BarGraphLabels = ({
   const { position, font, color } = options;
 
   // Loop over the data points and position each label
-  const labelPositions = points.map(({ x, y = 0, yValue }) => {
+  return points.map(({ x, y = 0, yValue }) => {
     const yText = yValue?.toString() ?? "";
     const labelWidth =
       font
@@ -86,16 +86,12 @@ export const BarGraphLabels = ({
       }
     }
 
-    return { x: xOffset, y: yOffset, value: yText };
-  });
-
-  return labelPositions.map(({ x, y, value }) => {
     return (
       <Text
-        key={`${x}-${y}-${value}`}
-        x={x}
-        y={y}
-        text={value}
+        key={`${xOffset}-${yOffset}-${yText}`}
+        x={xOffset}
+        y={yOffset}
+        text={yText}
         font={font}
         color={color}
       />
