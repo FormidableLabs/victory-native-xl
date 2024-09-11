@@ -118,7 +118,7 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                   />
                 </Line>
 
-                {points.high.map(({ x, y, yValue }) => (
+                {points.high.map(({ x, y }) => (
                   <AnimatedCircle
                     key={`circle-${x}-${y}`}
                     x={x}
