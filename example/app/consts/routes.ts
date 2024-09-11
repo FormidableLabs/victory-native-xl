@@ -79,8 +79,8 @@ export const ChartRoutes: {
     path: "/ordinal-data",
   },
   {
-    title: "Horizontal bands line",
-    description: `Custom horizontal bands as line background color for the chart line. Taken from "Ordinal Data"`,
+    title: "Horizontal bands background",
+    description: `Custom horizontal bands background for a chart line, implemented through a custom shader.`,
     path: "/horizontal-bands-line",
   },
   {

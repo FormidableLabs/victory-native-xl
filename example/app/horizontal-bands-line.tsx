@@ -108,10 +108,11 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                 >
                   <HorizontalBandsShader
                     thresholds={[
-                      [0, [1, 0, 0]],
-                      [55, [1, 1, 0]],
-                      [60, [0, 1, 1]],
-                      [65, [1, 0, 1]],
+                      [0, hexColorToNumArray("#33C4F8")],
+                      [50, hexColorToNumArray("#5FC452")],
+                      [55, hexColorToNumArray("#F0D446")],
+                      [60, hexColorToNumArray("#F49A47")],
+                      [65, hexColorToNumArray("#F75F48")],
                     ]}
                     yScale={yScale}
                   />
@@ -164,13 +165,13 @@ const AnimatedCircle = ({
 };
 
 const DATA = [
-  { day: "Mon", high: 50 + 20 * Math.random() },
-  { day: "Tue", high: 50 + 20 * Math.random() },
-  { day: "Wed", high: 50 + 20 * Math.random() },
-  { day: "Thu", high: 50 + 20 * Math.random() },
-  { day: "Fri", high: 50 + 20 * Math.random() },
-  { day: "Sat", high: 50 + 20 * Math.random() },
-  { day: "Sun", high: 50 + 20 * Math.random() },
+  { day: "Mon", high: 40 + 30 * Math.random() },
+  { day: "Tue", high: 40 + 30 * Math.random() },
+  { day: "Wed", high: 40 + 30 * Math.random() },
+  { day: "Thu", high: 40 + 30 * Math.random() },
+  { day: "Fri", high: 40 + 30 * Math.random() },
+  { day: "Sat", high: 40 + 30 * Math.random() },
+  { day: "Sun", high: 40 + 30 * Math.random() },
 ];
 
 const styles = StyleSheet.create({
@@ -210,3 +211,17 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
 });
+
+function hexColorToNumArray(hexCol: string) {
+  const hexParts: [string, string, string] = [
+    hexCol.slice(1, 3),
+    hexCol.slice(3, 5),
+    hexCol.slice(5, 7),
+  ];
+  const hexInts = hexParts.map(hexToInt);
+  return hexInts.map((num) => num / 255) as [number, number, number];
+}
+
+function hexToInt(hex: string) {
+  return parseInt(hex, 16);
+}
