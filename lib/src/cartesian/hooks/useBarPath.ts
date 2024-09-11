@@ -6,6 +6,7 @@ import {
 } from "../../utils/createRoundedRectPath";
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
+import { useBarWidth } from "./useBarWidth";
 
 export const useBarPath = (
   points: PointsArray,
@@ -16,30 +17,13 @@ export const useBarPath = (
   barCount?: number,
 ) => {
   const { yScale } = useCartesianChartContext();
-  const barWidth = React.useMemo(() => {
-    if (customBarWidth) return customBarWidth;
-    const domainWidth = chartBounds.right - chartBounds.left;
-
-    const numerator = (1 - innerPadding) * domainWidth;
-
-    const denominator = barCount
-      ? barCount
-      : points.length - 1 <= 0
-        ? // don't divide by 0 if there's only one data point
-          points.length
-        : points.length - 1;
-
-    const barWidth = numerator / denominator;
-
-    return barWidth;
-  }, [
-    customBarWidth,
-    chartBounds.left,
-    chartBounds.right,
+  const barWidth = useBarWidth({
+    points,
+    chartBounds,
     innerPadding,
-    points.length,
+    customBarWidth,
     barCount,
-  ]);
+  });
 
   const path = React.useMemo(() => {
     const path = Skia.Path.Make();
@@ -48,6 +32,7 @@ export const useBarPath = (
       if (typeof y !== "number") return;
 
       const barHeight = yScale(0) - y;
+
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
           x,

@@ -11,6 +11,11 @@ export const ChartRoutes: {
     path: "/line-chart",
   },
   {
+    title: "Constant Line Chart",
+    description: "This chart shows off constant lines with scatter points. ",
+    path: "/constant-line-chart",
+  },
+  {
     title: "Bar Chart",
     description:
       "This is a single Bar chart in Victory that supports customized spacing between each bar.",
@@ -38,6 +43,16 @@ export const ChartRoutes: {
     title: "Bar Charts Custom Bar",
     description: "These charts demonstrate how to customize individual bars.",
     path: "/bar-charts-custom-bars",
+  },
+  {
+    title: "Stacked Bar Charts (Simple)",
+    description: "This is a Stacked Bar chart in Victory Native.",
+    path: "/stacked-bar-charts",
+  },
+  {
+    title: "Stacked Bar Charts (Complex)",
+    description: "More complicated Stacked Bar charts in Victory Native.",
+    path: "/stacked-bar-charts-complex",
   },
   {
     title: "Scatter Plot",
