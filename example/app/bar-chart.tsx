@@ -67,6 +67,21 @@ export default function BarChartPage(props: { segment: string }) {
             frame={{
               lineWidth: 0,
             }}
+            xAxis={{
+              font,
+              dashPathEffect: {
+                intervals: [4, 4],
+              },
+            }}
+            yAxis={[
+              {
+                yKeys: ["listenCount"],
+                font,
+                dashPathEffect: {
+                  intervals: [4, 4],
+                },
+              },
+            ]}
             data={data}
           >
             {({ points, chartBounds }) => {

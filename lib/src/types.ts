@@ -1,6 +1,10 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
-import { type Color, type SkFont } from "@shopify/react-native-skia";
+import {
+  type Color,
+  type DashPathEffectProps,
+  type SkFont,
+} from "@shopify/react-native-skia";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -169,13 +173,18 @@ export type XAxisInputProps<
   tickCount?: number;
   tickValues?: number[];
   yAxisSide?: YAxisSide;
+  dashPathEffect?: DashPathEffectProps;
 };
 
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
-> = Required<Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues">> &
-  Partial<Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues">>;
+> = Required<
+  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "dashPathEffect">
+> &
+  Partial<
+    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "dashPathEffect">
+  >;
 
 export type XAxisProps<
   RawData extends Record<string, unknown>,
@@ -203,13 +212,18 @@ export type YAxisInputProps<
   tickValues?: number[];
   yKeys?: YK[];
   domain?: YAxisDomain;
+  dashPathEffect?: DashPathEffectProps;
 };
 
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
-> = Required<Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues">> &
-  Partial<Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues">>;
+> = Required<
+  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "dashPathEffect">
+> &
+  Partial<
+    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "dashPathEffect">
+  >;
 
 export type YAxisProps<
   RawData extends Record<string, unknown>,
