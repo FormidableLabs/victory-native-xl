@@ -1,4 +1,4 @@
-import React, { type ReactElement, type ReactNode } from "react";
+import React, { type ReactElement } from "react";
 import {
   type Color,
   Path,

@@ -1,9 +1,7 @@
 import {
   Group,
-  Rect,
   RoundedRect,
   Text,
-  vec,
   type SkFont,
 } from "@shopify/react-native-skia";
 
