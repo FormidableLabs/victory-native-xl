@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Pie, PolarChart } from "victory-native";
+import { Text, useFont } from "@shopify/react-native-skia";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
 import { InputColor } from "example/components/InputColor";
 import { appColors } from "./consts/colors";
 import { descriptionForRoute } from "./consts/routes";
+import inter from "../assets/inter-medium.ttf";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 125;
 function generateRandomColor(): string {
@@ -25,6 +27,7 @@ const DATA = (numberPoints = 5) =>
 
 export default function PieChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
+  const font = useFont(inter, 16);
   const [data, setData] = useState(DATA(5));
   const [insetWidth, setInsetWidth] = useState(4);
   const [insetColor, setInsetColor] = useState<string>("#fafafa");
@@ -44,10 +47,18 @@ export default function PieChart(props: { segment: string }) {
             labelKey={"label"}
           >
             <Pie.Chart>
-              {() => {
+              {({ slice }) => {
                 return (
                   <>
-                    <Pie.Slice />
+                    <Pie.Slice>
+                      <Pie.Label
+                        font={font}
+                        radiusOffset={1}
+                        color={"black"}
+                        text={slice.value.toString()}
+                      />
+                    </Pie.Slice>
+
                     <Pie.SliceAngularInset
                       angularInset={{
                         angularStrokeWidth: insetWidth,
