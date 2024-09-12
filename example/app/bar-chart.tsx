@@ -57,6 +57,21 @@ export default function BarChartPage(props: { segment: string }) {
               lineColor: isDark ? "#71717a" : "#d4d4d8",
               labelColor: isDark ? appColors.text.dark : appColors.text.light,
             }}
+            xAxis={{
+              font,
+              dashPathEffect: {
+                intervals: [4, 4],
+              },
+            }}
+            yAxis={[
+              {
+                yKeys: ["listenCount"],
+                font,
+                dashPathEffect: {
+                  intervals: [4, 4],
+                },
+              },
+            ]}
             data={data}
           >
             {({ points, chartBounds }) => {

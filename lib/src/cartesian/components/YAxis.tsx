@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Line, Text, vec } from "@shopify/react-native-skia";
+import { DashPathEffect, Line, Text, vec } from "@shopify/react-native-skia";
 import type {
   InputDatum,
   NumericalFields,
@@ -24,6 +24,7 @@ export const YAxis = <
   lineColor,
   font,
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
+  dashPathEffect,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
@@ -62,7 +63,9 @@ export const YAxis = <
             p2={vec(xScale(x2), yScale(tick))}
             color={lineColor}
             strokeWidth={lineWidth}
-          />
+          >
+            {dashPathEffect ? <DashPathEffect {...dashPathEffect} /> : null}
+          </Line>
         ) : null}
         {font
           ? canFitLabelContent && (
