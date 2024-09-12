@@ -40,6 +40,8 @@ const sidebars = {
             "cartesian/bar/use-bar-path",
             "cartesian/bar/bar-group",
             "cartesian/bar/use-bar-group-paths",
+            "cartesian/bar/stacked-bar",
+            "cartesian/bar/use-stacked-bar-paths",
           ],
         },
         {

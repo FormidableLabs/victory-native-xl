@@ -11,6 +11,11 @@ export const ChartRoutes: {
     path: "/line-chart",
   },
   {
+    title: "Constant Line Chart",
+    description: "This chart shows off constant lines with scatter points. ",
+    path: "/constant-line-chart",
+  },
+  {
     title: "Bar Chart",
     description:
       "This is a single Bar chart in Victory that supports customized spacing between each bar.",
@@ -40,6 +45,16 @@ export const ChartRoutes: {
     path: "/bar-charts-custom-bars",
   },
   {
+    title: "Stacked Bar Charts (Simple)",
+    description: "This is a Stacked Bar chart in Victory Native.",
+    path: "/stacked-bar-charts",
+  },
+  {
+    title: "Stacked Bar Charts (Complex)",
+    description: "More complicated Stacked Bar charts in Victory Native.",
+    path: "/stacked-bar-charts-complex",
+  },
+  {
     title: "Scatter Plot",
     description:
       "This is a Scatter plot in Victory Native that supports custom shapes and sizes.",
@@ -62,6 +77,11 @@ export const ChartRoutes: {
     description:
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
     path: "/ordinal-data",
+  },
+  {
+    title: "Horizontal bands background",
+    description: `Custom horizontal bands background for a chart line, implemented through a custom shader.`,
+    path: "/horizontal-bands-line",
   },
   {
     title: "Axis Configuration",

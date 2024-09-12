@@ -1,41 +1,30 @@
-import {
-  LinearGradient,
-  useFont,
-  vec,
-  type Color,
-} from "@shopify/react-native-skia";
+import { useFont } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Bar, CartesianChart } from "victory-native";
+import { StackedBar, CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
-import { InputSwitch } from "../components/InputSwitch";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "./consts/routes";
-import { InputSegment } from "../components/InputSegment";
-import { InputColor } from "../components/InputColor";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
     month: index + 1,
     listenCount: Math.floor(Math.random() * (100 - 50 + 1)) + 50,
+    favouriteCount: Math.floor(Math.random() * (100 - 50 + 1)) + 20,
+    sales: Math.floor(Math.random() * (100 - 50 + 1)) + 25,
   }));
 
-export default function BarChartPage(props: { segment: string }) {
+export default function StackedBarChartPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
   const isDark = useDarkMode();
-  const [data, setData] = useState(DATA(5));
-  const [innerPadding, setInnerPadding] = useState(0.33);
+  const [data, setData] = useState(DATA(4));
+  const [innerPadding, setInnerPadding] = useState(0.66);
   const [roundedCorner, setRoundedCorner] = useState(5);
-  const [showLabels, setShowLabels] = useState(false);
-  const [labelColor, setLabelColor] = useState<Color>("#262626");
-  const [labelPosition, setLabelPosition] = useState<
-    "top" | "bottom" | "left" | "right"
-  >("top");
 
   return (
     <>
@@ -44,12 +33,11 @@ export default function BarChartPage(props: { segment: string }) {
           <CartesianChart
             xKey="month"
             padding={5}
-            yKeys={["listenCount"]}
+            yKeys={["listenCount", "favouriteCount", "sales"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
-            domain={{ y: [0, 100] }}
+            domain={{ y: [0, 250] }}
             axisOptions={{
               font,
-              tickCount: 5,
               formatXLabel: (value) => {
                 const date = new Date(2023, value - 1);
                 return date.toLocaleString("default", { month: "short" });
@@ -61,23 +49,32 @@ export default function BarChartPage(props: { segment: string }) {
           >
             {({ points, chartBounds }) => {
               return (
-                <Bar
-                  points={points.listenCount}
-                  chartBounds={chartBounds}
+                <StackedBar
                   animate={{ type: "spring" }}
                   innerPadding={innerPadding}
-                  roundedCorners={{
-                    topLeft: roundedCorner,
-                    topRight: roundedCorner,
+                  chartBounds={chartBounds}
+                  points={[
+                    points.listenCount,
+                    points.favouriteCount,
+                    points.sales,
+                  ]}
+                  colors={["orange", "gold", "sienna"]}
+                  barOptions={({ isBottom, isTop }) => {
+                    return {
+                      roundedCorners: isTop
+                        ? {
+                            topLeft: roundedCorner,
+                            topRight: roundedCorner,
+                          }
+                        : isBottom
+                          ? {
+                              bottomRight: roundedCorner,
+                              bottomLeft: roundedCorner,
+                            }
+                          : undefined,
+                    };
                   }}
-                  labels={{ font, color: labelColor, position: labelPosition }}
-                >
-                  <LinearGradient
-                    start={vec(0, 0)}
-                    end={vec(0, 400)}
-                    colors={["#a78bfa", "#a78bfa50"]}
-                  />
-                </Bar>
+                />
               );
             }}
           </CartesianChart>
@@ -118,33 +115,13 @@ export default function BarChartPage(props: { segment: string }) {
             onChange={setInnerPadding}
           />
           <InputSlider
-            label="Top Corner Radius"
+            label="Corner Radius"
             maxValue={16}
             minValue={0}
             step={1}
             value={roundedCorner}
             onChange={setRoundedCorner}
           />
-          <InputSwitch
-            label="Show Data Labels"
-            value={showLabels}
-            onChange={setShowLabels}
-          />
-          {showLabels && (
-            <>
-              <InputSegment<"top" | "bottom" | "left" | "right">
-                value={labelPosition}
-                label=" Label Position"
-                values={["top", "bottom", "left", "right"]}
-                onChange={setLabelPosition}
-              />
-              <InputColor
-                label="Inset color"
-                color={labelColor as string}
-                onChange={setLabelColor}
-              />
-            </>
-          )}
         </ScrollView>
       </SafeAreaView>
     </>
