@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Pie, PolarChart } from "victory-native";
-import { Text, useFont } from "@shopify/react-native-skia";
+import { useFont } from "@shopify/react-native-skia";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
 import { InputColor } from "example/components/InputColor";
+import { InputSegment } from "example/components/InputSegment";
 import { appColors } from "./consts/colors";
 import { descriptionForRoute } from "./consts/routes";
 import inter from "../assets/inter-medium.ttf";
+import { PieChartCustomLabel } from "./pie-chart-custom-label";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 125;
 function generateRandomColor(): string {
@@ -27,10 +29,13 @@ const DATA = (numberPoints = 5) =>
 
 export default function PieChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
-  const font = useFont(inter, 16);
+  const font = useFont(inter, 10);
   const [data, setData] = useState(DATA(5));
   const [insetWidth, setInsetWidth] = useState(4);
   const [insetColor, setInsetColor] = useState<string>("#fafafa");
+  const [dataLabelSegment, setDataLabelSegment] = useState<
+    "simple" | "custom" | "none"
+  >("none");
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -51,12 +56,20 @@ export default function PieChart(props: { segment: string }) {
                 return (
                   <>
                     <Pie.Slice>
-                      <Pie.Label
-                        font={font}
-                        radiusOffset={1}
-                        color={"black"}
-                        text={slice.value.toString()}
-                      />
+                      {dataLabelSegment === "simple" && (
+                        <Pie.Label font={font} color={"black"} />
+                      )}
+                      {dataLabelSegment === "custom" && (
+                        <Pie.Label radiusOffset={0.6}>
+                          {(position) => (
+                            <PieChartCustomLabel
+                              position={position}
+                              slice={slice}
+                              font={font}
+                            />
+                          )}
+                        </Pie.Label>
+                      )}
                     </Pie.Slice>
 
                     <Pie.SliceAngularInset
@@ -103,6 +116,12 @@ export default function PieChart(props: { segment: string }) {
             label="Inset color"
             color={insetColor}
             onChange={setInsetColor}
+          />
+          <InputSegment<"none" | "simple" | "custom">
+            label="Data Labels"
+            value="none"
+            values={["none", "simple", "custom"]}
+            onChange={setDataLabelSegment}
           />
         </View>
       </ScrollView>

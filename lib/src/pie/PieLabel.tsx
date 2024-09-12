@@ -1,13 +1,4 @@
-import {
-  Group,
-  Paragraph,
-  Skia,
-  Text,
-  useFonts,
-  vec,
-  type Color,
-  type SkFont,
-} from "@shopify/react-native-skia";
+import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
 import React, { type ReactNode } from "react";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 
@@ -41,18 +32,29 @@ const PieLabel = ({
       .reduce((sum, value) => sum + value, 0) ?? 0;
 
   const RADIAN = Math.PI / 180;
+
+  // Offset from the slice radius to help position the lable
   const radius = slice.radius * radiusOffset;
+
+  // Middle angle of the slice
   const midAngle = (slice.startAngle + slice.endAngle) / 2;
-  const x =
-    slice.center.x + radius * Math.cos(-midAngle * RADIAN) - labelWidth / 2;
+
+  // Center coordinates of slice
+  const x = slice.center.x + radius * Math.cos(-midAngle * RADIAN);
   const y = slice.center.y + radius * Math.sin(midAngle * RADIAN);
 
-  if (children) {
-    return children({ x, y, midAngle });
-  }
+  if (children) return children({ x, y, midAngle });
 
   return (
-    font && <Text font={font} text={labelText} x={x} y={y} color={color} />
+    font && (
+      <Text
+        font={font}
+        text={labelText}
+        x={x - labelWidth / 2}
+        y={y}
+        color={color}
+      />
+    )
   );
 };
 
