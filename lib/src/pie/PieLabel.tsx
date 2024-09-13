@@ -1,6 +1,7 @@
 import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
 import React, { type ReactNode } from "react";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
+import { getFontGlyphWidth } from "../utils/getFontGlyphWidth";
 
 type LabelPostion = {
   x: number;
@@ -26,10 +27,7 @@ const PieLabel = ({
   const { slice } = usePieSliceContext();
   const labelText = text ?? slice.label;
 
-  const labelWidth =
-    font
-      ?.getGlyphWidths(font.getGlyphIDs(labelText))
-      .reduce((sum, value) => sum + value, 0) ?? 0;
+  const labelWidth = getFontGlyphWidth(labelText, font);
 
   const RADIAN = Math.PI / 180;
 
