@@ -62,6 +62,7 @@ const useIsPressActive = <Init extends ChartPressStateInit>(
     (val, oldVal) => {
       if (val !== oldVal) runOnJS(setIsPressActive)(val);
     },
+    [value.isActive],
   );
 
   return isPressActive;

@@ -1,7 +1,11 @@
 {
   "name": "victory-native",
+<<<<<<< Updated upstream
   "version": "41.2.0",
   "private": false,
+=======
+  "version": "41.1.0",
+>>>>>>> Stashed changes
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,7 +34,8 @@
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "yarn build"
   },
   "dependencies": {
     "d3-scale": "^4.0.2",
@@ -38,11 +43,11 @@
     "react-fast-compare": "^3.2.2"
   },
   "peerDependencies": {
+    "@shopify/react-native-skia": ">=1.2.3",
     "react": "*",
     "react-native": "*",
-    "@shopify/react-native-skia": ">=1.2.3",
-    "react-native-reanimated": ">=3.0.0",
-    "react-native-gesture-handler": ">=2.0.0"
+    "react-native-gesture-handler": ">=2.0.0",
+    "react-native-reanimated": ">=3.0.0"
   },
   "devDependencies": {
     "@types/d3-scale": "^4.0.3",
