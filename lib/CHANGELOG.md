@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.2.0
+
+### Minor Changes
+
+- Added labels to bar charts. ([#353](https://github.com/FormidableLabs/victory-native-xl/pull/353))
+
+## 41.1.2
+
+### Patch Changes
+
+- Add Stacked Bars support ([#315](https://github.com/FormidableLabs/victory-native-xl/pull/315))
+
 ## 41.1.1
 
 ### Patch Changes
