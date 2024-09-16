@@ -10,12 +10,16 @@ const containsNonNumbers = (arr: unknown[] | undefined): boolean => {
   return Array.isArray(arr) && arr.some((t) => Number.isNaN(Number(t)));
 };
 
-export const downsampleTicks = (tickValues: number[], tickCount: number) => {
-  if (containsNonNumbers(tickValues)) {
+export const downsampleTicks = (
+  tickValues: number[] | String[],
+  tickCount: number,
+) => {
+  //09162024 KD for now, we're letting this guy take strings for values
+/*   if (containsNonNumbers(tickValues)) {
     // Throw Error here until we expand tickValues to accept string and date types, like Victory web
     throw new Error("TickValues array must only contain numbers.");
   }
-
+ */
   if (
     !tickCount ||
     !Array.isArray(tickValues) ||

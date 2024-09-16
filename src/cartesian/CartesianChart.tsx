@@ -98,6 +98,7 @@ export function CartesianChart<
 
   const {
     xTicksNormalized,
+    xTickLabelsNormalized,
     yTicksNormalized,
     xScale,
     yScale,
@@ -110,7 +111,7 @@ export function CartesianChart<
       yScale,
       isNumericalData,
       xTicksNormalized,
-      yTicksNormalized,
+      xTickLabelsNormalized,
       ..._tData
     } = transformInputData({
       data,
@@ -381,6 +382,7 @@ export function CartesianChart<
                 yScale,
                 isNumericalData,
                 xTicksNormalized,
+                xTickLabelsNormalized,
                 yTicksNormalized,
                 ix: _tData.ix,
               }}

@@ -54,10 +54,10 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
-  xTicksNormalized: number[];
-  yTicksNormalized: number[];
+  xTickLabelsNormalized;
 } => {
-  console.log("transformInputData");
+  const xTickLabelsNormalized: axisOptions?.xTickLabelsNormalized;
+
   const data = [..._data];
   const tickValues = axisOptions?.tickValues;
   const tickCount = axisOptions?.tickCount ?? DEFAULT_TICK_COUNT;
@@ -267,9 +267,15 @@ export const transformInputData = <
 
   // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
   // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
+  //  const xTicksNormalized = xTickValues
+
   const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
+    ? downsampleTicks(axisOptions.xTickValues, xTicks)
     : xScale.ticks(xTicks);
+
+  const xTickLabels = xTickValues
+    ? (downsampleTicks(axisOptions.xTickLabels, xTicks) as string[])
+    : [];
 
   const ox = ixNum.map((x) => xScale(x)!);
 
@@ -280,6 +286,7 @@ export const transformInputData = <
     xScale,
     yScale,
     isNumericalData,
+    xTickLabelsNormalized,
     xTicksNormalized,
     yTicksNormalized,
   };

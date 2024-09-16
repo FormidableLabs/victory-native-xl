@@ -98,8 +98,8 @@ export type AxisProps<
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 > = {
-  axisLabels: { x: String[]; y: String[] };
   xTicksNormalized: number[];
+  xTickLabels: string[];
   yTicksNormalized: number[];
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
@@ -111,6 +111,7 @@ export type AxisProps<
   labelColor?: string | { x: string; y: string };
   tickCount?: number | { x: number; y: number };
   tickValues?: number[] | { x: number[]; y: number[] };
+  tickLabels?: number[] | { x: number[]; y: number[] };
   labelOffset?: number | { x: number; y: number };
   labelPosition?:
     | AxisLabelPosition
