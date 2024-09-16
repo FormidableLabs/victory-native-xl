@@ -168,7 +168,6 @@ export const CartesianAxis = <
   });
 
   let xAxisNodes: any[] = [];
-  //we can keep formatXLabel the same, passing into chart, but we
   if (xTickLabelsNormalized) {
     xAxisNodes = xTicksNormalized.map((tick, i) => {
       const val = isNumericalData ? tick : ix[tick];
@@ -290,19 +289,6 @@ export const CartesianAxis = <
     );
     return framePath;
   }, [x1, x2, xScale, y1, y2, yScale]);
-
-  //we still get a cyclic structure in JSON object error when passing this to JSON.stingify's 2nd parameter.
-  //no, actually, we fucking get cannot read property includes of null
-  function cyclic_stringify_helper(key, val) {
-    let seen = [];
-    if (val != null && typeof val == "object") {
-      if (seen.indexOf(val) >= 0) {
-        return;
-      }
-      seen.push(val);
-    }
-    return val;
-  }
 
   return (
     <>
