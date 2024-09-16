@@ -54,9 +54,10 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
+  xTickLabelsNormalized;
+  xTicksNormalized;
+  yTicksNormalized;
 } => {
-  const xTickLabels = axisOptions?.xTickLabels;
-
   const data = [..._data];
   const tickValues = axisOptions?.tickValues;
   const tickCount = axisOptions?.tickCount ?? DEFAULT_TICK_COUNT;
@@ -65,10 +66,18 @@ export const transformInputData = <
     tickValues && typeof tickValues === "object" && "x" in tickValues
       ? tickValues.x
       : tickValues;
+  const xTickLabels =
+    tickValues && typeof tickValues === "object" && "x" in tickValues
+      ? tickValues.x
+      : tickValues;
+  const yTickLabels =
+    tickValues && typeof tickValues === "object" && "y" in tickValues
+      ? tickValues.x
+      : undefined;
   const yTickValues =
     tickValues && typeof tickValues === "object" && "y" in tickValues
       ? tickValues.y
-      : tickValues;
+      : undefined;
   const xTicks = typeof tickCount === "number" ? tickCount : tickCount.x;
   const yTicks = typeof tickCount === "number" ? tickCount : tickCount.y;
 
@@ -196,6 +205,9 @@ export const transformInputData = <
   const yTicksNormalized = yTickValues
     ? downsampleTicks(yTickValues, yTicks)
     : yScale.ticks(yTicks);
+
+  console.log("transformIputData/yTicksNormalized ");
+  console.log(yTicksNormalized);
   // Calculate all yTicks we're displaying, so we can properly compensate for it in our x-scale
   const maxYLabel = Math.max(
     ...yTicksNormalized.map(
@@ -269,14 +281,16 @@ export const transformInputData = <
   //  const xTicksNormalized = xTickValues
 
   const xTicksNormalized = xTickValues
-    ? downsampleTicks(axisOptions.xTickValues, xTicks)
+    ? downsampleTicks(xTickValues, xTicks)
     : xScale.ticks(xTicks);
 
-  const xTickLabels = xTickValues
-    ? (downsampleTicks(axisOptions.xTickLabels, xTicks) as string[])
+  const xTickLabelsNormalized = xTickLabels
+    ? (downsampleTicks(xTickLabels, xTicks) as string[])
     : [];
 
   const ox = ixNum.map((x) => xScale(x)!);
+  console.log("returning normalized yticks from tarnsform input data:");
+  console.log(yTicksNormalized);
 
   return {
     ix,

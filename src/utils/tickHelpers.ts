@@ -15,7 +15,7 @@ export const downsampleTicks = (
   tickCount: number,
 ) => {
   //09162024 KD for now, we're letting this guy take strings for values
-/*   if (containsNonNumbers(tickValues)) {
+  /*   if (containsNonNumbers(tickValues)) {
     // Throw Error here until we expand tickValues to accept string and date types, like Victory web
     throw new Error("TickValues array must only contain numbers.");
   }

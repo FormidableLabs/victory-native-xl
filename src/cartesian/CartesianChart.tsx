@@ -112,6 +112,7 @@ export function CartesianChart<
       isNumericalData,
       xTicksNormalized,
       xTickLabelsNormalized,
+      yTicksNormalized,
       ..._tData
     } = transformInputData({
       data,
@@ -139,8 +140,8 @@ export function CartesianChart<
     };
 
     return {
-      xTicksNormalized,
       yTicksNormalized,
+      xTicksNormalized,
       tData,
       xScale,
       yScale,

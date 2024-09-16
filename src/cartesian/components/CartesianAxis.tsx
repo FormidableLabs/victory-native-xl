@@ -24,6 +24,7 @@ export const CartesianAxis = <
 >({
   tickCount = DEFAULT_TICK_COUNT,
   xTicksNormalized,
+  xTickLabelsNormalized,
   yTicksNormalized,
   labelPosition = "outset",
   labelOffset = { x: 2, y: 4 },
@@ -31,8 +32,6 @@ export const CartesianAxis = <
   lineColor = "hsla(0, 0%, 0%, 0.25)",
   lineWidth = StyleSheet.hairlineWidth,
   labelColor = "#000000",
-  xTickLabels,
-  yTickLabels,
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   yScale,
@@ -116,6 +115,8 @@ export const CartesianAxis = <
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
+  console.log("CartesianAxis/yTicksNormalized: ");
+  console.log(yTicksNormalized);
 
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
