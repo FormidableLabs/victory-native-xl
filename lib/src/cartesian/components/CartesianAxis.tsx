@@ -8,7 +8,7 @@ import {
   type Color,
 } from "@shopify/react-native-skia";
 import { StyleSheet } from "react-native";
-import { getFontGlyphWidth } from "lib/src/utils/getFontGlyphWidth";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type {
   ValueOf,
   NumericalFields,
