@@ -64,5 +64,20 @@ describe("transformInputData", () => {
     expect(y.y.i).toEqual([7, 5, 3]);
   });
 
+  it("should use domain if provided", () => {
+    const { xScale, yScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      domain: { x: [0, 2.5], y: [0, 1.5] },
+    });
+
+    expect(xScale(0)).toEqual(0);
+    expect(xScale(2.5)).toEqual(500);
+    expect(yScale(0)).toEqual(300);
+    expect(yScale(1.5)).toEqual(0);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });
