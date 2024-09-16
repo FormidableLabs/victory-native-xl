@@ -54,9 +54,8 @@ export const transformInputData = <
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
-  xTickLabelsNormalized;
 } => {
-  const xTickLabelsNormalized: axisOptions?.xTickLabelsNormalized;
+  const xTickLabels = axisOptions?.xTickLabels;
 
   const data = [..._data];
   const tickValues = axisOptions?.tickValues;
