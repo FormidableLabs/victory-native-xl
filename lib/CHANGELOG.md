@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.3.0
+
+### Minor Changes
+
+- Added pie chart labels ([#362](https://github.com/FormidableLabs/victory-native-xl/pull/362))
+
 ## 41.2.0
 
 ### Minor Changes
