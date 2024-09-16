@@ -160,7 +160,13 @@ export const useBuildChartAxis = <
       ...xAxis,
     };
     const yAxisWithDefaults: YAxisPropsWithDefaults<RawData, YK>[] = yAxis
-      ? yAxis.map((axis) => ({ ...YAxisDefaults, ...axis }))
+      ? yAxis.length === 1
+        ? yAxis.map((axis) => ({
+            ...YAxisDefaults,
+            yKeys: axis.yKeys ?? yKeys,
+            ...axis,
+          }))
+        : yAxis.map((axis) => ({ ...YAxisDefaults, ...axis }))
       : [{ ...YAxisDefaults, yKeys }];
     const frameWithDefaults = frame
       ? { ...FrameDefaults, frame }

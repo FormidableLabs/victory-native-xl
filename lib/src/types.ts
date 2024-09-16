@@ -198,7 +198,7 @@ export type YAxisInputProps<
   lineWidth?: number;
   tickCount?: number;
   tickValues?: number[];
-  yKeys: YK[];
+  yKeys?: YK[];
 };
 
 export type YAxisPropsWithDefaults<
