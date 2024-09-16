@@ -80,6 +80,7 @@ export const transformInputData = <
   const tickDomainsY = getDomainFromTicks(yTickValues);
 
   console.log(`xTickDomain: ${xTickValues}`);
+  console.log(`tickDomainsX: ${tickDomainsX}`);
 
   const isNumericalData = data.every(
     (datum) => typeof datum[xKey as keyof RawData] === "number",

@@ -137,13 +137,6 @@ export function CartesianChart<
       bottom: yScale(yScale.domain().at(-1) || 0),
     };
 
-    //at this point, ticks have been normalized but not formatted.
-    //if our numticks matches our num x labels, no downsample occurs
-    //e.g. we've got midnight submitted on going out just as we had going in
-    console.log("CartesianChart return value for xTicksNormalized you fucker");
-    console.log(xTicksNormalized);
-    console.log("---xticks normalized---");
-
     return {
       xTicksNormalized,
       yTicksNormalized,

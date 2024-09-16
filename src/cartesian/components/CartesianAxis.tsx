@@ -31,6 +31,7 @@ export const CartesianAxis = <
   lineColor = "hsla(0, 0%, 0%, 0.25)",
   lineWidth = StyleSheet.hairlineWidth,
   labelColor = "#000000",
+  axisLabels = { x: [], y: [] },
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   yScale,
@@ -166,30 +167,21 @@ export const CartesianAxis = <
     );
   });
 
+  //we can keep formatXLabel the same, passing into chart, but we
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
-    //    KD here just forcing this for now.
-    //const val = tick;
-    console.log(`building an xNode in cartesian axis with val`);
-    console.log(val);
     const contentX = formatXLabel(val as never);
     console.log(`content of node with formatted text value:`);
     console.log(contentX);
-    console.log(`typeof node text value: ${typeof contentX} `);
     const labelWidth =
       font
         ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
         .reduce((sum, value) => sum + value, 0) ?? 0;
 
-    console.log(`labelwidth in axis : ${labelWidth}`);
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     //even if we force this to be true, no labels perceptible.
     const canFitLabelContent =
       yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
-
-    console.log(`can we fit label content? ${canFitLabelContent}`);
-    console.log(`do we have our font? ${font != null}`);
-    console.log(`do we have a label width calculated? ${labelWidth}`);
 
     const labelY = (() => {
       // bottom, outset
@@ -282,6 +274,7 @@ export const CartesianAxisDefaultProps = {
   labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+  axisLabels: { x: [], y: [] },
   labelColor: "#000000",
   ix: [],
 } satisfies Partial<AxisProps<never, never, never>>;
