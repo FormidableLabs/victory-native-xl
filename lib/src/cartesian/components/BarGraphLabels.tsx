@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
-import { getFontGlyphWidth } from "lib/src/utils/getFontGlyphWidth";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type { ChartBounds, PointsArray } from "../../types";
 
 export type BarLabelConfig = {
