@@ -31,7 +31,7 @@ const PieLabel = ({
 
   const RADIAN = Math.PI / 180;
 
-  // Offset from the slice radius to help position the lable
+  // Offset from the slice radius to help position the label
   const radius = slice.radius * radiusOffset;
 
   // Middle angle of the slice

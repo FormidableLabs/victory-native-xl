@@ -1,9 +1,4 @@
-import {
-  Group,
-  RoundedRect,
-  Text,
-  type SkFont,
-} from "@shopify/react-native-skia";
+import { Group, Text, type SkFont } from "@shopify/react-native-skia";
 
 import React from "react";
 import type { PieSliceData } from "victory-native";
@@ -24,12 +19,13 @@ export const PieChartCustomLabel = ({
       ?.getGlyphWidths(font.getGlyphIDs(text))
       .reduce((sum, value) => sum + value, 0) ?? 0;
 
-  const isGood = slice.value > 130;
+  const isGoodUnits = slice.value > 130;
   const label = slice.label;
   const value = `${slice.value} UNITS`;
+  const centerLabel = (font?.getSize() ?? 0) / 2;
 
   return (
-    <Group transform={[{ translateY: -(font?.getSize() ?? 0) }]}>
+    <Group transform={[{ translateY: -centerLabel }]}>
       <Text
         x={x - getLabelWidth(label) / 2}
         y={y}
@@ -38,20 +34,12 @@ export const PieChartCustomLabel = ({
         color={"white"}
       />
       <Group>
-        <RoundedRect
-          color={"balck"}
-          height={fontSize * 2}
-          width={getLabelWidth(value) + 10}
-          x={x - (getLabelWidth(value) + 10) / 2}
-          y={y + fontSize / 4}
-          r={5}
-        />
         <Text
           x={x - getLabelWidth(value) / 2}
-          y={y + fontSize + 5}
+          y={y + fontSize}
           text={value}
           font={font}
-          color={isGood ? "limegreen" : "red"}
+          color={isGoodUnits ? "limegreen" : "red"}
         />
       </Group>
     </Group>
