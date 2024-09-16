@@ -99,7 +99,7 @@ export type AxisProps<
   YK extends keyof NumericalFields<RawData>,
 > = {
   xTicksNormalized: number[];
-  xTickLabels: string[];
+  xTickLabelsNormalized: string[];
   yTicksNormalized: number[];
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;

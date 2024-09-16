@@ -70,9 +70,6 @@ export function CartesianChart<
   onChartBoundsChange,
   gestureLongPressDelay = 100,
 }: CartesianChartProps<RawData, XK, YK>) {
-  console.log(`victory-native / CartesianChart args - xkey ${xKey}`);
-  //console.log(` victory-native / CartesianChart args - ykeys ${JSON.stringify(yKeys)}`)
-  //console.log(`victory-native / CartesianChart args - axis options ${JSON.stringify(axisOptions)}`)
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
@@ -142,6 +139,7 @@ export function CartesianChart<
     return {
       yTicksNormalized,
       xTicksNormalized,
+      xTickLabelsNormalized,
       tData,
       xScale,
       yScale,

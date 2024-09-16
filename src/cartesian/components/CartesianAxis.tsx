@@ -115,8 +115,6 @@ export const CartesianAxis = <
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
-  console.log("CartesianAxis/yTicksNormalized: ");
-  console.log(yTicksNormalized);
 
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
@@ -169,19 +167,13 @@ export const CartesianAxis = <
     );
   });
 
-  let xAxisNodes = [];
+  let xAxisNodes: any[] = [];
   //we can keep formatXLabel the same, passing into chart, but we
-  console.log("CartesianAxis / xticklabels");
-  console.log(xTickLabels);
-  if (xTickLabels) {
+  if (xTickLabelsNormalized) {
     xAxisNodes = xTicksNormalized.map((tick, i) => {
       const val = isNumericalData ? tick : ix[tick];
-      const contentX = xTickLabels[i];
-      console.log(`content of node with formatted text value:`);
-      console.log(contentX);
+      const contentX = formatXLabel(xTickLabelsNormalized[i] as any);
 
-      console.log(`content of node with formatted text value:`);
-      console.log(contentX);
       const labelWidth =
         font
           ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
@@ -230,9 +222,9 @@ export const CartesianAxis = <
       );
     });
   } else {
-    const xAxisNodes = xTicksNormalized.map((tick) => {
+    const xAxisNodes = xTicksNormalized.map((tick, i) => {
       const val = isNumericalData ? tick : ix[tick];
-      const contentX = formatXLabel(val as never);
+      let contentX = formatXLabel(val as never);
 
       const labelWidth =
         font
@@ -241,6 +233,7 @@ export const CartesianAxis = <
 
       const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
       //even if we force this to be true, no labels perceptible.
+      //
       const canFitLabelContent =
         yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
 
@@ -311,8 +304,6 @@ export const CartesianAxis = <
     return val;
   }
 
-  console.log("xticks > 0:");
-  console.log(xTicks > 0);
   return (
     <>
       {xTicks > 0 ? xAxisNodes : null}
@@ -336,7 +327,6 @@ export const CartesianAxisDefaultProps = {
   labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
-  axisLabels: { x: null, y: null },
   labelColor: "#000000",
   ix: [],
 } satisfies Partial<AxisProps<never, never, never>>;

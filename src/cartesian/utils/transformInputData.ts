@@ -59,36 +59,31 @@ export const transformInputData = <
   yTicksNormalized;
 } => {
   const data = [..._data];
-  const tickValues = axisOptions?.tickValues;
   const tickCount = axisOptions?.tickCount ?? DEFAULT_TICK_COUNT;
+  const tickValues = axisOptions?.tickValues;
+  const tickLabels = axisOptions?.tickLabels;
 
   const xTickValues =
     tickValues && typeof tickValues === "object" && "x" in tickValues
       ? tickValues.x
       : tickValues;
   const xTickLabels =
-    tickValues && typeof tickValues === "object" && "x" in tickValues
-      ? tickValues.x
-      : tickValues;
-  const yTickLabels =
-    tickValues && typeof tickValues === "object" && "y" in tickValues
-      ? tickValues.x
-      : undefined;
+    tickLabels && typeof tickValues === "object" && "x" in tickLabels
+      ? tickLabels.x
+      : tickLabels;
   const yTickValues =
     tickValues && typeof tickValues === "object" && "y" in tickValues
       ? tickValues.y
-      : undefined;
+      : tickValues;
+  const yTickLabels =
+    tickLabels && typeof tickLabels === "object" && "y" in tickLabels
+      ? tickLabels.y
+      : tickValues;
   const xTicks = typeof tickCount === "number" ? tickCount : tickCount.x;
   const yTicks = typeof tickCount === "number" ? tickCount : tickCount.y;
 
-  console.log(`xTickValues prior to getDomain:: ${xTickValues}`);
-  console.log(`yTickValues prior to getDomain: ${yTickValues}`);
-
   const tickDomainsX = getDomainFromTicks(xTickValues);
   const tickDomainsY = getDomainFromTicks(yTickValues);
-
-  console.log(`xTickDomain: ${xTickValues}`);
-  console.log(`tickDomainsX: ${tickDomainsX}`);
 
   const isNumericalData = data.every(
     (datum) => typeof datum[xKey as keyof RawData] === "number",
@@ -206,8 +201,6 @@ export const transformInputData = <
     ? downsampleTicks(yTickValues, yTicks)
     : yScale.ticks(yTicks);
 
-  console.log("transformIputData/yTicksNormalized ");
-  console.log(yTicksNormalized);
   // Calculate all yTicks we're displaying, so we can properly compensate for it in our x-scale
   const maxYLabel = Math.max(
     ...yTicksNormalized.map(
@@ -289,8 +282,6 @@ export const transformInputData = <
     : [];
 
   const ox = ixNum.map((x) => xScale(x)!);
-  console.log("returning normalized yticks from tarnsform input data:");
-  console.log(yTicksNormalized);
 
   return {
     ix,
