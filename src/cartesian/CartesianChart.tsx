@@ -70,8 +70,9 @@ export function CartesianChart<
   onChartBoundsChange,
   gestureLongPressDelay = 100,
 }: CartesianChartProps<RawData, XK, YK>) {
-console.log(`victory-native - xkey ${xKey}`)
-console.log(`victory-native - ykeys ${JSON.stringify(yKeys)}`)
+  console.log(`victory-native / CartesianChart args - xkey ${xKey}`);
+  //console.log(` victory-native / CartesianChart args - ykeys ${JSON.stringify(yKeys)}`)
+  //console.log(`victory-native / CartesianChart args - axis options ${JSON.stringify(axisOptions)}`)
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
@@ -135,8 +136,13 @@ console.log(`victory-native - ykeys ${JSON.stringify(yKeys)}`)
       top: yScale(yScale.domain().at(0) || 0),
       bottom: yScale(yScale.domain().at(-1) || 0),
     };
-    console.log('xTicksNormalized')
-    console.log(xTicksNormalized)
+
+    //at this point, ticks have been normalized but not formatted.
+    //if our numticks matches our num x labels, no downsample occurs
+    //e.g. we've got midnight submitted on going out just as we had going in
+    console.log("CartesianChart return value for xTicksNormalized you fucker");
+    console.log(xTicksNormalized);
+    console.log("---xticks normalized---");
 
     return {
       xTicksNormalized,

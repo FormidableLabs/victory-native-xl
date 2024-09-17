@@ -167,9 +167,9 @@ export const CartesianAxis = <
   });
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
-    //    const val = isNumericalData ? tick : ix[tick];
+    const val = isNumericalData ? tick : ix[tick];
     //    KD here just forcing this for now.
-    const val = tick;
+    //const val = tick;
     console.log(`building an xNode in cartesian axis with val`);
     console.log(val);
     const contentX = formatXLabel(val as never);
@@ -189,7 +189,7 @@ export const CartesianAxis = <
 
     console.log(`can we fit label content? ${canFitLabelContent}`);
     console.log(`do we have our font? ${font != null}`);
-    console.log(`do we have a label weidth calculated? ${labelWidth}`);
+    console.log(`do we have a label width calculated? ${labelWidth}`);
 
     const labelY = (() => {
       // bottom, outset
@@ -229,6 +229,7 @@ export const CartesianAxis = <
     );
   });
 
+  //we do have an appropriate yScale with a positive non-zero range for simulated data
   const boundingFrame = React.useMemo(() => {
     const framePath = Skia.Path.Make();
 
