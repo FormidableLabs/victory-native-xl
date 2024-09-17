@@ -75,10 +75,6 @@ export const transformInputData = <
     tickValues && typeof tickValues === "object" && "y" in tickValues
       ? tickValues.y
       : tickValues;
-  const yTickLabels =
-    tickLabels && typeof tickLabels === "object" && "y" in tickLabels
-      ? tickLabels.y
-      : tickLabels;
   const xTicks = typeof tickCount === "number" ? tickCount : tickCount.x;
   const yTicks = typeof tickCount === "number" ? tickCount : tickCount.y;
 
