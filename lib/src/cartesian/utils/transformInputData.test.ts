@@ -4,7 +4,7 @@ import type {
   ValueOf,
   XAxisPropsWithDefaults,
   YAxisPropsWithDefaults,
-} from "lib/src/types";
+} from "../../types";
 import { transformInputData } from "./transformInputData";
 
 const DATA = [

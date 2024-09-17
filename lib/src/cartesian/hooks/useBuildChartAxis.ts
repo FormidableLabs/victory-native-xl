@@ -12,7 +12,7 @@ import type {
   XAxisPropsWithDefaults,
   YAxisInputProps,
   YAxisPropsWithDefaults,
-} from "lib/src/types";
+} from "../../types";
 import { CartesianAxisDefaultProps } from "../components/CartesianAxis";
 import { XAxisDefaults } from "../components/XAxis";
 import { YAxisDefaults } from "../components/YAxis";

@@ -7,7 +7,7 @@ import type {
   ValueOf,
   YAxisProps,
   YAxisPropsWithDefaults,
-} from "lib/src/types";
+} from "../../types";
 
 export const YAxis = <
   RawData extends Record<string, unknown>,

@@ -1,14 +1,14 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Line, Text, vec } from "@shopify/react-native-skia";
+import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
   InputDatum,
   InputFields,
   ValueOf,
   XAxisProps,
   XAxisPropsWithDefaults,
-} from "lib/src/types";
-import { DEFAULT_TICK_COUNT, downsampleTicks } from "lib/src/utils/tickHelpers";
+} from "../../types";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
