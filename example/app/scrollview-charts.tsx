@@ -19,6 +19,7 @@ const LineChart = () => {
     <CartesianChart
       data={DATA}
       xKey="day"
+      padding={10}
       yKeys={["highTmp"]}
       axisOptions={{
         font,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     },
   },
   optionsScrollView: {
-    padding: 32,
+    padding: 10,
     backgroundColor: appColors.cardBackground.light,
     $dark: {
       backgroundColor: appColors.cardBackground.dark,
