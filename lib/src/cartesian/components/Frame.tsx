@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Path, Skia } from "@shopify/react-native-skia";
-import type { FrameProps } from "lib/src/types";
+import type { FrameProps } from "../../types";
 
 export const Frame = ({
   xScale,
