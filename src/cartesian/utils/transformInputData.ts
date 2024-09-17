@@ -278,7 +278,7 @@ export const transformInputData = <
     : xScale.ticks(xTicks);
 
   const xTickLabelsNormalized = xTickLabels
-    ? (downsampleTicks(xTickLabels, xTicks) as string[])
+    ? downsampleTicks(xTickLabels as string[], xTicks)
     : [];
 
   const ox = ixNum.map((x) => xScale(x)!);
