@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type { ChartBounds, PointsArray } from "../../types";
 
 export type BarLabelConfig = {
@@ -29,10 +30,7 @@ export const BarGraphLabels = ({
   // Loop over the data points and position each label
   return points.map(({ x, y = 0, yValue }) => {
     const yText = yValue?.toString() ?? "";
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(yText))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
+    const labelWidth = getFontGlyphWidth(yText, font);
 
     let xOffset;
     let yOffset;
