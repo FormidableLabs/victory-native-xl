@@ -5,6 +5,7 @@ import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { CartesianChart, Line, Bar, Area } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
+import { InputSlider } from "../components/InputSlider";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 const randomNumber2 = () => Math.floor(Math.random() * (50 - 25 + 1)) + 10000;
@@ -36,6 +37,9 @@ export default function MultipleYAxesPage() {
   const font = useFont(inter, 12);
   const [data] = useState(DATA());
   const [yDomainData] = useState(Y_DOMAIN_EXAMPLE_DATA());
+  const [priceYDomain, setPriceYDomain] = useState<[number, number]>([
+    100, 200,
+  ]);
 
   const red = "#a04d4d";
   const blue = "#1e1e59";
@@ -198,6 +202,7 @@ export default function MultipleYAxesPage() {
                   return `$${value.toFixed(0)}`;
                 },
                 axisSide: "left",
+                domain: priceYDomain,
               },
               {
                 yKeys: ["insideTemp", "outsideTemp"],
@@ -247,6 +252,24 @@ export default function MultipleYAxesPage() {
             )}
           </CartesianChart>
         </View>
+        <View style={styles.sliders}>
+          <InputSlider
+            label="Price domain y lower bound"
+            maxValue={200}
+            minValue={0}
+            step={10}
+            value={priceYDomain[0]}
+            onChange={(val) => setPriceYDomain((curr) => [val, curr[1]])}
+          />
+          <InputSlider
+            label="Price domain y upper bound"
+            maxValue={300}
+            minValue={100}
+            step={10}
+            value={priceYDomain[1]}
+            onChange={(val) => setPriceYDomain((curr) => [curr[0], val])}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -276,5 +299,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     alignItems: "flex-start",
     justifyContent: "flex-start",
+  },
+  sliders: {
+    paddingHorizontal: 10,
+    marginTop: -40,
   },
 });
