@@ -254,7 +254,7 @@ export default function MultipleYAxesPage() {
         </View>
         <View style={styles.sliders}>
           <InputSlider
-            label="Price domain y lower bound"
+            label="Price (red line) domain y lower bound"
             maxValue={200}
             minValue={0}
             step={10}
@@ -262,7 +262,7 @@ export default function MultipleYAxesPage() {
             onChange={(val) => setPriceYDomain((curr) => [val, curr[1]])}
           />
           <InputSlider
-            label="Price domain y upper bound"
+            label="Price (red line) domain y upper bound"
             maxValue={300}
             minValue={100}
             step={10}
