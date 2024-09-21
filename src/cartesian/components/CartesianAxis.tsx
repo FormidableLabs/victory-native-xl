@@ -23,6 +23,7 @@ export const CartesianAxis = <
   YK extends keyof NumericalFields<RawData>,
 >({
   tickCount = DEFAULT_TICK_COUNT,
+  isYAxisFloating,
   xTicksNormalized,
   xTickLabelsNormalized,
   yTicksNormalized,
@@ -290,7 +291,18 @@ export const CartesianAxis = <
     return framePath;
   }, [x1, x2, xScale, y1, y2, yScale]);
 
-  return (
+  return !isYAxisFloating ? (
+    <>
+      {xTicks > 0 ? xAxisNodes : null}
+      {yTicks > 0 ? yAxisNodes : null}
+      <Path
+        path={boundingFrame}
+        strokeWidth={gridFrameLineWidth}
+        style="stroke"
+        color={gridFrameLineColor}
+      />
+    </>
+  ) : (
     <>
       {xTicks > 0 ? xAxisNodes : null}
       {yTicks > 0 ? yAxisNodes : null}
@@ -315,4 +327,5 @@ export const CartesianAxisDefaultProps = {
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   ix: [],
+  isYAxisFloating: false,
 } satisfies Partial<AxisProps<never, never, never>>;

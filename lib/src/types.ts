@@ -118,5 +118,6 @@ export type AxisProps<
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
   isNumericalData?: boolean;
+  isYAxisFloating?: boolean;
   ix?: InputFields<RawData>[XK][];
 };

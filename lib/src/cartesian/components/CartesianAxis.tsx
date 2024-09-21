@@ -7,7 +7,7 @@ import {
   vec,
   type Color,
 } from "@shopify/react-native-skia";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type {
   ValueOf,
@@ -39,6 +39,7 @@ export const CartesianAxis = <
   font,
   isNumericalData = false,
   ix = [],
+  isYAxisFloating = false,
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
     return {
@@ -224,18 +225,33 @@ export const CartesianAxis = <
     return framePath;
   }, [x1, x2, xScale, y1, y2, yScale]);
 
-  return (
-    <>
-      {xTicks > 0 ? xAxisNodes : null}
-      {yTicks > 0 ? yAxisNodes : null}
-      <Path
-        path={boundingFrame}
-        strokeWidth={gridFrameLineWidth}
-        style="stroke"
-        color={gridFrameLineColor}
-      />
-    </>
-  );
+  if (isYAxisFloating) {
+    return (
+      <View>
+        <View>{yTicks > 0 ? yAxisNodes : null}</View>
+        {xTicks > 0 ? xAxisNodes : null}
+        <Path
+          path={boundingFrame}
+          strokeWidth={gridFrameLineWidth}
+          style="stroke"
+          color={gridFrameLineColor}
+        />
+      </View>
+    );
+  } else {
+    return (
+      <>
+        {xTicks > 0 ? xAxisNodes : null}
+        {yTicks > 0 ? yAxisNodes : null}
+        <Path
+          path={boundingFrame}
+          strokeWidth={gridFrameLineWidth}
+          style="stroke"
+          color={gridFrameLineColor}
+        />
+      </>
+    );
+  }
 };
 
 export const CartesianAxisDefaultProps = {

@@ -98,6 +98,7 @@ export type AxisProps<
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 > = {
+  isYAxisFloating?: boolean;
   xTicksNormalized: number[];
   xTickLabelsNormalized: string[];
   yTicksNormalized: number[];
