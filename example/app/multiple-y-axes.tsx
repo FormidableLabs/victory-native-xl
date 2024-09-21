@@ -24,6 +24,9 @@ export default function MultipleYAxesPage() {
   const font = useFont(inter, 12);
   const [data] = useState(DATA());
 
+  const calmRed = "#a04d4d";
+  const calmBlue = "#1e1e59";
+
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
@@ -71,13 +74,13 @@ export default function MultipleYAxesPage() {
             {({ points, chartBounds }) => (
               <>
                 <Bar
-                  color={"blue"}
+                  color={calmBlue}
                   points={points.profit}
                   chartBounds={chartBounds}
                 />
                 <Line
                   points={points.sales}
-                  color={"red"}
+                  color={calmRed}
                   strokeWidth={3}
                   animate={{ type: "spring" }}
                 />
@@ -93,11 +96,11 @@ export default function MultipleYAxesPage() {
             yKeys={["negative", "anotherNegativeValue"]}
             xAxis={{
               font,
-              labelColor: "red",
+              labelColor: "#a04d4d",
               formatXLabel: (value) => {
                 return value.toFixed(0);
               },
-              lineColor: "red",
+              lineColor: calmRed,
             }}
             frame={{
               lineColor: "black",
@@ -107,41 +110,43 @@ export default function MultipleYAxesPage() {
               {
                 yKeys: ["negative"],
                 font,
-                labelColor: "blue",
+                labelColor: calmBlue,
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
-                lineColor: "blue",
+                lineColor: calmBlue,
               },
               {
                 yKeys: ["anotherNegativeValue"],
                 font,
-                labelColor: "red",
+                labelColor: calmRed,
                 formatYLabel: (value) => {
                   return value.toFixed(0);
                 },
                 axisSide: "right",
-                lineColor: "red",
+                lineColor: calmRed,
               },
             ]}
             data={data}
             domainPadding={10}
           >
-            {({ points, chartBounds }) => (
-              <>
-                <Bar
-                  points={points.negative}
-                  color={"red"}
-                  chartBounds={chartBounds}
-                  animate={{ type: "spring" }}
-                />
-                <Line
-                  color={"blue"}
-                  strokeWidth={3}
-                  points={points.anotherNegativeValue}
-                />
-              </>
-            )}
+            {({ points, chartBounds }) => {
+              return (
+                <>
+                  <Bar
+                    points={points.negative}
+                    color={calmRed}
+                    chartBounds={chartBounds}
+                    animate={{ type: "spring" }}
+                  />
+                  <Line
+                    color={calmBlue}
+                    strokeWidth={3}
+                    points={points.anotherNegativeValue}
+                  />
+                </>
+              );
+            }}
           </CartesianChart>
         </View>
       </ScrollView>
