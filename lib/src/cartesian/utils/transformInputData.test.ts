@@ -42,6 +42,7 @@ const axes = {
       formatYLabel: (label: ValueOf<InputDatum>) => String(label),
       labelColor: "#000000",
       yKeys: ["y", "z"],
+      domain: null,
     } satisfies YAxisPropsWithDefaults<(typeof DATA)[number], "y" | "z">,
   ],
 };
