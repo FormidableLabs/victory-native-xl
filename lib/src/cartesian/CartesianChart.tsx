@@ -16,9 +16,9 @@ import type {
   SidedNumber,
   TransformedData,
   ChartBounds,
-  FrameProps,
   YAxisInputProps,
   XAxisInputProps,
+  FrameInputProps,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
@@ -57,7 +57,7 @@ type CartesianChartProps<
   gestureLongPressDelay?: number;
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
-  frame?: Omit<FrameProps, "xScale" | "yScale">;
+  frame?: FrameInputProps;
 };
 
 export function CartesianChart<

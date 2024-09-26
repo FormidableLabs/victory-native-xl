@@ -221,11 +221,11 @@ export type YAxisProps<
   yKeys: YK[];
 };
 
-export type FramePropsExternal = {
+export type FrameInputProps = {
   lineWidth?: number;
   lineColor?: Color;
 };
-export type FramePropsWithDefaults = Required<FramePropsExternal>;
+export type FramePropsWithDefaults = Required<FrameInputProps>;
 export type FrameProps = FramePropsWithDefaults & {
   xScale: Scale;
   yScale: Scale;
