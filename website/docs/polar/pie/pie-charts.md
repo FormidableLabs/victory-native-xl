@@ -76,7 +76,7 @@ The `children` prop is a render function which maps through the data and whose s
 
 If you do not provide any children, the `Pie.Chart` will just render a simple `Pie.Slice />` for each slice.
 
-However, you can provide children in order to add things like `Pie.SliceAngularInsets` and `LinearGradients` amongst other things to each slice, or to wholly customize your own rendering.
+However, you can provide children in order to add things like `Pie.Label`, `Pie.SliceAngularInsets` and `LinearGradients` amongst other things to each slice, or to wholly customize your own rendering.
 
 **See the [Render Function Fields](#render-function-fields) section for an outline of all of the available fields on the render function argument.**
 
@@ -111,6 +111,9 @@ function MyChart() {
             <>
               {/* 👇 return customized slice here  */}
               <Pie.Slice>
+                {/* 👇 configure slice label within Pie.Slice
+                  <Pie.Label font={font} color={"white"} />
+                */}
                 <LinearGradient
                   start={vec(startX, startY)}
                   end={vec(endX, endY)}
@@ -201,4 +204,57 @@ type PieSliceData = {
 
 :::info
 Generally, you would not need to use the `slice` object directly, but it is available to you if you need to do something custom with each slice. Please refer to the example app repo for more information on how to use the `slice` object e.g the `LinearGradient` examples.
+
+### Pie Slice Labels
+
+The `<Pie.Slice />` accepts a `<Pie.Label />` child element that allows for slice label customization.
+
+The `<Pie.Label />` accepts render props, and a custom render function.
+
+`font?: SkFont | null` - Used for calculating the labels position and to be used with the Skia `<Text />` element.
+
+`radiusOffset?: number` - Used to move the slice label closer or further away from the pie chart center.
+
+`color?: Color` - Set the labels color.
+
+`text?: String` - Specify the text to use for the label. Defaults to `slice.label`.
+
+`children?: (position: LabelPosition) => ReactNode` - Render function to allow custom slice labels. The `<Pie.Label />` will do some calculations for you and pass the `position` based on `radiusOffset` you provide.
+
+```tsx
+...
+<>
+  <Pie.Slice>
+    {/* 👇 configure slice label with render props */}
+    <Pie.Label font={font} color={"white"} />
+    <LinearGradient
+      start={vec(startX, startY)}
+      end={vec(endX, endY)}
+      colors={[slice.color, `${slice.color}50`]}
+      positions={[0, 1]}
+    />
+  </Pie.Slice>
+  </>
+...
+```
+
+```tsx
+...
+<>
+  <Pie.Slice>
+    {/* 👇 configure custom slice label with render function */}
+    <Pie.Label font={font} radiusOffset={0.5}>
+      {(position) => <CustomSliceLabel font={font} position={position} />}
+    </Pie.Label>
+    <LinearGradient
+      start={vec(startX, startY)}
+      end={vec(endX, endY)}
+      colors={[slice.color, `${slice.color}50`]}
+      positions={[0, 1]}
+    />
+  </Pie.Slice>
+</>
+...
+```
+
 :::

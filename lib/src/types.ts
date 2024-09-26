@@ -70,6 +70,8 @@ export type CartesianChartRenderArg<
 
 export type Scale = ScaleLinear<number, number>;
 
+export type YAxisDomain = [number] | [number, number] | null;
+
 export type PointsArray = {
   x: number;
   xValue: InputFieldType;
@@ -93,6 +95,9 @@ export type ColorFields<T> = {
 
 export type StringKeyOf<T> = Extract<keyof T, string>;
 
+/**
+ * @deprecated This prop will eventually be replaced by the new, separate x/y/frame props below. For now it's being kept around for backwards compatibility sake.
+ */
 export type AxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -117,6 +122,113 @@ export type AxisProps<
   axisSide?: { x: XAxisSide; y: YAxisSide };
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
+  domain?: YAxisDomain;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
 };
+
+// The default prop options we pass in
+export type AxisPropWithDefaults<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = Omit<
+  Required<AxisProps<RawData, XK, YK>>,
+  | "xScale"
+  | "yScale"
+  | "yTicksNormalized"
+  | "xTicksNormalized"
+  | "font"
+  | "tickValues"
+  | "isNumericalData"
+>;
+// The optional remaining props afterwards
+export type OptionalAxisProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = {
+  tickValues?: number[] | { x: number[]; y: number[] };
+  font?: SkFont | null;
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  formatYLabel?: (label: RawData[YK]) => string;
+};
+
+export type XAxisInputProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+> = {
+  axisSide?: XAxisSide;
+  font?: SkFont | null;
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  labelColor?: string;
+  labelOffset?: number;
+  labelPosition?: AxisLabelPosition;
+  lineColor?: Color;
+  lineWidth?: number;
+  tickCount?: number;
+  tickValues?: number[];
+  yAxisSide?: YAxisSide;
+};
+
+export type XAxisPropsWithDefaults<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+> = Required<Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues">> &
+  Partial<Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues">>;
+
+export type XAxisProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+> = XAxisPropsWithDefaults<RawData, XK> & {
+  xScale: Scale;
+  yScale: Scale;
+  isNumericalData: boolean;
+  ix: InputFields<RawData>[XK][];
+};
+
+export type YAxisInputProps<
+  RawData extends Record<string, unknown>,
+  YK extends keyof NumericalFields<RawData>,
+> = {
+  axisSide?: YAxisSide;
+  font?: SkFont | null;
+  formatYLabel?: (label: RawData[YK]) => string;
+  labelColor?: string;
+  labelOffset?: number;
+  labelPosition?: AxisLabelPosition;
+  lineColor?: Color;
+  lineWidth?: number;
+  tickCount?: number;
+  tickValues?: number[];
+  yKeys?: YK[];
+  domain?: YAxisDomain;
+};
+
+export type YAxisPropsWithDefaults<
+  RawData extends Record<string, unknown>,
+  YK extends keyof NumericalFields<RawData>,
+> = Required<Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues">> &
+  Partial<Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues">>;
+
+export type YAxisProps<
+  RawData extends Record<string, unknown>,
+  YK extends keyof NumericalFields<RawData>,
+> = YAxisPropsWithDefaults<RawData, YK> & {
+  xScale: Scale;
+  yScale: Scale;
+  yTicksNormalized: number[];
+  yKeys: YK[];
+};
+
+export type FramePropsExternal = {
+  lineWidth?: number;
+  lineColor?: Color;
+};
+export type FramePropsWithDefaults = Required<FramePropsExternal>;
+export type FrameProps = FramePropsWithDefaults & {
+  xScale: Scale;
+  yScale: Scale;
+};
+
+export type NonEmptyArray<T> = [T, ...T[]];

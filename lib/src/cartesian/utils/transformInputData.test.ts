@@ -1,4 +1,10 @@
 import { describe, it, expect } from "vitest";
+import type {
+  InputDatum,
+  ValueOf,
+  XAxisPropsWithDefaults,
+  YAxisPropsWithDefaults,
+} from "../../types";
 import { transformInputData } from "./transformInputData";
 
 const DATA = [
@@ -13,6 +19,34 @@ const OUTPUT_WINDOW = {
   xMax: 500,
 };
 
+const axes = {
+  xAxis: {
+    lineColor: "hsla(0, 0%, 0%, 0.25)",
+    lineWidth: 0.5,
+    tickCount: 5,
+    labelOffset: 2,
+    axisSide: "bottom",
+    yAxisSide: "left",
+    labelPosition: "outset",
+    formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+    labelColor: "#000000",
+  } satisfies XAxisPropsWithDefaults<never, never>,
+  yAxes: [
+    {
+      lineColor: "hsla(0, 0%, 0%, 0.25)",
+      lineWidth: 0.5,
+      tickCount: 5,
+      labelOffset: 0,
+      axisSide: "left",
+      labelPosition: "outset",
+      formatYLabel: (label: ValueOf<InputDatum>) => String(label),
+      labelColor: "#000000",
+      yKeys: ["y", "z"],
+      domain: null,
+    } satisfies YAxisPropsWithDefaults<(typeof DATA)[number], "y" | "z">,
+  ],
+};
+
 describe("transformInputData", () => {
   it("transforms data into internal data structure based on x/y keys", () => {
     const { ix, ox, y } = transformInputData({
@@ -20,6 +54,8 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
     });
 
     expect(ix).toEqual([0, 1, 2]);
@@ -35,12 +71,16 @@ describe("transformInputData", () => {
   });
 
   it("should generate scales based on output window", () => {
-    const { xScale, yScale } = transformInputData({
+    const { xScale, yAxes } = transformInputData({
       data: DATA,
       xKey: "x",
       yKeys: ["y", "z"],
       outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
     });
+
+    const yScale = yAxes[0].yScale;
 
     expect(xScale(0)).toEqual(0);
     expect(xScale(2)).toEqual(500);
@@ -58,6 +98,8 @@ describe("transformInputData", () => {
       xKey: "x",
       yKeys: ["y"],
       outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
     });
 
     expect(ix).toEqual([0, 1, 2]);

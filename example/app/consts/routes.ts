@@ -90,6 +90,11 @@ export const ChartRoutes: {
     path: "/axis-configuration",
   },
   {
+    title: "Multiple Y Axes",
+    description: "This shows how to use multiple y axes in a single chart",
+    path: "/multiple-y-axes",
+  },
+  {
     title: "Custom Shaders",
     description:
       "This chart showcases using custom shaders from Skia, leveraging shader uniforms derived from Reanimated shared values.",

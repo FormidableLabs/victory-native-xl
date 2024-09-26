@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.4.0
+
+### Minor Changes
+
+- Add multiple y-axis support ([#352](https://github.com/FormidableLabs/victory-native-xl/pull/352))
+
+## 41.3.0
+
+### Minor Changes
+
+- Added pie chart labels ([#362](https://github.com/FormidableLabs/victory-native-xl/pull/362))
+
 ## 41.2.0
 
 ### Minor Changes

@@ -1,11 +1,7 @@
 {
   "name": "victory-native",
-<<<<<<< Updated upstream
-  "version": "41.2.0",
+  "version": "41.4.0",
   "private": false,
-=======
-  "version": "41.1.0",
->>>>>>> Stashed changes
   "license": "MIT",
   "repository": {
     "type": "git",
