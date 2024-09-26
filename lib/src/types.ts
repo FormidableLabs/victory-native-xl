@@ -70,6 +70,8 @@ export type CartesianChartRenderArg<
 
 export type Scale = ScaleLinear<number, number>;
 
+export type YAxisDomain = [number] | [number, number] | null;
+
 export type PointsArray = {
   x: number;
   xValue: InputFieldType;
@@ -120,6 +122,7 @@ export type AxisProps<
   axisSide?: { x: XAxisSide; y: YAxisSide };
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
+  domain?: YAxisDomain;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
 };
@@ -199,6 +202,7 @@ export type YAxisInputProps<
   tickCount?: number;
   tickValues?: number[];
   yKeys?: YK[];
+  domain?: YAxisDomain;
 };
 
 export type YAxisPropsWithDefaults<

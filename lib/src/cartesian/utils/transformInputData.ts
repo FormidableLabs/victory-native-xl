@@ -90,7 +90,9 @@ export const transformInputData = <
 
     const yTickValues = yAxis.tickValues;
     const yTicks = yAxis.tickCount;
-    const tickDomainsY = getDomainFromTicks(yAxis.tickValues);
+    const tickDomainsY = yAxis.domain
+      ? yAxis.domain
+      : getDomainFromTicks(yAxis.tickValues);
 
     const yKeysForAxis = yAxis.yKeys ?? yKeys;
     const yMin =

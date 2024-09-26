@@ -133,6 +133,7 @@ export const useBuildChartAxis = <
           : axisProp.lineColor) as Color,
         font: axisProp.font,
         yKeys: yKeys,
+        domain: axisProp.domain,
       };
     };
 

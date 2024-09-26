@@ -92,4 +92,5 @@ export const YAxisDefaults = {
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   yKeys: [],
+  domain: null,
 } satisfies YAxisPropsWithDefaults<never, never>;

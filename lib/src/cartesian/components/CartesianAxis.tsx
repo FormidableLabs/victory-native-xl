@@ -256,4 +256,5 @@ export const CartesianAxisDefaultProps = {
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   ix: [],
+  domain: null,
 } satisfies Partial<AxisProps<never, never, never>>;
