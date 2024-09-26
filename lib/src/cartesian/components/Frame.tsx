@@ -20,7 +20,6 @@ export const Frame = ({ xScale, yScale, lineColor, lineWidth }: FrameProps) => {
     );
     return framePath;
   }, [x1, x2, xScale, y1, y2, yScale]);
-  console.log(lineWidth);
 
   if (lineWidth <= 0) {
     return null;
