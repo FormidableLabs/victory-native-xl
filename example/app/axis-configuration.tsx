@@ -68,6 +68,8 @@ export default function AxisConfiguration(props: { segment: string }) {
       customYLabel,
       xAxisValues,
       yAxisValues,
+      xAxisTickValues,
+      yAxisTickValues,
     },
     dispatch,
   ] = React.useReducer(optionsReducer, {
@@ -88,16 +90,27 @@ export default function AxisConfiguration(props: { segment: string }) {
     },
   });
   const font = useFont(inter, fontSize);
-  const ticksX = useMemo(
-    () => parseTickValues(xAxisValues) ?? [0, 10],
-    [xAxisValues],
-  );
-  const ticksY = useMemo(
-    () => parseTickValues(yAxisValues) ?? [0, 10],
-    [yAxisValues],
-  );
+  const ticksX = useMemo(() => {
+    if (xAxisTickValues) {
+      const tickX = parseTickValues(xAxisTickValues);
+      return tickX && tickX.length ? tickX : [0, 10];
+    }
+    return parseTickValues(xAxisValues) ?? [0, 10];
+  }, [xAxisValues, xAxisTickValues]);
 
-  const data = useMemo(() => DATA(ticksX, ticksY), [ticksX, ticksY]);
+  const ticksY = useMemo(() => {
+    if (yAxisTickValues) {
+      const tickY = parseTickValues(yAxisTickValues);
+      return tickY && tickY.length ? tickY : [0, 10];
+    }
+    return parseTickValues(yAxisValues) ?? [0, 10];
+  }, [yAxisValues, yAxisTickValues]);
+
+  const data = useMemo(() => {
+    const xValues = parseTickValues(xAxisValues) ?? [0, 10];
+    const yValues = parseTickValues(yAxisValues) ?? [0, 10];
+    return DATA(xValues, yValues);
+  }, [xAxisValues, yAxisValues]);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -164,7 +177,7 @@ export default function AxisConfiguration(props: { segment: string }) {
         <InfoCard>{description}</InfoCard>
         <View style={{ flexDirection: "row" }}>
           <InputText
-            label="X Tick Values"
+            label="X Axis Values"
             placeholder="Comma separated"
             value={xAxisValues}
             onChangeText={(val) =>
@@ -177,12 +190,38 @@ export default function AxisConfiguration(props: { segment: string }) {
           {/** Spacer */}
           <View style={{ width: 10 }} />
           <InputText
-            label="Y Tick Values"
+            label="Y Axis Values"
             placeholder="Comma separated"
             value={yAxisValues}
             onChangeText={(val) =>
               dispatch({
                 type: "SET_Y_AXIS_VALUES",
+                payload: val,
+              })
+            }
+          />
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <InputText
+            label="X Tick Values"
+            placeholder="Comma separated"
+            value={xAxisTickValues}
+            onChangeText={(val) =>
+              dispatch({
+                type: "SET_X_AXIS_TICK_VALUES",
+                payload: val,
+              })
+            }
+          />
+          {/** Spacer */}
+          <View style={{ width: 10 }} />
+          <InputText
+            label="Y Tick Values"
+            placeholder="Comma separated"
+            value={yAxisTickValues}
+            onChangeText={(val) =>
+              dispatch({
+                type: "SET_Y_AXIS_TICK_VALUES",
                 payload: val,
               })
             }

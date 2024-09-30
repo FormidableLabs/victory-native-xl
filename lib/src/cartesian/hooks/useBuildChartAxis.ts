@@ -52,12 +52,11 @@ export const useBuildChartAxis = <
         typeof axisProp.tickCount === "number"
           ? axisProp.tickCount
           : axisProp.tickCount.x,
-      tickValues:
-        axisProp.tickValues &&
-        typeof axisProp.tickValues === "object" &&
-        "x" in axisProp.tickValues
-          ? axisProp.tickValues.x
-          : axisProp.tickValues,
+      tickValues: (axisProp.tickValues &&
+      typeof axisProp.tickValues === "object" &&
+      "x" in axisProp.tickValues
+        ? axisProp.tickValues.x
+        : axisProp.tickValues) as number[] | undefined,
       formatXLabel: axisProp.formatXLabel,
       labelPosition:
         typeof axisProp.labelPosition === "string"
@@ -95,12 +94,11 @@ export const useBuildChartAxis = <
       return {
         axisSide: axisProp.axisSide.y,
         formatYLabel: axisProp.formatYLabel,
-        tickValues:
-          axisProp.tickValues &&
-          typeof axisProp.tickValues === "object" &&
-          "y" in axisProp.tickValues
-            ? axisProp.tickValues.y
-            : axisProp.tickValues,
+        tickValues: (axisProp.tickValues &&
+        typeof axisProp.tickValues === "object" &&
+        "y" in axisProp.tickValues
+          ? axisProp.tickValues.y
+          : axisProp.tickValues) as number[] | undefined,
         tickCount:
           typeof axisProp.tickCount === "number"
             ? axisProp.tickCount

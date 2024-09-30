@@ -21,6 +21,8 @@ type State = {
   customYLabel: string | undefined;
   xAxisValues: string | undefined;
   yAxisValues: string | undefined;
+  xAxisTickValues: string | undefined;
+  yAxisTickValues: string | undefined;
 };
 
 type Action =
@@ -42,7 +44,9 @@ type Action =
   | { type: "SET_X_LABEL"; payload: string }
   | { type: "SET_Y_LABEL"; payload: string }
   | { type: "SET_X_AXIS_VALUES"; payload: string | undefined }
-  | { type: "SET_Y_AXIS_VALUES"; payload: string | undefined };
+  | { type: "SET_Y_AXIS_VALUES"; payload: string | undefined }
+  | { type: "SET_X_AXIS_TICK_VALUES"; payload: string | undefined }
+  | { type: "SET_Y_AXIS_TICK_VALUES"; payload: string | undefined };
 
 export const optionsReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -84,7 +88,10 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, xAxisValues: action.payload };
     case "SET_Y_AXIS_VALUES":
       return { ...state, yAxisValues: action.payload };
-
+    case "SET_X_AXIS_TICK_VALUES":
+      return { ...state, xAxisTickValues: action.payload };
+    case "SET_Y_AXIS_TICK_VALUES":
+      return { ...state, yAxisTickValues: action.payload };
     default:
       throw new Error(`Unhandled action type`);
   }
@@ -110,4 +117,6 @@ export const optionsInitialState: State = {
   customYLabel: undefined,
   xAxisValues: undefined,
   yAxisValues: undefined,
+  xAxisTickValues: undefined,
+  yAxisTickValues: undefined,
 };

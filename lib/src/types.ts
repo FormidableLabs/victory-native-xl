@@ -114,7 +114,7 @@ export type AxisProps<
     | { grid: number | { x: number; y: number }; frame: number };
   labelColor?: string | { x: string; y: string };
   tickCount?: number | { x: number; y: number };
-  tickValues?: number[] | { x: number[]; y: number[] };
+  tickValues?: number[] | { x?: number[]; y?: number[] };
   labelOffset?: number | { x: number; y: number };
   labelPosition?:
     | AxisLabelPosition
@@ -148,7 +148,7 @@ export type OptionalAxisProps<
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 > = {
-  tickValues?: number[] | { x: number[]; y: number[] };
+  tickValues?: number[] | { x?: number[]; y?: number[] };
   font?: SkFont | null;
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
