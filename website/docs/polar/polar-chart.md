@@ -20,7 +20,7 @@ The example below shows the most basic use of the `PolarChart`.
 
 ```tsx
 import { View } from "react-native";
-import { Pie } from "victory-native";
+import { Pie, PolarChart } from "victory-native";
 
 function MyChart() {
   return (
