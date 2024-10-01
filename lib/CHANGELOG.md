@@ -1,5 +1,15 @@
 # victory-native
 
+## 41.5.0
+
+### Minor Changes
+
+- Added domain property for multiple y axes ([#375](https://github.com/FormidableLabs/victory-native-xl/pull/375))
+
+### Patch Changes
+
+- Fix frame prop ([#379](https://github.com/FormidableLabs/victory-native-xl/pull/379))
+
 ## 41.4.0
 
 ### Minor Changes

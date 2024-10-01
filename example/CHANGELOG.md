@@ -1,5 +1,11 @@
 # example
 
+## 1.2.0
+
+### Minor Changes
+
+- Added domain property for multiple y axes ([#375](https://github.com/FormidableLabs/victory-native-xl/pull/375))
+
 ## 1.1.1
 
 ### Patch Changes
