@@ -47,15 +47,25 @@ export default function BarChartPage(props: { segment: string }) {
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
-            axisOptions={{
+            xAxis={{
               font,
               tickCount: 5,
+              labelColor: isDark ? appColors.text.dark : appColors.text.light,
+              lineWidth: 0,
               formatXLabel: (value) => {
                 const date = new Date(2023, value - 1);
                 return date.toLocaleString("default", { month: "short" });
               },
-              lineColor: isDark ? "#71717a" : "#d4d4d8",
-              labelColor: isDark ? appColors.text.dark : appColors.text.light,
+            }}
+            yAxis={[
+              {
+                yKeys: ["listenCount"],
+                font,
+                lineWidth: 0,
+              },
+            ]}
+            frame={{
+              lineWidth: 0,
             }}
             data={data}
           >

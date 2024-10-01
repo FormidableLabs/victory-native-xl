@@ -3,7 +3,7 @@ import type { Color } from "@shopify/react-native-skia";
 import type {
   AxisPropWithDefaults,
   AxisProps,
-  FrameProps,
+  FrameInputProps,
   FramePropsWithDefaults,
   InputFields,
   NumericalFields,
@@ -37,7 +37,7 @@ export const useBuildChartAxis = <
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
-  frame?: Omit<FrameProps, "xScale" | "yScale">;
+  frame?: FrameInputProps;
   yKeys: YK[];
 }) => {
   const normalizeAxisProps = React.useMemo(() => {
@@ -170,7 +170,7 @@ export const useBuildChartAxis = <
         : yAxis.map((axis) => ({ ...YAxisDefaults, ...axis }))
       : [{ ...YAxisDefaults, yKeys }];
     const frameWithDefaults = frame
-      ? { ...FrameDefaults, frame }
+      ? { ...FrameDefaults, ...frame }
       : FrameDefaults;
 
     return {
