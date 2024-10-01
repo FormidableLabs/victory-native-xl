@@ -1,4 +1,9 @@
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import {
+  DashPathEffect,
+  LinearGradient,
+  useFont,
+  vec,
+} from "@shopify/react-native-skia";
 import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
@@ -43,18 +48,15 @@ export default function DashedAxesPage(props: { segment: string }) {
             xAxis={{
               font,
               labelOffset: 4,
-              dashPathEffect: {
-                intervals: [4, 4],
-              },
+              linePathEffect: <DashPathEffect intervals={[4, 4]} />,
             }}
             yAxis={[
               {
                 labelOffset: 8,
                 yKeys: ["high"],
                 font,
-                dashPathEffect: {
-                  intervals: [4, 4],
-                },
+
+                linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },
             ]}
             onChartBoundsChange={({ left, right, top, bottom }) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { DashPathEffect, Line, Text, vec } from "@shopify/react-native-skia";
+import { Line, Text, vec } from "@shopify/react-native-skia";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
   InputDatum,
@@ -29,7 +29,7 @@ export const XAxis = <
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   ix = [],
   isNumericalData,
-  dashPathEffect,
+  linePathEffect,
 }: XAxisProps<RawData, XK>) => {
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
@@ -76,7 +76,7 @@ export const XAxis = <
             color={lineColor}
             strokeWidth={lineWidth}
           >
-            {dashPathEffect ? <DashPathEffect {...dashPathEffect} /> : null}
+            {linePathEffect ? linePathEffect : null}
           </Line>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (

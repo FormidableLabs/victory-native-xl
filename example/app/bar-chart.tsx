@@ -1,4 +1,5 @@
 import {
+  DashPathEffect,
   LinearGradient,
   useFont,
   vec,
@@ -56,30 +57,16 @@ export default function BarChartPage(props: { segment: string }) {
                 const date = new Date(2023, value - 1);
                 return date.toLocaleString("default", { month: "short" });
               },
+              linePathEffect: <DashPathEffect intervals={[4, 4]} />,
             }}
-            yAxis={[
-              {
-                yKeys: ["listenCount"],
-                font,
-                lineWidth: 0,
-              },
-            ]}
             frame={{
               lineWidth: 0,
             }}
-            xAxis={{
-              font,
-              dashPathEffect: {
-                intervals: [4, 4],
-              },
-            }}
             yAxis={[
               {
                 yKeys: ["listenCount"],
                 font,
-                dashPathEffect: {
-                  intervals: [4, 4],
-                },
+                linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },
             ]}
             data={data}

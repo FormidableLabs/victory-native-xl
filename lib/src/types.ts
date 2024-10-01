@@ -2,7 +2,7 @@ import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import {
   type Color,
-  type DashPathEffectProps,
+  type DashPathEffect,
   type SkFont,
 } from "@shopify/react-native-skia";
 
@@ -158,6 +158,9 @@ export type OptionalAxisProps<
   formatYLabel?: (label: RawData[YK]) => string;
 };
 
+type DashPathEffectProps = React.ComponentProps<typeof DashPathEffect>;
+type DashPathEffectComponent = React.ReactElement<DashPathEffectProps>;
+
 export type XAxisInputProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -173,17 +176,17 @@ export type XAxisInputProps<
   tickCount?: number;
   tickValues?: number[];
   yAxisSide?: YAxisSide;
-  dashPathEffect?: DashPathEffectProps;
+  linePathEffect?: DashPathEffectComponent;
 };
 
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
 > = Required<
-  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "dashPathEffect">
+  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
 > &
   Partial<
-    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "dashPathEffect">
+    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
   >;
 
 export type XAxisProps<
@@ -212,17 +215,17 @@ export type YAxisInputProps<
   tickValues?: number[];
   yKeys?: YK[];
   domain?: YAxisDomain;
-  dashPathEffect?: DashPathEffectProps;
+  linePathEffect?: DashPathEffectComponent;
 };
 
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
 > = Required<
-  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "dashPathEffect">
+  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
 > &
   Partial<
-    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "dashPathEffect">
+    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
   >;
 
 export type YAxisProps<
