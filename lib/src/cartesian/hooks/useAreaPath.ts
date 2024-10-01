@@ -22,12 +22,13 @@ export const useAreaPath = (
     const groups = connectMissingData
       ? [cleanPointsArray(points)]
       : groupPointsArray(points);
+
     const p = Skia.Path.Make();
 
     groups.forEach((group) => {
-      const svgPath = area().y0(y0)?.curve(CURVES[curveType])(
-        stitchDataArray(group),
-      );
+      const svgPath = area()
+        .y0(y0 - 100)
+        ?.curve(CURVES[curveType])(stitchDataArray(group));
       if (!svgPath) return;
 
       p.addPath(Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make());
