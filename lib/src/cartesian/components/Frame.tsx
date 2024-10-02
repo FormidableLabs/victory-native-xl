@@ -3,7 +3,13 @@ import { StyleSheet } from "react-native";
 import { Path, Skia } from "@shopify/react-native-skia";
 import type { FrameProps } from "../../types";
 
-export const Frame = ({ xScale, yScale, lineColor, lineWidth }: FrameProps) => {
+export const Frame = ({
+  xScale,
+  yScale,
+  lineColor,
+  lineWidth,
+  linePathEffect,
+}: FrameProps) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [y1 = 0, y2 = 0] = yScale.domain();
 
@@ -31,7 +37,9 @@ export const Frame = ({ xScale, yScale, lineColor, lineWidth }: FrameProps) => {
       strokeWidth={lineWidth}
       style="stroke"
       color={lineColor}
-    />
+    >
+      {linePathEffect ? linePathEffect : null}
+    </Path>
   );
 };
 

@@ -241,8 +241,11 @@ export type YAxisProps<
 export type FrameInputProps = {
   lineWidth?: number;
   lineColor?: Color;
+  linePathEffect?: DashPathEffectComponent;
 };
-export type FramePropsWithDefaults = Required<FrameInputProps>;
+export type FramePropsWithDefaults = Required<
+  Omit<FrameInputProps, "linePathEffect">
+> & { linePathEffect?: DashPathEffectComponent };
 export type FrameProps = FramePropsWithDefaults & {
   xScale: Scale;
   yScale: Scale;
