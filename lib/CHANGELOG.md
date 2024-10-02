@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.6.0
+
+### Minor Changes
+
+- Add dashed path effect option for X and Y axes ([#372](https://github.com/FormidableLabs/victory-native-xl/pull/372))
+
 ## 41.5.0
 
 ### Minor Changes
