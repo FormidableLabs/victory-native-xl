@@ -29,6 +29,7 @@ export const XAxis = <
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   ix = [],
   isNumericalData,
+  linePathEffect,
 }: XAxisProps<RawData, XK>) => {
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
@@ -74,7 +75,9 @@ export const XAxis = <
             p2={vec(xScale(tick), yScale(y1))}
             color={lineColor}
             strokeWidth={lineWidth}
-          />
+          >
+            {linePathEffect ? linePathEffect : null}
+          </Line>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
           <Text
@@ -85,6 +88,7 @@ export const XAxis = <
             x={labelX}
           />
         ) : null}
+        <></>
       </React.Fragment>
     );
   });

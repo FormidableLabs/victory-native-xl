@@ -118,6 +118,11 @@ export const ChartRoutes: {
       "This is mixture of Pie and Donut charts, showing off the different ways to customize the charts.",
     path: "/pie-and-donut-charts",
   },
+  {
+    title: "Dashed Axes",
+    description: "This is an Area chart with dashed X and Y axes.",
+    path: "/dashed-axes",
+  },
 ];
 
 if (__DEV__) {

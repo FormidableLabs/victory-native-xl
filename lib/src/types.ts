@@ -1,6 +1,10 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
-import { type Color, type SkFont } from "@shopify/react-native-skia";
+import {
+  type Color,
+  type DashPathEffect,
+  type SkFont,
+} from "@shopify/react-native-skia";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -154,6 +158,9 @@ export type OptionalAxisProps<
   formatYLabel?: (label: RawData[YK]) => string;
 };
 
+type DashPathEffectProps = React.ComponentProps<typeof DashPathEffect>;
+type DashPathEffectComponent = React.ReactElement<DashPathEffectProps>;
+
 export type XAxisInputProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -169,13 +176,18 @@ export type XAxisInputProps<
   tickCount?: number;
   tickValues?: number[];
   yAxisSide?: YAxisSide;
+  linePathEffect?: DashPathEffectComponent;
 };
 
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
-> = Required<Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues">> &
-  Partial<Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues">>;
+> = Required<
+  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+> &
+  Partial<
+    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+  >;
 
 export type XAxisProps<
   RawData extends Record<string, unknown>,
@@ -203,13 +215,18 @@ export type YAxisInputProps<
   tickValues?: number[];
   yKeys?: YK[];
   domain?: YAxisDomain;
+  linePathEffect?: DashPathEffectComponent;
 };
 
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
-> = Required<Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues">> &
-  Partial<Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues">>;
+> = Required<
+  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+> &
+  Partial<
+    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+  >;
 
 export type YAxisProps<
   RawData extends Record<string, unknown>,
@@ -224,8 +241,11 @@ export type YAxisProps<
 export type FrameInputProps = {
   lineWidth?: number;
   lineColor?: Color;
+  linePathEffect?: DashPathEffectComponent;
 };
-export type FramePropsWithDefaults = Required<FrameInputProps>;
+export type FramePropsWithDefaults = Required<
+  Omit<FrameInputProps, "linePathEffect">
+> & { linePathEffect?: DashPathEffectComponent };
 export type FrameProps = FramePropsWithDefaults & {
   xScale: Scale;
   yScale: Scale;
