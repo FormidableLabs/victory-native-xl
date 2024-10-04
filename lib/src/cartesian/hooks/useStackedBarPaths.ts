@@ -84,12 +84,12 @@ export const useStackedBarPaths = ({
 
   const paths = React.useMemo(() => {
     const bars: StackedBarPath[] = [];
+    const xToBottomTopIndexMap = getXToPointIndexMap(points);
 
     points.forEach((pointsArray, i) => {
-      const isTop = i === points.length - 1; // the top "row" of the stack of bars
-      const isBottom = i === 0; // the bottom "row" of the stack bars
-
       pointsArray.forEach((point, j) => {
+        const isBottom = xToBottomTopIndexMap.get(point.x)?.[0] === i;
+        const isTop = xToBottomTopIndexMap.get(point.x)?.[1] === i;
         const { yValue, x, y } = point;
         if (typeof y !== "number") return;
 
@@ -144,4 +144,27 @@ export const useStackedBarPaths = ({
   }, [barOptions, barWidth, barYPositionOffsetTracker, colors, points, yScale]);
 
   return paths;
+};
+
+/**
+ * Returns a map of x values to a two value array where the first number is the index of
+ * the bottom bar and the second is the index of the top bar.
+ */
+const getXToPointIndexMap = (
+  points: PointsArray[],
+): Map<number, [number, number]> => {
+  const xToIndexMap = new Map<number, [number, number]>();
+  points.forEach((pointsArray, i) => {
+    pointsArray.forEach(({ x, y, yValue }) => {
+      if (y !== null && y !== undefined && yValue !== 0) {
+        const current = xToIndexMap.get(x);
+        if (!current) {
+          xToIndexMap.set(x, [i, i]);
+        } else {
+          current[1] = i;
+        }
+      }
+    });
+  });
+  return xToIndexMap;
 };
