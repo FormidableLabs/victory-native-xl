@@ -10,7 +10,6 @@ import { stitchDataArray } from "../../utils/stitchDataArray";
 import type { PointsArray } from "../../types";
 import { CURVES, type CurveType } from "../utils/curves";
 import { groupPointsArray } from "../../utils/groupPointsArray";
-import { cleanPointsArray } from "../../utils/cleanPointsArray";
 
 // Utility to calculate cumulative offsets, subtracting each layer from the previous one
 const calculateOffsets = (
@@ -58,7 +57,6 @@ type UseStackedAreaPathArgs = {
   colors: Color[];
   y0: number;
   curveType?: CurveType;
-  connectMissingData?: boolean;
   areaOptions?: ({
     rowIndex,
     lowestY,
@@ -86,7 +84,6 @@ export const useStackedAreaPaths = ({
   colors,
   y0,
   curveType = "linear",
-  connectMissingData = false,
   areaOptions = () => ({}),
 }: UseStackedAreaPathArgs): StackedAreaPath[] => {
   const paths = React.useMemo(() => {
@@ -94,9 +91,7 @@ export const useStackedAreaPaths = ({
 
     return pointsArray.map((points, layerIndex) => {
       const path = Skia.Path.Make();
-      const groups = connectMissingData
-        ? [cleanPointsArray(points)]
-        : groupPointsArray(points);
+      const groups = groupPointsArray(points);
 
       let lowestPointOfLayer: number = y0;
       let highestPointOfLayer: number = 0;
@@ -147,7 +142,7 @@ export const useStackedAreaPaths = ({
         ...options,
       };
     });
-  }, [connectMissingData, pointsArray, y0, curveType, colors, areaOptions]);
+  }, [pointsArray, y0, curveType, colors, areaOptions]);
 
   return paths;
 };

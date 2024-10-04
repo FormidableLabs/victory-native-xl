@@ -34,7 +34,6 @@ export function StackedArea({
   y0,
   animate,
   curveType,
-  connectMissingData,
   colors = DEFAULT_COLORS,
   areaOptions,
 }: React.PropsWithChildren<StackedAreaProps>) {
@@ -43,7 +42,6 @@ export function StackedArea({
     colors,
     y0,
     curveType,
-    connectMissingData,
     areaOptions,
   });
 
