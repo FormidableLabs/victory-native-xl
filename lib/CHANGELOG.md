@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.6.1
+
+### Patch Changes
+
+- Fix stacked bar rounded corners for non-uniform datasets and add support for positive and negative values in the same column. ([#386](https://github.com/FormidableLabs/victory-native-xl/pull/386))
+
 ## 41.6.0
 
 ### Minor Changes
