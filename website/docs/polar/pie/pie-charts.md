@@ -70,6 +70,10 @@ A `number` which defines how many degrees of the chart should be drawn. The defa
 
 A `number` which defines the starting angle of the chart. Changing this prop will rotate the chart.
 
+### `size`
+
+A `number` which defines the size of the chart. This defaults to the canvas' width and height. This can be overriden with this prop (in case you want to position labels outside the chart, for example)
+
 ### `children`
 
 The `children` prop is a render function which maps through the data and whose sole argument is each individual `slice` of the pie, allowing you to customize each slice as needed. E.g. this slice will have all the data needed to render a `Pie.Slice />`.
