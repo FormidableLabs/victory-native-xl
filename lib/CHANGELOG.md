@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.6.2
+
+### Patch Changes
+
+- Add pie size prop ([#392](https://github.com/FormidableLabs/victory-native-xl/pull/392))
+
 ## 41.6.1
 
 ### Patch Changes
