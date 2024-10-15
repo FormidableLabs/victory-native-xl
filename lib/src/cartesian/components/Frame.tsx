@@ -85,7 +85,6 @@ export const Frame = ({
     return null;
   }
 
-  // return boundingFrame;
   return (
     <Group color={lineColor} style="stroke">
       {linePathEffect}
