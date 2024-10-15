@@ -12,6 +12,7 @@ type PieChartProps = {
   innerRadius?: number | string;
   circleSweepDegrees?: number;
   startAngle?: number;
+  size?: number;
 };
 
 export const PieChart = (props: PieChartProps) => {
@@ -20,6 +21,7 @@ export const PieChart = (props: PieChartProps) => {
     circleSweepDegrees = CIRCLE_SWEEP_DEGREES,
     startAngle: _startAngle = 0,
     children,
+    size,
   } = props;
   const {
     canvasSize,
@@ -35,12 +37,13 @@ export const PieChart = (props: PieChartProps) => {
     0,
   );
 
-  const { width, height } = canvasSize; // Get the dynamic canvas size
+  const width = size ?? canvasSize.width; // Get the dynamic canvas size
+  const height = size ?? canvasSize.height; // Get the dynamic canvas size
 
   // The size of the chart will need to be adjusted if the labels are positioned outside the chart.
   // ie we need to decrease the Pie Charts radius to account for the labels so the labels don't get cut off.
   const radius = Math.min(width, height) / 2; // Calculate the radius based on canvas size
-  const center = vec(width / 2, height / 2);
+  const center = vec(canvasSize.width / 2, canvasSize.height / 2);
 
   const data = React.useMemo(() => {
     let startAngle = _startAngle; // Initialize the start angle for the first slice
