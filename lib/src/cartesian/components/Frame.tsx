@@ -26,7 +26,7 @@ export const Frame = ({
         ),
       );
 
-      return <Path path={framePath} strokeWidth={lineWidth} />;
+      return <Path key="full-frame" path={framePath} strokeWidth={lineWidth} />;
     } else {
       const lines = [];
       const _lineWidth = {
@@ -40,6 +40,7 @@ export const Frame = ({
       if (_lineWidth.top > 0) {
         lines.push(
           <Line
+            key="frame-top"
             p1={vec(xScale(x1), yScale(y1))}
             p2={vec(xScale(x2), yScale(y1))}
             strokeWidth={lineWidth.top}
@@ -49,6 +50,7 @@ export const Frame = ({
       if (_lineWidth.right > 0) {
         lines.push(
           <Line
+            key="frame-right"
             p1={vec(xScale(x2), yScale(y1))}
             p2={vec(xScale(x2), yScale(y2))}
             strokeWidth={lineWidth.right}
@@ -58,6 +60,7 @@ export const Frame = ({
       if (_lineWidth.bottom > 0) {
         lines.push(
           <Line
+            key="frame-bottom"
             p1={vec(xScale(x2), yScale(y2))}
             p2={vec(xScale(x1), yScale(y2))}
             strokeWidth={lineWidth.bottom}
@@ -67,6 +70,7 @@ export const Frame = ({
       if (_lineWidth.left > 0) {
         lines.push(
           <Line
+            key="frame-left"
             p1={vec(xScale(x1), yScale(y2))}
             p2={vec(xScale(x1), yScale(y1))}
             strokeWidth={lineWidth.left}
