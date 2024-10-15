@@ -239,7 +239,7 @@ export type YAxisProps<
 };
 
 export type FrameInputProps = {
-  lineWidth?: number;
+  lineWidth?: SidedNumber;
   lineColor?: Color;
   linePathEffect?: DashPathEffectComponent;
 };

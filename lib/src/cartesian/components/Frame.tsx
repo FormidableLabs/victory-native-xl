@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Path, Skia } from "@shopify/react-native-skia";
+import { Group, Line, Path, Skia, vec } from "@shopify/react-native-skia";
 import type { FrameProps } from "../../types";
 
 export const Frame = ({
@@ -16,30 +16,77 @@ export const Frame = ({
   const boundingFrame = React.useMemo(() => {
     const framePath = Skia.Path.Make();
 
-    framePath.addRect(
-      Skia.XYWHRect(
-        xScale(x1),
-        yScale(y1),
-        xScale(x2) - xScale(x1),
-        yScale(y2) - yScale(y1),
-      ),
-    );
-    return framePath;
-  }, [x1, x2, xScale, y1, y2, yScale]);
+    if (typeof lineWidth === "number") {
+      framePath.addRect(
+        Skia.XYWHRect(
+          xScale(x1),
+          yScale(y1),
+          xScale(x2) - xScale(x1),
+          yScale(y2) - yScale(y1),
+        ),
+      );
 
-  if (lineWidth <= 0) {
+      return <Path path={framePath} strokeWidth={lineWidth} />;
+    } else {
+      const lines = [];
+      const _lineWidth = {
+        top: StyleSheet.hairlineWidth,
+        right: StyleSheet.hairlineWidth,
+        bottom: StyleSheet.hairlineWidth,
+        left: StyleSheet.hairlineWidth,
+        ...lineWidth,
+      };
+
+      if (_lineWidth.top > 0) {
+        lines.push(
+          <Line
+            p1={vec(xScale(x1), yScale(y1))}
+            p2={vec(xScale(x2), yScale(y1))}
+            strokeWidth={lineWidth.top}
+          />,
+        );
+      }
+      if (_lineWidth.right > 0) {
+        lines.push(
+          <Line
+            p1={vec(xScale(x2), yScale(y1))}
+            p2={vec(xScale(x2), yScale(y2))}
+            strokeWidth={lineWidth.right}
+          />,
+        );
+      }
+      if (_lineWidth.bottom > 0) {
+        lines.push(
+          <Line
+            p1={vec(xScale(x2), yScale(y2))}
+            p2={vec(xScale(x1), yScale(y2))}
+            strokeWidth={lineWidth.bottom}
+          />,
+        );
+      }
+      if (_lineWidth.left > 0) {
+        lines.push(
+          <Line
+            p1={vec(xScale(x1), yScale(y2))}
+            p2={vec(xScale(x1), yScale(y1))}
+            strokeWidth={lineWidth.left}
+          />,
+        );
+      }
+      return lines;
+    }
+  }, [x1, x2, xScale, y1, y2, yScale, lineWidth]);
+
+  if (typeof lineWidth === "number" && lineWidth <= 0) {
     return null;
   }
 
+  // return boundingFrame;
   return (
-    <Path
-      path={boundingFrame}
-      strokeWidth={lineWidth}
-      style="stroke"
-      color={lineColor}
-    >
-      {linePathEffect ? linePathEffect : null}
-    </Path>
+    <Group color={lineColor} style="stroke">
+      {linePathEffect}
+      {boundingFrame}
+    </Group>
   );
 };
 
