@@ -1,13 +1,29 @@
 import * as React from "react";
-import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect } from "@shopify/react-native-skia";
-import { useSharedValue } from "react-native-reanimated";
+import { type LayoutChangeEvent, Platform } from "react-native";
 import {
+  Canvas,
+  convertToAffineMatrix,
+  convertToColumnMajor,
+  Group,
+  type Matrix4,
+  rect,
+  type SkRect,
+} from "@shopify/react-native-skia";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import {
+  type ComposedGesture,
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
+  type GestureType,
   type TouchData,
 } from "react-native-gesture-handler";
+
+import { useEffect, useRef } from "react";
+import { ZoomTransform } from "d3-zoom";
 import type {
   AxisProps,
   CartesianChartRenderArg,
@@ -32,6 +48,18 @@ import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
+import {
+  type ChartTransformState,
+  identity4,
+} from "./hooks/useChartTransformState";
+import {
+  panTransformGesture,
+  pinchTransformGesture,
+} from "./utils/transformGestures";
+import {
+  CartesianTransformProvider,
+  useCartesianTransformContext,
+} from "./contexts/CartesianTransformContext";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -58,9 +86,24 @@ type CartesianChartProps<
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
+  transformState?: ChartTransformState;
 };
 
 export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>({ transformState, children, ...rest }: CartesianChartProps<RawData, XK, YK>) {
+  return (
+    <CartesianTransformProvider transformState={transformState}>
+      <CartesianChartContent {...{ ...rest, transformState }}>
+        {children}
+      </CartesianChartContent>
+    </CartesianTransformProvider>
+  );
+}
+
+function CartesianChartContent<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
@@ -80,6 +123,7 @@ export function CartesianChart<
   xAxis,
   yAxis,
   frame,
+  transformState,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -98,6 +142,14 @@ export function CartesianChart<
     yKeys,
     axisOptions,
   });
+  const transform = useCartesianTransformContext();
+  const zoom = useRef(
+    new ZoomTransform(transform.k, transform.tx, transform.ty),
+  );
+
+  useEffect(() => {
+    zoom.current = new ZoomTransform(transform.k, transform.tx, transform.ty);
+  }, [transform]);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -423,12 +475,13 @@ export function CartesianChart<
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
           if (!yAxis) return null;
+          const rescaled = zoom.current.rescaleY(yAxis.yScale);
           return (
             <YAxis
               key={index}
               {...axis}
-              xScale={xScale}
-              yScale={yAxis.yScale}
+              xScale={zoom.current.rescaleX(xScale)}
+              yScale={rescaled}
               yTicksNormalized={
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
                 index > 0
@@ -447,8 +500,8 @@ export function CartesianChart<
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
         {...normalizedAxisProps.xAxis}
-        xScale={xScale}
-        yScale={primaryYScale}
+        xScale={zoom.current.rescaleX(xScale)}
+        yScale={zoom.current.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
       />
@@ -471,19 +524,83 @@ export function CartesianChart<
       {FrameComponent}
       <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
         <Group clip={clipRect}>
-          {hasMeasuredLayoutSize && children(renderArg)}
+          <Group matrix={transformState?.transformMatrix}>
+            {hasMeasuredLayoutSize && children(renderArg)}
+          </Group>
         </Group>
       </CartesianChartProvider>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </Canvas>
   );
 
-  // Conditionally wrap the body in gesture handler based on activePressSharedValue
-  return chartPressState ? (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={panGesture}>{body}</GestureDetector>
+  let composed = Gesture.Race();
+  if (transformState) {
+    composed = Gesture.Race(
+      composed,
+      pinchTransformGesture(transformState),
+      panTransformGesture(transformState),
+    );
+  }
+  // if (chartPressState) {
+  //   composed = Gesture.Race(composed, panGesture);
+  // }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+      {body}
+      <GestureHandler
+        debug={true}
+        gesture={composed}
+        transformState={transformState}
+        dimensions={{ x: 0, y: 0, width: size.width, height: size.height }}
+      />
     </GestureHandlerRootView>
-  ) : (
-    body
   );
 }
+
+type GestureHandlerProps = {
+  gesture: ComposedGesture | GestureType;
+  dimensions: SkRect;
+  transformState?: ChartTransformState;
+  debug?: boolean;
+};
+const GestureHandler = ({
+  gesture,
+  dimensions,
+  transformState,
+  debug = false,
+}: GestureHandlerProps) => {
+  const { x, y, width, height } = dimensions;
+  const style = useAnimatedStyle(() => {
+    let m4: Matrix4 = identity4;
+    if (transformState?.matrix.value) {
+      m4 = convertToColumnMajor(transformState.matrix.value);
+    }
+    return {
+      position: "absolute",
+      backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
+      x,
+      y,
+      width,
+      height,
+      transform: [
+        { translateX: -width / 2 },
+        { translateY: -height / 2 },
+        {
+          matrix: m4
+            ? Platform.OS === "web"
+              ? convertToAffineMatrix(m4)
+              : (m4 as unknown as number[])
+            : [],
+        },
+        { translateX: width / 2 },
+        { translateY: height / 2 },
+      ],
+    };
+  });
+  return (
+    <GestureDetector gesture={gesture}>
+      <Animated.View style={style} />
+    </GestureDetector>
+  );
+};
