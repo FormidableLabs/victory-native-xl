@@ -76,6 +76,22 @@ The `children` prop is a render function whose sole argument is an object that e
 
 The `children` function will render its Skia elements inside of [a clipping group](https://shopify.github.io/react-native-skia/docs/group/#clipping-operations) that sit inside of the bounds of the charts axes, so that your charting elements do not overflow outside of your axes.
 
+### `panX`
+
+A number of units to pan the chart in the positive X direction.
+
+### `panY`
+
+A number of units to pan the chart in the positive Y direction.
+
+### `scaleX`
+
+A multiple by which to scale the chart in the X axis. A value of 1 is equivalent to no scaling. A value greater than one effectively "zooms iout" to the chart, while a value less than one "zooms in". A value of 0 is invalid and will be ingnored.
+
+### `scaleY`
+
+A multiple by which to scale the chart in the Y axis. A value of 1 is equivalent to no scaling. A value greater than one effectively "zooms out" to the chart, while a value less than one "zooms in". A value of 0 is invalid and will be ingnored.
+
 ### `padding`
 
 A `number` or an object of shape `{ left?: number; right?: number; top?: number; bottom?: number; }` that specifies that padding between the outer bounds of the Skia canvas and where the charting bounds will occur.
