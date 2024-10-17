@@ -52,6 +52,10 @@ export default function LineChartPage(props: { segment: string }) {
       yAxisLabelPosition,
       scatterRadius,
       colors,
+      panX,
+      panY,
+      scaleX,
+      scaleY,
       domainPadding,
       curveType,
       customXLabel,
@@ -83,6 +87,10 @@ export default function LineChartPage(props: { segment: string }) {
           xKey="day"
           padding={chartPadding}
           yKeys={["sales"]}
+          panX={panX}
+          panY={panY}
+          scaleX={scaleX}
+          scaleY={scaleY}
           axisOptions={{
             font,
             lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
@@ -167,6 +175,38 @@ export default function LineChartPage(props: { segment: string }) {
           onChange={(val) => dispatch({ type: "SET_CURVE_TYPE", payload: val })}
           value={curveType}
           values={["linear", "natural", "cardinal", "step"]}
+        />
+        <InputSlider
+          label="Pan X"
+          maxValue={10}
+          minValue={-10}
+          step={1}
+          value={panX}
+          onChange={(val) => dispatch({ type: "SET_PAN_X", payload: val })}
+        />
+        <InputSlider
+          label="Pan Y"
+          maxValue={10}
+          minValue={-10}
+          step={1}
+          value={panY}
+          onChange={(val) => dispatch({ type: "SET_PAN_Y", payload: val })}
+        />
+        <InputSlider
+          label="Scale X"
+          maxValue={2.0}
+          minValue={0.0}
+          step={0.1}
+          value={scaleX}
+          onChange={(val) => dispatch({ type: "SET_SCALE_X", payload: val })}
+        />
+        <InputSlider
+          label="Scale Y"
+          maxValue={2.0}
+          minValue={0.0}
+          step={0.1}
+          value={scaleY}
+          onChange={(val) => dispatch({ type: "SET_SCALE_Y", payload: val })}
         />
         <InputSlider
           label="Domain Padding"
