@@ -15,6 +15,10 @@ type State = {
   xAxisLabelPosition: AxisLabelPosition;
   yAxisLabelPosition: AxisLabelPosition;
   colors: Record<string, string>;
+  panX: number;
+  panY: number;
+  scaleX: number;
+  scaleY: number;
   domainPadding: number;
   curveType: CurveType;
   customXLabel: string | undefined;
@@ -37,6 +41,10 @@ type Action =
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_COLORS"; payload: Record<string, string> }
+  | { type: "SET_PAN_X"; payload: number }
+  | { type: "SET_PAN_Y"; payload: number }
+  | { type: "SET_SCALE_X"; payload: number }
+  | { type: "SET_SCALE_Y"; payload: number }
   | { type: "SET_DOMAIN_PADDING"; payload: number }
   | { type: "SET_CURVE_TYPE"; payload: CurveType }
   | { type: "SET_X_LABEL"; payload: string }
@@ -72,6 +80,14 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, yAxisLabelPosition: action.payload };
     case "SET_COLORS":
       return { ...state, colors: { ...state.colors, ...action.payload } };
+    case "SET_PAN_X":
+      return { ...state, panX: action.payload };
+    case "SET_PAN_Y":
+      return { ...state, panY: action.payload };
+    case "SET_SCALE_X":
+      return { ...state, scaleX: action.payload };
+    case "SET_SCALE_Y":
+      return { ...state, scaleY: action.payload };
     case "SET_DOMAIN_PADDING":
       return { ...state, domainPadding: action.payload };
     case "SET_CURVE_TYPE":
@@ -104,6 +120,10 @@ export const optionsInitialState: State = {
   xAxisLabelPosition: "outset",
   yAxisLabelPosition: "outset",
   colors: {},
+  panX: 0,
+  panY: 0,
+  scaleX: 1.0,
+  scaleY: 1.0,
   domainPadding: 0,
   curveType: "linear",
   customXLabel: undefined,
