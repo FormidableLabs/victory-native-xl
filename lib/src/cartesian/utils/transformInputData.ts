@@ -141,7 +141,7 @@ export const transformInputData = <
     // Apply scale
     if (scaleY) {
       const deltaY = yScaleDomain[0] - yScaleDomain[1];
-      const yAdjustment = ((1 - scaleY) * deltaY) / 2;
+      const yAdjustment = (1 - scaleY) * (deltaY / 2);
       yScaleDomain[0] -= yAdjustment;
       yScaleDomain[1] += yAdjustment;
     }
@@ -305,10 +305,10 @@ export const transformInputData = <
 
   // Apply scale
   if (scaleX) {
-    const deltaX = xScaleDomain[0] - xScaleDomain[1];
-    const xAdjustment = ((1 - scaleX) * deltaX) / 2;
-    xScaleDomain[0] -= xAdjustment;
-    xScaleDomain[1] += xAdjustment;
+    const deltaX = xScaleDomain[1] - xScaleDomain[0];
+    const xAdjustment = (1 - scaleX) * (deltaX / 2);
+    xScaleDomain[0] += xAdjustment;
+    xScaleDomain[1] -= xAdjustment;
   }
 
   const xScale = makeScale({
