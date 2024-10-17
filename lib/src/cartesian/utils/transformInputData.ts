@@ -37,6 +37,10 @@ export const transformInputData = <
   data: _data,
   xKey,
   yKeys,
+  panX,
+  panY,
+  scaleX,
+  scaleY,
   outputWindow,
   domain,
   domainPadding,
@@ -46,6 +50,10 @@ export const transformInputData = <
   data: RawData[];
   xKey: XK;
   yKeys: YK[];
+  panX?: number;
+  panY?: number;
+  scaleX?: number;
+  scaleY?: number;
   outputWindow: PrimitiveViewWindow;
   axisOptions?: Partial<
     Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">
@@ -123,6 +131,20 @@ export const transformInputData = <
     const yScaleDomain = (
       yMax === yMin ? [yMax + 1, yMin - 1] : [yMax, yMin]
     ) as [number, number];
+
+    // Apply pan
+    if (panY) {
+      yScaleDomain[0] += panY;
+      yScaleDomain[1] += panY;
+    }
+
+    // Apply scale
+    if (scaleY) {
+      const deltaY = yScaleDomain[0] - yScaleDomain[1];
+      const yAdjustment = ((1 - scaleY) * deltaY) / 2;
+      yScaleDomain[0] -= yAdjustment;
+      yScaleDomain[1] += yAdjustment;
+    }
 
     const yScaleRange: [number, number] = (() => {
       const xTickCount =
@@ -270,9 +292,27 @@ export const transformInputData = <
   const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
     ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
 
+  // if single data point, manually add upper & lower bounds so chart renders properly
+  const xScaleDomain = (
+    ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax]
+  ) as [number, number];
+
+  // Apply pan
+  if (panX) {
+    xScaleDomain[0] += panX;
+    xScaleDomain[1] += panX;
+  }
+
+  // Apply scale
+  if (scaleX) {
+    const deltaX = xScaleDomain[0] - xScaleDomain[1];
+    const xAdjustment = ((1 - scaleX) * deltaX) / 2;
+    xScaleDomain[0] -= xAdjustment;
+    xScaleDomain[1] += xAdjustment;
+  }
+
   const xScale = makeScale({
-    // if single data point, manually add upper & lower bounds so chart renders properly
-    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
+    inputBounds: xScaleDomain,
     outputBounds: oRange,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,

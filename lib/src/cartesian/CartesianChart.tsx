@@ -41,6 +41,10 @@ type CartesianChartProps<
   data: RawData[];
   xKey: XK;
   yKeys: YK[];
+  panX?: number;
+  panY?: number;
+  scaleX?: number;
+  scaleY?: number;
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
@@ -68,6 +72,10 @@ export function CartesianChart<
   data,
   xKey,
   yKeys,
+  panX,
+  panY,
+  scaleX,
+  scaleY,
   padding,
   domainPadding,
   children,
@@ -118,6 +126,10 @@ export function CartesianChart<
           data,
           xKey,
           yKeys,
+          panX,
+          panY,
+          scaleX,
+          scaleY,
           outputWindow: {
             xMin: valueFromSidedNumber(padding, "left"),
             xMax: size.width - valueFromSidedNumber(padding, "right"),
@@ -153,6 +165,10 @@ export function CartesianChart<
       data,
       xKey,
       yKeys,
+      panX,
+      panY,
+      scaleX,
+      scaleY,
       padding,
       size.width,
       size.height,
