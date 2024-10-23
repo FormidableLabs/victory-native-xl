@@ -1,5 +1,15 @@
 # victory-native
 
+## 41.7.0
+
+### Minor Changes
+
+- Updates the lineWidth prop for frame to allow for configuring the width per side. ([#397](https://github.com/FormidableLabs/victory-native-xl/pull/397))
+
+### Patch Changes
+
+- Fix determining stacked bar count from points structure ([#404](https://github.com/FormidableLabs/victory-native-xl/pull/404))
+
 ## 41.6.2
 
 ### Patch Changes
