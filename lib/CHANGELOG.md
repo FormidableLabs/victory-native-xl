@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.8.0
+
+### Minor Changes
+
+- Add `matchedIndex` to chart press state ([#405](https://github.com/FormidableLabs/victory-native-xl/pull/405))
+
 ## 41.7.0
 
 ### Minor Changes
