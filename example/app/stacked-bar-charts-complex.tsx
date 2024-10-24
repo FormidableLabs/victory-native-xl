@@ -26,7 +26,7 @@ const IndividualTouchableBarChart = () => {
     y: { favouriteCount: 0, listenCount: 0, sales: 0 },
   });
 
-  const pressedXY = { x: state.x.value.value - 1, y: state.yIndex.value };
+  const pressedXY = { x: state.matchedIndex.value, y: state.yIndex.value };
   return (
     <View style={{ flex: 1 }}>
       <CartesianChart

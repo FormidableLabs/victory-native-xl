@@ -227,6 +227,7 @@ export function CartesianChart<
 
     if (v) {
       try {
+        v.matchedIndex.value = idx;
         v.x.value.value = tData.value.ix[idx]!;
         v.x.position.value = asNumber(tData.value.ox[idx]);
         for (const yk in v.y) {
