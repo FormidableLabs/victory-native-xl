@@ -30,7 +30,12 @@ const sidebars = {
         {
           type: "category",
           label: "Area Paths",
-          items: ["cartesian/area/area", "cartesian/area/use-area-path"],
+          items: [
+            "cartesian/area/area",
+            "cartesian/area/use-area-path",
+            "cartesian/area/stacked-area",
+            "cartesian/area/use-stacked-area-paths",
+          ],
         },
         {
           type: "category",

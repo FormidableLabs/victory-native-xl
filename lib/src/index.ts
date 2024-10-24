@@ -43,6 +43,8 @@ export { BarGroup } from "./cartesian/components/BarGroup";
 // Area
 export { useAreaPath } from "./cartesian/hooks/useAreaPath";
 export { Area } from "./cartesian/components/Area";
+export { StackedArea } from "./cartesian/components/StackedArea";
+export { useStackedAreaPaths } from "./cartesian/hooks/useStackedAreaPaths";
 
 // Scatter
 export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";

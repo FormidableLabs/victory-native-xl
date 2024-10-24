@@ -53,7 +53,7 @@ export default function DashedAxesPage(props: { segment: string }) {
             yAxis={[
               {
                 labelOffset: 8,
-                yKeys: ["high"],
+
                 font,
 
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
@@ -85,6 +85,26 @@ export default function DashedAxesPage(props: { segment: string }) {
                   color={"#f7ce64"}
                   curveType="natural"
                   points={points.high}
+                />
+                <Area
+                  points={points.low}
+                  y0={chartBounds.bottom}
+                  color="black"
+                  opacity={0.5}
+                  curveType="natural"
+                  animate={{ type: "timing" }}
+                >
+                  <LinearGradient
+                    start={vec(0, 50)}
+                    end={vec(0, 200)}
+                    colors={["#22dacd", "#22dacd20"]}
+                  />
+                </Area>
+                <Line
+                  strokeWidth={3}
+                  color={"#22dacd"}
+                  curveType="natural"
+                  points={points.low}
                 />
               </>
             )}
