@@ -15,6 +15,7 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
   const state = React.useMemo(() => {
     return {
       isActive: makeMutable(false),
+      matchedIndex: makeMutable(-1),
       x: { value: makeMutable(initialValues.x), position: makeMutable(0) },
       y: Object.entries(initialValues.y).reduce(
         (acc, [key, initVal]) => {
@@ -42,7 +43,11 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
 type ChartPressStateInit = { x: InputFieldType; y: Record<string, number> };
 export type ChartPressState<Init extends ChartPressStateInit> = {
   isActive: SharedValue<boolean>;
-  x: { value: SharedValue<Init["x"]>; position: SharedValue<number> };
+  matchedIndex: SharedValue<number>;
+  x: {
+    value: SharedValue<Init["x"]>;
+    position: SharedValue<number>;
+  };
   y: Record<
     keyof Init["y"],
     { value: SharedValue<number>; position: SharedValue<number> }
