@@ -22,7 +22,6 @@ import {
   type TouchData,
 } from "react-native-gesture-handler";
 
-import { useEffect, useRef } from "react";
 import { ZoomTransform } from "d3-zoom";
 import type {
   AxisProps,
@@ -143,13 +142,7 @@ function CartesianChartContent<
     axisOptions,
   });
   const transform = useCartesianTransformContext();
-  const zoom = useRef(
-    new ZoomTransform(transform.k, transform.tx, transform.ty),
-  );
-
-  useEffect(() => {
-    zoom.current = new ZoomTransform(transform.k, transform.tx, transform.ty);
-  }, [transform]);
+  const zoom = new ZoomTransform(transform.k, transform.tx, transform.ty);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -475,12 +468,12 @@ function CartesianChartContent<
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
           if (!yAxis) return null;
-          const rescaled = zoom.current.rescaleY(yAxis.yScale);
+          const rescaled = zoom.rescaleY(yAxis.yScale);
           return (
             <YAxis
               key={index}
               {...axis}
-              xScale={zoom.current.rescaleX(xScale)}
+              xScale={zoom.rescaleX(xScale)}
               yScale={rescaled}
               yTicksNormalized={
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
@@ -500,8 +493,8 @@ function CartesianChartContent<
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
         {...normalizedAxisProps.xAxis}
-        xScale={zoom.current.rescaleX(xScale)}
-        yScale={zoom.current.rescaleY(primaryYScale)}
+        xScale={zoom.rescaleX(xScale)}
+        yScale={zoom.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
       />
