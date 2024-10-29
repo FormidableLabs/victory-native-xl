@@ -1,11 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView, Linking } from "react-native";
-import {
-  CartesianChart,
-  Line,
-  useChartPressState,
-  useChartTransformState,
-} from "victory-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { Button } from "example/components/Button";
@@ -16,7 +11,6 @@ import { urlForRoute } from "../consts/routes";
 export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
-  const transformState = useChartTransformState();
   const url = urlForRoute(props.segment);
 
   const handleDocsButtonPress = React.useCallback(async () => {
@@ -37,7 +31,6 @@ export default function GettingStartedScreen(props: { segment: string }) {
             font,
           }}
           chartPressState={state}
-          transformState={transformState}
         >
           {({ points }) => (
             <>
