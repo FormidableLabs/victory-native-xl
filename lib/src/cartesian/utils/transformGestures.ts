@@ -16,6 +16,8 @@ export const pinchTransformGesture = (
         x: e.focalX,
         y: e.focalY,
       };
+    })
+    .onStart(() => {
       state.zoomActive.value = true;
     })
     .onChange((e) => {
@@ -33,7 +35,7 @@ export const pinchTransformGesture = (
 
 export const panTransformGesture = (state: ChartTransformState): PanGesture => {
   const pan = Gesture.Pan()
-    .onBegin(() => {
+    .onStart(() => {
       state.panActive.value = true;
     })
     .onChange((e) => {
