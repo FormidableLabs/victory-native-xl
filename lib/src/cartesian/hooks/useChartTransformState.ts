@@ -1,4 +1,5 @@
 import {
+  makeMutable,
   type SharedValue,
   useDerivedValue,
   useSharedValue,
@@ -15,6 +16,7 @@ export const identity4: Matrix4 = [
 ];
 
 export type ChartTransformState = {
+  isActive: SharedValue<boolean>;
   transformMatrix: SharedValue<SkMatrix>;
   origin: SharedValue<{ x: number; y: number }>;
   matrix: SharedValue<Matrix4>;
@@ -31,6 +33,7 @@ export const useChartTransformState = (): ChartTransformState => {
   });
 
   return {
+    isActive: makeMutable(false),
     transformMatrix,
     origin,
     matrix,

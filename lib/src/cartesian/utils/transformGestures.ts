@@ -16,12 +16,16 @@ export const pinchTransformGesture = (
         x: e.focalX,
         y: e.focalY,
       };
+      state.isActive.value = true;
     })
     .onChange((e) => {
       state.matrix.value = multiply4(
         state.offset.value,
         scale(e.scale, e.scale, 1, state.origin.value),
       );
+    })
+    .onEnd(() => {
+      state.isActive.value = false;
     });
 
   return pinch;
