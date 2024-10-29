@@ -23,7 +23,7 @@ export type ChartTransformState = {
   offset: SharedValue<Matrix4>;
 };
 
-export const useChartTransformState = (): ChartTransformState => {
+export const useChartTransformState = (): { state: ChartTransformState } => {
   const origin = useSharedValue({ x: 0, y: 0 });
   const matrix = useSharedValue(identity4);
   const offset = useSharedValue(identity4);
@@ -33,10 +33,12 @@ export const useChartTransformState = (): ChartTransformState => {
   });
 
   return {
-    isActive: makeMutable(false),
-    transformMatrix,
-    origin,
-    matrix,
-    offset,
+    state: {
+      isActive: makeMutable(false),
+      transformMatrix,
+      origin,
+      matrix,
+      offset,
+    },
   };
 };
