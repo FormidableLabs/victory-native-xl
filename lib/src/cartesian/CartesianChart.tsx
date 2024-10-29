@@ -534,9 +534,9 @@ function CartesianChartContent<
       panTransformGesture(transformState),
     );
   }
-  // if (chartPressState) {
-  //   composed = Gesture.Race(composed, panGesture);
-  // }
+  if (chartPressState) {
+    composed = Gesture.Race(composed, panGesture);
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
