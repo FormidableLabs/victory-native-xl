@@ -123,6 +123,11 @@ export const ChartRoutes: {
     description: "This is an Area chart with dashed X and Y axes.",
     path: "/dashed-axes",
   },
+  {
+    title: "Pan Zoom",
+    description: "This is an example of pan zoom functionality",
+    path: "/pan-zoom",
+  },
 ];
 
 if (__DEV__) {
