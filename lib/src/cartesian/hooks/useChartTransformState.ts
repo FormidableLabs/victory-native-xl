@@ -16,7 +16,8 @@ export const identity4: Matrix4 = [
 ];
 
 export type ChartTransformState = {
-  isActive: SharedValue<boolean>;
+  panActive: SharedValue<boolean>;
+  zoomActive: SharedValue<boolean>;
   transformMatrix: SharedValue<SkMatrix>;
   origin: SharedValue<{ x: number; y: number }>;
   matrix: SharedValue<Matrix4>;
@@ -34,7 +35,8 @@ export const useChartTransformState = (): { state: ChartTransformState } => {
 
   return {
     state: {
-      isActive: makeMutable(false),
+      panActive: makeMutable(false),
+      zoomActive: makeMutable(false),
       transformMatrix,
       origin,
       matrix,

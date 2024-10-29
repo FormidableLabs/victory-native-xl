@@ -16,7 +16,7 @@ export const pinchTransformGesture = (
         x: e.focalX,
         y: e.focalY,
       };
-      state.isActive.value = true;
+      state.zoomActive.value = true;
     })
     .onChange((e) => {
       state.matrix.value = multiply4(
@@ -25,19 +25,26 @@ export const pinchTransformGesture = (
       );
     })
     .onEnd(() => {
-      state.isActive.value = false;
+      state.zoomActive.value = false;
     });
 
   return pinch;
 };
 
 export const panTransformGesture = (state: ChartTransformState): PanGesture => {
-  const pan = Gesture.Pan().onChange((e) => {
-    state.matrix.value = multiply4(
-      translate(e.changeX, e.changeY, 0),
-      state.matrix.value,
-    );
-  });
+  const pan = Gesture.Pan()
+    .onBegin(() => {
+      state.panActive.value = true;
+    })
+    .onChange((e) => {
+      state.matrix.value = multiply4(
+        translate(e.changeX, e.changeY, 0),
+        state.matrix.value,
+      );
+    })
+    .onEnd(() => {
+      state.panActive.value = false;
+    });
 
   return pan;
 };
