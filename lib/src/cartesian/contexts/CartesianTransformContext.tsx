@@ -29,9 +29,9 @@ export const CartesianTransformProvider = ({
   ) => {
     "worklet";
     return {
-      k: transformState?.transformMatrix.value.get()[0] || 1,
-      tx: transformState?.transformMatrix.value.get()[2] || 0,
-      ty: transformState?.transformMatrix.value.get()[5] || 0,
+      k: transformState?.matrix.value[0] || 1,
+      tx: transformState?.matrix.value[3] || 0,
+      ty: transformState?.matrix.value[7] || 0,
     };
   };
   const [transform, setTransform] = useState<{
