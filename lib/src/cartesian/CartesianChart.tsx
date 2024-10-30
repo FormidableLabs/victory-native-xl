@@ -1,24 +1,10 @@
 import * as React from "react";
-import { type LayoutChangeEvent, Platform } from "react-native";
+import { type LayoutChangeEvent } from "react-native";
+import { Canvas, Group, rect } from "@shopify/react-native-skia";
+import { useSharedValue } from "react-native-reanimated";
 import {
-  Canvas,
-  convertToAffineMatrix,
-  convertToColumnMajor,
-  Group,
-  type Matrix4,
-  rect,
-  type SkRect,
-} from "@shopify/react-native-skia";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
-import {
-  type ComposedGesture,
   Gesture,
-  GestureDetector,
   GestureHandlerRootView,
-  type GestureType,
   type TouchData,
 } from "react-native-gesture-handler";
 
@@ -47,10 +33,7 @@ import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
-import {
-  type ChartTransformState,
-  identity4,
-} from "./hooks/useChartTransformState";
+import { type ChartTransformState } from "./hooks/useChartTransformState";
 import {
   panTransformGesture,
   pinchTransformGesture,
@@ -60,6 +43,7 @@ import {
   useCartesianTransformContext,
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
+import { GestureHandler } from "../shared/GestureHandler";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -555,50 +539,3 @@ function CartesianChartContent<
     </GestureHandlerRootView>
   );
 }
-
-type GestureHandlerProps = {
-  gesture: ComposedGesture | GestureType;
-  dimensions: SkRect;
-  transformState?: ChartTransformState;
-  debug?: boolean;
-};
-const GestureHandler = ({
-  gesture,
-  dimensions,
-  transformState,
-  debug = false,
-}: GestureHandlerProps) => {
-  const { x, y, width, height } = dimensions;
-  const style = useAnimatedStyle(() => {
-    let m4: Matrix4 = identity4;
-    if (transformState?.matrix.value) {
-      m4 = convertToColumnMajor(transformState.matrix.value);
-    }
-    return {
-      position: "absolute",
-      backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
-      x,
-      y,
-      width,
-      height,
-      transform: [
-        { translateX: -width / 2 },
-        { translateY: -height / 2 },
-        {
-          matrix: m4
-            ? Platform.OS === "web"
-              ? convertToAffineMatrix(m4)
-              : (m4 as unknown as number[])
-            : [],
-        },
-        { translateX: width / 2 },
-        { translateY: height / 2 },
-      ],
-    };
-  });
-  return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View style={style} />
-    </GestureDetector>
-  );
-};
