@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Line, Text, vec } from "@shopify/react-native-skia";
+import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
   InputDatum,
@@ -30,6 +30,7 @@ export const XAxis = <
   ix = [],
   isNumericalData,
   linePathEffect,
+  chartBounds,
 }: XAxisProps<RawData, XK>) => {
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
@@ -70,14 +71,16 @@ export const XAxis = <
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Line
-            p1={vec(xScale(tick), yScale(y2))}
-            p2={vec(xScale(tick), yScale(y1))}
-            color={lineColor}
-            strokeWidth={lineWidth}
-          >
-            {linePathEffect ? linePathEffect : null}
-          </Line>
+          <Group clip={chartBounds}>
+            <Line
+              p1={vec(xScale(tick), yScale(y2))}
+              p2={vec(xScale(tick), yScale(y1))}
+              color={lineColor}
+              strokeWidth={lineWidth}
+            >
+              {linePathEffect ? linePathEffect : null}
+            </Line>
+          </Group>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
           <Text
