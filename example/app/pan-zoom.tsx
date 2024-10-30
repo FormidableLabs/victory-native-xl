@@ -7,12 +7,7 @@ import {
 export const PanZoom = () => {};
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import {
-  CartesianChart,
-  type ChartBounds,
-  Line,
-  useChartTransformState,
-} from "victory-native";
+import { CartesianChart, Line, useChartTransformState } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import { useState } from "react";
 import { appColors } from "./consts/colors";
