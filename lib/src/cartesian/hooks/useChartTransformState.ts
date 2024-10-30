@@ -9,23 +9,41 @@ export const identity4: Matrix4 = [
   1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
 ];
 
+enum MatrixValues {
+  ScaleX = 0,
+  ScaleY = 5,
+  TranslateX = 3,
+  TranslateY = 7,
+}
 const getActions = (matrix: SharedValue<Matrix4>) => {
-  const setScale = (_: number) => {
+  const setScale = (kx: number, ky?: number) => {
     "worklet";
     const next = matrix.value.slice(0);
-    // next[0] = k;
-    // next[3] = k;
+    next[MatrixValues.ScaleX] = kx;
+    next[MatrixValues.ScaleY] = ky ?? kx;
+
+    matrix.value = next as unknown as Matrix4;
+  };
+
+  const setTranslate = (tx: number, ty: number) => {
+    "worklet";
+    const next = matrix.value.slice(0);
+
+    next[MatrixValues.TranslateX] = tx;
+    next[MatrixValues.TranslateY] = ty;
 
     matrix.value = next as unknown as Matrix4;
   };
 
   return {
     setScale: setScale,
+    setTranslate: setTranslate,
   };
 };
 
 type CharTransformActions = {
-  setScale: (k: number) => void;
+  setScale: (kx: number, ky?: number) => void;
+  setTranslate: (tx: number, ty: number) => void;
 };
 
 export type ChartTransformState = {
