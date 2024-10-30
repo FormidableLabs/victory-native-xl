@@ -15,6 +15,25 @@ export const identity4: Matrix4 = [
   1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
 ];
 
+const getActions = (matrix: SharedValue<Matrix4>) => {
+  const setScale = (k: number) => {
+    "worklet";
+    const next = matrix.value.slice(0);
+    // next[0] = k;
+    // next[3] = k;
+
+    matrix.value = next as unknown as Matrix4;
+  };
+
+  return {
+    setScale: setScale,
+  };
+};
+
+type CharTransformActions = {
+  setScale: () => void;
+};
+
 export type ChartTransformState = {
   panActive: SharedValue<boolean>;
   zoomActive: SharedValue<boolean>;
@@ -24,7 +43,10 @@ export type ChartTransformState = {
   offset: SharedValue<Matrix4>;
 };
 
-export const useChartTransformState = (): { state: ChartTransformState } => {
+export const useChartTransformState = (): {
+  state: ChartTransformState;
+  actions: CharTransformActions;
+} => {
   const origin = useSharedValue({ x: 0, y: 0 });
   const matrix = useSharedValue(identity4);
   const offset = useSharedValue(identity4);
@@ -42,5 +64,6 @@ export const useChartTransformState = (): { state: ChartTransformState } => {
       matrix,
       offset,
     },
+    actions: getActions(matrix),
   };
 };
