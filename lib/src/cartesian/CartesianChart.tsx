@@ -59,6 +59,7 @@ import {
   CartesianTransformProvider,
   useCartesianTransformContext,
 } from "./contexts/CartesianTransformContext";
+import { downsampleTicks } from "../utils/tickHelpers";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -469,6 +470,9 @@ function CartesianChartContent<
           const yAxis = yAxes[index];
           if (!yAxis) return null;
           const rescaled = zoom.rescaleY(yAxis.yScale);
+          const yTicksRescaled = axis.tickValues
+            ? downsampleTicks(axis.tickValues, axis.tickCount)
+            : rescaled.ticks(axis.tickCount);
           return (
             <YAxis
               key={index}
@@ -483,7 +487,7 @@ function CartesianChartContent<
                       primaryYScale,
                       yAxis.yScale,
                     )
-                  : yAxis.yTicksNormalized
+                  : yTicksRescaled
               }
               chartBounds={clipRect}
             />
