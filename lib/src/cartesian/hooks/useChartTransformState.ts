@@ -4,65 +4,7 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import { type Matrix4 } from "@shopify/react-native-skia";
-
-export const identity4: Matrix4 = [
-  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-];
-
-enum MatrixValues {
-  ScaleX = 0,
-  ScaleY = 5,
-  TranslateX = 3,
-  TranslateY = 7,
-}
-const getActions = (matrix: SharedValue<Matrix4>) => {
-  const getTransformComponents = () => {
-    "worklet";
-
-    return {
-      scaleX: matrix.value[MatrixValues.ScaleX],
-      scaleY: matrix.value[MatrixValues.ScaleY],
-      translateX: matrix.value[MatrixValues.TranslateX],
-      translateY: matrix.value[MatrixValues.TranslateY],
-    };
-  };
-
-  const setScale = (kx: number, ky?: number) => {
-    "worklet";
-    const next = matrix.value.slice(0);
-    next[MatrixValues.ScaleX] = kx;
-    next[MatrixValues.ScaleY] = ky ?? kx;
-
-    matrix.value = next as unknown as Matrix4;
-  };
-
-  const setTranslate = (tx: number, ty: number) => {
-    "worklet";
-    const next = matrix.value.slice(0);
-
-    next[MatrixValues.TranslateX] = tx;
-    next[MatrixValues.TranslateY] = ty;
-
-    matrix.value = next as unknown as Matrix4;
-  };
-
-  return {
-    getTransformComponents: getTransformComponents,
-    setScale: setScale,
-    setTranslate: setTranslate,
-  };
-};
-
-type CharTransformActions = {
-  setScale: (kx: number, ky?: number) => void;
-  setTranslate: (tx: number, ty: number) => void;
-  getTransformComponents: () => {
-    scaleX: number;
-    scaleY: number;
-    translateX: number;
-    translateY: number;
-  };
-};
+import { identity4 } from "../../utils/transform";
 
 export type ChartTransformState = {
   panActive: SharedValue<boolean>;
@@ -74,7 +16,6 @@ export type ChartTransformState = {
 
 export const useChartTransformState = (): {
   state: ChartTransformState;
-  actions: CharTransformActions;
 } => {
   const origin = useSharedValue({ x: 0, y: 0 });
   const matrix = useSharedValue(identity4);
@@ -88,6 +29,5 @@ export const useChartTransformState = (): {
       matrix,
       offset,
     },
-    actions: getActions(matrix),
   };
 };

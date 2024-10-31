@@ -25,6 +25,11 @@ export {
 } from "./cartesian/hooks/useChartPressState";
 
 export { useChartTransformState } from "./cartesian/hooks/useChartTransformState";
+export {
+  getTransformComponents,
+  setScale,
+  setTranslate,
+} from "./utils/transform";
 
 // Line
 export { useLinePath } from "./cartesian/hooks/useLinePath";

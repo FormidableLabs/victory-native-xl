@@ -12,10 +12,8 @@ import {
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { Platform } from "react-native";
 import * as React from "react";
-import {
-  type ChartTransformState,
-  identity4,
-} from "../cartesian/hooks/useChartTransformState";
+import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
+import { identity4 } from "../utils/transform";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
