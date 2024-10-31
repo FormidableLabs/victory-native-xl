@@ -7,8 +7,20 @@ import {
 export const PanZoom = () => {};
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { CartesianChart, Line, useChartTransformState } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import {
+  CartesianChart,
+  getTransformComponents,
+  Line,
+  setScale,
+  setTranslate,
+  useChartTransformState,
+} from "victory-native";
+import {
+  multiply4,
+  scale,
+  translate,
+  useFont,
+} from "@shopify/react-native-skia";
 import { useState } from "react";
 import { appColors } from "./consts/colors";
 import inter from "../assets/inter-medium.ttf";
@@ -17,9 +29,9 @@ import { Button } from "../components/Button";
 
 export default function PanZoomPage() {
   const font = useFont(inter, 12);
-  const [, setWidth] = useState(0);
-  const [, setHeight] = useState(0);
-  const { state, actions } = useChartTransformState();
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const { state } = useChartTransformState();
 
   const k = useSharedValue(1);
   const tx = useSharedValue(0);
@@ -31,7 +43,7 @@ export default function PanZoomPage() {
     },
     (cv, pv) => {
       if (!cv && pv) {
-        const vals = actions.getTransformComponents();
+        const vals = getTransformComponents(state.matrix.value);
         k.value = vals.scaleX;
         tx.value = vals.translateX;
         ty.value = vals.translateY;
@@ -48,8 +60,8 @@ export default function PanZoomPage() {
       return { k: k.value, tx: tx.value, ty: ty.value };
     },
     ({ k, tx, ty }) => {
-      actions.setTranslate(tx, ty);
-      actions.setScale(k);
+      const m = setTranslate(state.matrix.value, tx, ty);
+      state.matrix.value = setScale(m, k);
     },
   );
 
@@ -76,11 +88,13 @@ export default function PanZoomPage() {
             setHeight(bottom - top);
           }}
         >
-          {({ points }) => (
-            <>
-              <Line points={points.highTmp} color="red" strokeWidth={3} />
-            </>
-          )}
+          {({ points }) => {
+            return (
+              <>
+                <Line points={points.highTmp} color="red" strokeWidth={3} />
+              </>
+            );
+          }}
         </CartesianChart>
       </View>
       <ScrollView
@@ -94,16 +108,20 @@ export default function PanZoomPage() {
               title={"Pan Left"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { translateX: tx } = actions.getTransformComponents();
-                actions.setTranslate(tx + 10, 0);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  translate(10, 0),
+                );
               }}
             />
             <Button
               title={"Pan Right"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { translateX: tx } = actions.getTransformComponents();
-                actions.setTranslate(tx - 10, 0);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  translate(-10, 0, 0),
+                );
               }}
             />
           </View>
@@ -112,16 +130,20 @@ export default function PanZoomPage() {
               title={"Pan Up"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { translateY: ty } = actions.getTransformComponents();
-                actions.setTranslate(0, ty + 10);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  translate(0, 10),
+                );
               }}
             />
             <Button
               title={"Pan Down"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { translateY: ty } = actions.getTransformComponents();
-                actions.setTranslate(0, ty - 10);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  translate(0, -10),
+                );
               }}
             />
           </View>
@@ -130,16 +152,20 @@ export default function PanZoomPage() {
               title={"Zoom In"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { scaleX, scaleY } = actions.getTransformComponents();
-                actions.setScale(scaleX + 1, scaleY + 1);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  scale(1.25, 1.25, 1, { x: width / 2, y: height / 2 }),
+                );
               }}
             />
             <Button
               title={"Zoom Out"}
               style={{ flex: 1 }}
               onPress={() => {
-                const { scaleX, scaleY } = actions.getTransformComponents();
-                actions.setScale(scaleX - 1, scaleY - 1);
+                state.matrix.value = multiply4(
+                  state.matrix.value,
+                  scale(0.75, 0.75, 1, { x: width / 2, y: height / 2 }),
+                );
               }}
             />
           </View>
