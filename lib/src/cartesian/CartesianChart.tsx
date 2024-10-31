@@ -36,6 +36,7 @@ import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
 import { type ChartTransformState } from "./hooks/useChartTransformState";
 import {
   panTransformGesture,
+  type PanTransformGestureConfig,
   pinchTransformGesture,
 } from "./utils/transformGestures";
 import {
@@ -71,6 +72,9 @@ type CartesianChartProps<
   yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
   transformState?: ChartTransformState;
+  transformConfig?: {
+    pan?: PanTransformGestureConfig;
+  };
 };
 
 export function CartesianChart<
@@ -108,6 +112,7 @@ function CartesianChartContent<
   yAxis,
   frame,
   transformState,
+  transformConfig,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -529,7 +534,7 @@ function CartesianChartContent<
     composed = Gesture.Race(
       composed,
       pinchTransformGesture(transformState),
-      panTransformGesture(transformState),
+      panTransformGesture(transformState, transformConfig?.pan),
     );
   }
   if (chartPressState) {

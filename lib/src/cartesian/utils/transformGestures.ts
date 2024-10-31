@@ -4,6 +4,7 @@ import {
   type PinchGesture,
 } from "react-native-gesture-handler";
 import { multiply4, scale, translate } from "@shopify/react-native-skia";
+import type { PanGestureConfig } from "react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler";
 import { type ChartTransformState } from "../hooks/useChartTransformState";
 
 export const pinchTransformGesture = (
@@ -33,7 +34,14 @@ export const pinchTransformGesture = (
   return pinch;
 };
 
-export const panTransformGesture = (state: ChartTransformState): PanGesture => {
+export type PanTransformGestureConfig = Pick<
+  PanGestureConfig,
+  "activateAfterLongPress"
+>;
+export const panTransformGesture = (
+  state: ChartTransformState,
+  config: PanTransformGestureConfig = {},
+): PanGesture => {
   const pan = Gesture.Pan()
     .onStart(() => {
       state.panActive.value = true;
@@ -47,6 +55,10 @@ export const panTransformGesture = (state: ChartTransformState): PanGesture => {
     .onEnd(() => {
       state.panActive.value = false;
     });
+
+  if (config.activateAfterLongPress !== undefined) {
+    pan.activateAfterLongPress(config.activateAfterLongPress);
+  }
 
   return pan;
 };
