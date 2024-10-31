@@ -6,6 +6,7 @@ import {
   type DashPathEffect,
   type SkFont,
 } from "@shopify/react-native-skia";
+import type { ZoomTransform } from "d3-zoom";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -178,16 +179,23 @@ export type XAxisInputProps<
   tickValues?: number[];
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
+  enableRescaling?: boolean;
 };
 
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
 > = Required<
-  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+  Omit<
+    XAxisInputProps<RawData, XK>,
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+  >
 > &
   Partial<
-    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+    Pick<
+      XAxisInputProps<RawData, XK>,
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    >
   >;
 
 export type XAxisProps<
@@ -199,6 +207,7 @@ export type XAxisProps<
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
   chartBounds: ClipDef;
+  zoom?: ZoomTransform;
 };
 
 export type YAxisInputProps<
@@ -218,16 +227,23 @@ export type YAxisInputProps<
   yKeys?: YK[];
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
+  enableRescaling?: boolean;
 };
 
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
 > = Required<
-  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+  Omit<
+    YAxisInputProps<RawData, YK>,
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+  >
 > &
   Partial<
-    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+    Pick<
+      YAxisInputProps<RawData, YK>,
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    >
   >;
 
 export type YAxisProps<

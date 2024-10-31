@@ -14,7 +14,7 @@ export const XAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
 >({
-  xScale,
+  xScale: xScaleProp,
   yScale,
   axisSide = "bottom",
   yAxisSide = "left",
@@ -31,13 +31,18 @@ export const XAxis = <
   isNumericalData,
   linePathEffect,
   chartBounds,
+  enableRescaling,
+  zoom,
 }: XAxisProps<RawData, XK>) => {
+  const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
   const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
   const xTicksNormalized = tickValues
     ? downsampleTicks(tickValues, tickCount)
-    : xScale.ticks(tickCount);
+    : enableRescaling
+      ? xScale.ticks(tickCount)
+      : xScaleProp.ticks(tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
@@ -49,7 +54,9 @@ export const XAxis = <
         .reduce((sum, value) => sum + value, 0) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
-      yAxisSide === "left" ? labelX + labelWidth < x2r : x1r < labelX;
+      xScale(tick) >= x1r &&
+      xScale(tick) <= x2r &&
+      (yAxisSide === "left" ? labelX + labelWidth < x2r : x1r < labelX);
 
     const labelY = (() => {
       // bottom, outset

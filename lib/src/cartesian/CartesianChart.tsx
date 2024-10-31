@@ -459,17 +459,19 @@ function CartesianChartContent<
           const yAxis = yAxes[index];
           if (!yAxis) return null;
 
-          const rescaled = zoom.rescaleY(yAxis.yScale);
-
-          const primaryRescaled = zoom.rescaleY(primaryYScale);
           const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
+          const primaryRescaled = zoom.rescaleY(primaryYScale);
+
+          const rescaled = zoom.rescaleY(yAxis.yScale);
 
           const primaryTicksRescaled = primaryAxisProps.tickValues
             ? downsampleTicks(
                 primaryAxisProps.tickValues,
                 primaryAxisProps.tickCount,
               )
-            : primaryRescaled.ticks(primaryAxisProps.tickCount);
+            : primaryAxisProps.enableRescaling
+              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
+              : primaryYScale.ticks(primaryAxisProps.tickCount);
           return (
             <YAxis
               key={index}
@@ -495,11 +497,12 @@ function CartesianChartContent<
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
         {...normalizedAxisProps.xAxis}
-        xScale={zoom.rescaleX(xScale)}
+        xScale={xScale}
         yScale={zoom.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
         chartBounds={clipRect}
+        zoom={zoom}
       />
     ) : null;
 
