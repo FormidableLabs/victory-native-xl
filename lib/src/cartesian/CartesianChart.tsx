@@ -453,10 +453,18 @@ function CartesianChartContent<
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
           if (!yAxis) return null;
+
           const rescaled = zoom.rescaleY(yAxis.yScale);
-          const yTicksRescaled = axis.tickValues
-            ? downsampleTicks(axis.tickValues, axis.tickCount)
-            : rescaled.ticks(axis.tickCount);
+
+          const primaryRescaled = zoom.rescaleY(primaryYScale);
+          const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
+
+          const primaryTicksRescaled = primaryAxisProps.tickValues
+            ? downsampleTicks(
+                primaryAxisProps.tickValues,
+                primaryAxisProps.tickCount,
+              )
+            : primaryRescaled.ticks(primaryAxisProps.tickCount);
           return (
             <YAxis
               key={index}
@@ -467,11 +475,11 @@ function CartesianChartContent<
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
                 index > 0
                   ? normalizeYAxisTicks(
-                      primaryYAxis.yTicksNormalized,
-                      primaryYScale,
-                      yAxis.yScale,
+                      primaryTicksRescaled,
+                      primaryRescaled,
+                      rescaled,
                     )
-                  : yTicksRescaled
+                  : primaryTicksRescaled
               }
               chartBounds={clipRect}
             />
