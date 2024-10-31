@@ -60,8 +60,15 @@ export default function PanZoomPage() {
           data={DATA}
           xKey="day"
           yKeys={["highTmp"]}
-          axisOptions={{
-            font,
+          yAxis={[
+            {
+              font: font,
+              enableRescaling: true,
+            },
+          ]}
+          xAxis={{
+            enableRescaling: true,
+            font: font,
           }}
           transformState={state}
           onChartBoundsChange={({ top, left, right, bottom }) => {
