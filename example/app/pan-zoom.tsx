@@ -17,8 +17,8 @@ import { Button } from "../components/Button";
 
 export default function PanZoomPage() {
   const font = useFont(inter, 12);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [, setWidth] = useState(0);
+  const [, setHeight] = useState(0);
   const { state, actions } = useChartTransformState();
 
   const k = useSharedValue(1);
@@ -87,14 +87,16 @@ export default function PanZoomPage() {
               title={"Pan Left"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.translate(10, 0);
+                const { translateX: tx } = actions.getTransformComponents();
+                actions.setTranslate(tx + 10, 0);
               }}
             />
             <Button
               title={"Pan Right"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.translate(-10, 0);
+                const { translateX: tx } = actions.getTransformComponents();
+                actions.setTranslate(tx - 10, 0);
               }}
             />
           </View>
@@ -103,14 +105,16 @@ export default function PanZoomPage() {
               title={"Pan Up"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.translate(0, 10);
+                const { translateY: ty } = actions.getTransformComponents();
+                actions.setTranslate(0, ty + 10);
               }}
             />
             <Button
               title={"Pan Down"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.translate(0, -10);
+                const { translateY: ty } = actions.getTransformComponents();
+                actions.setTranslate(0, ty - 10);
               }}
             />
           </View>
@@ -119,20 +123,16 @@ export default function PanZoomPage() {
               title={"Zoom In"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.scale(1.5, 1.5, {
-                  x: width / 2,
-                  y: height / 2,
-                });
+                const { scaleX, scaleY } = actions.getTransformComponents();
+                actions.setScale(scaleX + 1, scaleY + 1);
               }}
             />
             <Button
               title={"Zoom Out"}
               style={{ flex: 1 }}
               onPress={() => {
-                actions.scale(0.5, 0.5, {
-                  x: width / 2,
-                  y: height / 2,
-                });
+                const { scaleX, scaleY } = actions.getTransformComponents();
+                actions.setScale(scaleX - 1, scaleY - 1);
               }}
             />
           </View>
