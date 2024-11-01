@@ -19,6 +19,7 @@ import type {
   YAxisInputProps,
   XAxisInputProps,
   FrameInputProps,
+  ChartPressPanConfig,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
@@ -47,6 +48,9 @@ type CartesianChartProps<
   chartPressState?:
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  chartPressConfig?: {
+    pan?: ChartPressPanConfig;
+  };
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
@@ -75,6 +79,7 @@ export function CartesianChart<
   axisOptions,
   domain,
   chartPressState,
+  chartPressConfig,
   onChartBoundsChange,
   gestureLongPressDelay = 100,
   xAxis,
@@ -369,6 +374,28 @@ export function CartesianChart<
      */
     .activateAfterLongPress(gestureLongPressDelay);
 
+  if (chartPressConfig?.pan?.activateAfterLongPress !== undefined) {
+    if (isNaN(chartPressConfig.pan.activateAfterLongPress)) {
+      panGesture.config.activateAfterLongPress = undefined;
+    } else {
+      panGesture.activateAfterLongPress(
+        chartPressConfig.pan?.activateAfterLongPress,
+      );
+    }
+  }
+  if (chartPressConfig?.pan?.activeOffsetX) {
+    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetX);
+  }
+  if (chartPressConfig?.pan?.activeOffsetY) {
+    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetY);
+  }
+  if (chartPressConfig?.pan?.failOffsetX) {
+    panGesture.failOffsetX(chartPressConfig.pan.failOffsetX);
+  }
+  if (chartPressConfig?.pan?.failOffsetY) {
+    panGesture.failOffsetX(chartPressConfig.pan.failOffsetY);
+  }
+
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
    * Generate this on demand using a proxy.
@@ -443,6 +470,7 @@ export function CartesianChart<
           );
         })
       : null;
+
   const XAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
