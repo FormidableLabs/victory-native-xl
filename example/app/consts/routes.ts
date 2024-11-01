@@ -18,7 +18,7 @@ export const ChartRoutes: {
   {
     title: "Bar Chart",
     description:
-      "This is a single Bar chart in Victory that supports customized spacing between each bar.",
+      "This is a single Bar chart in Victory that supports customized spacing between each bar as well as pan/zoom.",
     path: "/bar-chart",
   },
   {
@@ -103,7 +103,7 @@ export const ChartRoutes: {
   {
     title: "Pie Chart",
     description:
-      "This is a Pie chart in Victory. It has support for customizing each slice and adding insets.",
+      "This is a Pie chart in Victory. It has support for customizing each slice and adding insets as well as pan/zoom",
     path: "/pie-chart",
   },
   {

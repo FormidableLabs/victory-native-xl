@@ -7,8 +7,20 @@ import {
 } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Bar, CartesianChart } from "victory-native";
+import {
+  Bar,
+  CartesianChart,
+  getTransformComponents,
+  setScale,
+  setTranslate,
+  useChartTransformState,
+} from "victory-native";
 import { useDarkMode } from "react-native-dark";
+import {
+  useAnimatedReaction,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { InputSwitch } from "../components/InputSwitch";
@@ -37,12 +49,46 @@ export default function BarChartPage(props: { segment: string }) {
   const [labelPosition, setLabelPosition] = useState<
     "top" | "bottom" | "left" | "right"
   >("top");
+  const { state } = useChartTransformState();
+
+  const k = useSharedValue(1);
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => {
+      return state.panActive.value || state.zoomActive.value;
+    },
+    (cv, pv) => {
+      if (!cv && pv) {
+        const vals = getTransformComponents(state.matrix.value);
+        k.value = vals.scaleX;
+        tx.value = vals.translateX;
+        ty.value = vals.translateY;
+
+        k.value = withTiming(1);
+        tx.value = withTiming(0);
+        ty.value = withTiming(0);
+      }
+    },
+  );
+
+  useAnimatedReaction(
+    () => {
+      return { k: k.value, tx: tx.value, ty: ty.value };
+    },
+    ({ k, tx, ty }) => {
+      const m = setTranslate(state.matrix.value, tx, ty);
+      state.matrix.value = setScale(m, k);
+    },
+  );
 
   return (
     <>
       <SafeAreaView style={styles.safeView}>
         <View style={styles.chart}>
           <CartesianChart
+            transformState={state}
             xKey="month"
             padding={5}
             yKeys={["listenCount"]}
