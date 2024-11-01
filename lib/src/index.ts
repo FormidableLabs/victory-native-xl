@@ -1,7 +1,10 @@
 /**
  * Cartesian chart exports (including useful types)
  */
-export { CartesianChart } from "./cartesian/CartesianChart";
+export {
+  CartesianChart,
+  type CartesianActionsHandle,
+} from "./cartesian/CartesianChart";
 
 export {
   type InputDatum,

@@ -3,11 +3,13 @@ import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
+  type ComposedGesture,
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
   type TouchData,
 } from "react-native-gesture-handler";
+import { type MutableRefObject } from "react";
 import type {
   AxisProps,
   CartesianChartRenderArg,
@@ -32,6 +34,10 @@ import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
+
+export type CartesianActionsHandle<T> = {
+  handleTouch: (v: T, x: number, y: number) => void;
+};
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -58,6 +64,13 @@ type CartesianChartProps<
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
+  customGestures?: ComposedGesture;
+  actionsRef?: MutableRefObject<CartesianActionsHandle<
+    ChartPressState<{
+      x: InputFields<RawData>[XK];
+      y: Record<YK, number>;
+    }>
+  > | null>;
 };
 
 export function CartesianChart<
@@ -80,6 +93,8 @@ export function CartesianChart<
   xAxis,
   yAxis,
   frame,
+  customGestures,
+  actionsRef,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -243,6 +258,12 @@ export function CartesianChart<
 
     lastIdx.value = idx;
   };
+
+  if (actionsRef) {
+    actionsRef.current = {
+      handleTouch,
+    };
+  }
 
   /**
    * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
@@ -478,12 +499,15 @@ export function CartesianChart<
     </Canvas>
   );
 
+  let composedGestures = customGestures ?? Gesture.Race();
+  if (chartPressState) {
+    composedGestures = Gesture.Race(composedGestures, panGesture);
+  }
+
   // Conditionally wrap the body in gesture handler based on activePressSharedValue
-  return chartPressState ? (
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={panGesture}>{body}</GestureDetector>
+      <GestureDetector gesture={composedGestures}>{body}</GestureDetector>
     </GestureHandlerRootView>
-  ) : (
-    body
   );
 }
