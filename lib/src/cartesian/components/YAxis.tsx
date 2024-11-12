@@ -24,6 +24,7 @@ export const YAxis = <
   lineColor,
   font,
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
+  linePathEffect,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
@@ -62,7 +63,9 @@ export const YAxis = <
             p2={vec(xScale(x2), yScale(tick))}
             color={lineColor}
             strokeWidth={lineWidth}
-          />
+          >
+            {linePathEffect ? linePathEffect : null}
+          </Line>
         ) : null}
         {font
           ? canFitLabelContent && (

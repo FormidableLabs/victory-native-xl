@@ -1,4 +1,5 @@
 import {
+  DashPathEffect,
   LinearGradient,
   useFont,
   vec,
@@ -47,16 +48,27 @@ export default function BarChartPage(props: { segment: string }) {
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
-            axisOptions={{
+            xAxis={{
               font,
               tickCount: 5,
+              labelColor: isDark ? appColors.text.dark : appColors.text.light,
+              lineWidth: 0,
               formatXLabel: (value) => {
                 const date = new Date(2023, value - 1);
                 return date.toLocaleString("default", { month: "short" });
               },
-              lineColor: isDark ? "#71717a" : "#d4d4d8",
-              labelColor: isDark ? appColors.text.dark : appColors.text.light,
+              linePathEffect: <DashPathEffect intervals={[4, 4]} />,
             }}
+            frame={{
+              lineWidth: 0,
+            }}
+            yAxis={[
+              {
+                yKeys: ["listenCount"],
+                font,
+                linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+              },
+            ]}
             data={data}
           >
             {({ points, chartBounds }) => {

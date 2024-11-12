@@ -36,7 +36,7 @@ export const ChartRoutes: {
   {
     title: "Negative Bar Charts",
     description:
-      "These charts demonstrate how negative values look with Bar and Bar Group charts.",
+      "These charts demonstrate how negative values look with Bar, Bar Group and Stacked Bar charts.",
     path: "/negative-bar-charts",
   },
   {
@@ -117,6 +117,11 @@ export const ChartRoutes: {
     description:
       "This is mixture of Pie and Donut charts, showing off the different ways to customize the charts.",
     path: "/pie-and-donut-charts",
+  },
+  {
+    title: "Dashed Axes",
+    description: "This is an Area chart with dashed X and Y axes.",
+    path: "/dashed-axes",
   },
 ];
 

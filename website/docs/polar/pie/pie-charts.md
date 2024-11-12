@@ -18,7 +18,7 @@ The example below shows the most basic use of the `Pie.Chart`.
 
 ```tsx
 import { View } from "react-native";
-import { Pie } from "victory-native";
+import { Pie, PolarChart } from "victory-native";
 
 function MyChart() {
   return (
@@ -69,6 +69,10 @@ A `number` which defines how many degrees of the chart should be drawn. The defa
 ### `startAngle`
 
 A `number` which defines the starting angle of the chart. Changing this prop will rotate the chart.
+
+### `size`
+
+A `number` which defines the size of the chart. This defaults to the canvas' width and height. This can be overriden with this prop (in case you want to position labels outside the chart, for example)
 
 ### `children`
 

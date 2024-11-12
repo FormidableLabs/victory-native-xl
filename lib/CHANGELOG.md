@@ -1,5 +1,55 @@
 # victory-native
 
+## 41.9.0
+
+### Minor Changes
+
+- Expose chart xTick and yTick values ([#409](https://github.com/FormidableLabs/victory-native-xl/pull/409))
+
+## 41.8.0
+
+### Minor Changes
+
+- Add `matchedIndex` to chart press state ([#405](https://github.com/FormidableLabs/victory-native-xl/pull/405))
+
+## 41.7.0
+
+### Minor Changes
+
+- Updates the lineWidth prop for frame to allow for configuring the width per side. ([#397](https://github.com/FormidableLabs/victory-native-xl/pull/397))
+
+### Patch Changes
+
+- Fix determining stacked bar count from points structure ([#404](https://github.com/FormidableLabs/victory-native-xl/pull/404))
+
+## 41.6.2
+
+### Patch Changes
+
+- Add pie size prop ([#392](https://github.com/FormidableLabs/victory-native-xl/pull/392))
+
+## 41.6.1
+
+### Patch Changes
+
+- Fix stacked bar rounded corners for non-uniform datasets and add support for positive and negative values in the same column. ([#386](https://github.com/FormidableLabs/victory-native-xl/pull/386))
+
+## 41.6.0
+
+### Minor Changes
+
+- Add dashed path effect option for X and Y axes ([#372](https://github.com/FormidableLabs/victory-native-xl/pull/372))
+
+## 41.5.0
+
+### Minor Changes
+
+- Added domain property for multiple y axes ([#375](https://github.com/FormidableLabs/victory-native-xl/pull/375))
+
+### Patch Changes
+
+- Fix frame prop ([#379](https://github.com/FormidableLabs/victory-native-xl/pull/379))
+
 ## 41.4.0
 
 ### Minor Changes

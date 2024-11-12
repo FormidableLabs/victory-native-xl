@@ -26,7 +26,7 @@ const IndividualTouchableBarChart = () => {
     y: { favouriteCount: 0, listenCount: 0, sales: 0 },
   });
 
-  const pressedXY = { x: state.x.value.value - 1, y: state.yIndex.value };
+  const pressedXY = { x: state.matchedIndex.value, y: state.yIndex.value };
   return (
     <View style={{ flex: 1 }}>
       <CartesianChart
@@ -219,6 +219,61 @@ const CustomChildrenChart = () => {
   );
 };
 
+const NonUniformDataSet = () => {
+  const font = useFont(inter, 12);
+  const isDark = useDarkMode();
+  const data = [
+    { month: 1, favouriteCount: 50, listenCount: 50, sales: 50 },
+    { month: 2, listenCount: 50, sales: 50 },
+    { month: 3, sales: 50 },
+    { month: 4, listenCount: 50, sales: 0 },
+    { month: 5, favouriteCount: 50, listenCount: 50, sales: 0 },
+  ];
+  const roundedCorner = 5;
+
+  return (
+    <View style={{ flex: 1 }}>
+      <CartesianChart
+        xKey="month"
+        padding={5}
+        yKeys={["favouriteCount", "listenCount", "sales"]}
+        domainPadding={{ left: 50, right: 50, top: 0 }}
+        domain={{ y: [0, 200] }}
+        axisOptions={{
+          font,
+          formatXLabel: (value) => {
+            const date = new Date(2023, value - 1);
+            return date.toLocaleString("default", { month: "short" });
+          },
+          lineColor: isDark ? "#71717a" : "#d4d4d8",
+          labelColor: isDark ? appColors.text.dark : appColors.text.light,
+        }}
+        data={data}
+      >
+        {({ points, chartBounds }) => {
+          return (
+            <StackedBar
+              barWidth={45}
+              innerPadding={0.33}
+              chartBounds={chartBounds}
+              points={[points.favouriteCount, points.listenCount, points.sales]}
+              colors={["blue", "red", "green"]}
+              barOptions={({ isBottom, isTop }) => ({
+                roundedCorners: {
+                  topLeft: isTop ? roundedCorner : 0,
+                  topRight: isTop ? roundedCorner : 0,
+                  bottomRight: isBottom ? roundedCorner : 0,
+                  bottomLeft: isBottom ? roundedCorner : 0,
+                },
+              })}
+            />
+          );
+        }}
+      </CartesianChart>
+    </View>
+  );
+};
+
 export default function StackedBarChartsComplexPage() {
   return (
     <>
@@ -237,6 +292,13 @@ export default function StackedBarChartsComplexPage() {
           <View style={styles.chartContainer}>
             <Text style={styles.title}>Stacked chart with custom children</Text>
             <CustomChildrenChart />
+          </View>
+          <View style={styles.chartContainer}>
+            <Text style={styles.title}>
+              Rounded corners where some data points are missing or values are
+              zero
+            </Text>
+            <NonUniformDataSet />
           </View>
         </ScrollView>
       </SafeAreaView>
