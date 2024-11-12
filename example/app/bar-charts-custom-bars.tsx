@@ -26,7 +26,7 @@ export default function BarChartCustomBarsPage() {
   });
 
   let activeXItem = useDerivedValue(() => {
-    return data.findIndex((value) => value.month === state.x.value.value);
+    return state.matchedIndex.value;
   }).value;
   if (activeXItem < 0) {
     activeXItem = 2;

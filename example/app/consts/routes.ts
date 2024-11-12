@@ -36,7 +36,7 @@ export const ChartRoutes: {
   {
     title: "Negative Bar Charts",
     description:
-      "These charts demonstrate how negative values look with Bar and Bar Group charts.",
+      "These charts demonstrate how negative values look with Bar, Bar Group and Stacked Bar charts.",
     path: "/negative-bar-charts",
   },
   {

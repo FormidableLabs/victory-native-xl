@@ -140,7 +140,7 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 
 |        Property         | Type                                        | Description                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | :---------------------: | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`yKeys` (optional)**  | <pre>YK[]</pre>                             | A `string[]` array of strings indicating the _keys_ of each `data[number]` object to be used on the dependent (y) axis for charting. Each yAxis object needs to specify which Y data keys it corresponds to. If only one object is passed, then this defaults to the existing yKeys and so remains optional, but you must specify it if you want to have multiple y axes, since the axis must know which data is corresponds to! |
+| **`yKeys` (optional)**  | <pre>YK[]</pre>                             | A `string[]` array of strings indicating the _keys_ of each `data[number]` object to be used on the dependent (y) axis for charting. Each yAxis object needs to specify which Y data keys it corresponds to. If only one object is passed, then this defaults to the existing yKeys and so remains optional, but you must specify it if you want to have multiple y axes, since the axis must know which data it corresponds to! |
 |       **`font`**        | <pre>SkFont &#124; null</pre>               | Defines the font to be used for x axis labels. If not provided, then no labels will be rendered. This font object is typically returned from Skia’s `useFont` hook.                                                                                                                                                                                                                                                              |
 |     **`tickCount`**     | <pre>number</pre>                           | Defines the number of ticks to be rendered on the Y axis. If not provided, then the chart will attempt to choose a reasonable number of ticks based on the size of the chart. <br /><br />Note: This is an approximation; the scale may return more or fewer values depending on the domain, padding, and axis labels.                                                                                                           |
 |    **`tickValues`**     | <pre>[number]</pre>                         | Defines the explicit set of numeric tick values to be rendered on the Y axis. The tickValues prop is used to specify the values of each tick, so we only accept numeric values. Use the `formatXLabel` or `formatYLabel` options to customize how the ticks should be labeled. <br /><br />Note: If `tickCount` value is also provided, it will be used to downsample the provided `tickValues` array to the specified length.   |
@@ -161,7 +161,7 @@ The `frame` is an optional prop allows you to configure the frame of the chart. 
 |       Property       | Type                             | Description                                                                                                                                                                 |
 | :------------------: | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |   **`lineColor`**    | <pre>Color (RN Skia Color)</pre> | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
-|   **`lineWidth`**    | <pre>number</pre>                | Defines the width of the frame. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                          |
+|   **`lineWidth`**    | <pre>number &#124; \{top: number; bottom: number; left: number; right: number\}</pre> | Defines the width of the frame. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                          |
 | **`linePathEffect`** | <pre>`DashPathEffect`</pre>      | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
 
 ### `chartPressState`
@@ -238,3 +238,11 @@ A [`d3-scale` linear scale](https://d3js.org/d3-scale/linear) used for mapping t
 ### `yScale`
 
 A [`d3-scale` linear scale](https://d3js.org/d3-scale/linear) used for mapping the raw data's dependent variables onto the canvas's vertical axis.
+
+### `xTicks`
+
+a `number[]` which holds the normalized values of the canvas's horizontal axis. To map into canvas position values, use `xScale` (i.e. `xScale(xTicks[0])`)
+
+### `yTicks`
+
+a `number[]` which holds the normalized values of the canvas's vertical axis. To map into canvas position values, use `yScale` (i.e. `yScale(yTicks[0])`)
