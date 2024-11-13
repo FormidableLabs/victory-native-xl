@@ -1,0 +1,36 @@
+# Pan/Zoom
+
+The `CartesianChart` and `PolarChart` components have opt-in support for "pan/zoom" gestures simply by using the `useChartTransformState` hook.
+
+## useChartTransformState
+
+At a high level, `useChartTransformState` initializes some structures internally that keep track of the pan/zoom operations and support subsequent gestures. These structures are Reanimated `SharedValue`s.
+
+The signature of the function is:
+
+```ts
+useChartTransformState(): { state: ChartTransformState }
+
+export type ChartTransformState = {
+  panActive: SharedValue<boolean>;
+  zoomActive: SharedValue<boolean>;
+  origin: SharedValue<{ x: number; y: number }>;
+  matrix: SharedValue<Matrix4>;
+  offset: SharedValue<Matrix4>;
+};
+```
+
+### panActive
+`true` if the pan gesture is active
+
+### zoomActive
+`true` if the zoom/pinch gesture is active
+
+### matrix
+A `4 x 4` matrix used to keep track of all the pan / zoom transformation.
+
+### origin
+structure used internally to support tranformation gestures
+
+### offset
+stucture used internally to support transformation gestures

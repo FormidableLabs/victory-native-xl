@@ -192,6 +192,10 @@ The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?:
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
 
+### `transformState`
+
+The `transformState` allows you pass in Reanimated `SharedValue`s that will be used to track the pan/zoom transformations on the chart.
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.
