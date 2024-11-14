@@ -19,8 +19,8 @@ import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
 import { InputColor } from "example/components/InputColor";
 import { InputSegment } from "example/components/InputSegment";
-import { appColors } from "./consts/colors";
-import { descriptionForRoute } from "./consts/routes";
+import { appColors } from "../consts/colors";
+import { descriptionForRoute } from "../consts/routes";
 import inter from "../assets/inter-medium.ttf";
 import { PieChartCustomLabel } from "./pie-chart-custom-label";
 

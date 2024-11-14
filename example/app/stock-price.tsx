@@ -35,10 +35,10 @@ import { useDarkMode } from "react-native-dark";
 import * as Haptics from "expo-haptics";
 import inter from "../assets/inter-medium.ttf";
 import { AnimatedText } from "../components/AnimatedText";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import data from "../data/stockprice/tesla_stock.json";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
 const initChartPressState = { x: 0, y: { high: 0 } };

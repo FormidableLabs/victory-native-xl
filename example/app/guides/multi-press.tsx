@@ -4,9 +4,9 @@ import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { Button } from "example/components/Button";
-import { appColors } from "../consts/colors";
+import { appColors } from "../../consts/colors";
 import inter from "../../assets/inter-medium.ttf";
-import { urlForRoute } from "../consts/routes";
+import { urlForRoute } from "../../consts/routes";
 
 const initChartPressState = { x: 0, y: { highTmp: 0 } };
 
