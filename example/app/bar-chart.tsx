@@ -22,12 +22,12 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InputSwitch } from "../components/InputSwitch";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 import { InputSegment } from "../components/InputSegment";
 import { InputColor } from "../components/InputColor";
 

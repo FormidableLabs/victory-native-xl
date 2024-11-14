@@ -41,7 +41,7 @@ import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "./consts/routes";
 
 const DATA = data.map((d) => ({ ...d, date: new Date(d.date).valueOf() }));
-const initChartPressState = { x: 0, y: { high: 0 } } as const;
+const initChartPressState = { x: 0, y: { high: 0 } };
 
 export default function StockPriceScreen(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
@@ -125,7 +125,7 @@ export default function StockPriceScreen(props: { segment: string }) {
   });
 
   // Indicator color based on delta
-  const indicatorColor = useDerivedValue(() => {
+  const indicatorColor = useDerivedValue<string>(() => {
     if (!(isFirstPressActive && isSecondPressActive)) return appColors.tint;
     return isDeltaPositive.value
       ? appColors.success[colorPrefix]

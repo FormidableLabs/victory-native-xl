@@ -8,7 +8,7 @@ import { appColors } from "../consts/colors";
 import inter from "../../assets/inter-medium.ttf";
 import { urlForRoute } from "../consts/routes";
 
-const initChartPressState = { x: 0, y: { highTmp: 0 } } as const;
+const initChartPressState = { x: 0, y: { highTmp: 0 } };
 
 export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);

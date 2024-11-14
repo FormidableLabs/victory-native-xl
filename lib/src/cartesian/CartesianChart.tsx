@@ -202,7 +202,6 @@ function CartesianChartContent<
         xAxis: normalizedAxisProps.xAxis,
         yAxes: normalizedAxisProps.yAxes,
       });
-    tData.value = _tData;
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
@@ -216,7 +215,6 @@ function CartesianChartContent<
     return {
       xTicksNormalized,
       yAxes,
-      tData,
       xScale,
       chartBounds,
       isNumericalData,
@@ -231,9 +229,12 @@ function CartesianChartContent<
     size.height,
     domain,
     domainPadding,
-    tData,
     normalizedAxisProps,
   ]);
+
+  React.useEffect(() => {
+    tData.value = _tData;
+  }, [_tData, tData]);
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;

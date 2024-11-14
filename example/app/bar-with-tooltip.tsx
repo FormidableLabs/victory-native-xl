@@ -21,8 +21,8 @@ import {
 import { BarGroup, CartesianChart, useChartPressState } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { InfoCard } from "../components/InfoCard";
-import { appColors } from "./consts/colors";
-import { descriptionForRoute } from "./consts/routes";
+import { appColors } from "../consts/colors";
+import { descriptionForRoute } from "../consts/routes";
 
 const DATA = Array.from({ length: 6 }, (_, index) => {
   const low = Math.round(20 + 20 * Math.random());
