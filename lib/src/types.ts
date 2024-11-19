@@ -66,7 +66,9 @@ export type CartesianChartRenderArg<
   YK extends keyof NumericalFields<RawData>,
 > = {
   xScale: Scale;
+  xTicks: number[];
   yScale: Scale;
+  yTicks: number[];
   chartBounds: ChartBounds;
   canvasSize: { width: number; height: number };
   points: {

@@ -124,6 +124,16 @@ export const ChartRoutes: {
     path: "/dashed-axes",
   },
   {
+    title: "Stacked Area (very simple)",
+    description: "This is a very simple Stacked Area chart",
+    path: "/stacked-area",
+  },
+  {
+    title: "Stacked Area (complex)",
+    description: "This is a more complicated Stacked Area chart",
+    path: "/stacked-area-complex",
+  },
+  {
     title: "Pan Zoom",
     description: "This is an example of pan zoom functionality",
     path: "/pan-zoom",

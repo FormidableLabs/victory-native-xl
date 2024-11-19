@@ -242,3 +242,11 @@ A [`d3-scale` linear scale](https://d3js.org/d3-scale/linear) used for mapping t
 ### `yScale`
 
 A [`d3-scale` linear scale](https://d3js.org/d3-scale/linear) used for mapping the raw data's dependent variables onto the canvas's vertical axis.
+
+### `xTicks`
+
+a `number[]` which holds the normalized values of the canvas's horizontal axis. To map into canvas position values, use `xScale` (i.e. `xScale(xTicks[0])`)
+
+### `yTicks`
+
+a `number[]` which holds the normalized values of the canvas's vertical axis. To map into canvas position values, use `yScale` (i.e. `yScale(yTicks[0])`)
