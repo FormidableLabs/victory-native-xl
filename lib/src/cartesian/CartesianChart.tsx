@@ -58,6 +58,9 @@ type CartesianChartProps<
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
 
   onChartBoundsChange?: (bounds: ChartBounds) => void;
+  /**
+   * @deprecated This prop will eventually be replaced by the new `chartPressConfig`. For now it's being kept around for backwards compatibility sake.
+   */
   gestureLongPressDelay?: number;
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
@@ -367,21 +370,20 @@ export function CartesianChart<
           val.isActive.value = false;
         }
       }
-    })
+    });
+
+  if (!chartPressConfig?.pan) {
     /**
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */
-    .activateAfterLongPress(gestureLongPressDelay);
+    panGesture.activateAfterLongPress(gestureLongPressDelay);
+  }
 
-  if (chartPressConfig?.pan?.activateAfterLongPress !== undefined) {
-    if (isNaN(chartPressConfig.pan.activateAfterLongPress)) {
-      panGesture.config.activateAfterLongPress = undefined;
-    } else {
-      panGesture.activateAfterLongPress(
-        chartPressConfig.pan?.activateAfterLongPress,
-      );
-    }
+  if (chartPressConfig?.pan?.activateAfterLongPress) {
+    panGesture.activateAfterLongPress(
+      chartPressConfig.pan?.activateAfterLongPress,
+    );
   }
   if (chartPressConfig?.pan?.activeOffsetX) {
     panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetX);
