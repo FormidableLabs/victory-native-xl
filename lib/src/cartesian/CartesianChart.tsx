@@ -131,6 +131,9 @@ function CartesianChartContent<
     yKeys,
     axisOptions,
   });
+
+  // create a d3-zoom transform object based on the current transform state. This
+  // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
   const zoom = new ZoomTransform(transform.k, transform.tx, transform.ty);
 
