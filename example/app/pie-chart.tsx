@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Pie, PolarChart } from "victory-native";
+import {
+  getTransformComponents,
+  Pie,
+  PolarChart,
+  setScale,
+  setTranslate,
+  useChartTransformState,
+} from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
+import {
+  useAnimatedReaction,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
@@ -36,6 +48,39 @@ export default function PieChart(props: { segment: string }) {
   const [dataLabelSegment, setDataLabelSegment] = useState<
     "simple" | "custom" | "none"
   >("none");
+  const { state } = useChartTransformState();
+
+  const k = useSharedValue(1);
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => {
+      return state.panActive.value || state.zoomActive.value;
+    },
+    (cv, pv) => {
+      if (!cv && pv) {
+        const vals = getTransformComponents(state.matrix.value);
+        k.value = vals.scaleX;
+        tx.value = vals.translateX;
+        ty.value = vals.translateY;
+
+        k.value = withTiming(1);
+        tx.value = withTiming(0);
+        ty.value = withTiming(0);
+      }
+    },
+  );
+
+  useAnimatedReaction(
+    () => {
+      return { k: k.value, tx: tx.value, ty: ty.value };
+    },
+    ({ k, tx, ty }) => {
+      const m = setTranslate(state.matrix.value, tx, ty);
+      state.matrix.value = setScale(m, k);
+    },
+  );
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -46,6 +91,7 @@ export default function PieChart(props: { segment: string }) {
           }}
         >
           <PolarChart
+            transformState={state}
             data={data}
             colorKey={"color"}
             valueKey={"value"}

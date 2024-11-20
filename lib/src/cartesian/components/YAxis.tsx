@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Line, Text, vec } from "@shopify/react-native-skia";
+import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import type {
   InputDatum,
   NumericalFields,
@@ -25,6 +25,7 @@ export const YAxis = <
   font,
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
+  chartBounds,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
@@ -58,14 +59,16 @@ export const YAxis = <
     return (
       <React.Fragment key={`y-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Line
-            p1={vec(xScale(x1), yScale(tick))}
-            p2={vec(xScale(x2), yScale(tick))}
-            color={lineColor}
-            strokeWidth={lineWidth}
-          >
-            {linePathEffect ? linePathEffect : null}
-          </Line>
+          <Group clip={chartBounds}>
+            <Line
+              p1={vec(xScale(x1), yScale(tick))}
+              p2={vec(xScale(x2), yScale(tick))}
+              color={lineColor}
+              strokeWidth={lineWidth}
+            >
+              {linePathEffect ? linePathEffect : null}
+            </Line>
+          </Group>
         ) : null}
         {font
           ? canFitLabelContent && (

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Canvas } from "@shopify/react-native-skia";
+import { Canvas, Group } from "@shopify/react-native-skia";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   type LayoutChangeEvent,
   type StyleProp,
 } from "react-native";
+import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   PolarChartProvider,
   usePolarChartContext,
@@ -17,6 +18,12 @@ import type {
   NumericalFields,
   StringKeyOf,
 } from "../types";
+import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
+import {
+  panTransformGesture,
+  pinchTransformGesture,
+} from "../cartesian/utils/transformGestures";
+import { GestureHandler } from "../shared/GestureHandler";
 
 type PolarChartBaseProps = {
   onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
@@ -24,6 +31,7 @@ type PolarChartBaseProps = {
   canvasSize: { width: number; height: number };
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
+  transformState?: ChartTransformState;
 };
 
 const PolarChartBase = (
@@ -36,28 +44,44 @@ const PolarChartBase = (
     onLayout,
     hasMeasuredLayoutSize,
     canvasSize,
+    transformState,
   } = props;
   const { width, height } = canvasSize;
 
   const ctx = usePolarChartContext();
 
+  let composed = Gesture.Race();
+  if (transformState) {
+    composed = Gesture.Race(
+      composed,
+      pinchTransformGesture(transformState),
+      panTransformGesture(transformState),
+    );
+  }
+
   return (
     <View style={[styles.baseContainer, containerStyle]}>
-      <Canvas
-        onLayout={onLayout}
-        style={StyleSheet.flatten([
-          styles.canvasContainer,
-          hasMeasuredLayoutSize ? { width, height } : null,
-          canvasStyle,
-        ])}
-      >
-        {/* https://shopify.github.io/react-native-skia/docs/canvas/contexts/
+      <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+        <Canvas
+          onLayout={onLayout}
+          style={StyleSheet.flatten([
+            styles.canvasContainer,
+            hasMeasuredLayoutSize ? { width, height } : null,
+            canvasStyle,
+          ])}
+        >
+          {/* https://shopify.github.io/react-native-skia/docs/canvas/contexts/
             we have to re-inject our context to make it available in the skia renderer
          */}
-        <PolarChartProvider {...ctx} canvasSize={canvasSize}>
-          {children}
-        </PolarChartProvider>
-      </Canvas>
+          <PolarChartProvider {...ctx} canvasSize={canvasSize}>
+            <Group matrix={transformState?.matrix}>{children}</Group>
+          </PolarChartProvider>
+        </Canvas>
+        <GestureHandler
+          gesture={composed}
+          dimensions={{ x: 0, y: 0, width: width, height: height }}
+        />
+      </GestureHandlerRootView>
     </View>
   );
 };

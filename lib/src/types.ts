@@ -1,10 +1,13 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import {
+  type ClipDef,
   type Color,
   type DashPathEffect,
   type SkFont,
 } from "@shopify/react-native-skia";
+import type { ZoomTransform } from "d3-zoom";
+import { type PanGesture } from "react-native-gesture-handler";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -179,16 +182,23 @@ export type XAxisInputProps<
   tickValues?: number[];
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
+  enableRescaling?: boolean;
 };
 
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
 > = Required<
-  Omit<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+  Omit<
+    XAxisInputProps<RawData, XK>,
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+  >
 > &
   Partial<
-    Pick<XAxisInputProps<RawData, XK>, "font" | "tickValues" | "linePathEffect">
+    Pick<
+      XAxisInputProps<RawData, XK>,
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    >
   >;
 
 export type XAxisProps<
@@ -199,6 +209,8 @@ export type XAxisProps<
   yScale: Scale;
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
+  chartBounds: ClipDef;
+  zoom?: ZoomTransform;
 };
 
 export type YAxisInputProps<
@@ -218,16 +230,23 @@ export type YAxisInputProps<
   yKeys?: YK[];
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
+  enableRescaling?: boolean;
 };
 
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
 > = Required<
-  Omit<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+  Omit<
+    YAxisInputProps<RawData, YK>,
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+  >
 > &
   Partial<
-    Pick<YAxisInputProps<RawData, YK>, "font" | "tickValues" | "linePathEffect">
+    Pick<
+      YAxisInputProps<RawData, YK>,
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    >
   >;
 
 export type YAxisProps<
@@ -238,6 +257,7 @@ export type YAxisProps<
   yScale: Scale;
   yTicksNormalized: number[];
   yKeys: YK[];
+  chartBounds: ClipDef;
 };
 
 export type FrameInputProps = {
@@ -251,6 +271,19 @@ export type FramePropsWithDefaults = Required<
 export type FrameProps = FramePropsWithDefaults & {
   xScale: Scale;
   yScale: Scale;
+};
+
+type ExtractParams<
+  T extends (...args: any[]) => any, // eslint-disable-line
+  P extends Parameters<T> = Parameters<T>,
+> = P["length"] extends 1 ? P[0] : P;
+
+export type ChartPressPanConfig = {
+  activateAfterLongPress?: ExtractParams<PanGesture["activateAfterLongPress"]>;
+  activeOffsetX?: ExtractParams<PanGesture["activeOffsetX"]>;
+  activeOffsetY?: ExtractParams<PanGesture["activeOffsetY"]>;
+  failOffsetX?: ExtractParams<PanGesture["failOffsetX"]>;
+  failOffsetY?: ExtractParams<PanGesture["failOffsetY"]>;
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

@@ -120,19 +120,20 @@ The `axisOptions` is an optional prop allows you to configure the axes and grid 
 
 The `xAxis` is an optional prop allows you to configure the X axis of the chart. If it is not present then the chart will not render any X axis. It is an object of the following properties:
 
-|       Property       | Type                                | Description                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| :------------------: | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|      **`font`**      | <pre>SkFont &#124; null</pre>       | Defines the font to be used for X axis labels. If not provided, then no labels will be rendered. This font object is typically returned from Skia’s `useFont` hook.                                                                                                                                                                                                                                                            |
-|   **`tickCount`**    | <pre>number</pre>                   | Defines the number of ticks to be rendered on the X axis. If not provided, then the chart will attempt to choose a reasonable number of ticks based on the size of the chart. <br /><br />Note: This is an approximation; the scale may return more or fewer values depending on the domain, padding, and axis labels.                                                                                                         |
-|   **`tickValues`**   | <pre>[number]</pre>                 | Defines the explicit set of numeric tick values to be rendered on the X axis. The tickValues prop is used to specify the values of each tick, so we only accept numeric values. Use the `formatXLabel` or `formatYLabel` options to customize how the ticks should be labeled. <br /><br />Note: If `tickCount` value is also provided, it will be used to downsample the provided `tickValues` array to the specified length. |
-|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre>    | Defines the color of the X axis lines. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                                                                                                                                                                                                                                                                         |
-|   **`lineWidth`**    | <pre>number</pre>                   | Defines the width of the X axis lines. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                                                                                                                                                                                                                                                                      |
-|   **`labelColor`**   | <pre>string</pre>                   | Defines the color of the X axis label. It will default to `#000000 (black)` if none is provided.                                                                                                                                                                                                                                                                                                                               |
-|  **`labelOffset`**   | <pre>number</pre>                   | Defines the offset of the axis label. It will default to `2` if none is provided.                                                                                                                                                                                                                                                                                                                                              |
-| **`labelPosition`**  | <pre>AxisLabelPosition;</pre>       | Defines the position of the x-axis labels. It will default to `outset` if none is provided.<br /><br />&#9432; **`AxisLabelPosition`** is an enum with the values: <code>'inset &#124; 'outset'</code>.                                                                                                                                                                                                                        |
-|    **`axisSide`**    | <pre>XAxisSide</pre>                | Defines the side of the chart that the `X` axis is rendered on. It will default to `bottom` if none is provided. <br /><br />&#9432; **`XAxisSide`** is an enum with the values: <code>'top' &#124; 'bottom'</code>.<br/>                                                                                                                                                                                                      |
-|  **`formatXLabel`**  | <pre>(label: T[XK]) => string</pre> | Defines a function provide customization for formatting the X axis labels. It will default to just returning the value as a string if no function is provided.                                                                                                                                                                                                                                                                 |
-| **`linePathEffect`** | <pre>`DashPathEffect`</pre>         | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to their axis lines. In the future this prop may accept other line path effects as well.                                                                                                                                                                                                                                             |
+|       Property        | Type                                | Description                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| :-------------------: | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|      **`font`**       | <pre>SkFont &#124; null</pre>       | Defines the font to be used for X axis labels. If not provided, then no labels will be rendered. This font object is typically returned from Skia’s `useFont` hook.                                                                                                                                                                                                                                                            |
+|    **`tickCount`**    | <pre>number</pre>                   | Defines the number of ticks to be rendered on the X axis. If not provided, then the chart will attempt to choose a reasonable number of ticks based on the size of the chart. <br /><br />Note: This is an approximation; the scale may return more or fewer values depending on the domain, padding, and axis labels.                                                                                                         |
+|   **`tickValues`**    | <pre>[number]</pre>                 | Defines the explicit set of numeric tick values to be rendered on the X axis. The tickValues prop is used to specify the values of each tick, so we only accept numeric values. Use the `formatXLabel` or `formatYLabel` options to customize how the ticks should be labeled. <br /><br />Note: If `tickCount` value is also provided, it will be used to downsample the provided `tickValues` array to the specified length. |
+|    **`lineColor`**    | <pre>Color (RN Skia Color)</pre>    | Defines the color of the X axis lines. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                                                                                                                                                                                                                                                                         |
+|    **`lineWidth`**    | <pre>number</pre>                   | Defines the width of the X axis lines. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                                                                                                                                                                                                                                                                      |
+|   **`labelColor`**    | <pre>string</pre>                   | Defines the color of the X axis label. It will default to `#000000 (black)` if none is provided.                                                                                                                                                                                                                                                                                                                               |
+|   **`labelOffset`**   | <pre>number</pre>                   | Defines the offset of the axis label. It will default to `2` if none is provided.                                                                                                                                                                                                                                                                                                                                              |
+|  **`labelPosition`**  | <pre>AxisLabelPosition;</pre>       | Defines the position of the x-axis labels. It will default to `outset` if none is provided.<br /><br />&#9432; **`AxisLabelPosition`** is an enum with the values: <code>'inset &#124; 'outset'</code>.                                                                                                                                                                                                                        |
+|    **`axisSide`**     | <pre>XAxisSide</pre>                | Defines the side of the chart that the `X` axis is rendered on. It will default to `bottom` if none is provided. <br /><br />&#9432; **`XAxisSide`** is an enum with the values: <code>'top' &#124; 'bottom'</code>.<br/>                                                                                                                                                                                                      |
+|  **`formatXLabel`**   | <pre>(label: T[XK]) => string</pre> | Defines a function provide customization for formatting the X axis labels. It will default to just returning the value as a string if no function is provided.                                                                                                                                                                                                                                                                 |
+| **`linePathEffect`**  | <pre>`DashPathEffect`</pre>         | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to their axis lines. In the future this prop may accept other line path effects as well.                                                                                                                                                                                                                                             |
+| **`enableRescaling`** | <pre>boolean</pre>                  | When `true`, allows the axis ticks to be rescaled during pan/zoom transformations. When `false`, the ticks will remain fixed at their initial values regardless of zoom level. Defaults to `false`.                                                                                                                                                                                                                            |
 
 ### `yAxis`
 
@@ -153,6 +154,7 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 |   **`formatYLabel`**    | <pre>(label: T[YK]) => string</pre>         | Defines a function provide customization for formatting the Y-axis labels. It will default to just returning the value as a string if no function is provided.                                                                                                                                                                                                                                                                   |
 | **`domain` (optional)** | <pre>[number] &#124; [number, number]</pre> | Defines the domain for the Y-axis that can be specified to control the upper and lower bounds of the Y-axis. It defaults to the min and max of the range.                                                                                                                                                                                                                                                                        |
 |  **`linePathEffect`**   | <pre>`DashPathEffect`</pre>                 | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to their axis lines. In the future this prop may accept other line path effects as well.                                                                                                                                                                                                                                               |
+|  **`enableRescaling`**  | <pre>boolean</pre>                          | When `true`, allows the axis ticks to be rescaled during pan/zoom transformations. When `false`, the ticks will remain fixed at their initial values regardless of zoom level. Defaults to `false`.                                                                                                                                                                                                                              |
 
 ### `frame`
 
@@ -188,9 +190,66 @@ The `renderOutside` prop is identical to [the `children` prop](#children-require
 
 The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?: (bounds: ChartBounds) => void;` that exposes the chart bounds, useful if you need access to the chart's bounds for your own custom drawing purposes.
 
-### `gestureLongPressDelay`
+### `gestureLongPressDelay` <i>deprecated</i>
+
+:::warning
+While the `gestureLongPressDelay` prop is still supported, it is deprecated in favor `chartPressConfig` prop. The `gestureLongPressDelay` prop may be removed in a future release.
+:::
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
+
+### `chartPressConfig`
+
+The `chartPressConfig` prop allows you to configure the pan gesture handler used for chart interactions. It accepts an object with the following optional properties:
+
+- `activateAfterLongPress`: Configuration for when the gesture should activate after a long press
+- `activeOffsetX`: The minimum horizontal pan distance required before the gesture activates
+- `activeOffsetY`: The minimum vertical pan distance required before the gesture activates
+- `failOffsetX`: The maximum allowed horizontal pan distance before the gesture fails
+- `failOffsetY`: The maximum allowed vertical pan distance before the gesture fails
+
+These properties correspond directly to the [React Native Gesture Handler's PanGesture configuration options](https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/pan-gesture#configuration).
+
+### `transformState`
+
+The `transformState` prop allows you to pass in a transform state object that enables pan and zoom interactions with the chart. This object is typically created using the `useChartTransformState` hook. When provided, users can:
+
+- Pinch to zoom in/out of the chart
+- Pan around the zoomed chart view
+- Double tap to reset the zoom level
+
+Example usage:
+
+```tsx
+import { CartesianChart, useChartTransformState } from "victory-native";
+
+function MyChart() {
+  const transformState = useChartTransformState();
+
+  return (
+    <CartesianChart
+      data={data}
+      xKey="date"
+      yKeys={["value"]}
+      transformState={transformState} // 👈 enable pan/zoom
+    >
+      {/* ... */}
+    </CartesianChart>
+  );
+}
+```
+
+### `transformConfig`
+
+An optional configuration object for customizing transform behavior when `transformState` is provided. It accepts the following properties:
+
+```typescript
+{
+  pan?: {
+    activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+  }
+}
+```
 
 ### `customGestures`
 
