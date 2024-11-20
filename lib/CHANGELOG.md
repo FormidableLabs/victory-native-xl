@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.11.0
+
+### Minor Changes
+
+- Add support for Pan/Zoom ([#425](https://github.com/FormidableLabs/victory-native-xl/pull/425))
+
 ## 41.10.0
 
 ### Minor Changes
