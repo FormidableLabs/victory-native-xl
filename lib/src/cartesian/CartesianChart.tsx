@@ -4,10 +4,11 @@ import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
   Gesture,
-  GestureDetector,
   GestureHandlerRootView,
   type TouchData,
 } from "react-native-gesture-handler";
+
+import { ZoomTransform } from "d3-zoom";
 import type {
   AxisProps,
   CartesianChartRenderArg,
@@ -32,6 +33,18 @@ import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
+import { type ChartTransformState } from "./hooks/useChartTransformState";
+import {
+  panTransformGesture,
+  type PanTransformGestureConfig,
+  pinchTransformGesture,
+} from "./utils/transformGestures";
+import {
+  CartesianTransformProvider,
+  useCartesianTransformContext,
+} from "./contexts/CartesianTransformContext";
+import { downsampleTicks } from "../utils/tickHelpers";
+import { GestureHandler } from "../shared/GestureHandler";
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -58,9 +71,27 @@ type CartesianChartProps<
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
+  transformState?: ChartTransformState;
+  transformConfig?: {
+    pan?: PanTransformGestureConfig;
+  };
 };
 
 export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>({ transformState, children, ...rest }: CartesianChartProps<RawData, XK, YK>) {
+  return (
+    <CartesianTransformProvider transformState={transformState}>
+      <CartesianChartContent {...{ ...rest, transformState }}>
+        {children}
+      </CartesianChartContent>
+    </CartesianTransformProvider>
+  );
+}
+
+function CartesianChartContent<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
@@ -80,6 +111,8 @@ export function CartesianChart<
   xAxis,
   yAxis,
   frame,
+  transformState,
+  transformConfig,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -98,6 +131,11 @@ export function CartesianChart<
     yKeys,
     axisOptions,
   });
+
+  // create a d3-zoom transform object based on the current transform state. This
+  // is used for rescaling the X and Y axes.
+  const transform = useCartesianTransformContext();
+  const zoom = new ZoomTransform(transform.k, transform.tx, transform.ty);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -431,22 +469,37 @@ export function CartesianChart<
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
           if (!yAxis) return null;
+
+          const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
+          const primaryRescaled = zoom.rescaleY(primaryYScale);
+
+          const rescaled = zoom.rescaleY(yAxis.yScale);
+
+          const primaryTicksRescaled = primaryAxisProps.tickValues
+            ? downsampleTicks(
+                primaryAxisProps.tickValues,
+                primaryAxisProps.tickCount,
+              )
+            : primaryAxisProps.enableRescaling
+              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
+              : primaryYScale.ticks(primaryAxisProps.tickCount);
           return (
             <YAxis
               key={index}
               {...axis}
-              xScale={xScale}
-              yScale={yAxis.yScale}
+              xScale={zoom.rescaleX(xScale)}
+              yScale={rescaled}
               yTicksNormalized={
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
                 index > 0
                   ? normalizeYAxisTicks(
-                      primaryYAxis.yTicksNormalized,
-                      primaryYScale,
-                      yAxis.yScale,
+                      primaryTicksRescaled,
+                      primaryRescaled,
+                      rescaled,
                     )
-                  : yAxis.yTicksNormalized
+                  : primaryTicksRescaled
               }
+              chartBounds={clipRect}
             />
           );
         })
@@ -456,9 +509,11 @@ export function CartesianChart<
       <XAxis
         {...normalizedAxisProps.xAxis}
         xScale={xScale}
-        yScale={primaryYScale}
+        yScale={zoom.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
+        chartBounds={clipRect}
+        zoom={zoom}
       />
     ) : null;
 
@@ -479,19 +534,35 @@ export function CartesianChart<
       {FrameComponent}
       <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
         <Group clip={clipRect}>
-          {hasMeasuredLayoutSize && children(renderArg)}
+          <Group matrix={transformState?.matrix}>
+            {hasMeasuredLayoutSize && children(renderArg)}
+          </Group>
         </Group>
       </CartesianChartProvider>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </Canvas>
   );
 
-  // Conditionally wrap the body in gesture handler based on activePressSharedValue
-  return chartPressState ? (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={panGesture}>{body}</GestureDetector>
+  let composed = Gesture.Race();
+  if (transformState) {
+    composed = Gesture.Race(
+      composed,
+      pinchTransformGesture(transformState),
+      panTransformGesture(transformState, transformConfig?.pan),
+    );
+  }
+  if (chartPressState) {
+    composed = Gesture.Race(composed, panGesture);
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+      {body}
+      <GestureHandler
+        gesture={composed}
+        transformState={transformState}
+        dimensions={{ x: 0, y: 0, width: size.width, height: size.height }}
+      />
     </GestureHandlerRootView>
-  ) : (
-    body
   );
 }

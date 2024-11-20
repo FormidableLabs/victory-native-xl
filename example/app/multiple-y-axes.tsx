@@ -2,10 +2,25 @@ import { useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { CartesianChart, Line, Bar, Area } from "victory-native";
+import {
+  CartesianChart,
+  Line,
+  Bar,
+  Area,
+  useChartTransformState,
+  getTransformComponents,
+  setTranslate,
+  setScale,
+} from "victory-native";
+import {
+  useAnimatedReaction,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "./consts/colors";
 import { InputSlider } from "../components/InputSlider";
+import { InfoCard } from "../components/InfoCard";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 const randomNumber2 = () => Math.floor(Math.random() * (50 - 25 + 1)) + 10000;
@@ -40,6 +55,7 @@ export default function MultipleYAxesPage() {
   const [priceYDomain, setPriceYDomain] = useState<[number, number]>([
     100, 200,
   ]);
+  const { state } = useChartTransformState();
 
   const red = "#a04d4d";
   const blue = "#1e1e59";
@@ -47,15 +63,54 @@ export default function MultipleYAxesPage() {
   const green = "#74b567";
   const gray = "#232323";
 
+  const k = useSharedValue(1);
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => {
+      return state.panActive.value || state.zoomActive.value;
+    },
+    (cv, pv) => {
+      if (!cv && pv) {
+        const vals = getTransformComponents(state.matrix.value);
+        k.value = vals.scaleX;
+        tx.value = vals.translateX;
+        ty.value = vals.translateY;
+
+        k.value = withTiming(1);
+        tx.value = withTiming(0);
+        ty.value = withTiming(0);
+      }
+    },
+  );
+
+  useAnimatedReaction(
+    () => {
+      return { k: k.value, tx: tx.value, ty: ty.value };
+    },
+    ({ k, tx, ty }) => {
+      const m = setTranslate(state.matrix.value, tx, ty);
+      state.matrix.value = setScale(m, k);
+    },
+  );
+
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
         <View style={styles.chart}>
           <CartesianChart
+            transformState={state}
+            transformConfig={{
+              pan: {
+                activateAfterLongPress: 100,
+              },
+            }}
             xKey="day"
             padding={25}
             yKeys={["sales", "profit"]}
             xAxis={{
+              enableRescaling: true,
               font,
               labelColor: "orange",
               formatXLabel: (value) => {
@@ -76,6 +131,7 @@ export default function MultipleYAxesPage() {
                   return value.toFixed(0);
                 },
                 lineColor: "pink",
+                enableRescaling: true,
               },
               {
                 yKeys: ["profit"],
@@ -107,6 +163,9 @@ export default function MultipleYAxesPage() {
               </>
             )}
           </CartesianChart>
+          <View style={{ paddingHorizontal: 20 }}>
+            <InfoCard>This chart supports pan/zoom</InfoCard>
+          </View>
         </View>
         {/* Multi bar, with negative values */}
         <View style={styles.chart}>
