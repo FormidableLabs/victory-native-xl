@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.10.0
+
+### Minor Changes
+
+- Add stacked area charts ([#387](https://github.com/FormidableLabs/victory-native-xl/pull/387))
+
+## 41.9.0
+
+### Minor Changes
+
+- Expose chart xTick and yTick values ([#409](https://github.com/FormidableLabs/victory-native-xl/pull/409))
+
 ## 41.8.0
 
 ### Minor Changes

@@ -133,56 +133,62 @@ export function CartesianChart<
     ),
   });
 
-  const { yAxes, xScale, chartBounds, isNumericalData, _tData } =
-    React.useMemo(() => {
-      const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
-        transformInputData({
-          data,
-          xKey,
-          yKeys,
-          outputWindow: {
-            xMin: valueFromSidedNumber(padding, "left"),
-            xMax: size.width - valueFromSidedNumber(padding, "right"),
-            yMin: valueFromSidedNumber(padding, "top"),
-            yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-          },
-          domain,
-          domainPadding,
-          xAxis: normalizedAxisProps.xAxis,
-          yAxes: normalizedAxisProps.yAxes,
-        });
-      tData.value = _tData;
+  const {
+    yAxes,
+    xScale,
+    chartBounds,
+    isNumericalData,
+    xTicksNormalized,
+    _tData,
+  } = React.useMemo(() => {
+    const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
+      transformInputData({
+        data,
+        xKey,
+        yKeys,
+        outputWindow: {
+          xMin: valueFromSidedNumber(padding, "left"),
+          xMax: size.width - valueFromSidedNumber(padding, "right"),
+          yMin: valueFromSidedNumber(padding, "top"),
+          yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+        },
+        domain,
+        domainPadding,
+        xAxis: normalizedAxisProps.xAxis,
+        yAxes: normalizedAxisProps.yAxes,
+      });
+    tData.value = _tData;
 
-      const primaryYAxis = yAxes[0];
-      const primaryYScale = primaryYAxis.yScale;
-      const chartBounds = {
-        left: xScale(xScale.domain().at(0) || 0),
-        right: xScale(xScale.domain().at(-1) || 0),
-        top: primaryYScale(primaryYScale.domain().at(0) || 0),
-        bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
-      };
+    const primaryYAxis = yAxes[0];
+    const primaryYScale = primaryYAxis.yScale;
+    const chartBounds = {
+      left: xScale(xScale.domain().at(0) || 0),
+      right: xScale(xScale.domain().at(-1) || 0),
+      top: primaryYScale(primaryYScale.domain().at(0) || 0),
+      bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
+    };
 
-      return {
-        xTicksNormalized,
-        yAxes,
-        tData,
-        xScale,
-        chartBounds,
-        isNumericalData,
-        _tData,
-      };
-    }, [
-      data,
-      xKey,
-      yKeys,
-      padding,
-      size.width,
-      size.height,
-      domain,
-      domainPadding,
+    return {
+      xTicksNormalized,
+      yAxes,
       tData,
-      normalizedAxisProps,
-    ]);
+      xScale,
+      chartBounds,
+      isNumericalData,
+      _tData,
+    };
+  }, [
+    data,
+    xKey,
+    yKeys,
+    padding,
+    size.width,
+    size.height,
+    domain,
+    domainPadding,
+    tData,
+    normalizedAxisProps,
+  ]);
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;
@@ -433,7 +439,9 @@ export function CartesianChart<
 
   const renderArg: CartesianChartRenderArg<RawData, YK> = {
     xScale,
+    xTicks: xTicksNormalized,
     yScale: primaryYScale,
+    yTicks: primaryYAxis.yTicksNormalized,
     chartBounds,
     canvasSize: size,
     points,
