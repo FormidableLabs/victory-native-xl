@@ -123,6 +123,11 @@ export const ChartRoutes: {
     description: "This is an Area chart with dashed X and Y axes.",
     path: "/dashed-axes",
   },
+  {
+    title: "Custom Gesture",
+    description: "Basic chart example with a custom tap gesture.",
+    path: "/custom-gesture",
+  },
 ];
 
 if (__DEV__) {
