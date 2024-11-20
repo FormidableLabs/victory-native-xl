@@ -3,11 +3,12 @@ import { type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, rect } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
+  type ComposedGesture,
   Gesture,
   GestureHandlerRootView,
   type TouchData,
 } from "react-native-gesture-handler";
-
+import { type MutableRefObject } from "react";
 import { ZoomTransform } from "d3-zoom";
 import type {
   AxisProps,
@@ -26,7 +27,10 @@ import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
-import type { ChartPressState } from "./hooks/useChartPressState";
+import type {
+  ChartPressState,
+  ChartPressStateInit,
+} from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
@@ -46,6 +50,13 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+
+export type CartesianActionsHandle<T = undefined> =
+  T extends ChartPressState<ChartPressStateInit>
+    ? {
+        handleTouch: (v: T, x: number, y: number) => void;
+      }
+    : object;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -82,6 +93,14 @@ type CartesianChartProps<
   transformConfig?: {
     pan?: PanTransformGestureConfig;
   };
+  customGestures?: ComposedGesture;
+  actionsRef?: MutableRefObject<CartesianActionsHandle<
+    | ChartPressState<{
+        x: InputFields<RawData>[XK];
+        y: Record<YK, number>;
+      }>
+    | undefined
+  > | null>;
 };
 
 export function CartesianChart<
@@ -121,6 +140,8 @@ function CartesianChartContent<
   frame,
   transformState,
   transformConfig,
+  customGestures,
+  actionsRef,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -295,6 +316,12 @@ function CartesianChartContent<
 
     lastIdx.value = idx;
   };
+
+  if (actionsRef) {
+    actionsRef.current = {
+      handleTouch,
+    };
+  }
 
   /**
    * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
@@ -573,7 +600,7 @@ function CartesianChartContent<
     </Canvas>
   );
 
-  let composed = Gesture.Race();
+  let composed = customGestures ?? Gesture.Race();
   if (transformState) {
     composed = Gesture.Race(
       composed,

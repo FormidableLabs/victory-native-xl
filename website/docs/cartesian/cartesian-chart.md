@@ -251,6 +251,48 @@ An optional configuration object for customizing transform behavior when `transf
 }
 ```
 
+### `customGestures`
+
+The `customGestures` prop allows you to provide custom gesture handlers that will work alongside (or instead of) the default chart press gestures. It accepts a `ComposedGesture` from react-native-gesture-handler.
+
+When both `customGestures` and `chartPressState` are provided, the gestures will be composed using `Gesture.Race()`, allowing either gesture to be active.
+
+```ts
+const tapGesture = Gesture.Tap().onStart((e) => {
+  state.isActive.value = true;
+  ref.current?.handleTouch(state, e.x, e.y);
+});
+
+const composed = Gesture.Race(tapGesture);
+```
+
+### `actionsRef`
+
+The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
+
+- `handleTouch`: Programmatically trigger the chart's touch handling behavior at specific coordinates. This is useful for programmatically highlighting specific data points.
+
+Example usage:
+
+```tsx
+function MyChart() {
+  const { state } = useChartPressState({ x: 0, y: { highTmp: 0 } });
+  const actionsRef = useRef<CartesianActionsHandle<typeof state>>(null);
+
+  const highlightPoint = () => {
+    // Programmatically highlight a point at coordinates (100, 200)
+    actionsRef.current?.handleTouch(state, 100, 200);
+  };
+
+  return (
+    <CartesianChart
+      actionsRef={actionsRef}
+      // ... other props
+    />
+  );
+}
+```
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.

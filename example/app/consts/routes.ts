@@ -138,6 +138,11 @@ export const ChartRoutes: {
     description: "This is an example of pan zoom functionality",
     path: "/pan-zoom",
   },
+  {
+    title: "Custom Gesture",
+    description: "Basic chart example with a custom tap gesture.",
+    path: "/custom-gesture",
+  },
 ];
 
 if (__DEV__) {

@@ -40,7 +40,10 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
   return { state, isActive };
 };
 
-type ChartPressStateInit = { x: InputFieldType; y: Record<string, number> };
+export type ChartPressStateInit = {
+  x: InputFieldType;
+  y: Record<string, number>;
+};
 export type ChartPressState<Init extends ChartPressStateInit> = {
   isActive: SharedValue<boolean>;
   matchedIndex: SharedValue<number>;
