@@ -1,6 +1,23 @@
+import ReactPlayer from "react-player/lazy";
+import lineMp4 from "./assets/line.mp4";
+
 # Pan/Zoom
 
 The `CartesianChart` and `PolarChart` components have opt-in support for "pan/zoom" gestures simply by using the `useChartTransformState` hook.
+
+<div className="flex justify-center mb-10">
+  <div className="rounded-md overflow-hidden border shadow">
+    <ReactPlayer
+      width={350}
+      height={(1096 / 764) * 350}
+      playing={true}
+      loop={true}
+      controls={true}
+      url={lineMp4}
+    />
+  </div>
+</div>
+
 
 ## useChartTransformState
 
