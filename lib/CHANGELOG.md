@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.12.0
+
+### Minor Changes
+
+- Add additional configuration options for pan gesture. ([#418](https://github.com/FormidableLabs/victory-native-xl/pull/418))
+
+- Add ability to pass use custom gesture definitions. ([#417](https://github.com/FormidableLabs/victory-native-xl/pull/417))
+
 ## 41.11.0
 
 ### Minor Changes
