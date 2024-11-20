@@ -158,11 +158,11 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 
 The `frame` is an optional prop allows you to configure the frame of the chart. If it is not present then the chart will not render any frame. It is an object with the following properties:
 
-|       Property       | Type                             | Description                                                                                                                                                                 |
-| :------------------: | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre> | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
+|       Property       | Type                                                                                  | Description                                                                                                                                                                 |
+| :------------------: | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre>                                                      | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
 |   **`lineWidth`**    | <pre>number &#124; \{top: number; bottom: number; left: number; right: number\}</pre> | Defines the width of the frame. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                          |
-| **`linePathEffect`** | <pre>`DashPathEffect`</pre>      | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
+| **`linePathEffect`** | <pre>`DashPathEffect`</pre>                                                           | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
 
 ### `chartPressState`
 
@@ -188,9 +188,25 @@ The `renderOutside` prop is identical to [the `children` prop](#children-require
 
 The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?: (bounds: ChartBounds) => void;` that exposes the chart bounds, useful if you need access to the chart's bounds for your own custom drawing purposes.
 
-### `gestureLongPressDelay`
+### `gestureLongPressDelay` <i>deprecated</i>
+
+:::warning
+While the `gestureLongPressDelay` prop is still supported, it is deprecated in favor `chartPressConfig` prop. The `gestureLongPressDelay` prop may be removed in a future release.
+:::
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
+
+### `chartPressConfig`
+
+The `chartPressConfig` prop allows you to configure the pan gesture handler used for chart interactions. It accepts an object with the following optional properties:
+
+- `activateAfterLongPress`: Configuration for when the gesture should activate after a long press
+- `activeOffsetX`: The minimum horizontal pan distance required before the gesture activates
+- `activeOffsetY`: The minimum vertical pan distance required before the gesture activates
+- `failOffsetX`: The maximum allowed horizontal pan distance before the gesture fails
+- `failOffsetY`: The maximum allowed vertical pan distance before the gesture fails
+
+These properties correspond directly to the [React Native Gesture Handler's PanGesture configuration options](https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/pan-gesture#configuration).
 
 ## Render Function Fields
 
