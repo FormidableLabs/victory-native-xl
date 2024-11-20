@@ -158,11 +158,11 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 
 The `frame` is an optional prop allows you to configure the frame of the chart. If it is not present then the chart will not render any frame. It is an object with the following properties:
 
-|       Property       | Type                             | Description                                                                                                                                                                 |
-| :------------------: | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre> | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
+|       Property       | Type                                                                                  | Description                                                                                                                                                                 |
+| :------------------: | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre>                                                      | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
 |   **`lineWidth`**    | <pre>number &#124; \{top: number; bottom: number; left: number; right: number\}</pre> | Defines the width of the frame. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                          |
-| **`linePathEffect`** | <pre>`DashPathEffect`</pre>      | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
+| **`linePathEffect`** | <pre>`DashPathEffect`</pre>                                                           | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
 
 ### `chartPressState`
 
@@ -191,6 +191,33 @@ The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?:
 ### `gestureLongPressDelay`
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
+
+### `actionsRef`
+
+The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
+
+- `handleTouch`: Programmatically trigger the chart's touch handling behavior at specific coordinates. This is useful for programmatically highlighting specific data points.
+
+Example usage:
+
+```tsx
+function MyChart() {
+  const { state } = useChartPressState({ x: 0, y: { highTmp: 0 } });
+  const actionsRef = useRef<CartesianActionsHandle<typeof state>>(null);
+
+  const highlightPoint = () => {
+    // Programmatically highlight a point at coordinates (100, 200)
+    actionsRef.current?.handleTouch(state, 100, 200);
+  };
+
+  return (
+    <CartesianChart
+      actionsRef={actionsRef}
+      // ... other props
+    />
+  );
+}
+```
 
 ## Render Function Fields
 
