@@ -1,15 +1,8 @@
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView, Linking } from "react-native";
-import {
-  type CartesianActionsHandle,
-  CartesianChart,
-  Line,
-  useChartPressState,
-} from "victory-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
-import { Gesture } from "react-native-gesture-handler";
-import { useRef } from "react";
 import { Button } from "example/components/Button";
 import { appColors } from "../consts/colors";
 import inter from "../../assets/inter-medium.ttf";
@@ -19,17 +12,10 @@ export default function GettingStartedScreen(props: { segment: string }) {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const url = urlForRoute(props.segment);
-  const ref = useRef<CartesianActionsHandle<typeof state>>(null);
 
   const handleDocsButtonPress = React.useCallback(async () => {
     url && (await Linking.canOpenURL(url)) && Linking.openURL(url);
   }, [url]);
-
-  const tapGesture = Gesture.Tap().onStart((e) => {
-    state.isActive.value = true;
-    ref.current?.handleTouch(state, e.x, e.y);
-  });
-  const composed = Gesture.Race(tapGesture);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -44,8 +30,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
           axisOptions={{
             font,
           }}
-          customGestures={composed}
-          actionsRef={ref}
+          chartPressState={state}
         >
           {({ points }) => (
             <>
