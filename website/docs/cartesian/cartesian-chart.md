@@ -192,6 +192,12 @@ The `onChartBoundsChange` prop is a function of the shape `onChartBoundsChange?:
 
 The `gestureLongPressDelay` prop allows you to set the delay in milliseconds before the pan gesture is activated. Defaults to `100`.
 
+### `customGestures`
+
+The `customGestures` prop allows you to provide custom gesture handlers that will work alongside (or instead of) the default chart press gestures. It accepts a `ComposedGesture` from react-native-gesture-handler.
+
+When both `customGestures` and `chartPressState` are provided, the gestures will be composed using `Gesture.Race()`, allowing either gesture to be active.
+
 ### `actionsRef`
 
 The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
