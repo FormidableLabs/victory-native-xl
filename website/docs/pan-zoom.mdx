@@ -56,7 +56,7 @@ return (
 }
 ```
 
-### Configuration
+## Configuration
 
 You can customize the pan gesture behavior using the `transformConfig` prop:
 
@@ -72,3 +72,37 @@ You can customize the pan gesture behavior using the `transformConfig` prop:
   {/* chart content */}
 </CartesianChart>
 ```
+
+## Utility Functions
+
+Several utility functions are available to help work with chart transformations:
+
+### getTransformComponents
+
+Extracts the scale and translation components from a transformation matrix:
+
+```ts
+const { scaleX, scaleY, translateX, translateY } = getTransformComponents(matrix);
+```
+
+### setScale
+
+Updates the scale components of a transformation matrix:
+
+```ts
+// Set uniform scale
+const newMatrix = setScale(matrix, 2.0); // scales both X and Y by 2.0
+
+// Set different X and Y scales
+const newMatrix = setScale(matrix, 2.0, 1.5); // scaleX = 2.0, scaleY = 1.5
+```
+
+### setTranslate
+
+Updates the translation components of a transformation matrix:
+
+```ts
+const newMatrix = setTranslate(matrix, 100, 50); // moves 100 units in X, 50 in Y
+```
+
+These utility functions are particularly useful when you need to programmatically modify chart transformations or read the current transformation state.
