@@ -7,6 +7,7 @@ import {
   type SkFont,
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
+import { type PanGesture } from "react-native-gesture-handler";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -270,6 +271,19 @@ export type FramePropsWithDefaults = Required<
 export type FrameProps = FramePropsWithDefaults & {
   xScale: Scale;
   yScale: Scale;
+};
+
+type ExtractParams<
+  T extends (...args: any[]) => any, // eslint-disable-line
+  P extends Parameters<T> = Parameters<T>,
+> = P["length"] extends 1 ? P[0] : P;
+
+export type ChartPressPanConfig = {
+  activateAfterLongPress?: ExtractParams<PanGesture["activateAfterLongPress"]>;
+  activeOffsetX?: ExtractParams<PanGesture["activeOffsetX"]>;
+  activeOffsetY?: ExtractParams<PanGesture["activeOffsetY"]>;
+  failOffsetX?: ExtractParams<PanGesture["failOffsetX"]>;
+  failOffsetY?: ExtractParams<PanGesture["failOffsetY"]>;
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

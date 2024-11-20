@@ -20,6 +20,7 @@ import type {
   YAxisInputProps,
   XAxisInputProps,
   FrameInputProps,
+  ChartPressPanConfig,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
@@ -60,6 +61,9 @@ type CartesianChartProps<
   chartPressState?:
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  chartPressConfig?: {
+    pan?: ChartPressPanConfig;
+  };
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
@@ -67,6 +71,9 @@ type CartesianChartProps<
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
 
   onChartBoundsChange?: (bounds: ChartBounds) => void;
+  /**
+   * @deprecated This prop will eventually be replaced by the new `chartPressConfig`. For now it's being kept around for backwards compatibility sake.
+   */
   gestureLongPressDelay?: number;
   xAxis?: XAxisInputProps<RawData, XK>;
   yAxis?: YAxisInputProps<RawData, YK>[];
@@ -106,6 +113,7 @@ function CartesianChartContent<
   axisOptions,
   domain,
   chartPressState,
+  chartPressConfig,
   onChartBoundsChange,
   gestureLongPressDelay = 100,
   xAxis,
@@ -406,12 +414,33 @@ function CartesianChartContent<
           val.isActive.value = false;
         }
       }
-    })
+    });
+
+  if (!chartPressConfig?.pan) {
     /**
      * Activate after a long press, which helps with preventing all touch hijacking.
      * This is important if this chart is inside of some sort of scrollable container.
      */
-    .activateAfterLongPress(gestureLongPressDelay);
+    panGesture.activateAfterLongPress(gestureLongPressDelay);
+  }
+
+  if (chartPressConfig?.pan?.activateAfterLongPress) {
+    panGesture.activateAfterLongPress(
+      chartPressConfig.pan?.activateAfterLongPress,
+    );
+  }
+  if (chartPressConfig?.pan?.activeOffsetX) {
+    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetX);
+  }
+  if (chartPressConfig?.pan?.activeOffsetY) {
+    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetY);
+  }
+  if (chartPressConfig?.pan?.failOffsetX) {
+    panGesture.failOffsetX(chartPressConfig.pan.failOffsetX);
+  }
+  if (chartPressConfig?.pan?.failOffsetY) {
+    panGesture.failOffsetX(chartPressConfig.pan.failOffsetY);
+  }
 
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
@@ -504,6 +533,7 @@ function CartesianChartContent<
           );
         })
       : null;
+
   const XAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
       <XAxis
