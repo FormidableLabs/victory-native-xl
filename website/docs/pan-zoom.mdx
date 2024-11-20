@@ -4,33 +4,54 @@ The `CartesianChart` and `PolarChart` components have opt-in support for "pan/zo
 
 ## useChartTransformState
 
-At a high level, `useChartTransformState` initializes some structures internally that keep track of the pan/zoom operations and support subsequent gestures. These structures are Reanimated `SharedValue`s.
-
-The signature of the function is:
+The `useChartTransformState` hook provides the necessary state management for pan and zoom gestures. It returns an object with a `state` property that contains:
 
 ```ts
-useChartTransformState(): { state: ChartTransformState }
-
-export type ChartTransformState = {
-  panActive: SharedValue<boolean>;
-  zoomActive: SharedValue<boolean>;
-  origin: SharedValue<{ x: number; y: number }>;
-  matrix: SharedValue<Matrix4>;
-  offset: SharedValue<Matrix4>;
-};
+{
+  state: {
+    panActive: SharedValue<boolean>; // Whether a pan gesture is currently active
+    zoomActive: SharedValue<boolean>; // Whether a zoom gesture is currently active
+    origin: SharedValue<{ x: number; y: number }>; // The origin point for transformations
+    matrix: SharedValue<Matrix4>; // The current transformation matrix
+    offset: SharedValue<Matrix4>; // The offset transformation matrix
+  };
+}
 ```
 
-### panActive
-`true` if the pan gesture is active
+### Basic Usage
 
-### zoomActive
-`true` if the zoom/pinch gesture is active
+To enable pan and zoom gestures on a chart, pass the transform state to the chart's `transformState` prop:
 
-### matrix
-A `4 x 4` matrix used to keep track of all the pan / zoom transformation.
+```tsx
+import { CartesianChart, useChartTransformState } from "victory-native";
 
-### origin
-structure used internally to support tranformation gestures
+function MyChart() {
+  const transformState = useChartTransformState();
 
-### offset
-stucture used internally to support transformation gestures
+return (
+  <CartesianChart
+      transformState={transformState}
+      // ... other props
+    >
+      {/* chart content */}
+    </CartesianChart>
+  )
+}
+```
+
+### Configuration
+
+You can customize the pan gesture behavior using the `transformConfig` prop:
+
+```tsx
+<CartesianChart
+  transformState={state}
+  transformConfig={{
+    pan: {
+      activateAfterLongPress: 100, // Delay in ms before pan gesture activates
+    },
+  }}
+>
+  {/* chart content */}
+</CartesianChart>
+```
