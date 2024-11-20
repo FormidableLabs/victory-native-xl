@@ -158,11 +158,11 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 
 The `frame` is an optional prop allows you to configure the frame of the chart. If it is not present then the chart will not render any frame. It is an object with the following properties:
 
-|       Property       | Type                             | Description                                                                                                                                                                 |
-| :------------------: | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre> | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
+|       Property       | Type                                                                                  | Description                                                                                                                                                                 |
+| :------------------: | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   **`lineColor`**    | <pre>Color (RN Skia Color)</pre>                                                      | Defines the color of the frame. It will default to `hsla(0, 0%, 0%, 0.25)` if none is provided.                                                                             |
 |   **`lineWidth`**    | <pre>number &#124; \{top: number; bottom: number; left: number; right: number\}</pre> | Defines the width of the frame. It will default to `Stylesheet.hairlineWidth` if none is provided. A value of `0` will disable the line rendering.                          |
-| **`linePathEffect`** | <pre>`DashPathEffect`</pre>      | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
+| **`linePathEffect`** | <pre>`DashPathEffect`</pre>                                                           | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to the frame. In the future this prop may accept other line path effects as well. |
 
 ### `chartPressState`
 
@@ -194,7 +194,44 @@ The `gestureLongPressDelay` prop allows you to set the delay in milliseconds bef
 
 ### `transformState`
 
-The `transformState` allows you pass in Reanimated `SharedValue`s that will be used to track the pan/zoom transformations on the chart.
+The `transformState` prop allows you to pass in a transform state object that enables pan and zoom interactions with the chart. This object is typically created using the `useChartTransformState` hook. When provided, users can:
+
+- Pinch to zoom in/out of the chart
+- Pan around the zoomed chart view
+- Double tap to reset the zoom level
+
+Example usage:
+
+```tsx
+import { CartesianChart, useChartTransformState } from "victory-native";
+
+function MyChart() {
+  const transformState = useChartTransformState();
+
+  return (
+    <CartesianChart
+      data={data}
+      xKey="date"
+      yKeys={["value"]}
+      transformState={transformState} // 👈 enable pan/zoom
+    >
+      {/* ... */}
+    </CartesianChart>
+  );
+}
+```
+
+### `transformConfig`
+
+An optional configuration object for customizing transform behavior when `transformState` is provided. It accepts the following properties:
+
+```typescript
+{
+  pan?: {
+    activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+  }
+}
+```
 
 ## Render Function Fields
 
