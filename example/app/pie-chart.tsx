@@ -22,7 +22,7 @@ import { InputSegment } from "example/components/InputSegment";
 import { appColors } from "../consts/colors";
 import { descriptionForRoute } from "../consts/routes";
 import inter from "../assets/inter-medium.ttf";
-import { PieChartCustomLabel } from "./pie-chart-custom-label";
+import { PieChartCustomLabel } from "../components/pie-chart-custom-label";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 125;
 function generateRandomColor(): string {
