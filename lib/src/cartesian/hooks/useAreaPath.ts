@@ -22,6 +22,7 @@ export const useAreaPath = (
     const groups = connectMissingData
       ? [cleanPointsArray(points)]
       : groupPointsArray(points);
+
     const p = Skia.Path.Make();
 
     groups.forEach((group) => {

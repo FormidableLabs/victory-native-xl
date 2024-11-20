@@ -123,6 +123,16 @@ export const ChartRoutes: {
     description: "This is an Area chart with dashed X and Y axes.",
     path: "/dashed-axes",
   },
+  {
+    title: "Stacked Area (very simple)",
+    description: "This is a very simple Stacked Area chart",
+    path: "/stacked-area",
+  },
+  {
+    title: "Stacked Area (complex)",
+    description: "This is a more complicated Stacked Area chart",
+    path: "/stacked-area-complex",
+  },
 ];
 
 if (__DEV__) {
