@@ -26,7 +26,10 @@ import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
-import type { ChartPressState } from "./hooks/useChartPressState";
+import type {
+  ChartPressState,
+  ChartPressStateInit,
+} from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
@@ -35,9 +38,12 @@ import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
 
-export type CartesianActionsHandle<T> = {
-  handleTouch: (v: T, x: number, y: number) => void;
-};
+export type CartesianActionsHandle<T = undefined> =
+  T extends ChartPressState<ChartPressStateInit>
+    ? {
+        handleTouch: (v: T, x: number, y: number) => void;
+      }
+    : object;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -66,10 +72,11 @@ type CartesianChartProps<
   frame?: FrameInputProps;
   customGestures?: ComposedGesture;
   actionsRef?: MutableRefObject<CartesianActionsHandle<
-    ChartPressState<{
-      x: InputFields<RawData>[XK];
-      y: Record<YK, number>;
-    }>
+    | ChartPressState<{
+        x: InputFields<RawData>[XK];
+        y: Record<YK, number>;
+      }>
+    | undefined
   > | null>;
 };
 
