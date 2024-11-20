@@ -257,6 +257,15 @@ The `customGestures` prop allows you to provide custom gesture handlers that wil
 
 When both `customGestures` and `chartPressState` are provided, the gestures will be composed using `Gesture.Race()`, allowing either gesture to be active.
 
+```ts
+const tapGesture = Gesture.Tap().onStart((e) => {
+  state.isActive.value = true;
+  ref.current?.handleTouch(state, e.x, e.y);
+});
+
+const composed = Gesture.Race(tapGesture);
+```
+
 ### `actionsRef`
 
 The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
