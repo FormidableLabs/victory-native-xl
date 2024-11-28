@@ -17,7 +17,7 @@ import {
   optionsReducer,
 } from "example/hooks/useOptionsReducer";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 

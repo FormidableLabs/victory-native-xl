@@ -10,8 +10,8 @@ import {
 import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Text } from "example/components/Text";
-import { appColors } from "./consts/colors";
-import { descriptionForRoute } from "./consts/routes";
+import { appColors } from "../consts/colors";
+import { descriptionForRoute } from "../consts/routes";
 
 function calculateGradientPoints(
   radius: number,

@@ -4,11 +4,11 @@ import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Bar, BarGroup, CartesianChart, StackedBar } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
 import { Text } from "../components/Text";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 import { Checkbox } from "../components/Checkbox";
 
 const STACKED_DATA = (length: number = 5) =>

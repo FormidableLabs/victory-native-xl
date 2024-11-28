@@ -1,8 +1,8 @@
 import * as React from "react";
 import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { Link } from "expo-router";
-import { appColors } from "../app/consts/colors";
-import { ChartRoutes } from "../app/consts/routes";
+import { appColors } from "../consts/colors";
+import { ChartRoutes } from "../consts/routes";
 import { Text } from "./Text";
 
 type Props = {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text as _Text, type TextProps } from "react-native";
-import { appColors } from "../app/consts/colors";
+import { appColors } from "../consts/colors";
 
 export const Text = (props: TextProps) => {
   return <_Text {...props} style={[props.style, styles.text]} />;

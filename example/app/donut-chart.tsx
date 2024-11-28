@@ -4,8 +4,8 @@ import { LinearGradient, vec } from "@shopify/react-native-skia";
 import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
-import { appColors } from "./consts/colors";
-import { descriptionForRoute } from "./consts/routes";
+import { appColors } from "../consts/colors";
+import { descriptionForRoute } from "../consts/routes";
 
 function calculateGradientPoints(
   radius: number,

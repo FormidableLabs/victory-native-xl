@@ -4,7 +4,7 @@ import { useDarkMode } from "react-native-dark";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import type { PropsWithChildren } from "react";
 import { Text } from "./Text";
-import { appColors } from "../app/consts/colors";
+import { appColors } from "../consts/colors";
 
 export const InfoCard = ({
   style,

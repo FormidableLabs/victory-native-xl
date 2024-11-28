@@ -4,7 +4,7 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import { useAssets } from "expo-asset";
 import { Image, type ImageSource } from "expo-image";
 import { useDarkMode } from "react-native-dark";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 
 const titleCaseName = (name: string) =>
   name

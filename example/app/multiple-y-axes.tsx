@@ -18,7 +18,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { InfoCard } from "../components/InfoCard";
 

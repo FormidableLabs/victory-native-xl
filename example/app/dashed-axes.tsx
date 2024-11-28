@@ -8,9 +8,9 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 import { Button } from "../components/Button";
 
 const generateData = () =>
