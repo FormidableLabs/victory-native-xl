@@ -52,11 +52,13 @@ import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 
 export type CartesianActionsHandle<T = undefined> =
-  T extends ChartPressState<ChartPressStateInit>
-    ? {
-        handleTouch: (v: T, x: number, y: number) => void;
-      }
-    : object;
+  T extends ChartPressState<infer S>
+    ? S extends ChartPressStateInit
+      ? {
+          handleTouch: (v: T, x: number, y: number) => void;
+        }
+      : never
+    : never;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
