@@ -42,6 +42,9 @@ export default function HorizontalScrollPage() {
             pan: {
               dimensions: "x",
             },
+            pinch: {
+              dimensions: "x",
+            },
           }}
           onChartBoundsChange={({ top, left, right, bottom }) => {
             setWidth(right - left);

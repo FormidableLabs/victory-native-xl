@@ -43,6 +43,7 @@ import {
   panTransformGesture,
   type PanTransformGestureConfig,
   pinchTransformGesture,
+  type PinchTransformGestureConfig,
 } from "./utils/transformGestures";
 import {
   CartesianTransformProvider,
@@ -94,6 +95,7 @@ type CartesianChartProps<
   transformState?: ChartTransformState;
   transformConfig?: {
     pan?: PanTransformGestureConfig;
+    pinch?: PinchTransformGestureConfig;
   };
   customGestures?: ComposedGesture;
   actionsRef?: MutableRefObject<CartesianActionsHandle<
@@ -606,11 +608,18 @@ function CartesianChartContent<
 
   let composed = customGestures ?? Gesture.Race();
   if (transformState) {
-    composed = Gesture.Race(
-      composed,
-      pinchTransformGesture(transformState),
-      panTransformGesture(transformState, transformConfig?.pan),
-    );
+    if (transformConfig?.pinch?.enabled ?? true) {
+      composed = Gesture.Race(
+        composed,
+        pinchTransformGesture(transformState, transformConfig?.pinch),
+      );
+    }
+    if (transformConfig?.pan?.enabled ?? true) {
+      composed = Gesture.Race(
+        composed,
+        panTransformGesture(transformState, transformConfig?.pan),
+      );
+    }
   }
   if (chartPressState) {
     composed = Gesture.Race(composed, panGesture);
