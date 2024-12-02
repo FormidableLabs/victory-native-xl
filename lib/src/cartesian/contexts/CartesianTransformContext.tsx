@@ -2,6 +2,7 @@ import React, {
   createContext,
   type PropsWithChildren,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
@@ -38,7 +39,13 @@ export const CartesianTransformProvider = ({
     k: number;
     tx: number;
     ty: number;
-  }>(getTransformComponents(transformState));
+  }>(getTransformComponents(undefined));
+
+  useEffect(() => {
+    if (transformState) {
+      setTransform(getTransformComponents(transformState));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimatedReaction(
     () => {
