@@ -4,7 +4,6 @@ import React, {
   useContext,
   useEffect,
   useState,
-  Component,
 } from "react";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import { getTransformComponents } from "lib/src/utils/transform";
