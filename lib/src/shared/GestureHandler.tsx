@@ -4,16 +4,18 @@ import {
   type GestureType,
 } from "react-native-gesture-handler";
 import {
-  convertToAffineMatrix,
-  convertToColumnMajor,
-  type Matrix4,
+  // convertToAffineMatrix,
+  // convertToColumnMajor,
+  // type Matrix4,
   type SkRect,
 } from "@shopify/react-native-skia";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import { Platform, type TransformsStyle, type ViewStyle } from "react-native";
+import {
+  /*Platform, type TransformsStyle,*/ type ViewStyle,
+} from "react-native";
 import * as React from "react";
 import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
-import { getTransformComponents, identity4 } from "../utils/transform";
+import { getTransformComponents /*identity4*/ } from "../utils/transform";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
@@ -51,6 +53,8 @@ export const GestureHandler = ({
       transform: [
         { translateX: -width / 2 },
         { translateY: -height / 2 },
+        // Running into issues using 'matrix' transforms when enabling the new arch:
+        // https://github.com/facebook/react-native/issues/47467
         // {
         //   matrix: m4
         //     ? Platform.OS === "web"
