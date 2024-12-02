@@ -166,7 +166,8 @@ function CartesianChartContent<
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
-  const zoom = new ZoomTransform(transform.k, transform.tx, transform.ty);
+  const zoomX = new ZoomTransform(transform.k, transform.tx, transform.ty);
+  const zoomY = new ZoomTransform(transform.ky, transform.tx, transform.ty);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -530,9 +531,9 @@ function CartesianChartContent<
           if (!yAxis) return null;
 
           const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
-          const primaryRescaled = zoom.rescaleY(primaryYScale);
+          const primaryRescaled = zoomY.rescaleY(primaryYScale);
 
-          const rescaled = zoom.rescaleY(yAxis.yScale);
+          const rescaled = zoomY.rescaleY(yAxis.yScale);
 
           const primaryTicksRescaled = primaryAxisProps.tickValues
             ? downsampleTicks(
@@ -546,7 +547,7 @@ function CartesianChartContent<
             <YAxis
               key={index}
               {...axis}
-              xScale={zoom.rescaleX(xScale)}
+              xScale={zoomX.rescaleX(xScale)}
               yScale={rescaled}
               yTicksNormalized={
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
@@ -569,11 +570,11 @@ function CartesianChartContent<
       <XAxis
         {...normalizedAxisProps.xAxis}
         xScale={xScale}
-        yScale={zoom.rescaleY(primaryYScale)}
+        yScale={zoomY.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
         chartBounds={clipRect}
-        zoom={zoom}
+        zoom={zoomX}
       />
     ) : null;
 

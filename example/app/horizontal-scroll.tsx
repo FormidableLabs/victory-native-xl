@@ -1,20 +1,7 @@
-import {
-  useAnimatedReaction,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-
 export const PanZoom = () => {};
 import * as React from "react";
 import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import {
-  CartesianChart,
-  getTransformComponents,
-  Line,
-  setScale,
-  setTranslate,
-  useChartTransformState,
-} from "victory-native";
+import { CartesianChart, Line, useChartTransformState } from "victory-native";
 import {
   multiply4,
   scale,
@@ -34,10 +21,6 @@ export default function HorizontalScrollPage() {
   const { state } = useChartTransformState({
     scaleX: 1.5,
   });
-
-  const k = useSharedValue(1);
-  const tx = useSharedValue(0);
-  const ty = useSharedValue(0);
 
   return (
     <SafeAreaView style={styles.safeView}>
