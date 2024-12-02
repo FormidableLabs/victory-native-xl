@@ -34,21 +34,29 @@ export const pinchTransformGesture = (
   return pinch;
 };
 
-export type PanTransformGestureConfig = Pick<
-  PanGestureConfig,
-  "activateAfterLongPress"
->;
+type Dimension = "x" | "y";
+export type PanTransformGestureConfig = {
+  dimensions?: Dimension | Dimension[];
+} & Pick<PanGestureConfig, "activateAfterLongPress">;
 export const panTransformGesture = (
   state: ChartTransformState,
   config: PanTransformGestureConfig = {},
 ): PanGesture => {
+  const dimensions = config.dimensions
+    ? Array.isArray(config.dimensions)
+      ? config.dimensions
+      : [config.dimensions]
+    : ["x", "y"];
+  const panX = dimensions.includes("x");
+  const panY = dimensions.includes("y");
+
   const pan = Gesture.Pan()
     .onStart(() => {
       state.panActive.value = true;
     })
     .onChange((e) => {
       state.matrix.value = multiply4(
-        translate(e.changeX, e.changeY, 0),
+        translate(panX ? e.changeX : 0, panY ? e.changeY : 0, 0),
         state.matrix.value,
       );
     })

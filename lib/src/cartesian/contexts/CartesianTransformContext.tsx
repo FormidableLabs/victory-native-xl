@@ -41,6 +41,8 @@ export const CartesianTransformProvider = ({
     ty: number;
   }>(getTransformComponents(undefined));
 
+  // This is done in a useEffect to prevent Reanimated warning
+  // about setting shared value in the render phase
   useEffect(() => {
     if (transformState) {
       setTransform(getTransformComponents(transformState));

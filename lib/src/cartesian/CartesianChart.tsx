@@ -619,6 +619,7 @@ function CartesianChartContent<
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
       {body}
       <GestureHandler
+        debug={true}
         gesture={composed}
         transformState={transformState}
         dimensions={{ x: 0, y: 0, width: size.width, height: size.height }}

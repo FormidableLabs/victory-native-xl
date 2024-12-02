@@ -10,10 +10,10 @@ import {
   type SkRect,
 } from "@shopify/react-native-skia";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import { Platform } from "react-native";
+import { Platform, type TransformsStyle, type ViewStyle } from "react-native";
 import * as React from "react";
 import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
-import { identity4 } from "../utils/transform";
+import { getTransformComponents, identity4 } from "../utils/transform";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
@@ -29,9 +29,17 @@ export const GestureHandler = ({
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions;
   const style = useAnimatedStyle(() => {
-    let m4: Matrix4 = identity4;
+    // let m4: Matrix4 = identity4;
+    let transforms: ViewStyle["transform"] = [];
     if (transformState?.matrix.value) {
-      m4 = convertToColumnMajor(transformState.matrix.value);
+      const decomposed = getTransformComponents(transformState.matrix.value);
+      transforms = [
+        { translateX: decomposed.translateX },
+        { translateY: decomposed.translateY },
+        { scaleX: decomposed.scaleX },
+        { scaleY: decomposed.scaleY },
+      ];
+      // m4 = convertToColumnMajor(transformState.matrix.value);
     }
     return {
       position: "absolute",
@@ -43,13 +51,14 @@ export const GestureHandler = ({
       transform: [
         { translateX: -width / 2 },
         { translateY: -height / 2 },
-        {
-          matrix: m4
-            ? Platform.OS === "web"
-              ? convertToAffineMatrix(m4)
-              : (m4 as unknown as number[])
-            : [],
-        },
+        // {
+        //   matrix: m4
+        //     ? Platform.OS === "web"
+        //       ? convertToAffineMatrix(m4)
+        //       : undefined
+        //     : undefined,
+        // },
+        ...transforms,
         { translateX: width / 2 },
         { translateY: height / 2 },
       ],
