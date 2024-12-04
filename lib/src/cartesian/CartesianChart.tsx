@@ -33,7 +33,6 @@ import type {
 } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
-import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
 import { Frame } from "./components/Frame";
@@ -524,37 +523,23 @@ function CartesianChartContent<
     hasMeasuredLayoutSize && (axisOptions || yAxes)
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
           const yAxis = yAxes[index];
+
           if (!yAxis) return null;
 
-          const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
-          const primaryRescaled = zoom.rescaleY(primaryYScale);
-
           const rescaled = zoom.rescaleY(yAxis.yScale);
+          const rescaledTicks = axis.tickValues
+            ? downsampleTicks(axis.tickValues, axis.tickCount)
+            : axis.enableRescaling
+              ? rescaled.ticks(axis.tickCount)
+              : yAxis.yScale.ticks(axis.tickCount);
 
-          const primaryTicksRescaled = primaryAxisProps.tickValues
-            ? downsampleTicks(
-                primaryAxisProps.tickValues,
-                primaryAxisProps.tickCount,
-              )
-            : primaryAxisProps.enableRescaling
-              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
-              : primaryYScale.ticks(primaryAxisProps.tickCount);
           return (
             <YAxis
               key={index}
               {...axis}
               xScale={zoom.rescaleX(xScale)}
               yScale={rescaled}
-              yTicksNormalized={
-                // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
-                index > 0
-                  ? normalizeYAxisTicks(
-                      primaryTicksRescaled,
-                      primaryRescaled,
-                      rescaled,
-                    )
-                  : primaryTicksRescaled
-              }
+              yTicksNormalized={rescaledTicks}
               chartBounds={clipRect}
             />
           );
