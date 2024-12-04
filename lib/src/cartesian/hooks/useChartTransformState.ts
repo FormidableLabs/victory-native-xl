@@ -31,11 +31,6 @@ export const useChartTransformState = (
   // This is done in a useEffect to prevent Reanimated warning
   // about setting shared value in the render phase
   useEffect(() => {
-    // matrix.value = setScale(
-    //   matrix.value,
-    //   config?.scaleX ?? 1,
-    //   config?.scaleY ?? 1,
-    // );
     matrix.value = scale(config?.scaleX ?? 1, config?.scaleY ?? 1);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
