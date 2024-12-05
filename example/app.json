@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Victory",
+    "newArchEnabled": true,
     "slug": "victory-native-xl-demo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,9 +13,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "platforms": ["android", "ios", "web"],
     "ios": {
       "supportsTablet": true,
@@ -25,10 +24,7 @@
       "userInterfaceStyle": "automatic",
       "package": "com.formidable.victorynativexldemo"
     },
-    "plugins": [
-      "expo-router",
-      "expo-asset"
-    ],
+    "plugins": ["expo-router", "expo-asset"],
     "extra": {
       "router": {
         "origin": false

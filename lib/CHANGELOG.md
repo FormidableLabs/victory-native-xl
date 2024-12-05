@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.12.2
+
+### Patch Changes
+
+- Fixes Reanimated warning ([#435](https://github.com/FormidableLabs/victory-native-xl/pull/435))
+
+## 41.12.1
+
+### Patch Changes
+
+- Fix warnings associated with newer versions of Reanimated ([#423](https://github.com/FormidableLabs/victory-native-xl/pull/423))
+
 ## 41.12.0
 
 ### Minor Changes

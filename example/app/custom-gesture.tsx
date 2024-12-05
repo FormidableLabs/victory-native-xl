@@ -11,7 +11,7 @@ import type { SharedValue } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
 import { useRef } from "react";
 import { InfoCard } from "example/components/InfoCard";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
 
 export default function CustomGestureScreen() {

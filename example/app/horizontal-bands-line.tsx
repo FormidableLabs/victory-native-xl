@@ -15,11 +15,11 @@ import {
 import { useEffect } from "react";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InfoCard } from "../components/InfoCard";
 import { AnimatedText } from "../components/AnimatedText";
 import { Text } from "../components/Text";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 
 interface HorizontalBandsShaderProps {
   yScale: Scale;

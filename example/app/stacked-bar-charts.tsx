@@ -4,11 +4,11 @@ import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { StackedBar, CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({

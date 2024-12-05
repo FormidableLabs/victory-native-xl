@@ -6,7 +6,7 @@ import {
   type TouchableHighlightProps,
 } from "react-native";
 import { useDarkMode } from "react-native-dark";
-import { appColors } from "../app/consts/colors";
+import { appColors } from "../consts/colors";
 
 type ButtonProps = Omit<TouchableHighlightProps, "children"> & {
   title: string;

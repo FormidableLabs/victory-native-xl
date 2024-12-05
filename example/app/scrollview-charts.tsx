@@ -5,7 +5,7 @@ import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 
 const DATA = Array.from({ length: 31 }, (_, i) => ({
   day: i,
