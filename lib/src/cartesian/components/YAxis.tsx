@@ -41,18 +41,18 @@ export const YAxis = <
     const labelX = (() => {
       // left, outset
       if (axisSide === "left" && labelPosition === "outset") {
-        return xScale(x1) - (labelWidth + labelOffset);
+        return chartBounds.left - (labelWidth + labelOffset);
       }
       // left, inset
       if (axisSide === "left" && labelPosition === "inset") {
-        return xScale(x1) + labelOffset;
+        return chartBounds.left + labelOffset;
       }
       // right, outset
       if (axisSide === "right" && labelPosition === "outset") {
-        return xScale(x2) + labelOffset;
+        return chartBounds.right + labelOffset;
       }
       // right, inset
-      return xScale(x2) - (labelWidth + labelOffset);
+      return chartBounds.right - (labelWidth + labelOffset);
     })();
 
     const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);

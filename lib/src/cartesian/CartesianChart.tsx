@@ -170,6 +170,7 @@ function CartesianChartContent<
     yKeys,
     axisOptions,
   });
+  console.log("size:", size);
 
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
@@ -641,9 +642,9 @@ function CartesianChartContent<
         gesture={composed}
         transformState={transformState}
         dimensions={{
-          x: xScale.range()[0]!,
+          x: Math.min(xScale.range()[0]!, 0),
           y: 0,
-          width: xScale.range()[1]! - xScale.range()[0]!,
+          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
           height: size.height,
         }}
       />
