@@ -21,7 +21,22 @@ The `CartesianChart` and `PolarChart` components have opt-in support for "pan/zo
 
 ## useChartTransformState
 
-The `useChartTransformState` hook provides the necessary state management for pan and zoom gestures. It returns an object with a `state` property that contains:
+The `useChartTransformState` hook provides the necessary state management for pan and zoom gestures. It accepts an optional configuration object and returns an object with a `state` property.
+
+### Configuration
+
+The hook accepts a configuration object with the following options:
+
+```ts
+type ChartTransformStateConfig = {
+  scaleX?: number; // Initial X-axis scale
+  scaleY?: number; // Initial Y-axis scale
+};
+```
+
+### Return Value
+
+The hook returns an object with a `state` property that contains:
 
 ```ts
 {
@@ -43,7 +58,10 @@ To enable pan and zoom gestures on a chart, pass the transform state to the char
 import { CartesianChart, useChartTransformState } from "victory-native";
 
 function MyChart() {
-  const transformState = useChartTransformState();
+  const transformState = useChartTransformState({
+    scaleX: 1.5, // Initial X-axis scale
+    scaleY: 1.0, // Initial Y-axis scale
+  });
 
 return (
   <CartesianChart
@@ -56,7 +74,9 @@ return (
 }
 ```
 
-## Configuration
+If no configuration is provided, the chart will initialize with a scale of 1.0 for both axes.
+
+## Transform Gesture Configuration
 
 You can customize the pan gesture behavior using the `transformConfig` prop:
 

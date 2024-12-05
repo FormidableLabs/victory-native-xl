@@ -143,6 +143,11 @@ export const ChartRoutes: {
     description: "Basic chart example with a custom tap gesture.",
     path: "/custom-gesture",
   },
+  {
+    title: "Horizontal Scroll",
+    description: "Show example of horizontal scrolling of chart data.",
+    path: "/horizontal-scroll",
+  },
 ];
 
 if (__DEV__) {

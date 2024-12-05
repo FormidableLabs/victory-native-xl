@@ -43,6 +43,7 @@ import {
   panTransformGesture,
   type PanTransformGestureConfig,
   pinchTransformGesture,
+  type PinchTransformGestureConfig,
 } from "./utils/transformGestures";
 import {
   CartesianTransformProvider,
@@ -50,6 +51,7 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+import { boundsToClip } from "../utils/boundsToClip";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -71,6 +73,10 @@ type CartesianChartProps<
   padding?: SidedNumber;
   domainPadding?: SidedNumber;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
+  viewport?: {
+    x?: [number, number];
+    y?: [number, number];
+  };
   chartPressState?:
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
@@ -94,6 +100,7 @@ type CartesianChartProps<
   transformState?: ChartTransformState;
   transformConfig?: {
     pan?: PanTransformGestureConfig;
+    pinch?: PinchTransformGestureConfig;
   };
   customGestures?: ComposedGesture;
   actionsRef?: MutableRefObject<CartesianActionsHandle<
@@ -144,6 +151,7 @@ function CartesianChartContent<
   transformConfig,
   customGestures,
   actionsRef,
+  viewport,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
@@ -162,11 +170,13 @@ function CartesianChartContent<
     yKeys,
     axisOptions,
   });
+  console.log("size:", size);
 
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
-  const zoom = new ZoomTransform(transform.k, transform.tx, transform.ty);
+  const zoomX = new ZoomTransform(transform.k, transform.tx, transform.ty);
+  const zoomY = new ZoomTransform(transform.ky, transform.tx, transform.ty);
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
@@ -203,16 +213,22 @@ function CartesianChartContent<
         domainPadding,
         xAxis: normalizedAxisProps.xAxis,
         yAxes: normalizedAxisProps.yAxes,
+        viewport,
       });
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
     const chartBounds = {
-      left: xScale(xScale.domain().at(0) || 0),
-      right: xScale(xScale.domain().at(-1) || 0),
+      // left: xScale(xScale.domain().at(0) || 0),
+      left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
+      // right: xScale(xScale.domain().at(-1) || 0),
+      right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
       top: primaryYScale(primaryYScale.domain().at(0) || 0),
       bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
     };
+    console.log("chart bounds:", chartBounds);
+    console.log("scale domain:", xScale.domain());
+    console.log("scale range:", xScale.range());
 
     return {
       xTicksNormalized,
@@ -232,6 +248,7 @@ function CartesianChartContent<
     domain,
     domainPadding,
     normalizedAxisProps,
+    viewport,
   ]);
 
   React.useEffect(() => {
@@ -516,13 +533,7 @@ function CartesianChartContent<
     points,
   };
 
-  const clipRect = rect(
-    chartBounds.left,
-    chartBounds.top,
-    chartBounds.right - chartBounds.left,
-    chartBounds.bottom - chartBounds.top,
-  );
-
+  const clipRect = boundsToClip(chartBounds);
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
@@ -530,9 +541,9 @@ function CartesianChartContent<
           if (!yAxis) return null;
 
           const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
-          const primaryRescaled = zoom.rescaleY(primaryYScale);
+          const primaryRescaled = zoomY.rescaleY(primaryYScale);
 
-          const rescaled = zoom.rescaleY(yAxis.yScale);
+          const rescaled = zoomY.rescaleY(yAxis.yScale);
 
           const primaryTicksRescaled = primaryAxisProps.tickValues
             ? downsampleTicks(
@@ -546,7 +557,7 @@ function CartesianChartContent<
             <YAxis
               key={index}
               {...axis}
-              xScale={zoom.rescaleX(xScale)}
+              xScale={zoomX.rescaleX(xScale)}
               yScale={rescaled}
               yTicksNormalized={
                 // Since we treat the first yAxis as the primary yAxis, we normalize the other Y ticks against it so the ticks line up nicely
@@ -558,7 +569,7 @@ function CartesianChartContent<
                     )
                   : primaryTicksRescaled
               }
-              chartBounds={clipRect}
+              chartBounds={chartBounds}
             />
           );
         })
@@ -569,11 +580,12 @@ function CartesianChartContent<
       <XAxis
         {...normalizedAxisProps.xAxis}
         xScale={xScale}
-        yScale={zoom.rescaleY(primaryYScale)}
+        yScale={zoomY.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={isNumericalData}
-        chartBounds={clipRect}
-        zoom={zoom}
+        // chartBounds={clipRect}
+        chartBounds={chartBounds}
+        zoom={zoomX}
       />
     ) : null;
 
@@ -605,11 +617,18 @@ function CartesianChartContent<
 
   let composed = customGestures ?? Gesture.Race();
   if (transformState) {
-    composed = Gesture.Race(
-      composed,
-      pinchTransformGesture(transformState),
-      panTransformGesture(transformState, transformConfig?.pan),
-    );
+    if (transformConfig?.pinch?.enabled ?? true) {
+      composed = Gesture.Race(
+        composed,
+        pinchTransformGesture(transformState, transformConfig?.pinch),
+      );
+    }
+    if (transformConfig?.pan?.enabled ?? true) {
+      composed = Gesture.Race(
+        composed,
+        panTransformGesture(transformState, transformConfig?.pan),
+      );
+    }
   }
   if (chartPressState) {
     composed = Gesture.Race(composed, panGesture);
@@ -619,9 +638,15 @@ function CartesianChartContent<
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
       {body}
       <GestureHandler
+        debug
         gesture={composed}
         transformState={transformState}
-        dimensions={{ x: 0, y: 0, width: size.width, height: size.height }}
+        dimensions={{
+          x: Math.min(xScale.range()[0]!, 0),
+          y: 0,
+          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
+          height: size.height,
+        }}
       />
     </GestureHandlerRootView>
   );
