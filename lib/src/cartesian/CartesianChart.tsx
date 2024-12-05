@@ -49,6 +49,7 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<ChartPressStateInit>
@@ -526,12 +527,24 @@ function CartesianChartContent<
 
           if (!yAxis) return null;
 
+          const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
+          const primaryRescaled = zoom.rescaleY(primaryYScale);
           const rescaled = zoom.rescaleY(yAxis.yScale);
+
           const rescaledTicks = axis.tickValues
             ? downsampleTicks(axis.tickValues, axis.tickCount)
             : axis.enableRescaling
               ? rescaled.ticks(axis.tickCount)
               : yAxis.yScale.ticks(axis.tickCount);
+
+          const primaryTicksRescaled = primaryAxisProps.tickValues
+            ? downsampleTicks(
+                primaryAxisProps.tickValues,
+                primaryAxisProps.tickCount,
+              )
+            : primaryAxisProps.enableRescaling
+              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
+              : primaryYScale.ticks(primaryAxisProps.tickCount);
 
           return (
             <YAxis
@@ -539,7 +552,15 @@ function CartesianChartContent<
               {...axis}
               xScale={zoom.rescaleX(xScale)}
               yScale={rescaled}
-              yTicksNormalized={rescaledTicks}
+              yTicksNormalized={
+                index > 0 && !axis.tickValues
+                  ? normalizeYAxisTicks(
+                      primaryTicksRescaled,
+                      primaryRescaled,
+                      rescaled,
+                    )
+                  : rescaledTicks
+              }
               chartBounds={clipRect}
             />
           );
