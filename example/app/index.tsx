@@ -8,11 +8,11 @@ import {
   Linking,
 } from "react-native";
 import { ChartCard } from "../components/ChartCard";
-import { appColors } from "./consts/colors";
-import { ChartRoutes } from "./consts/routes";
+import { appColors } from "../consts/colors";
+import { ChartRoutes } from "../consts/routes";
 import { InfoCard } from "../components/InfoCard";
 import { Button } from "../components/Button";
-import { VICTORY_OSS_URL } from "./consts/urls";
+import { VICTORY_OSS_URL } from "../consts/urls";
 import { Text } from "../components/Text";
 
 export default function LandingPage() {

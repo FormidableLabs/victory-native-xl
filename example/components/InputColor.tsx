@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import ColorPicker from "react-native-wheel-color-picker";
 import { Text } from "./Text";
-import { appColors } from "../app/consts/colors";
+import { appColors } from "../consts/colors";
 
 type Props = {
   label: string;

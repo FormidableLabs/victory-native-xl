@@ -15,9 +15,9 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 import { Button } from "../components/Button";
 
 const generateData = () =>
@@ -135,7 +135,7 @@ float f(vec3 p) {
     return .1 - length(cos(p.xy) + sin(p.yz));
 }
 
-vec4 main(vec2 FC) { 
+vec4 main(vec2 FC) {
     vec3 d = .5 - FC.xy1 / resH;
     vec3 p=vec3(0);
     for (int i = 0; i < 32; i++) {

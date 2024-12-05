@@ -5,7 +5,7 @@ import { StackedBar, CartesianChart, useChartPressState } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import { Text } from "example/components/Text";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({

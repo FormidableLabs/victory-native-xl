@@ -20,9 +20,9 @@ import {
 import { InputColor } from "example/components/InputColor";
 import { InputText } from "example/components/InputText";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 
 const parseTickValues = (tickString?: string) =>
   tickString

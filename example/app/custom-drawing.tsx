@@ -5,11 +5,11 @@ import { CartesianChart } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import { useState } from "react";
 import inter from "../assets/inter-medium.ttf";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import { InputSlider } from "../components/InputSlider";
 import { InputColor } from "../components/InputColor";
 import { InfoCard } from "../components/InfoCard";
-import { descriptionForRoute } from "./consts/routes";
+import { descriptionForRoute } from "../consts/routes";
 
 const DATA = Array.from({ length: 13 }, (_, index) => ({
   day: index + 1,

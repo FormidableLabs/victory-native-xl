@@ -52,11 +52,13 @@ import { GestureHandler } from "../shared/GestureHandler";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 
 export type CartesianActionsHandle<T = undefined> =
-  T extends ChartPressState<ChartPressStateInit>
-    ? {
-        handleTouch: (v: T, x: number, y: number) => void;
-      }
-    : object;
+  T extends ChartPressState<infer S>
+    ? S extends ChartPressStateInit
+      ? {
+          handleTouch: (v: T, x: number, y: number) => void;
+        }
+      : never
+    : never;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -202,7 +204,6 @@ function CartesianChartContent<
         xAxis: normalizedAxisProps.xAxis,
         yAxes: normalizedAxisProps.yAxes,
       });
-    tData.value = _tData;
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
@@ -216,7 +217,6 @@ function CartesianChartContent<
     return {
       xTicksNormalized,
       yAxes,
-      tData,
       xScale,
       chartBounds,
       isNumericalData,
@@ -231,9 +231,12 @@ function CartesianChartContent<
     size.height,
     domain,
     domainPadding,
-    tData,
     normalizedAxisProps,
   ]);
+
+  React.useEffect(() => {
+    tData.value = _tData;
+  }, [_tData, tData]);
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;

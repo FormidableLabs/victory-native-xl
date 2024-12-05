@@ -9,7 +9,7 @@ import {
   useChartPressState,
 } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
-import { appColors } from "./consts/colors";
+import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
 import { InputSegment } from "../components/InputSegment";

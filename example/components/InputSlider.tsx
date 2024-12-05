@@ -2,7 +2,7 @@ import Slider from "@react-native-community/slider";
 import * as React from "react";
 import { View, Platform } from "react-native";
 import { Text } from "./Text";
-import { appColors } from "../app/consts/colors";
+import { appColors } from "../consts/colors";
 
 type Props = {
   label: string;
