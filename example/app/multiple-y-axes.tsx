@@ -141,7 +141,8 @@ export default function MultipleYAxesPage() {
                   return value.toFixed(0);
                 },
                 axisSide: "right",
-                lineColor: "green",
+                lineWidth: 0,
+                tickValues: [10000, 10030],
               },
             ]}
             data={data}
