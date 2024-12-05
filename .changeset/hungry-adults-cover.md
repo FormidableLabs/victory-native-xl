@@ -1,5 +1,4 @@
 ---
-"example": patch
 "victory-native": patch
 ---
 
