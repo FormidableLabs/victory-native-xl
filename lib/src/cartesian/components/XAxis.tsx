@@ -9,6 +9,7 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
+import { boundsToClip } from "lib/src/utils/boundsToClip";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -54,9 +55,11 @@ export const XAxis = <
         .reduce((sum, value) => sum + value, 0) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
-      xScale(tick) >= x1r &&
-      xScale(tick) <= x2r &&
-      (yAxisSide === "left" ? labelX + labelWidth < x2r : x1r < labelX);
+      xScale(tick) >= chartBounds.left &&
+      xScale(tick) <= chartBounds.right &&
+      (yAxisSide === "left"
+        ? labelX + labelWidth < chartBounds.right
+        : chartBounds.left < labelX);
 
     const labelY = (() => {
       // bottom, outset
@@ -78,7 +81,7 @@ export const XAxis = <
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Group clip={chartBounds}>
+          <Group clip={boundsToClip(chartBounds)}>
             <Line
               p1={vec(xScale(tick), yScale(y2))}
               p2={vec(xScale(tick), yScale(y1))}

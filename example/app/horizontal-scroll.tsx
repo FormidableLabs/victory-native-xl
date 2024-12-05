@@ -18,15 +18,16 @@ export default function HorizontalScrollPage() {
   const font = useFont(inter, 12);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const { state } = useChartTransformState({
-    scaleX: 1.5,
-  });
+  const { state } = useChartTransformState({});
 
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
         <CartesianChart
           data={DATA}
+          viewport={{
+            x: [5, 15],
+          }}
           xKey="day"
           yKeys={["highTmp"]}
           yAxis={[

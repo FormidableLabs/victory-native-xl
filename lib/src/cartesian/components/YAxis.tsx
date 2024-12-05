@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import { boundsToClip } from "lib/src/utils/boundsToClip";
 import type {
   InputDatum,
   NumericalFields,
@@ -59,7 +60,7 @@ export const YAxis = <
     return (
       <React.Fragment key={`y-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Group clip={chartBounds}>
+          <Group clip={boundsToClip(chartBounds)}>
             <Line
               p1={vec(xScale(x1), yScale(tick))}
               p2={vec(xScale(x2), yScale(tick))}

@@ -46,12 +46,14 @@ export const GestureHandler = ({
     return {
       position: "absolute",
       backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
-      x,
-      y,
+      // x,
+      // y,
+      left: x,
+      top: y,
       width,
       height,
       transform: [
-        { translateX: -width / 2 },
+        { translateX: -width / 2 - x },
         { translateY: -height / 2 },
         // Running into issues using 'matrix' transforms when enabling the new arch:
         // https://github.com/facebook/react-native/issues/47467
@@ -63,7 +65,7 @@ export const GestureHandler = ({
         //     : undefined,
         // },
         ...transforms,
-        { translateX: width / 2 },
+        { translateX: x + width / 2 },
         { translateY: height / 2 },
       ],
     };

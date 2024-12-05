@@ -209,7 +209,8 @@ export type XAxisProps<
   yScale: Scale;
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
-  chartBounds: ClipDef;
+  // chartBounds: ClipDef;
+  chartBounds: ChartBounds;
   zoom?: ZoomTransform;
 };
 
@@ -257,7 +258,7 @@ export type YAxisProps<
   yScale: Scale;
   yTicksNormalized: number[];
   yKeys: YK[];
-  chartBounds: ClipDef;
+  chartBounds: ChartBounds;
 };
 
 export type FrameInputProps = {
