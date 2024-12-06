@@ -246,9 +246,28 @@ An optional configuration object for customizing transform behavior when `transf
 ```typescript
 {
   pan?: {
+    enabled?: boolean; // Enable/disable panning gesture (defaults to true)
+    dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be panned
     activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+  },
+  pinch?: {
+    enabled?: boolean; // Enable/disable pinch gesture (defaults to true)
+    dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be zoomed
   }
 }
+```
+
+For example, to restrict panning and zooming to only the x-axis:
+
+```typescript
+<CartesianChart
+  transformState={transformState}
+  transformConfig={{
+    pan: { dimensions: "x" },
+    pinch: { dimensions: "x" }
+  }}
+  // ... other props
+/>
 ```
 
 ### `customGestures`
