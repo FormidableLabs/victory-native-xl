@@ -88,6 +88,18 @@ An object of shape `{ x?: [number] | [number, number]; y?: [number] | [number, n
 
 For example, passing `domain={{y: [-10, 100]}}` will result in a y-axis with a lower bound of `-10` and an upper bound of `100`. For `domain={{x: [1, 4]}}`, will result in an x-axis contained within those bounds.
 
+### `viewport`
+
+An object of shape `{ x?: [number, number]; y?: [number, number] }` that controls the visible range of the chart. Unlike `domain` which sets the absolute bounds of the data, `viewport` determines what portion of the data is currently visible in the chart window.
+
+For example, if your data spans from 0-100 on the x-axis, setting `viewport={{ x: [25, 75] }}` will zoom the chart to show only the data between x=25 and x=75. This is particularly useful for implementing features like:
+
+- Initial zoom level
+- Programmatically controlling the visible range
+- Creating preset view windows for different data ranges
+
+The viewport can be combined with `transformState` to allow user interaction (pan/zoom) within the specified range.
+
 ### `domainPadding`
 
 A `number` or an object of shape `{ left?: number; right?: number; top?: number; bottom?: number; }` that specifies that padding between the outer bounds of the _charting area_ (e.g. where the axes lie) and where chart elements will be plotted.
