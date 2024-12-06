@@ -33,6 +33,7 @@ export {
   getTransformComponents,
   setScale,
   setTranslate,
+  invert4,
 } from "./utils/transform";
 
 // Line
