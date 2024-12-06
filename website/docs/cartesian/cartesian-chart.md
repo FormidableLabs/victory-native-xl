@@ -293,6 +293,25 @@ function MyChart() {
 }
 ```
 
+### `onScaleChange`
+
+A callback function that is called whenever the chart's scales change, either due to data updates or zoom/pan transformations. The function receives two parameters:
+
+- `xScale`: The current x-axis scale (a d3 linear scale)
+- `yScale`: The current y-axis scale (a d3 linear scale)
+
+This is useful for tracking scale changes and accessing the current domain/range of the chart, especially during zoom and pan interactions.
+
+```tsx
+<CartesianChart
+  onScaleChange={(xScale, yScale) => {
+    console.log("X domain:", xScale.domain());
+    console.log("Y domain:", yScale.domain());
+  }}
+  // ... other props
+/>
+```
+
 ## Render Function Fields
 
 The `CartesianChart` `children` and `renderOutside` render functions both have a single argument that is an object with the following fields.
