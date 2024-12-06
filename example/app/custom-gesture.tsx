@@ -5,7 +5,6 @@ import {
   CartesianChart,
   Line,
   useChartPressState,
-  useChartTransformState,
 } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
@@ -19,7 +18,6 @@ export default function CustomGestureScreen() {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const ref = useRef<CartesianActionsHandle<typeof state>>(null);
-  const { state: transformState } = useChartTransformState();
 
   const tapGesture = Gesture.Tap().onStart((e) => {
     state.isActive.value = true;
@@ -31,7 +29,6 @@ export default function CustomGestureScreen() {
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
         <CartesianChart
-          transformState={transformState}
           data={DATA}
           xKey="day"
           yKeys={["highTmp"]}
