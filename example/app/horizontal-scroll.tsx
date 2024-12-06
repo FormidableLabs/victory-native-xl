@@ -4,7 +4,6 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 import {
   CartesianChart,
   Line,
-  setTranslate,
   useChartTransformState,
   type ChartBounds,
   type Viewport,
@@ -126,7 +125,8 @@ export default function HorizontalScrollPage() {
   const font = useFont(inter, 12);
   const { state } = useChartTransformState({});
   const viewport: Viewport = {
-    x: [0, 15],
+    x: [5, 15],
+    y: [60, 50],
   };
 
   return (
@@ -148,10 +148,10 @@ export default function HorizontalScrollPage() {
           transformState={state}
           transformConfig={{
             pan: {
-              dimensions: "x",
+              dimensions: ["x", "y"],
             },
             pinch: {
-              dimensions: "x",
+              enabled: false,
             },
           }}
         >
@@ -181,44 +181,42 @@ const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
     top: 0,
     bottom: 0,
   });
-  const domain = useSharedValue<[number, number]>([0, 0]);
+  const domainX = useSharedValue<[number, number]>([0, 0]);
+  const domainY = useSharedValue<[number, number]>([0, 0]);
   const box = useDerivedValue(() => {
     const vp: Required<Viewport> = { ...{ x: [0, 0], y: [0, 0] }, ...viewport };
-    const k = (domain.value[1] - domain.value[0]) / (vp.x[1] - vp.x[0]) || 1;
-    console.log("k", k);
+    const kx = (domainX.value[1] - domainX.value[0]) / (vp.x[1] - vp.x[0]) || 1;
+    const ky = (domainY.value[1] - domainY.value[0]) / (vp.y[1] - vp.y[0]) || 1;
 
-    const bounds = [
-      chartBounds.left,
-      chartBounds.left + (chartBounds.right - chartBounds.left) * k,
-    ];
-    const p1 = interpolate(vp.x[0], domain.value, bounds);
-    const p2 = interpolate(vp.x[1], domain.value, bounds);
-    const tl = mapPoint3d(invert4(matrix.value), [p1, 0, 1]);
-    const br = mapPoint3d(invert4(matrix.value), [p2, 0, 1]);
+    const boundsX = [0, (chartBounds.right - chartBounds.left) * kx];
+    const boundsY = [0, (chartBounds.bottom - chartBounds.top) * ky];
+    const x1z = interpolate(vp.x[0], domainX.value, boundsX);
+    const x2z = interpolate(vp.x[1], domainX.value, boundsX);
+    const y1z = interpolate(vp.y[0], domainY.value, boundsY);
+    const y2z = interpolate(vp.y[1], domainY.value, boundsY);
 
-    let m = scale(1 / k, 1, 1);
-    m = setTranslate(m, chartBounds.left / k, 0);
-    // const x1 = mapPoint3d(m, tl)[0];
-    // const x2 = mapPoint3d(m, br)[0];
+    const tl = mapPoint3d(invert4(matrix.value), [x1z, y1z, 1]);
+    const br = mapPoint3d(invert4(matrix.value), [x2z, y2z, 1]);
 
-    const x1 = interpolate(tl[0], bounds, [
-      chartBounds.left,
-      chartBounds.right,
-    ]);
-    const x2 = interpolate(br[0], bounds, [
-      chartBounds.left,
-      chartBounds.right,
-    ]);
+    const m = scale(kx, ky, 1);
+    const x1 = mapPoint3d(invert4(m), tl)[0];
+    const x2 = mapPoint3d(invert4(m), br)[0];
+    const y1 = mapPoint3d(invert4(m), tl)[1];
+    const y2 = mapPoint3d(invert4(m), br)[1];
 
-    console.log("x1", x1, "x2", x2);
-
-    return { x1, x2 };
+    return { x: [x1, x2], y: [y1, y2] };
   });
   const x = useDerivedValue(() => {
-    return box.value.x1;
+    return box.value.x[0]! + chartBounds.left;
   });
   const w = useDerivedValue(() => {
-    return box.value.x2 - box.value.x1;
+    return box.value.x[1]! - box.value.x[0]!;
+  });
+  const y = useDerivedValue(() => {
+    return box.value.y[0]! + chartBounds.top;
+  });
+  const h = useDerivedValue(() => {
+    return box.value.y[1]! - box.value.y[0]!;
   });
 
   return (
@@ -238,8 +236,9 @@ const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
         onChartBoundsChange={(_chartBounds) => {
           setChartBounds(() => _chartBounds);
         }}
-        onScaleChange={(_xScale) => {
-          domain.value = _xScale.domain() as [number, number];
+        onScaleChange={(_xScale, _yScale) => {
+          domainX.value = _xScale.domain() as [number, number];
+          domainY.value = _yScale.domain() as [number, number];
         }}
       >
         {({ points }) => {
@@ -248,11 +247,11 @@ const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
               <Line points={points.highTmp} color="red" strokeWidth={3} />
               <Rect
                 x={x}
-                y={chartBounds.bottom}
+                y={y}
                 width={w}
-                height={chartBounds.top - chartBounds.bottom}
+                height={h}
                 color="green"
-                opacity={0.5}
+                opacity={0.3}
               />
             </>
           );

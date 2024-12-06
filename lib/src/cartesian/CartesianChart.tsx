@@ -234,12 +234,15 @@ function CartesianChartContent<
       left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
       // right: xScale(xScale.domain().at(-1) || 0),
       right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
-      top: primaryYScale(primaryYScale.domain().at(0) || 0),
-      bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
+      top: primaryYScale(
+        viewport?.y?.[0] ?? (primaryYScale.domain().at(0) || 0),
+      ),
+      bottom: primaryYScale(
+        viewport?.y?.[1] ?? (primaryYScale.domain().at(-1) || 0),
+      ),
+      // top: primaryYScale(primaryYScale.domain().at(0) || 0),
+      // bottom: primaryYScale(primaryYScale.domain().at(-1) || 0),
     };
-    // console.log("chart bounds:", chartBounds);
-    // console.log("scale domain:", xScale.domain());
-    // console.log("scale range:", xScale.range());
 
     return {
       xTicksNormalized,
@@ -667,14 +670,14 @@ function CartesianChartContent<
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
       {body}
       <GestureHandler
-        debug
         gesture={composed}
         transformState={transformState}
         dimensions={{
           x: Math.min(xScale.range()[0]!, 0),
-          y: 0,
+          y: Math.min(primaryYScale.range()[0]!, 0),
           width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-          height: size.height,
+          height:
+            primaryYScale.range()[1]! - Math.min(primaryYScale.range()[0]!, 0),
         }}
       />
     </GestureHandlerRootView>
