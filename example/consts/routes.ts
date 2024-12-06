@@ -145,8 +145,8 @@ export const ChartRoutes: {
   },
   {
     title: "Scroll",
-    description: "Show example of scrolling of chart data.",
-    path: "/horizontal-scroll",
+    description: "Show example of scrolling chart data.",
+    path: "/scroll",
   },
 ];
 
