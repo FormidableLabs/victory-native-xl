@@ -16,7 +16,6 @@ export const makeScale = ({
   isNice?: boolean;
 }): ScaleLinear<number, number> => {
   // Linear
-  // const scale = scaleLinear().domain(inputBounds).range(outputBounds);
   const viewScale = scaleLinear()
     .domain(viewport ?? inputBounds)
     .range(outputBounds);
