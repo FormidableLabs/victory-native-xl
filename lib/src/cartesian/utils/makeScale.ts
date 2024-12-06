@@ -10,14 +10,16 @@ export const makeScale = ({
 }: {
   inputBounds: [number, number];
   outputBounds: [number, number];
-  viewport: [number, number];
+  viewport?: [number, number];
   padStart?: number;
   padEnd?: number;
   isNice?: boolean;
 }): ScaleLinear<number, number> => {
   // Linear
   // const scale = scaleLinear().domain(inputBounds).range(outputBounds);
-  const viewScale = scaleLinear().domain(viewport).range(outputBounds);
+  const viewScale = scaleLinear()
+    .domain(viewport ?? inputBounds)
+    .range(outputBounds);
   const scale = scaleLinear()
     .domain(inputBounds)
     .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);

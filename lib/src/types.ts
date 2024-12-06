@@ -1,7 +1,6 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import {
-  type ClipDef,
   type Color,
   type DashPathEffect,
   type SkFont,
@@ -213,7 +212,6 @@ export type XAxisProps<
   yScale: Scale;
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
-  // chartBounds: ClipDef;
   chartBounds: ChartBounds;
   zoom?: ZoomTransform;
 };

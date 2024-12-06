@@ -37,7 +37,6 @@ export const XAxis = <
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
-  const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
   const xTicksNormalized = tickValues
     ? downsampleTicks(tickValues, tickCount)

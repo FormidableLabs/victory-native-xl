@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, rect } from "@shopify/react-native-skia";
+import { Canvas, Group } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
   type ComposedGesture,
@@ -186,8 +186,14 @@ function CartesianChartContent<
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
-  const zoomX = new ZoomTransform(transform.k, transform.tx, transform.ty);
-  const zoomY = new ZoomTransform(transform.ky, transform.tx, transform.ty);
+  const zoomX = React.useMemo(
+    () => new ZoomTransform(transform.k, transform.tx, transform.ty),
+    [transform.k, transform.tx, transform.ty],
+  );
+  const zoomY = React.useMemo(
+    () => new ZoomTransform(transform.ky, transform.tx, transform.ty),
+    [transform.ky, transform.tx, transform.ty],
+  );
 
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
