@@ -56,6 +56,10 @@ export type SidedNumber =
 /**
  * Render arg for our line chart.
  */
+export type Viewport = {
+  x?: [number, number];
+  y?: [number, number];
+};
 export type ChartBounds = {
   left: number;
   right: number;

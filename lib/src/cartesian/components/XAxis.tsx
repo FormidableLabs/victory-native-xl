@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import { boundsToClip } from "lib/src/utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
   InputDatum,
@@ -9,7 +10,6 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
-import { boundsToClip } from "lib/src/utils/boundsToClip";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -64,7 +64,7 @@ export const XAxis = <
     const labelY = (() => {
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
-        return yScale(y2) + labelOffset + fontSize;
+        return chartBounds.bottom + labelOffset + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {

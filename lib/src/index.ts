@@ -9,6 +9,7 @@ export {
 export {
   type InputDatum,
   type CartesianChartRenderArg,
+  type Viewport,
   type ChartBounds,
   type YAxisSide,
   type XAxisSide,

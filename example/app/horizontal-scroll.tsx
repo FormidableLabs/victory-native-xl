@@ -1,33 +1,140 @@
 export const PanZoom = () => {};
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { CartesianChart, Line, useChartTransformState } from "victory-native";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 import {
-  multiply4,
+  CartesianChart,
+  Line,
+  setTranslate,
+  useChartTransformState,
+  type ChartBounds,
+  type Viewport,
+} from "victory-native";
+import {
+  mapPoint3d,
+  Matrix4,
+  Rect,
   scale,
-  translate,
   useFont,
 } from "@shopify/react-native-skia";
-import { useState } from "react";
+import {
+  interpolate,
+  useDerivedValue,
+  useSharedValue,
+  type SharedValue,
+} from "react-native-reanimated";
 import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
 
-import { Button } from "../components/Button";
+const det3x3 = (
+  a00: number,
+  a01: number,
+  a02: number,
+  a10: number,
+  a11: number,
+  a12: number,
+  a20: number,
+  a21: number,
+  a22: number,
+): number => {
+  "worklet";
+  return (
+    a00 * (a11 * a22 - a12 * a21) +
+    a01 * (a12 * a20 - a10 * a22) +
+    a02 * (a10 * a21 - a11 * a20)
+  );
+};
+
+/**
+ * Inverts a 4x4 matrix
+ * @worklet
+ * @returns The inverted matrix, or the identity matrix if the input is not invertible
+ */
+export const invert4 = (m: Matrix4): Matrix4 => {
+  "worklet";
+
+  const a00 = m[0],
+    a01 = m[1],
+    a02 = m[2],
+    a03 = m[3];
+  const a10 = m[4],
+    a11 = m[5],
+    a12 = m[6],
+    a13 = m[7];
+  const a20 = m[8],
+    a21 = m[9],
+    a22 = m[10],
+    a23 = m[11];
+  const a30 = m[12],
+    a31 = m[13],
+    a32 = m[14],
+    a33 = m[15];
+
+  // Calculate cofactors
+  const b00 = det3x3(a11, a12, a13, a21, a22, a23, a31, a32, a33);
+  const b01 = -det3x3(a10, a12, a13, a20, a22, a23, a30, a32, a33);
+  const b02 = det3x3(a10, a11, a13, a20, a21, a23, a30, a31, a33);
+  const b03 = -det3x3(a10, a11, a12, a20, a21, a22, a30, a31, a32);
+
+  const b10 = -det3x3(a01, a02, a03, a21, a22, a23, a31, a32, a33);
+  const b11 = det3x3(a00, a02, a03, a20, a22, a23, a30, a32, a33);
+  const b12 = -det3x3(a00, a01, a03, a20, a21, a23, a30, a31, a33);
+  const b13 = det3x3(a00, a01, a02, a20, a21, a22, a30, a31, a32);
+
+  const b20 = det3x3(a01, a02, a03, a11, a12, a13, a31, a32, a33);
+  const b21 = -det3x3(a00, a02, a03, a10, a12, a13, a30, a32, a33);
+  const b22 = det3x3(a00, a01, a03, a10, a11, a13, a30, a31, a33);
+  const b23 = -det3x3(a00, a01, a02, a10, a11, a12, a30, a31, a32);
+
+  const b30 = -det3x3(a01, a02, a03, a11, a12, a13, a21, a22, a23);
+  const b31 = det3x3(a00, a02, a03, a10, a12, a13, a20, a22, a23);
+  const b32 = -det3x3(a00, a01, a03, a10, a11, a13, a20, a21, a23);
+  const b33 = det3x3(a00, a01, a02, a10, a11, a12, a20, a21, a22);
+
+  // Calculate determinant
+  const det = a00 * b00 + a01 * b01 + a02 * b02 + a03 * b03;
+
+  // Check if matrix is invertible
+  if (Math.abs(det) < 1e-8) {
+    // Return identity matrix if not invertible
+    return Matrix4();
+  }
+
+  const invDet = 1.0 / det;
+
+  // Calculate inverse matrix
+  return [
+    b00 * invDet,
+    b10 * invDet,
+    b20 * invDet,
+    b30 * invDet,
+    b01 * invDet,
+    b11 * invDet,
+    b21 * invDet,
+    b31 * invDet,
+    b02 * invDet,
+    b12 * invDet,
+    b22 * invDet,
+    b32 * invDet,
+    b03 * invDet,
+    b13 * invDet,
+    b23 * invDet,
+    b33 * invDet,
+  ] as Matrix4;
+};
 
 export default function HorizontalScrollPage() {
   const font = useFont(inter, 12);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
   const { state } = useChartTransformState({});
+  const viewport: Viewport = {
+    x: [0, 15],
+  };
 
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
         <CartesianChart
           data={DATA}
-          viewport={{
-            x: [5, 15],
-          }}
+          viewport={viewport}
           xKey="day"
           yKeys={["highTmp"]}
           yAxis={[
@@ -47,10 +154,6 @@ export default function HorizontalScrollPage() {
               dimensions: "x",
             },
           }}
-          onChartBoundsChange={({ top, left, right, bottom }) => {
-            setWidth(right - left);
-            setHeight(bottom - top);
-          }}
         >
           {({ points }) => {
             return (
@@ -61,88 +164,103 @@ export default function HorizontalScrollPage() {
           }}
         </CartesianChart>
       </View>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-        }}
-      >
-        <View style={{ gap: 10 }}>
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <Button
-              title={"Pan Left"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  translate(10, 0),
-                );
-              }}
-            />
-            <Button
-              title={"Pan Right"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  translate(-10, 0, 0),
-                );
-              }}
-            />
-          </View>
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <Button
-              title={"Pan Up"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  translate(0, 10),
-                );
-              }}
-            />
-            <Button
-              title={"Pan Down"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  translate(0, -10),
-                );
-              }}
-            />
-          </View>
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <Button
-              title={"Zoom In"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  scale(1.25, 1.25, 1, { x: width / 2, y: height / 2 }),
-                );
-              }}
-            />
-            <Button
-              title={"Zoom Out"}
-              style={{ flex: 1 }}
-              onPress={() => {
-                state.matrix.value = multiply4(
-                  state.matrix.value,
-                  scale(0.75, 0.75, 1, { x: width / 2, y: height / 2 }),
-                );
-              }}
-            />
-          </View>
-        </View>
-      </ScrollView>
+      <Hightlighted viewport={viewport} matrix={state.matrix} />
     </SafeAreaView>
   );
 }
 
-// const DATA = Array.from({ length: 31 }, (_, i) => ({
-//   day: i,
-//   highTmp: 40 + 30 * Math.random(),
-// }));
+type HightlightedProps = {
+  viewport: Viewport;
+  matrix: SharedValue<Matrix4>;
+};
+const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
+  const font = useFont(inter, 12);
+  const [chartBounds, setChartBounds] = React.useState<ChartBounds>({
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  });
+  const domain = useSharedValue<[number, number]>([0, 0]);
+  const box = useDerivedValue(() => {
+    const vp: Required<Viewport> = { ...{ x: [0, 0], y: [0, 0] }, ...viewport };
+    const k = (domain.value[1] - domain.value[0]) / (vp.x[1] - vp.x[0]) || 1;
+    console.log("k", k);
+
+    const bounds = [
+      chartBounds.left,
+      chartBounds.left + (chartBounds.right - chartBounds.left) * k,
+    ];
+    const p1 = interpolate(vp.x[0], domain.value, bounds);
+    const p2 = interpolate(vp.x[1], domain.value, bounds);
+    const tl = mapPoint3d(invert4(matrix.value), [p1, 0, 1]);
+    const br = mapPoint3d(invert4(matrix.value), [p2, 0, 1]);
+
+    let m = scale(1 / k, 1, 1);
+    m = setTranslate(m, chartBounds.left / k, 0);
+    // const x1 = mapPoint3d(m, tl)[0];
+    // const x2 = mapPoint3d(m, br)[0];
+
+    const x1 = interpolate(tl[0], bounds, [
+      chartBounds.left,
+      chartBounds.right,
+    ]);
+    const x2 = interpolate(br[0], bounds, [
+      chartBounds.left,
+      chartBounds.right,
+    ]);
+
+    console.log("x1", x1, "x2", x2);
+
+    return { x1, x2 };
+  });
+  const x = useDerivedValue(() => {
+    return box.value.x1;
+  });
+  const w = useDerivedValue(() => {
+    return box.value.x2 - box.value.x1;
+  });
+
+  return (
+    <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
+      <CartesianChart
+        data={DATA}
+        xKey="day"
+        yKeys={["highTmp"]}
+        yAxis={[
+          {
+            font: font,
+          },
+        ]}
+        xAxis={{
+          font: font,
+        }}
+        onChartBoundsChange={(_chartBounds) => {
+          setChartBounds(() => _chartBounds);
+        }}
+        onScaleChange={(_xScale) => {
+          domain.value = _xScale.domain() as [number, number];
+        }}
+      >
+        {({ points }) => {
+          return (
+            <>
+              <Line points={points.highTmp} color="red" strokeWidth={3} />
+              <Rect
+                x={x}
+                y={chartBounds.bottom}
+                width={w}
+                height={chartBounds.top - chartBounds.bottom}
+                color="green"
+                opacity={0.5}
+              />
+            </>
+          );
+        }}
+      </CartesianChart>
+    </View>
+  );
+};
 
 const DATA = [
   { day: 0, highTmp: 59.30624201725173 },
