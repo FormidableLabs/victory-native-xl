@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.12.3
+
+### Patch Changes
+
+- allow tickValues for multiple Y axes ([#438](https://github.com/FormidableLabs/victory-native-xl/pull/438))
+
 ## 41.12.2
 
 ### Patch Changes
