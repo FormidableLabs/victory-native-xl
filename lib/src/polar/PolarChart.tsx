@@ -8,10 +8,8 @@ import {
   type StyleProp,
 } from "react-native";
 import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  PolarChartProvider,
-  usePolarChartContext,
-} from "./contexts/PolarChartContext";
+import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
+import { PolarChartProvider } from "./contexts/PolarChartContext";
 import type {
   ColorFields,
   InputFields,
@@ -47,8 +45,7 @@ const PolarChartBase = (
     transformState,
   } = props;
   const { width, height } = canvasSize;
-
-  const ctx = usePolarChartContext();
+  const Bridge: ContextBridge = useContextBridge();
 
   let composed = Gesture.Race();
   if (transformState) {
@@ -70,12 +67,9 @@ const PolarChartBase = (
             canvasStyle,
           ])}
         >
-          {/* https://shopify.github.io/react-native-skia/docs/canvas/contexts/
-            we have to re-inject our context to make it available in the skia renderer
-         */}
-          <PolarChartProvider {...ctx} canvasSize={canvasSize}>
+          <Bridge>
             <Group matrix={transformState?.matrix}>{children}</Group>
-          </PolarChartProvider>
+          </Bridge>
         </Canvas>
         <GestureHandler
           gesture={composed}
@@ -126,20 +120,22 @@ export const PolarChart = <
   );
 
   return (
-    <PolarChartProvider
-      data={data}
-      labelKey={labelKey.toString()}
-      colorKey={colorKey.toString()}
-      valueKey={valueKey.toString()}
-      canvasSize={canvasSize}
-    >
-      <PolarChartBase
-        {...props}
-        onLayout={onLayout}
-        hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+    <FiberProvider>
+      <PolarChartProvider
+        data={data}
+        labelKey={labelKey.toString()}
+        colorKey={colorKey.toString()}
+        valueKey={valueKey.toString()}
         canvasSize={canvasSize}
-      />
-    </PolarChartProvider>
+      >
+        <PolarChartBase
+          {...props}
+          onLayout={onLayout}
+          hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+          canvasSize={canvasSize}
+        />
+      </PolarChartProvider>
+    </FiberProvider>
   );
 };
 
