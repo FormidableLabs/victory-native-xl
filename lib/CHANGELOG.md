@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.12.4
+
+### Patch Changes
+
+- add package 'its-fine' for polar chart shared contexts ([#440](https://github.com/FormidableLabs/victory-native-xl/pull/440))
+
 ## 41.12.3
 
 ### Patch Changes
