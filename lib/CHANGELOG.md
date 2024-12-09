@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.12.5
+
+### Patch Changes
+
+- Fix calculating y scale range based on label position configurations. ([#445](https://github.com/FormidableLabs/victory-native-xl/pull/445))
+
 ## 41.12.4
 
 ### Patch Changes
