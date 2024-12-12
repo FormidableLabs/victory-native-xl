@@ -2,9 +2,6 @@
 
 The `Pie.Chart` component is a child component of the `PolarChart` component and is responsible for rendering the `Pie` or `Donut` chart.
 
-:::info
-This chart does not yet support labels. We are working on adding support for labels in the future. In the meantime, you can easily add your own legend next to the chart. See the [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/example) for more details.
-:::
 
 :::tip
 
@@ -208,6 +205,7 @@ type PieSliceData = {
 
 :::info
 Generally, you would not need to use the `slice` object directly, but it is available to you if you need to do something custom with each slice. Please refer to the example app repo for more information on how to use the `slice` object e.g the `LinearGradient` examples.
+:::
 
 ### Pie Slice Labels
 

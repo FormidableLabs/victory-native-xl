@@ -68,6 +68,8 @@ const sidebars = {
           label: "Pie / Donut Paths",
           items: [
             "polar/pie/pie-charts",
+            "polar/pie/pie-slice",
+            "polar/pie/pie-slice-angular-inset",
             "polar/pie/use-slice-path",
             "polar/pie/use-slice-angular-inset-path",
           ],
