@@ -30,7 +30,7 @@ export default function HorizontalScrollPage() {
   const { state } = useChartTransformState({});
   const viewport: Viewport = {
     x: [5, 15],
-    y: [60, 50],
+    y: [50, 60],
   };
 
   return (
@@ -90,7 +90,7 @@ const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
   const box = useDerivedValue(() => {
     const vp: Required<Viewport> = { ...{ x: [0, 0], y: [0, 0] }, ...viewport };
     const kx = (domainX.value[1] - domainX.value[0]) / (vp.x[1] - vp.x[0]) || 1;
-    const ky = (domainY.value[1] - domainY.value[0]) / (vp.y[1] - vp.y[0]) || 1;
+    const ky = (domainY.value[0] - domainY.value[1]) / (vp.y[1] - vp.y[0]) || 1;
 
     const boundsX = [0, (chartBounds.right - chartBounds.left) * kx];
     const boundsY = [0, (chartBounds.bottom - chartBounds.top) * ky];

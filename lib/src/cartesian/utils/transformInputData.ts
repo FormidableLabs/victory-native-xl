@@ -161,7 +161,8 @@ export const transformInputData = <
     const yScale = makeScale({
       inputBounds: yScaleDomain,
       outputBounds: yScaleRange,
-      viewport: viewport?.y ?? yScaleDomain,
+      // Reverse viewport y values since canvas coordinates increase downward
+      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
       isNice: true,
       padEnd:
         typeof domainPadding === "number"
