@@ -239,10 +239,10 @@ function CartesianChartContent<
       left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
       right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
       top: primaryYScale(
-        viewport?.y?.[0] ?? (primaryYScale.domain().at(0) || 0),
+        viewport?.y?.[1] ?? (primaryYScale.domain().at(0) || 0),
       ),
       bottom: primaryYScale(
-        viewport?.y?.[1] ?? (primaryYScale.domain().at(-1) || 0),
+        viewport?.y?.[0] ?? (primaryYScale.domain().at(-1) || 0),
       ),
     };
 
