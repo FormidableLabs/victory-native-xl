@@ -52,13 +52,14 @@ export type SidedNumber =
   | number
   | { left?: number; right?: number; top?: number; bottom?: number };
 
-/**
- * Render arg for our line chart.
- */
 export type Viewport = {
   x?: [number, number];
   y?: [number, number];
 };
+
+/**
+ * Render arg for our line chart.
+ */
 export type ChartBounds = {
   left: number;
   right: number;
