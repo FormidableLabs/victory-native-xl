@@ -134,12 +134,12 @@ export const transformInputData = <
         (typeof yAxis?.tickCount === "number"
           ? yAxis?.tickCount
           : xAxis?.tickCount) ?? 0;
-      const yLabelPosition = yAxis?.labelPosition;
-      const xAxisSide = xAxis?.axisSide;
       const yLabelOffset = yAxis.labelOffset ?? 0;
+      const xAxisSide = xAxis?.axisSide;
+      const xLabelPosition = xAxis?.labelPosition;
 
       // bottom, outset
-      if (xAxisSide === "bottom" && yLabelPosition === "outset") {
+      if (xAxisSide === "bottom" && xLabelPosition === "outset") {
         return [
           outputWindow.yMin,
           outputWindow.yMax +
@@ -147,7 +147,7 @@ export const transformInputData = <
         ];
       }
       // Top outset
-      if (xAxisSide === "top" && yLabelPosition === "outset") {
+      if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
           outputWindow.yMin +
             (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),

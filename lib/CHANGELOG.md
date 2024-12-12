@@ -1,5 +1,29 @@
 # victory-native
 
+## 41.12.5
+
+### Patch Changes
+
+- Fix calculating y scale range based on label position configurations. ([#445](https://github.com/FormidableLabs/victory-native-xl/pull/445))
+
+## 41.12.4
+
+### Patch Changes
+
+- add package 'its-fine' for polar chart shared contexts ([#440](https://github.com/FormidableLabs/victory-native-xl/pull/440))
+
+## 41.12.3
+
+### Patch Changes
+
+- allow tickValues for multiple Y axes ([#438](https://github.com/FormidableLabs/victory-native-xl/pull/438))
+
+## 41.12.2
+
+### Patch Changes
+
+- Fixes Reanimated warning ([#435](https://github.com/FormidableLabs/victory-native-xl/pull/435))
+
 ## 41.12.1
 
 ### Patch Changes
