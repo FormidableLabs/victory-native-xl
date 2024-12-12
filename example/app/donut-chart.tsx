@@ -12,7 +12,7 @@ function calculateGradientPoints(
   startAngle: number,
   endAngle: number,
   centerX: number,
-  centerY: number
+  centerY: number,
 ) {
   // Calculate the midpoint angle of the slice for a central gradient effect
   const midAngle = (startAngle + endAngle) / 2;
@@ -68,7 +68,7 @@ export default function DonutChart(props: { segment: string }) {
                   slice.startAngle,
                   slice.endAngle,
                   slice.center.x,
-                  slice.center.y
+                  slice.center.y,
                 );
 
                 return (

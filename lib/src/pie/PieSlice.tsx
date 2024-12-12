@@ -39,7 +39,7 @@ export const PieSlice = ({ children, animate, ...rest }: PieSliceProps) => {
   const childrenArray = React.Children.toArray(children);
 
   const labelIndex = childrenArray.findIndex(
-    (child) => (child as ReactElement).type === PieLabel
+    (child) => (child as ReactElement).type === PieLabel,
   );
 
   if (labelIndex > -1) {

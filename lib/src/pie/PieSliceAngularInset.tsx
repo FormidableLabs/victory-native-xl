@@ -23,6 +23,11 @@ export const PieSliceAngularInset = (props: PieSliceAngularInsetProps) => {
   const { slice } = usePieSliceContext();
   const [path, insetPaint] = useSliceAngularInsetPath({ slice, angularInset });
 
+  // If the path is empty, don't render anything
+  if (path.toSVGString() === "M0 0L0 0M0 0L0 0") {
+    return null;
+  }
+
   if (angularInset.angularStrokeWidth === 0) {
     return null;
   }
