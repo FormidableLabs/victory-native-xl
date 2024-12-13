@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
-import { getTransformComponents } from "lib/src/utils/transform";
+import { getTransformComponents } from "../../utils/transform";
 import type { ChartTransformState } from "../hooks/useChartTransformState";
 
 interface CartesianTransformContext {
