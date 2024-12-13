@@ -112,7 +112,10 @@ const config: Config = {
         property: "og:url",
         content: "https://commerce.nearform.com/open-source/victory-native/",
       },
-      { property: "og:title", content: `${title} - React Charting Components` },
+      {
+        property: "og:title",
+        content: `${title} - React Native Charting Components`,
+      },
       {
         property: "og:description",
         content: tagline,
@@ -129,7 +132,7 @@ const config: Config = {
       },
       {
         property: "twitter:title",
-        content: `${title} - React Charting Components`,
+        content: `${title} - React Native Charting Components`,
       },
       {
         property: "twitter:description",
