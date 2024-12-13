@@ -1,7 +1,6 @@
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import {
-  type ClipDef,
   type Color,
   type DashPathEffect,
   type SkFont,
@@ -52,6 +51,11 @@ export type TransformedData<
 export type SidedNumber =
   | number
   | { left?: number; right?: number; top?: number; bottom?: number };
+
+export type Viewport = {
+  x?: [number, number];
+  y?: [number, number];
+};
 
 /**
  * Render arg for our line chart.
@@ -209,7 +213,7 @@ export type XAxisProps<
   yScale: Scale;
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
-  chartBounds: ClipDef;
+  chartBounds: ChartBounds;
   zoom?: ZoomTransform;
 };
 
@@ -257,7 +261,7 @@ export type YAxisProps<
   yScale: Scale;
   yTicksNormalized: number[];
   yKeys: YK[];
-  chartBounds: ClipDef;
+  chartBounds: ChartBounds;
 };
 
 export type FrameInputProps = {

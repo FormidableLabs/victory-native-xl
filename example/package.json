@@ -16,6 +16,7 @@
     "@react-native-segmented-control/segmented-control": "2.5.4",
     "@shopify/react-native-skia": "1.5.0",
     "canvaskit-wasm": "^0.39.1",
+    "d3-scale": "^4.0.2",
     "date-fns": "^2.30.0",
     "expo": "^52.0.5",
     "expo-asset": "~11.0.1",

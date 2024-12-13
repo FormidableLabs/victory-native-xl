@@ -9,6 +9,7 @@ export {
 export {
   type InputDatum,
   type CartesianChartRenderArg,
+  type Viewport,
   type ChartBounds,
   type YAxisSide,
   type XAxisSide,
@@ -32,6 +33,7 @@ export {
   getTransformComponents,
   setScale,
   setTranslate,
+  invert4,
 } from "./utils/transform";
 
 // Line

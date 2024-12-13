@@ -42,6 +42,7 @@ export const transformInputData = <
   domainPadding,
   xAxis,
   yAxes,
+  viewport,
 }: {
   data: RawData[];
   xKey: XK;
@@ -54,6 +55,10 @@ export const transformInputData = <
   domainPadding?: SidedNumber;
   xAxis: XAxisPropsWithDefaults<RawData, XK>;
   yAxes: YAxisPropsWithDefaults<RawData, YK>[];
+  viewport?: {
+    x?: [number, number];
+    y?: [number, number];
+  };
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
@@ -156,6 +161,8 @@ export const transformInputData = <
     const yScale = makeScale({
       inputBounds: yScaleDomain,
       outputBounds: yScaleRange,
+      // Reverse viewport y values since canvas coordinates increase downward
+      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
       isNice: true,
       padEnd:
         typeof domainPadding === "number"
@@ -270,10 +277,13 @@ export const transformInputData = <
   const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
     ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
 
+  const xInputBounds: [number, number] =
+    ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax];
   const xScale = makeScale({
     // if single data point, manually add upper & lower bounds so chart renders properly
-    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
+    inputBounds: xInputBounds,
     outputBounds: oRange,
+    viewport: viewport?.x ?? xInputBounds,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
     padEnd:

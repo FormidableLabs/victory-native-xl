@@ -143,6 +143,11 @@ export const ChartRoutes: {
     description: "Basic chart example with a custom tap gesture.",
     path: "/custom-gesture",
   },
+  {
+    title: "Scroll",
+    description: "Show example of scrolling chart data.",
+    path: "/scroll",
+  },
 ];
 
 if (__DEV__) {

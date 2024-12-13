@@ -88,6 +88,18 @@ An object of shape `{ x?: [number] | [number, number]; y?: [number] | [number, n
 
 For example, passing `domain={{y: [-10, 100]}}` will result in a y-axis with a lower bound of `-10` and an upper bound of `100`. For `domain={{x: [1, 4]}}`, will result in an x-axis contained within those bounds.
 
+### `viewport`
+
+An object of shape `{ x?: [number, number]; y?: [number, number] }` that controls the visible range of the chart. Unlike `domain` which sets the absolute bounds of the data, `viewport` determines what portion of the data is currently visible in the chart window.
+
+For example, if your data spans from 0-100 on the x-axis, setting `viewport={{ x: [25, 75] }}` will zoom the chart to show only the data between x=25 and x=75. This is particularly useful for implementing features like:
+
+- Initial zoom level
+- Programmatically controlling the visible range
+- Creating preset view windows for different data ranges
+
+The viewport can be combined with `transformState` to allow user interaction (pan/zoom) within the specified range.
+
 ### `domainPadding`
 
 A `number` or an object of shape `{ left?: number; right?: number; top?: number; bottom?: number; }` that specifies that padding between the outer bounds of the _charting area_ (e.g. where the axes lie) and where chart elements will be plotted.
@@ -246,9 +258,28 @@ An optional configuration object for customizing transform behavior when `transf
 ```typescript
 {
   pan?: {
+    enabled?: boolean; // Enable/disable panning gesture (defaults to true)
+    dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be panned
     activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+  },
+  pinch?: {
+    enabled?: boolean; // Enable/disable pinch gesture (defaults to true)
+    dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be zoomed
   }
 }
+```
+
+For example, to restrict panning and zooming to only the x-axis:
+
+```typescript
+<CartesianChart
+  transformState={transformState}
+  transformConfig={{
+    pan: { dimensions: "x" },
+    pinch: { dimensions: "x" }
+  }}
+  // ... other props
+/>
 ```
 
 ### `customGestures`
@@ -291,6 +322,25 @@ function MyChart() {
     />
   );
 }
+```
+
+### `onScaleChange`
+
+A callback function that is called whenever the chart's scales change, either due to data updates or zoom/pan transformations. The function receives two parameters:
+
+- `xScale`: The current x-axis scale (a d3 linear scale)
+- `yScale`: The current y-axis scale (a d3 linear scale)
+
+This is useful for tracking scale changes and accessing the current domain/range of the chart, especially during zoom and pan interactions.
+
+```tsx
+<CartesianChart
+  onScaleChange={(xScale, yScale) => {
+    console.log("X domain:", xScale.domain());
+    console.log("Y domain:", yScale.domain());
+  }}
+  // ... other props
+/>
 ```
 
 ## Render Function Fields

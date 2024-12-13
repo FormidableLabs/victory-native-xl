@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
   InputDatum,
@@ -36,7 +37,6 @@ export const XAxis = <
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
-  const [x1r = 0, x2r = 0] = xScale.range();
   const fontSize = font?.getSize() ?? 0;
   const xTicksNormalized = tickValues
     ? downsampleTicks(tickValues, tickCount)
@@ -54,14 +54,16 @@ export const XAxis = <
         .reduce((sum, value) => sum + value, 0) ?? 0;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
-      xScale(tick) >= x1r &&
-      xScale(tick) <= x2r &&
-      (yAxisSide === "left" ? labelX + labelWidth < x2r : x1r < labelX);
+      xScale(tick) >= chartBounds.left &&
+      xScale(tick) <= chartBounds.right &&
+      (yAxisSide === "left"
+        ? labelX + labelWidth < chartBounds.right
+        : chartBounds.left < labelX);
 
     const labelY = (() => {
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
-        return yScale(y2) + labelOffset + fontSize;
+        return chartBounds.bottom + labelOffset + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {
@@ -78,7 +80,7 @@ export const XAxis = <
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Group clip={chartBounds}>
+          <Group clip={boundsToClip(chartBounds)}>
             <Line
               p1={vec(xScale(tick), yScale(y2))}
               p2={vec(xScale(tick), yScale(y1))}

@@ -88,6 +88,30 @@ describe("transformInputData", () => {
     expect(yScale(10)).toEqual(0);
   });
 
+  it("should handle viewport", () => {
+    const { xScale, yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
+      viewport: {
+        // Test both x and y viewport handling
+        x: [0.5, 1.5],
+        y: [2, 8],
+      },
+    });
+
+    const yScale = yAxes[0].yScale;
+
+    expect(xScale(0.5)).toEqual(0);
+    expect(xScale(1.5)).toEqual(500);
+
+    expect(yScale(2)).toEqual(300); // min maps to bottom
+    expect(yScale(8)).toEqual(0); // max maps to top
+  });
+
   it("sorts data by xKey", () => {
     const { ix, y } = transformInputData({
       data: [
