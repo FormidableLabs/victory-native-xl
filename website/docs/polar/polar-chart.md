@@ -4,9 +4,6 @@ The `PolarChart` component provides another chart container component in `victor
 
 - accepting raw data and metadata in a format that can then be easily transformed and used for charting `Pie` and `Donut` charts.
 
-:::info
-This chart does not yet support gestures or animations.
-:::
 
 :::tip
 

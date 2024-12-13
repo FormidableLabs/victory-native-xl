@@ -1,4 +1,4 @@
-import type { SkPath } from "@shopify/react-native-skia";
+import { Skia, type SkPath } from "@shopify/react-native-skia";
 import * as React from "react";
 import {
   useDerivedValue,
@@ -54,9 +54,27 @@ export const useAnimatedPath = (
   }, [path, t]);
 
   const currentPath = useDerivedValue<SkPath>(() => {
-    if (t.value !== 1 && path.isInterpolatable(prevPath)) {
-      return path.interpolate(prevPath, t.value) || path;
+    if (t.value !== 1) {
+      // Match floating-point numbers in a string and normalize their precision as this is essential for Skia to interpolate paths
+      // Without normalization, Skia won't be able to interpolate paths in Pie slice shapes
+      // This normalization is really only needed for pie charts at the moment
+      const normalizePrecision = (path: string): string =>
+        path.replace(/(\d+\.\d+)/g, (match) => parseFloat(match).toFixed(3));
+      const pathNormalized = Skia.Path.MakeFromSVGString(
+        normalizePrecision(path.toSVGString()),
+      );
+      const prevPathNormalized = Skia.Path.MakeFromSVGString(
+        normalizePrecision(prevPath.toSVGString()),
+      );
+      if (
+        pathNormalized &&
+        prevPathNormalized &&
+        pathNormalized.isInterpolatable(prevPathNormalized)
+      ) {
+        return pathNormalized.interpolate(prevPathNormalized, t.value) || path;
+      }
     }
+
     return path;
   });
 

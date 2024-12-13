@@ -73,7 +73,7 @@ export default function DonutChart(props: { segment: string }) {
 
                 return (
                   <>
-                    <Pie.Slice>
+                    <Pie.Slice animate={{ type: "spring" }}>
                       <LinearGradient
                         start={vec(startX, startY)}
                         end={vec(endX, endY)}
@@ -82,6 +82,7 @@ export default function DonutChart(props: { segment: string }) {
                       />
                     </Pie.Slice>
                     <Pie.SliceAngularInset
+                      animate={{ type: "spring" }}
                       angularInset={{
                         angularStrokeWidth: 5,
                         angularStrokeColor: "white",
