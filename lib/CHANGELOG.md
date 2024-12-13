@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.13.0
+
+### Minor Changes
+
+- Add ability to scroll chart data ([#437](https://github.com/FormidableLabs/victory-native-xl/pull/437))
+
 ## 41.12.5
 
 ### Patch Changes
