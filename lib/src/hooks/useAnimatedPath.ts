@@ -55,28 +55,23 @@ export const useAnimatedPath = (
 
   const currentPath = useDerivedValue<SkPath>(() => {
     if (t.value !== 1) {
-      if (!path.isInterpolatable(prevPath)) {
-        // Match floating-point numbers in a string and normalize their precision as this is essential for Skia to interpolate paths
-        // Without normalization, Skia won't be able to interpolate paths in Pie slice shapes
-        const normalizePrecision = (path: string): string =>
-          path.replace(/(\d+\.\d+)/g, (match) => parseFloat(match).toFixed(3));
-        const pathNormalized = Skia.Path.MakeFromSVGString(
-          normalizePrecision(path.toSVGString()),
-        );
-        const prevPathNormalized = Skia.Path.MakeFromSVGString(
-          normalizePrecision(prevPath.toSVGString()),
-        );
-        if (
-          pathNormalized &&
-          prevPathNormalized &&
-          pathNormalized.isInterpolatable(prevPathNormalized)
-        ) {
-          return (
-            pathNormalized.interpolate(prevPathNormalized, t.value) || path
-          );
-        }
-      } else if (path.isInterpolatable(prevPath)) {
-        return path.interpolate(prevPath, t.value) || path;
+      // Match floating-point numbers in a string and normalize their precision as this is essential for Skia to interpolate paths
+      // Without normalization, Skia won't be able to interpolate paths in Pie slice shapes
+      // This normalization is really only needed for pie charts at the moment
+      const normalizePrecision = (path: string): string =>
+        path.replace(/(\d+\.\d+)/g, (match) => parseFloat(match).toFixed(3));
+      const pathNormalized = Skia.Path.MakeFromSVGString(
+        normalizePrecision(path.toSVGString()),
+      );
+      const prevPathNormalized = Skia.Path.MakeFromSVGString(
+        normalizePrecision(prevPath.toSVGString()),
+      );
+      if (
+        pathNormalized &&
+        prevPathNormalized &&
+        pathNormalized.isInterpolatable(prevPathNormalized)
+      ) {
+        return pathNormalized.interpolate(prevPathNormalized, t.value) || path;
       }
     }
 
