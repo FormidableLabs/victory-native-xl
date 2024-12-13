@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.14.0
+
+### Minor Changes
+
+- Add animations for pie chart ([#451](https://github.com/FormidableLabs/victory-native-xl/pull/451))
+
 ## 41.13.0
 
 ### Minor Changes
