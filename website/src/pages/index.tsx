@@ -19,7 +19,7 @@ import {
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+    <Layout description={siteConfig.tagline}>
       <LandingHero
         heading={siteConfig.title}
         body={siteConfig.tagline}
