@@ -3,10 +3,13 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
+const title = "Victory Native";
+const tagline =
+  "A charting library for React Native with a focus on performance and customization.";
+
 const config: Config = {
-  title: "Victory Native",
-  tagline:
-    "A charting library for React Native with a focus on performance and customization.",
+  title,
+  tagline,
   url: "https://commerce.nearform.com/",
   baseUrl:
     // eslint-disable-next-line no-undef
@@ -86,7 +89,61 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
-    image: "/img/victory-native-social.png",
+    metadata: [
+      {
+        name: "title",
+        content: `${title} - React Charting Components`,
+      },
+      {
+        name: "description",
+        content: tagline,
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, maximum-scale=1",
+      },
+      {
+        name: "keywords",
+        content:
+          "victory, victory-native, documentation, react, react-native, charts, charting, data, viz, d3",
+      },
+      { property: "og:type", content: "website" },
+      {
+        property: "og:url",
+        content: "https://commerce.nearform.com/open-source/victory-native/",
+      },
+      {
+        property: "og:title",
+        content: `${title} - React Native Charting Components`,
+      },
+      {
+        property: "og:description",
+        content: tagline,
+      },
+      {
+        property: "og:image",
+        content:
+          "https://commerce.nearform.com/open-source/victory-native/open-graph.png",
+      },
+      { property: "twitter:card", content: "summary_large_image" },
+      {
+        property: "twitter:url",
+        content: "https://commerce.nearform.com/open-source/victory-native/",
+      },
+      {
+        property: "twitter:title",
+        content: `${title} - React Native Charting Components`,
+      },
+      {
+        property: "twitter:description",
+        content: tagline,
+      },
+      {
+        property: "twitter:image",
+        content:
+          "https://commerce.nearform.com/open-source/victory-native/open-graph.png",
+      },
+    ],
   } satisfies Preset.ThemeConfig,
 };
 
