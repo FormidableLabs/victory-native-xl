@@ -1,7 +1,7 @@
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { useDerivedValue } from "react-native-reanimated";
+import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import { Bar, CartesianChart, useChartPressState } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import { Text } from "example/components/Text";
@@ -25,12 +25,14 @@ export default function BarChartCustomBarsPage() {
     y: { listenCount: 0 },
   });
 
-  let activeXItem = useDerivedValue(() => {
-    return state.matchedIndex.value;
-  }).value;
-  if (activeXItem < 0) {
-    activeXItem = 2;
-  }
+  const [activeItemIndex, setActiveItemIndex] = useState(0);
+
+  useAnimatedReaction(
+    () => state.matchedIndex.value,
+    (matchedIndex) => {
+      runOnJS(setActiveItemIndex)(matchedIndex);
+    },
+  );
 
   return (
     <>
@@ -117,7 +119,7 @@ export default function BarChartCustomBarsPage() {
                         topRight: roundedCorner,
                       }}
                     >
-                      {i == activeXItem ? (
+                      {i == activeItemIndex ? (
                         <LinearGradient
                           start={vec(0, 0)}
                           end={vec(0, 400)}
