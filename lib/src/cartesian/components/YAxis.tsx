@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import { Group, Line, Paint, Text, vec } from "@shopify/react-native-skia";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import { boundsToClip } from "../../utils/boundsToClip";
 import type {
   InputDatum,
@@ -27,6 +28,7 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
+  title,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
@@ -86,7 +88,61 @@ export const YAxis = <
     );
   });
 
-  return yAxisNodes;
+  const AxisTitle = useMemo(() => {
+    if (title) {
+      const {
+        text,
+        position: titlePosition = "center",
+        xOffset = 2,
+        font: titleFont,
+      } = title;
+
+      const titleFontToUse = titleFont ?? font;
+
+      const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+
+      const titleY = (() => {
+        if (titlePosition === "top") {
+          return chartBounds.top + titleWidth;
+        }
+        if (titlePosition === "bottom") {
+          return chartBounds.bottom;
+        }
+        // defaults to center of axis
+        return (chartBounds.bottom + chartBounds.top + titleWidth) / 2;
+      })();
+
+      const translateX = fontSize * 2 + labelOffset + (xOffset ?? 0);
+
+      return (
+        <Group
+          transform={[
+            { translateX: -translateX },
+            { translateY: titleY },
+            { rotate: -Math.PI / 2 },
+          ]}
+        >
+          <Text
+            color={labelColor}
+            text={text}
+            font={titleFontToUse!}
+            y={chartBounds.left}
+            x={0}
+          />
+        </Group>
+      );
+    }
+    return null;
+  }, [title, chartBounds, font, labelOffset, fontSize, labelColor]);
+
+  return (
+    <>
+      {yAxisNodes}
+      {/* rotate 90deg */}
+
+      {AxisTitle}
+    </>
+  );
 };
 
 export const YAxisDefaults = {

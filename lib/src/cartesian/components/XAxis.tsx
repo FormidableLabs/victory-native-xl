@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import {
   Group,
@@ -17,6 +17,7 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -42,6 +43,7 @@ export const XAxis = <
   chartBounds,
   enableRescaling,
   zoom,
+  title,
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
@@ -159,7 +161,50 @@ export const XAxis = <
     );
   });
 
-  return xAxisNodes;
+  const AxisTitle = useMemo(() => {
+    if (title) {
+      const {
+        text,
+        font: titleFont,
+        position: titlePosition = "center",
+        yOffset = 8,
+      } = title;
+
+      const titleFontToUse = titleFont ?? font;
+
+      const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+      const titleXPosition = (() => {
+        if (titlePosition === "left") {
+          return chartBounds.left;
+        }
+        if (titlePosition === "right") {
+          return chartBounds.right - titleWidth;
+        }
+        // defaults to center of axis
+        return (chartBounds.left + chartBounds.right - titleWidth) / 2;
+      })();
+
+      const titleYPosition =
+        chartBounds.bottom + fontSize * 2 + labelOffset + (yOffset ?? 0);
+
+      return (
+        <Text
+          y={titleYPosition}
+          x={titleXPosition}
+          font={titleFontToUse!}
+          text={title.text}
+        />
+      );
+    }
+    return null;
+  }, [title, chartBounds, font, fontSize, labelOffset]);
+
+  return (
+    <>
+      {xAxisNodes}
+      {AxisTitle}
+    </>
+  );
 };
 
 export const XAxisDefaults = {

@@ -42,20 +42,36 @@ export default function DashedAxesPage(props: { segment: string }) {
             data={data}
             xKey="month"
             yKeys={["low", "high"]}
-            padding={16}
+            padding={{
+              top: 20,
+              right: 20,
+              bottom: 40,
+              left: 30,
+            }}
             domain={{ y: [0, 65] }}
-            domainPadding={{ top: 20 }}
+            // domainPadding={{ top: 20 }}
             xAxis={{
               font,
-              labelOffset: 4,
+              labelOffset: 0,
               linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+              title: {
+                text: "Month",
+                font,
+                position: "left",
+                yOffset: 20,
+              },
             }}
             yAxis={[
               {
                 labelOffset: 8,
 
                 font,
-
+                title: {
+                  text: "Temperature",
+                  font,
+                  position: "left",
+                  yOffset: -20,
+                },
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },
             ]}
