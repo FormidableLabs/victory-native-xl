@@ -20,6 +20,7 @@ export const XAxis = <
   axisSide = "bottom",
   yAxisSide = "left",
   labelPosition = "outset",
+  labelRotate,
   tickCount = DEFAULT_TICK_COUNT,
   tickValues,
   labelOffset = 2,
@@ -93,6 +94,8 @@ export const XAxis = <
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
           <Text
+            transform={[{ rotate: (Math.PI / 180) * (labelRotate ?? 0) }]}
+            origin={vec(xScale(tick), yScale(y2))}
             color={labelColor}
             text={contentX}
             font={font}

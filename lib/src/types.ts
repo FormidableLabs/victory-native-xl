@@ -132,6 +132,7 @@ export type AxisProps<
   labelPosition?:
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
+  labelRotate?: number;
   axisSide?: { x: XAxisSide; y: YAxisSide };
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
@@ -180,6 +181,7 @@ export type XAxisInputProps<
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
+  labelRotate?: number;
   lineColor?: Color;
   lineWidth?: number;
   tickCount?: number;
@@ -195,13 +197,17 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
   >
 > &
   Partial<
     Pick<
       XAxisInputProps<RawData, XK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "labelRotate"
     >
   >;
 
