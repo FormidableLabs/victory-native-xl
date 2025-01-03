@@ -187,6 +187,12 @@ export type XAxisInputProps<
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  title?: {
+    text: string;
+    position?: "left" | "center" | "right";
+    yOffset?: number;
+    font?: SkFont | null;
+  };
 };
 
 export type XAxisPropsWithDefaults<
@@ -195,13 +201,13 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "title"
   >
 > &
   Partial<
     Pick<
       XAxisInputProps<RawData, XK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "title"
     >
   >;
 
@@ -235,6 +241,12 @@ export type YAxisInputProps<
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  title?: {
+    text: string;
+    position?: "top" | "center" | "bottom";
+    xOffset?: number;
+    font?: SkFont | null;
+  };
 };
 
 export type YAxisPropsWithDefaults<
@@ -243,13 +255,13 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "title"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "title"
     >
   >;
 
