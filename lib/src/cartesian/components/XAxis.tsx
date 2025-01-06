@@ -162,42 +162,45 @@ export const XAxis = <
   });
 
   const AxisTitle = useMemo(() => {
-    if (title) {
-      const {
-        text,
-        font: titleFont,
-        position: titlePosition = "center",
-        yOffset = 8,
-      } = title;
+    if (!title) return null;
 
-      const titleFontToUse = titleFont ?? font;
+    const {
+      text,
+      position: titlePosition = "center",
+      yOffset = 2,
+      font: titleFont,
+    } = title;
 
-      const titleWidth = getFontGlyphWidth(text, titleFontToUse);
-      const titleXPosition = (() => {
-        if (titlePosition === "left") {
-          return chartBounds.left;
-        }
-        if (titlePosition === "right") {
-          return chartBounds.right - titleWidth;
-        }
-        // defaults to center of axis
-        return (chartBounds.left + chartBounds.right - titleWidth) / 2;
-      })();
+    const titleFontToUse = titleFont ?? font;
+    const titleWidth = getFontGlyphWidth(text, titleFontToUse);
 
-      const titleYPosition =
-        chartBounds.bottom + fontSize * 2 + labelOffset + (yOffset ?? 0);
+    // Calculate horizontal position
+    const titleX = (() => {
+      if (titlePosition === "left") return chartBounds.left;
+      if (titlePosition === "right") return chartBounds.right - titleWidth;
+      // Center by default
+      return (chartBounds.left + chartBounds.right - titleWidth) / 2;
+    })();
 
-      return (
+    // Calculate vertical offset from axis
+    const baseOffset = fontSize * 2 + labelOffset + (yOffset ?? 0);
+    const translateY =
+      axisSide === "bottom"
+        ? chartBounds.bottom + baseOffset
+        : chartBounds.top - baseOffset;
+
+    return (
+      <Group transform={[{ translateX: titleX }, { translateY }]}>
         <Text
-          y={titleYPosition}
-          x={titleXPosition}
+          color={labelColor}
+          text={text}
           font={titleFontToUse!}
-          text={title.text}
+          x={0}
+          y={0}
         />
-      );
-    }
-    return null;
-  }, [title, chartBounds, font, fontSize, labelOffset]);
+      </Group>
+    );
+  }, [title, chartBounds, font, fontSize, labelOffset, axisSide, labelColor]);
 
   return (
     <>

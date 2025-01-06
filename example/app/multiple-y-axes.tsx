@@ -117,6 +117,11 @@ export default function MultipleYAxesPage() {
                 return value.toFixed(0);
               },
               lineColor: "pink",
+              title: {
+                text: "Bottom",
+                position: "center",
+                yOffset: 2,
+              },
             }}
             frame={{
               lineColor: "black",
@@ -132,6 +137,11 @@ export default function MultipleYAxesPage() {
                 },
                 lineColor: "pink",
                 enableRescaling: true,
+                title: {
+                  text: "Temperature",
+                  position: "center",
+                  xOffset: 2,
+                },
               },
               {
                 yKeys: ["profit"],
@@ -143,6 +153,11 @@ export default function MultipleYAxesPage() {
                 axisSide: "right",
                 lineWidth: 0,
                 tickValues: [10000, 10030],
+                title: {
+                  text: "Profit",
+                  position: "center",
+                  xOffset: -8,
+                },
               },
             ]}
             data={data}

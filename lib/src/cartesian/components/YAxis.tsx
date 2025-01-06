@@ -89,57 +89,55 @@ export const YAxis = <
   });
 
   const AxisTitle = useMemo(() => {
-    if (title) {
-      const {
-        text,
-        position: titlePosition = "center",
-        xOffset = 2,
-        font: titleFont,
-      } = title;
+    if (!title) return null;
 
-      const titleFontToUse = titleFont ?? font;
+    const {
+      text,
+      position: titlePosition = "center",
+      xOffset = 2,
+      font: titleFont,
+    } = title;
 
-      const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+    const titleFontToUse = titleFont ?? font;
+    const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+    const isRightSide = axisSide === "right";
 
-      const titleY = (() => {
-        if (titlePosition === "top") {
-          return chartBounds.top + titleWidth;
-        }
-        if (titlePosition === "bottom") {
-          return chartBounds.bottom;
-        }
-        // defaults to center of axis
-        return (chartBounds.bottom + chartBounds.top + titleWidth) / 2;
-      })();
+    // Calculate vertical position
+    const titleY = (() => {
+      const center = (chartBounds.bottom + chartBounds.top) / 2;
+      if (titlePosition === "top") return chartBounds.top;
+      if (titlePosition === "bottom") return chartBounds.bottom;
+      return center;
+    })();
 
-      const translateX = fontSize * 2 + labelOffset + (xOffset ?? 0);
+    // Calculate horizontal offset from axis
+    const baseOffset = fontSize * 2 + labelOffset + (xOffset ?? 0);
+    const translateX = isRightSide
+      ? chartBounds.right + baseOffset
+      : chartBounds.left - baseOffset;
 
-      return (
-        <Group
-          transform={[
-            { translateX: -translateX },
-            { translateY: titleY },
-            { rotate: -Math.PI / 2 },
-          ]}
-        >
-          <Text
-            color={labelColor}
-            text={text}
-            font={titleFontToUse!}
-            y={chartBounds.left}
-            x={0}
-          />
-        </Group>
-      );
-    }
-    return null;
-  }, [title, chartBounds, font, labelOffset, fontSize, labelColor]);
+    return (
+      <Group
+        transform={[
+          { translateX },
+          { translateY: titleY },
+          { rotate: isRightSide ? Math.PI / 2 : -Math.PI / 2 },
+        ]}
+      >
+        <Text
+          color={labelColor}
+          text={text}
+          font={titleFontToUse!}
+          x={-titleWidth / 2} // Center text horizontally
+          y={0}
+        />
+      </Group>
+    );
+  }, [title, chartBounds, font, labelOffset, fontSize, labelColor, axisSide]);
 
   return (
     <>
       {yAxisNodes}
-      {/* rotate 90deg */}
-
       {AxisTitle}
     </>
   );
