@@ -9,6 +9,7 @@ import {
   Scatter,
   type XAxisSide,
   type YAxisSide,
+  ErrorBand,
 } from "victory-native";
 import type { AxisLabelPosition } from "lib/src/types";
 import { useDarkMode } from "react-native-dark";
@@ -113,6 +114,13 @@ export default function LineChartPage(props: { segment: string }) {
         >
           {({ points }) => (
             <>
+              <ErrorBand
+                points={points.sales}
+                error={points.sales.map(() => 50)}
+                color="hsla(.1, 50%, 50%, 0.2)"
+                animate={{ type: "spring" }}
+                curveType={curveType}
+              />
               <Line
                 points={points.sales}
                 curveType={curveType}
