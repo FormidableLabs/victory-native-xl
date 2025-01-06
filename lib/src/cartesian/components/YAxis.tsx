@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { Group, Line, Paint, Text, vec } from "@shopify/react-native-skia";
+import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import { boundsToClip } from "../../utils/boundsToClip";
 import type {
