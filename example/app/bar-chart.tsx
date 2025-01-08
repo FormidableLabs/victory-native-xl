@@ -97,14 +97,15 @@ export default function BarChartPage(props: { segment: string }) {
             xAxis={{
               font,
               tickCount: 5,
-              //labelPosition: "inset",
-              labelRotate: -25,
+              // labelOffset: -30,
+              // labelPosition: "inset",
+              labelRotate: -30,
               labelColor: isDark ? appColors.text.dark : appColors.text.light,
               lineWidth: 0,
               formatXLabel: (value) => {
                 const date = new Date(2023, value - 1);
                 return (
-                  date.toLocaleString("default", { month: "short" }) + " test 2"
+                  date.toLocaleString("default", { month: "short" }) + " test "
                 );
               },
               linePathEffect: <DashPathEffect intervals={[4, 4]} />,

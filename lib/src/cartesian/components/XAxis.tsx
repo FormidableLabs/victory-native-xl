@@ -94,8 +94,12 @@ export const XAxis = <
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
           <Text
-            transform={[{ rotate: (Math.PI / 180) * (labelRotate ?? 0) }]}
-            origin={vec(xScale(tick), yScale(y2))}
+            transform={[
+              {
+                rotate: (Math.PI / 180) * (labelRotate ?? 0),
+              },
+            ]}
+            origin={vec(xScale(tick) + labelWidth / 2, yScale(y2))}
             color={labelColor}
             text={contentX}
             font={font}
