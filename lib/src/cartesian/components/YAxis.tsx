@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
+import { AxisImage, type TickImage } from "./AxisImage";
 import type {
   InputDatum,
   NumericalFields,
@@ -27,11 +28,13 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
-}: YAxisProps<RawData, YK>) => {
+  tickImages,
+}: YAxisProps<RawData, YK> & { tickImages?: TickImage[] }) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
-  const yAxisNodes = yTicksNormalized.map((tick) => {
+
+  const yAxisNodes = yTicksNormalized.map((tick, index) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth =
       font
@@ -71,17 +74,18 @@ export const YAxis = <
             </Line>
           </Group>
         ) : null}
-        {font
-          ? canFitLabelContent && (
-              <Text
-                color={labelColor}
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
-            )
-          : null}
+        {tickImages && tickImages[index] && canFitLabelContent && (
+          <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
+        )}
+        {font && canFitLabelContent && !tickImages?.[index] && (
+          <Text
+            color={labelColor}
+            text={contentY}
+            font={font}
+            y={labelY}
+            x={labelX}
+          />
+        )}
       </React.Fragment>
     );
   });

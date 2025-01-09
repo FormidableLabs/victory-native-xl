@@ -148,6 +148,11 @@ export const ChartRoutes: {
     description: "Show example of scrolling chart data.",
     path: "/scroll",
   },
+  {
+    title: "Axis Images",
+    description: "Show example of using images as tick labels.",
+    path: "/axis-images",
+  },
 ];
 
 if (__DEV__) {

@@ -7,6 +7,7 @@ import {
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
+import type { TickImage } from "./cartesian/components/AxisImage";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -188,6 +189,7 @@ export type XAxisInputProps<
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  tickImages?: TickImage[];
 };
 
 export type XAxisPropsWithDefaults<
@@ -196,7 +198,12 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
+    | "tickImages"
   >
 > &
   Partial<
@@ -207,6 +214,7 @@ export type XAxisPropsWithDefaults<
       | "linePathEffect"
       | "enableRescaling"
       | "labelRotate"
+      | "tickImages"
     >
   >;
 
@@ -240,6 +248,7 @@ export type YAxisInputProps<
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  tickImages?: TickImage[];
 };
 
 export type YAxisPropsWithDefaults<
@@ -248,13 +257,17 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "tickImages"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "tickImages"
     >
   >;
 
