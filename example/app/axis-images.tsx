@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { DashPathEffect, useFont, useImage } from "@shopify/react-native-skia";
-import {
-  StackedBar,
-  CartesianChart,
-  useChartPressState,
-  Line,
-} from "victory-native";
-import { useDarkMode } from "react-native-dark";
+import { CartesianChart, Line } from "victory-native";
 import { Text } from "example/components/Text";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
@@ -23,12 +17,7 @@ const DATA = [
 
 const ChartWithRemoteImages = () => {
   const font = useFont(inter, 12);
-  const isDark = useDarkMode();
   const [data] = useState(DATA);
-
-  const warmImage = useImage(require("../assets/warm.png"));
-  const medImage = useImage(require("../assets/med.png"));
-  const coldImage = useImage(require("../assets/cold.png"));
 
   return (
     <View style={{ flex: 1 }}>
@@ -75,7 +64,6 @@ const ChartWithRemoteImages = () => {
 
 const ChartWithLocalImages = () => {
   const font = useFont(inter, 12);
-  const isDark = useDarkMode();
   const [data] = useState(DATA);
 
   const warmImage = useImage(require("../assets/warm.png"));
