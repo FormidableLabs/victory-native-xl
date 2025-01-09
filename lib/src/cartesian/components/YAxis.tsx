@@ -29,6 +29,7 @@ export const YAxis = <
   linePathEffect,
   chartBounds,
   tickImages,
+  renderYLabel,
 }: YAxisProps<RawData, YK> & { tickImages?: TickImage[] }) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
@@ -74,17 +75,29 @@ export const YAxis = <
             </Line>
           </Group>
         ) : null}
-        {tickImages && tickImages[index] && canFitLabelContent && (
-          <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
-        )}
-        {font && canFitLabelContent && !tickImages?.[index] && (
-          <Text
-            color={labelColor}
-            text={contentY}
-            font={font}
-            y={labelY}
-            x={labelX}
-          />
+        {renderYLabel ? (
+          renderYLabel({
+            x: labelX,
+            y: labelY,
+            content: contentY,
+            canFitContent: canFitLabelContent,
+            index: index,
+          })
+        ) : (
+          <>
+            {tickImages && tickImages[index] && canFitLabelContent && (
+              <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
+            )}
+            {font && canFitLabelContent && !tickImages?.[index] && (
+              <Text
+                color={labelColor}
+                text={contentY}
+                font={font}
+                y={labelY}
+                x={labelX}
+              />
+            )}
+          </>
         )}
       </React.Fragment>
     );

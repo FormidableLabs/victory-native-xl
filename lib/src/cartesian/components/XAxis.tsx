@@ -44,6 +44,7 @@ export const XAxis = <
   enableRescaling,
   zoom,
   tickImages,
+  renderXLabel,
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
@@ -139,26 +140,41 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {tickImages && tickImages[index] && canFitLabelContent && (
-          <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
+        {renderXLabel ? (
+          renderXLabel({
+            x: labelX,
+            y: labelY,
+            content: contentX,
+            canFitContent: canFitLabelContent,
+            index: index,
+          })
+        ) : (
+          <>
+            {tickImages && tickImages[index] && canFitLabelContent && (
+              <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
+            )}
+            {font &&
+            labelWidth &&
+            canFitLabelContent &&
+            !tickImages?.[index] ? (
+              <Group transform={[{ translateY: rotateOffset }]}>
+                <Text
+                  transform={[
+                    {
+                      rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                    },
+                  ]}
+                  origin={origin}
+                  color={labelColor}
+                  text={contentX}
+                  font={font}
+                  y={labelY}
+                  x={labelX}
+                />
+              </Group>
+            ) : null}
+          </>
         )}
-        {font && labelWidth && canFitLabelContent && !tickImages?.[index] ? (
-          <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
-          </Group>
-        ) : null}
         <></>
       </React.Fragment>
     );
