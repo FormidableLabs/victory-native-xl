@@ -317,10 +317,30 @@ export const transformInputData = <
       ),
     );
 
+    // First, we pass labelRotate as radian to Math.sin to get labelOffset multiplier based on maxLabel width
+    // We then use this multiplier to calculate labelOffset for rotated labels
+    const rotateLabelOffset = Math.abs(
+      maxXLabel * Math.sin((Math.PI / 180) * labelRotate),
+    );
+
     const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
     const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
 
-    yAxesTransformed[0]?.yScale.range([yScaleRange0, yScaleRange1 - maxXLabel]);
+    // bottom, outset
+    if (xAxis?.axisSide === "bottom" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([
+        yScaleRange0,
+        yScaleRange1 - rotateLabelOffset,
+      ]);
+    }
+
+    // top, outset
+    if (xAxis?.axisSide === "top" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([
+        yScaleRange0 + rotateLabelOffset,
+        yScaleRange1,
+      ]);
+    }
   }
 
   const ox = ixNum.map((x) => xScale(x)!);
