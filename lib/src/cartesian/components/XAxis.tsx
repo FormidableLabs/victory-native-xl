@@ -73,18 +73,18 @@ export const XAxis = <
     const labelY = (() => {
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
-        return chartBounds.bottom + labelOffset + fontSize;
+        return chartBounds.bottom + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {
-        return yScale(y2) - labelOffset;
+        return yScale(y2);
       }
       // top, outset
       if (axisSide === "top" && labelPosition === "outset") {
-        return yScale(y1) - labelOffset;
+        return yScale(y1);
       }
       // top, inset
-      return yScale(y1) + fontSize + labelOffset;
+      return yScale(y1) + fontSize;
     })();
 
     const { origin, translateX, translateY } = ((): {
@@ -154,21 +154,23 @@ export const XAxis = <
           </Group>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
-          <Text
-            transform={[
-              {
-                rotate: (Math.PI / 180) * (labelRotate ?? 0),
-              },
-              { translateX },
-              { translateY },
-            ]}
-            origin={origin}
-            color={labelColor}
-            text={contentX}
-            font={font}
-            y={labelY}
-            x={labelX}
-          />
+          <Group transform={[{ translateY: labelOffset }]}>
+            <Text
+              transform={[
+                {
+                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                },
+                { translateX },
+                { translateY },
+              ]}
+              origin={origin}
+              color={labelColor}
+              text={contentX}
+              font={font}
+              y={labelY}
+              x={labelX}
+            />
+          </Group>
         ) : null}
         <></>
       </React.Fragment>
