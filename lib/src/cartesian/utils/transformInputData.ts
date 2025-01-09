@@ -43,6 +43,7 @@ export const transformInputData = <
   xAxis,
   yAxes,
   viewport,
+  labelRotate,
 }: {
   data: RawData[];
   xKey: XK;
@@ -59,6 +60,7 @@ export const transformInputData = <
     x?: [number, number];
     y?: [number, number];
   };
+  labelRotate?: number;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
@@ -295,6 +297,31 @@ export const transformInputData = <
   const xTicksNormalized = xTickValues
     ? downsampleTicks(xTickValues, xTicks)
     : xScale.ticks(xTicks);
+
+  /** DONE ---- TODO: If rotated, rescale yAxesTransformed[0].yScale output range HERE based on derived maxXLabel value */
+  /** TODO: dynamically calclate "shift by" number based on sin/cos/tan * maxXLabel */
+  /** TODO: check how Victory web handles origin rotation */
+
+  // If labelRotate is true, dynamically adjust yScale range to accommodate the maximum label width
+  if (labelRotate) {
+    const maxXLabel = Math.max(
+      ...xTicksNormalized.map(
+        (xTick) =>
+          xAxis?.font
+            ?.getGlyphWidths?.(
+              xAxis.font.getGlyphIDs(
+                xAxis?.formatXLabel?.(xTick as never) || String(xTick),
+              ),
+            )
+            .reduce((sum, value) => sum + value, 0) ?? 0,
+      ),
+    );
+
+    const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
+    const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
+
+    yAxesTransformed[0]?.yScale.range([yScaleRange0, yScaleRange1 - maxXLabel]);
+  }
 
   const ox = ixNum.map((x) => xScale(x)!);
 

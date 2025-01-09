@@ -232,45 +232,8 @@ function CartesianChartContent<
         xAxis: normalizedAxisProps.xAxis,
         yAxes: normalizedAxisProps.yAxes,
         viewport,
+        labelRotate: normalizedAxisProps.xAxis.labelRotate,
       });
-
-    // Calculate width of each X axis tick label.
-    const xLabelWidths = (() => {
-      const tickWidths = xTicksNormalized.map((tick) => {
-        const val = isNumericalData ? tick : _tData.ix[tick];
-        const contentX = normalizedAxisProps.xAxis.formatXLabel(val as never);
-        const labelWidth = getFontGlyphWidth(contentX, xAxis?.font);
-
-        return labelWidth;
-      });
-
-      return tickWidths;
-    })();
-
-    // Calculate offset amount based on label rotate and label widths
-    const getRotateXLabelOffset = (
-      labelWidths: number[],
-      labelRotate: number | undefined,
-    ): number => {
-      const { labelPosition } = normalizedAxisProps.xAxis;
-      if (!labelRotate || !labelPosition || labelPosition === "inset") return 0;
-
-      const maxLabelWidth = Math.max(...labelWidths);
-
-      // TODO: Need to calculate the correct offset based on the labelRotate value...
-      if (labelRotate > 0) {
-        return maxLabelWidth;
-      } else if (labelRotate < 0) {
-        return maxLabelWidth;
-      } else {
-        return maxLabelWidth;
-      }
-    };
-
-    const rotateXlabelOffset = getRotateXLabelOffset(
-      xLabelWidths,
-      normalizedAxisProps.xAxis.labelRotate as number,
-    );
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
@@ -280,10 +243,9 @@ function CartesianChartContent<
       top: primaryYScale(
         viewport?.y?.[1] ?? (primaryYScale.domain().at(0) || 0),
       ),
-      bottom:
-        primaryYScale(
-          viewport?.y?.[0] ?? (primaryYScale.domain().at(-1) || 0),
-        ) - rotateXlabelOffset,
+      bottom: primaryYScale(
+        viewport?.y?.[0] ?? (primaryYScale.domain().at(-1) || 0),
+      ),
     };
 
     return {

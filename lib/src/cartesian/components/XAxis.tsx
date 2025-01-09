@@ -102,7 +102,7 @@ export const XAxis = <
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        translateY = labelWidth - fontSize / 2;
+        translateY = -fontSize / 2;
         origin = p1;
 
         if (labelRotate > 0) {
