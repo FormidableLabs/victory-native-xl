@@ -1,6 +1,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import {
+  Group,
+  Line,
+  Text,
+  vec,
+  type SkPoint,
+} from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
@@ -46,6 +52,9 @@ export const XAxis = <
       : xScaleProp.ticks(tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
+    const p1 = vec(xScale(tick), yScale(y2));
+    const p2 = vec(xScale(tick), yScale(y1));
+
     const val = isNumericalData ? tick : ix[tick];
 
     const contentX = formatXLabel(val as never);
@@ -78,16 +87,68 @@ export const XAxis = <
       return yScale(y1) + fontSize + labelOffset;
     })();
 
+    const { origin, translateX, translateY } = ((): {
+      origin: SkPoint | undefined;
+      translateX: number;
+      translateY: number;
+    } => {
+      let translateX = 0;
+      let translateY = 0;
+      let origin;
+
+      // return defaults if no labelRotate is provided
+      if (!labelRotate) return { origin, translateX, translateY };
+
+      if (axisSide === "bottom" && labelPosition === "outset") {
+        // bottom, outset
+        translateY = fontSize;
+        origin = p1;
+
+        if (labelRotate > 0) {
+          translateX = labelWidth / 2;
+        } else {
+          translateX = -labelWidth / 2;
+        }
+      } else if (axisSide === "bottom" && labelPosition === "inset") {
+        // bottom, inset
+        translateY = fontSize / 2;
+        origin = p1;
+
+        if (labelRotate > 0) {
+          translateX = -labelWidth / 2;
+        } else {
+          translateX = labelWidth / 2;
+        }
+      } else if (axisSide === "top" && labelPosition === "inset") {
+        // top, inset
+        translateY = -fontSize;
+        origin = p2;
+
+        if (labelRotate > 0) {
+          translateX = labelWidth / 2;
+        } else {
+          translateX = -labelWidth / 2;
+        }
+      } else {
+        // top, outset
+        translateY = fontSize / 2;
+        origin = p2;
+
+        if (labelRotate > 0) {
+          translateX = labelWidth / 2;
+        } else {
+          translateX = -labelWidth / 2;
+        }
+      }
+
+      return { origin, translateX, translateY };
+    })();
+
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
           <Group clip={boundsToClip(chartBounds)}>
-            <Line
-              p1={vec(xScale(tick), yScale(y2))}
-              p2={vec(xScale(tick), yScale(y1))}
-              color={lineColor}
-              strokeWidth={lineWidth}
-            >
+            <Line p1={p1} p2={p2} color={lineColor} strokeWidth={lineWidth}>
               {linePathEffect ? linePathEffect : null}
             </Line>
           </Group>
@@ -98,8 +159,10 @@ export const XAxis = <
               {
                 rotate: (Math.PI / 180) * (labelRotate ?? 0),
               },
+              { translateX },
+              { translateY },
             ]}
-            origin={vec(xScale(tick) + labelWidth / 2, yScale(y2))}
+            origin={origin}
             color={labelColor}
             text={contentX}
             font={font}
