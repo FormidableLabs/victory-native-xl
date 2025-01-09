@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import {
+  Circle,
   Group,
   Line,
   Text,
@@ -87,6 +88,7 @@ export const XAxis = <
       return yScale(y1) + fontSize;
     })();
 
+    // Calculate origin and translate for label rotation
     const { origin, translateX, translateY } = ((): {
       origin: SkPoint | undefined;
       translateX: number;
@@ -101,7 +103,7 @@ export const XAxis = <
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        translateY = fontSize;
+        translateY = labelWidth - fontSize / 2;
         origin = p1;
 
         if (labelRotate > 0) {
@@ -121,7 +123,7 @@ export const XAxis = <
         }
       } else if (axisSide === "top" && labelPosition === "inset") {
         // top, inset
-        translateY = -fontSize;
+        translateY = -fontSize / 2;
         origin = p2;
 
         if (labelRotate > 0) {
@@ -135,9 +137,9 @@ export const XAxis = <
         origin = p2;
 
         if (labelRotate > 0) {
-          translateX = labelWidth / 2;
-        } else {
           translateX = -labelWidth / 2;
+        } else {
+          translateX = labelWidth / 2;
         }
       }
 
