@@ -14,6 +14,7 @@ import type {
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
+import { getOffsetFromAngle } from "lib/src/utils/getOffsetFromAngle";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -320,7 +321,7 @@ export const transformInputData = <
     // First, we pass labelRotate as radian to Math.sin to get labelOffset multiplier based on maxLabel width
     // We then use this multiplier to calculate labelOffset for rotated labels
     const rotateLabelOffset = Math.abs(
-      maxXLabel * Math.sin((Math.PI / 180) * labelRotate),
+      maxXLabel * getOffsetFromAngle(labelRotate),
     );
 
     const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import {
+  Circle,
   Group,
   Line,
   Text,
@@ -16,6 +17,7 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
+import { getOffsetFromAngle } from "lib/src/utils/getOffsetFromAngle";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -88,61 +90,43 @@ export const XAxis = <
     })();
 
     // Calculate origin and translate for label rotation
-    const { origin, translateX, translateY } = ((): {
+    const { origin, rotateOffset } = ((): {
       origin: SkPoint | undefined;
-      translateX: number;
-      translateY: number;
+      rotateOffset: number;
     } => {
-      let translateX = 0;
-      let translateY = 0;
+      let rotateOffset = 0;
       let origin;
 
       // return defaults if no labelRotate is provided
-      if (!labelRotate) return { origin, translateX, translateY };
+      if (!labelRotate) return { origin, rotateOffset };
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        translateY = -fontSize / 2;
-        origin = p1;
-
-        if (labelRotate > 0) {
-          translateX = labelWidth / 2;
-        } else {
-          translateX = -labelWidth / 2;
-        }
+        origin = vec(labelX + labelWidth / 2, labelY);
+        rotateOffset = Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
       } else if (axisSide === "bottom" && labelPosition === "inset") {
         // bottom, inset
-        translateY = fontSize / 2;
-        origin = p1;
-
-        if (labelRotate > 0) {
-          translateX = -labelWidth / 2;
-        } else {
-          translateX = labelWidth / 2;
-        }
+        origin = vec(labelX + labelWidth / 2, labelY);
+        rotateOffset = -Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
       } else if (axisSide === "top" && labelPosition === "inset") {
         // top, inset
-        translateY = -fontSize / 2;
-        origin = p2;
-
-        if (labelRotate > 0) {
-          translateX = labelWidth / 2;
-        } else {
-          translateX = -labelWidth / 2;
-        }
+        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        rotateOffset = Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
       } else {
         // top, outset
-        translateY = fontSize / 2;
-        origin = p2;
-
-        if (labelRotate > 0) {
-          translateX = -labelWidth / 2;
-        } else {
-          translateX = labelWidth / 2;
-        }
+        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        rotateOffset = -Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
       }
 
-      return { origin, translateX, translateY };
+      return { origin, rotateOffset };
     })();
 
     return (
@@ -155,14 +139,12 @@ export const XAxis = <
           </Group>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
-          <Group transform={[{ translateY: labelOffset }]}>
+          <Group transform={[{ translateY: rotateOffset }]}>
             <Text
               transform={[
                 {
                   rotate: (Math.PI / 180) * (labelRotate ?? 0),
                 },
-                { translateX },
-                { translateY },
               ]}
               origin={origin}
               color={labelColor}
@@ -174,6 +156,12 @@ export const XAxis = <
           </Group>
         ) : null}
         <></>
+        <Circle
+          cx={origin?.x as number}
+          cy={origin?.y as number}
+          r={2}
+          color={"red"}
+        />
       </React.Fragment>
     );
   });
