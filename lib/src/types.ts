@@ -7,7 +7,6 @@ import {
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
-import type { TickImage } from "./cartesian/components/AxisImage";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -189,7 +188,6 @@ export type XAxisInputProps<
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
-  tickImages?: TickImage[];
   renderXLabel?: (opts: RenderAxisLabelProps) => React.ReactNode;
 };
 
@@ -258,7 +256,6 @@ export type YAxisInputProps<
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
-  tickImages?: TickImage[];
 };
 
 export type YAxisPropsWithDefaults<
@@ -271,7 +268,6 @@ export type YAxisPropsWithDefaults<
     | "tickValues"
     | "linePathEffect"
     | "enableRescaling"
-    | "tickImages"
     | "renderYLabel"
   >
 > &
@@ -282,7 +278,6 @@ export type YAxisPropsWithDefaults<
       | "tickValues"
       | "linePathEffect"
       | "enableRescaling"
-      | "tickImages"
       | "renderYLabel"
     >
   >;

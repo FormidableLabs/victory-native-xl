@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
-import { AxisImage, type TickImage } from "./AxisImage";
 import type {
   InputDatum,
   NumericalFields,
@@ -28,9 +27,8 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
-  tickImages,
   renderYLabel,
-}: YAxisProps<RawData, YK> & { tickImages?: TickImage[] }) => {
+}: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
@@ -85,10 +83,7 @@ export const YAxis = <
           })
         ) : (
           <>
-            {tickImages && tickImages[index] && canFitLabelContent && (
-              <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
-            )}
-            {font && canFitLabelContent && !tickImages?.[index] && (
+            {font && canFitLabelContent && (
               <Text
                 color={labelColor}
                 text={contentY}

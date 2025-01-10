@@ -8,6 +8,9 @@ import {
   Skia,
   Paragraph,
   TileMode,
+  Text as SkiaText,
+  type ImageProps,
+  type SkImage,
 } from "@shopify/react-native-skia";
 import { CartesianChart, Line } from "victory-native";
 import { Text } from "example/components/Text";
@@ -23,9 +26,49 @@ const DATA = [
   { temperature: 15, day: 6 },
 ];
 
+export type TickImage = Partial<Omit<ImageProps, "image">> & {
+  image?: string;
+  skImage?: SkImage | null;
+  width?: number;
+  height?: number;
+};
+
+type AxisImageProps = TickImage & {
+  y: number;
+  x: number;
+};
+
+export const AxisImage: React.FC<AxisImageProps> = ({
+  image,
+  skImage,
+  y,
+  x,
+  ...rest
+}) => {
+  const imageSKFromHook = useImage(image || "");
+  const imageSK = skImage || imageSKFromHook;
+
+  return (
+    <Image
+      image={imageSK}
+      fit="contain"
+      y={y}
+      x={x}
+      width={12}
+      height={12}
+      {...rest}
+    />
+  );
+};
+
 const ChartWithRemoteImages = () => {
   const font = useFont(inter, 12);
   const [data] = useState(DATA);
+  const images = [
+    "https://picsum.photos/32/32",
+    "https://picsum.photos/32/32",
+    "https://picsum.photos/32/32",
+  ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -44,11 +87,18 @@ const ChartWithRemoteImages = () => {
         yAxis={[
           {
             tickValues: [15, 50, 80],
-            tickImages: [
-              { image: "https://picsum.photos/32/32", width: 32, height: 32 },
-              { image: "https://picsum.photos/32/32", width: 32, height: 32 },
-              { image: "https://picsum.photos/32/32", width: 32, height: 32 },
-            ],
+            renderYLabel: ({ x, y, index }) => {
+              return (
+                <AxisImage
+                  image={images[index]!}
+                  fit="contain"
+                  y={y}
+                  x={x}
+                  width={32}
+                  height={32}
+                />
+              );
+            },
             labelOffset: 12,
             font,
             linePathEffect: <DashPathEffect intervals={[4, 4]} />,
@@ -77,6 +127,7 @@ const ChartWithLocalImages = () => {
   const warmImage = useImage(require("../assets/warm.png"));
   const medImage = useImage(require("../assets/med.png"));
   const coldImage = useImage(require("../assets/cold.png"));
+  const images = [coldImage, medImage, warmImage];
 
   return (
     <View style={{ flex: 1 }}>
@@ -91,15 +142,38 @@ const ChartWithLocalImages = () => {
           font,
           labelOffset: 14,
           linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+          renderXLabel: ({ x, y, content, canFitContent }) => {
+            if (!canFitContent) {
+              return null;
+            }
+
+            return (
+              <SkiaText
+                key={`y-${y}-${x}`}
+                color={"green"}
+                text={`Hi ${content}`}
+                font={font}
+                y={y}
+                x={x}
+              />
+            );
+          },
         }}
         yAxis={[
           {
             tickValues: [15, 50, 80],
-            tickImages: [
-              { skImage: coldImage, width: 32, height: 32 },
-              { skImage: medImage, width: 32, height: 32 },
-              { skImage: warmImage, width: 32, height: 32 },
-            ],
+            renderYLabel: ({ x, y, index }) => {
+              return (
+                <Image
+                  image={images[index]!}
+                  fit="contain"
+                  y={y}
+                  x={x}
+                  width={32}
+                  height={32}
+                />
+              );
+            },
             labelOffset: 12,
             font,
             linePathEffect: <DashPathEffect intervals={[4, 4]} />,

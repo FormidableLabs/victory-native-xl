@@ -17,7 +17,6 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
-import { AxisImage } from "./AxisImage";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -43,7 +42,6 @@ export const XAxis = <
   chartBounds,
   enableRescaling,
   zoom,
-  tickImages,
   renderXLabel,
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
@@ -150,13 +148,7 @@ export const XAxis = <
           })
         ) : (
           <>
-            {tickImages && tickImages[index] && canFitLabelContent && (
-              <AxisImage {...tickImages[index]} y={labelY} x={labelX} />
-            )}
-            {font &&
-            labelWidth &&
-            canFitLabelContent &&
-            !tickImages?.[index] ? (
+            {font && labelWidth && canFitLabelContent ? (
               <Group transform={[{ translateY: rotateOffset }]}>
                 <Text
                   transform={[
