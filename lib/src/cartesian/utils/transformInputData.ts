@@ -299,11 +299,7 @@ export const transformInputData = <
     ? downsampleTicks(xTickValues, xTicks)
     : xScale.ticks(xTicks);
 
-  /** DONE ---- TODO: If rotated, rescale yAxesTransformed[0].yScale output range HERE based on derived maxXLabel value */
-  /** TODO: dynamically calclate "shift by" number based on sin/cos/tan * maxXLabel */
-  /** TODO: check how Victory web handles origin rotation */
-
-  // If labelRotate is true, dynamically adjust yScale range to accommodate the maximum label width
+  // If labelRotate is true, dynamically adjust yScale range to accommodate the maximum X label width
   if (labelRotate) {
     const maxXLabel = Math.max(
       ...xTicksNormalized.map(
