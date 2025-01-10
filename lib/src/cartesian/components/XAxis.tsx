@@ -7,6 +7,7 @@ import {
   vec,
   type SkPoint,
 } from "@shopify/react-native-skia";
+import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
@@ -16,7 +17,6 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
-import { getOffsetFromAngle } from "lib/src/utils/getOffsetFromAngle";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
