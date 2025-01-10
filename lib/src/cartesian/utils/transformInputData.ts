@@ -1,4 +1,5 @@
 import { type ScaleLinear } from "d3-scale";
+import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
   AxisProps,
@@ -14,7 +15,6 @@ import type {
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
-import { getOffsetFromAngle } from "lib/src/utils/getOffsetFromAngle";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format

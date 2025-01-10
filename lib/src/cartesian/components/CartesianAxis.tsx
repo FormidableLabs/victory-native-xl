@@ -257,4 +257,5 @@ export const CartesianAxisDefaultProps = {
   labelColor: "#000000",
   ix: [],
   domain: null,
+  labelRotate: 0,
 } satisfies Partial<AxisProps<never, never, never>>;

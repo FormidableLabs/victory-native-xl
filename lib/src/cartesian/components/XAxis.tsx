@@ -172,4 +172,5 @@ export const XAxisDefaults = {
   labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
+  labelRotate: 0,
 } satisfies XAxisPropsWithDefaults<never, never>;

@@ -55,7 +55,6 @@ import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
-import { getFontGlyphWidth } from "../utils/getFontGlyphWidth";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
