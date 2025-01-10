@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import {
-  Circle,
   Group,
   Line,
   Text,
@@ -75,18 +74,18 @@ export const XAxis = <
     const labelY = (() => {
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
-        return chartBounds.bottom + fontSize;
+        return chartBounds.bottom + labelOffset + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {
-        return yScale(y2);
+        return yScale(y2) - labelOffset;
       }
       // top, outset
       if (axisSide === "top" && labelPosition === "outset") {
-        return yScale(y1);
+        return yScale(y1) - labelOffset;
       }
       // top, inset
-      return yScale(y1) + fontSize;
+      return yScale(y1) + fontSize + labelOffset;
     })();
 
     // Calculate origin and translate for label rotation
@@ -156,12 +155,6 @@ export const XAxis = <
           </Group>
         ) : null}
         <></>
-        <Circle
-          cx={origin?.x as number}
-          cy={origin?.y as number}
-          r={2}
-          color={"red"}
-        />
       </React.Fragment>
     );
   });
