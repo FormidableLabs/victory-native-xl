@@ -2,6 +2,10 @@
 
 The `Area` component takes a `PointsArray` prop, a value for the "bottom" of the area, and some options for styling/animating, and returns a Skia `Path` element to draw the line chart.
 
+:::tip
+For visualizing ranges or error bounds around a line, check out the [`AreaRange`](./area-range.md) component.
+:::
+
 ## Example
 
 ```tsx
