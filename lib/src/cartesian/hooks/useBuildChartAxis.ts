@@ -86,7 +86,6 @@ export const useBuildChartAxis = <
           : axisProp.lineColor.grid
         : axisProp.lineColor) as Color,
       font: axisProp.font,
-      labelRotate: axisProp.labelRotate,
     });
 
     const pickYAxisProps = (

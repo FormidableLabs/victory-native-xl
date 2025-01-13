@@ -132,7 +132,6 @@ export type AxisProps<
   labelPosition?:
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
-  labelRotate?: number;
   axisSide?: { x: XAxisSide; y: YAxisSide };
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   formatYLabel?: (label: RawData[YK]) => string;
