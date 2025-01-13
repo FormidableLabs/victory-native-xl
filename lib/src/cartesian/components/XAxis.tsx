@@ -1,6 +1,13 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import {
+  Group,
+  Line,
+  Text,
+  vec,
+  type SkPoint,
+} from "@shopify/react-native-skia";
+import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import type {
@@ -20,6 +27,7 @@ export const XAxis = <
   axisSide = "bottom",
   yAxisSide = "left",
   labelPosition = "outset",
+  labelRotate,
   tickCount = DEFAULT_TICK_COUNT,
   tickValues,
   labelOffset = 2,
@@ -45,6 +53,9 @@ export const XAxis = <
       : xScaleProp.ticks(tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
+    const p1 = vec(xScale(tick), yScale(y2));
+    const p2 = vec(xScale(tick), yScale(y1));
+
     const val = isNumericalData ? tick : ix[tick];
 
     const contentX = formatXLabel(val as never);
@@ -77,28 +88,71 @@ export const XAxis = <
       return yScale(y1) + fontSize + labelOffset;
     })();
 
+    // Calculate origin and translate for label rotation
+    const { origin, rotateOffset } = ((): {
+      origin: SkPoint | undefined;
+      rotateOffset: number;
+    } => {
+      let rotateOffset = 0;
+      let origin;
+
+      // return defaults if no labelRotate is provided
+      if (!labelRotate) return { origin, rotateOffset };
+
+      if (axisSide === "bottom" && labelPosition === "outset") {
+        // bottom, outset
+        origin = vec(labelX + labelWidth / 2, labelY);
+        rotateOffset = Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
+      } else if (axisSide === "bottom" && labelPosition === "inset") {
+        // bottom, inset
+        origin = vec(labelX + labelWidth / 2, labelY);
+        rotateOffset = -Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
+      } else if (axisSide === "top" && labelPosition === "inset") {
+        // top, inset
+        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        rotateOffset = Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
+      } else {
+        // top, outset
+        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        rotateOffset = -Math.abs(
+          (labelWidth / 2) * getOffsetFromAngle(labelRotate),
+        );
+      }
+
+      return { origin, rotateOffset };
+    })();
+
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
           <Group clip={boundsToClip(chartBounds)}>
-            <Line
-              p1={vec(xScale(tick), yScale(y2))}
-              p2={vec(xScale(tick), yScale(y1))}
-              color={lineColor}
-              strokeWidth={lineWidth}
-            >
+            <Line p1={p1} p2={p2} color={lineColor} strokeWidth={lineWidth}>
               {linePathEffect ? linePathEffect : null}
             </Line>
           </Group>
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
-          <Text
-            color={labelColor}
-            text={contentX}
-            font={font}
-            y={labelY}
-            x={labelX}
-          />
+          <Group transform={[{ translateY: rotateOffset }]}>
+            <Text
+              transform={[
+                {
+                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                },
+              ]}
+              origin={origin}
+              color={labelColor}
+              text={contentX}
+              font={font}
+              y={labelY}
+              x={labelX}
+            />
+          </Group>
         ) : null}
         <></>
       </React.Fragment>
@@ -118,4 +172,5 @@ export const XAxisDefaults = {
   labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
+  labelRotate: 0,
 } satisfies XAxisPropsWithDefaults<never, never>;

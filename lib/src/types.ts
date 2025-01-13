@@ -180,6 +180,7 @@ export type XAxisInputProps<
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
+  labelRotate?: number;
   lineColor?: Color;
   lineWidth?: number;
   tickCount?: number;
@@ -195,13 +196,17 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
   >
 > &
   Partial<
     Pick<
       XAxisInputProps<RawData, XK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "labelRotate"
     >
   >;
 

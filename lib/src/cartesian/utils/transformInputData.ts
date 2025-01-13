@@ -1,4 +1,5 @@
 import { type ScaleLinear } from "d3-scale";
+import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
   AxisProps,
@@ -43,6 +44,7 @@ export const transformInputData = <
   xAxis,
   yAxes,
   viewport,
+  labelRotate,
 }: {
   data: RawData[];
   xKey: XK;
@@ -59,6 +61,7 @@ export const transformInputData = <
     x?: [number, number];
     y?: [number, number];
   };
+  labelRotate?: number;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
@@ -295,6 +298,47 @@ export const transformInputData = <
   const xTicksNormalized = xTickValues
     ? downsampleTicks(xTickValues, xTicks)
     : xScale.ticks(xTicks);
+
+  // If labelRotate is true, dynamically adjust yScale range to accommodate the maximum X label width
+  if (labelRotate) {
+    const maxXLabel = Math.max(
+      ...xTicksNormalized.map(
+        (xTick) =>
+          xAxis?.font
+            ?.getGlyphWidths?.(
+              xAxis.font.getGlyphIDs(
+                xAxis?.formatXLabel?.(xTick as never) || String(xTick),
+              ),
+            )
+            .reduce((sum, value) => sum + value, 0) ?? 0,
+      ),
+    );
+
+    // First, we pass labelRotate as radian to Math.sin to get labelOffset multiplier based on maxLabel width
+    // We then use this multiplier to calculate labelOffset for rotated labels
+    const rotateLabelOffset = Math.abs(
+      maxXLabel * getOffsetFromAngle(labelRotate),
+    );
+
+    const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
+    const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
+
+    // bottom, outset
+    if (xAxis?.axisSide === "bottom" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([
+        yScaleRange0,
+        yScaleRange1 - rotateLabelOffset,
+      ]);
+    }
+
+    // top, outset
+    if (xAxis?.axisSide === "top" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([
+        yScaleRange0 + rotateLabelOffset,
+        yScaleRange1,
+      ]);
+    }
+  }
 
   const ox = ixNum.map((x) => xScale(x)!);
 

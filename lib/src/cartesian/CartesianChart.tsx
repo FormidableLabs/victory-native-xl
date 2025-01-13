@@ -231,6 +231,7 @@ function CartesianChartContent<
         xAxis: normalizedAxisProps.xAxis,
         yAxes: normalizedAxisProps.yAxes,
         viewport,
+        labelRotate: normalizedAxisProps.xAxis.labelRotate,
       });
 
     const primaryYAxis = yAxes[0];
