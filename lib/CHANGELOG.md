@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.15.0
+
+### Minor Changes
+
+- Add AreaRange component ([#466](https://github.com/FormidableLabs/victory-native-xl/pull/466))
+
 ## 41.14.0
 
 ### Minor Changes
