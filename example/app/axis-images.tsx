@@ -286,15 +286,6 @@ const ChartWithRenderCustomYLabel = () => {
                 y={y}
                 width={42}
               />
-
-              // <SkiaText
-              //   key={`y-${y}-${x}`}
-              //   color={"green"}
-              //   text={`Hi ${content}`}
-              //   font={font}
-              //   y={y}
-              //   x={x}
-              // />
             );
           },
         }}
