@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.16.0
+
+### Minor Changes
+
+- add custom x-axis label rotate ([#469](https://github.com/FormidableLabs/victory-native-xl/pull/469))
+
 ## 41.15.0
 
 ### Minor Changes
