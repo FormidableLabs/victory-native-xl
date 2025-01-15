@@ -92,7 +92,7 @@ export default function BarChartPage(props: { segment: string }) {
             xKey="month"
             padding={5}
             yKeys={["listenCount"]}
-            domainPadding={{ left: 50, right: 50, top: 30, }}
+            domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
             xAxis={{
               font,

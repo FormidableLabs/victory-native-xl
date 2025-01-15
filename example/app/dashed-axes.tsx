@@ -47,11 +47,8 @@ export default function DashedAxesPage(props: { segment: string }) {
             padding={{
               top: 20,
               right: 20,
-              bottom: 40,
-              left: 30,
             }}
             domain={{ y: [0, 65] }}
-            // domainPadding={{ top: 20 }}
             xAxis={{
               font,
               labelOffset: 0,
@@ -60,18 +57,18 @@ export default function DashedAxesPage(props: { segment: string }) {
                 text: "Month",
                 font: notoFont,
                 position: "center",
-                yOffset: 8,
+                yOffset: 0,
               },
             }}
             yAxis={[
               {
-                labelOffset: 8,
+                labelOffset: 4,
                 font,
                 title: {
                   text: "Temperature",
                   font: notoFont,
                   position: "center",
-                  xOffset: 2,
+                  xOffset: 12,
                 },
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },

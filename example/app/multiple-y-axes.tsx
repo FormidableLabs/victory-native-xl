@@ -156,7 +156,7 @@ export default function MultipleYAxesPage() {
                 title: {
                   text: "Profit",
                   position: "center",
-                  xOffset: -8,
+                  xOffset: 0,
                 },
               },
             ]}

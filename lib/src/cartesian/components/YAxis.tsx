@@ -33,6 +33,16 @@ export const YAxis = <
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
+
+  const longestLabel = yTicksNormalized.reduce((longest, tick) => {
+    const contentY = formatYLabel(tick as never);
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
+    return labelWidth > longest ? labelWidth : longest;
+  }, 0);
+
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth =
@@ -111,7 +121,7 @@ export const YAxis = <
     })();
 
     // Calculate horizontal offset from axis
-    const baseOffset = fontSize * 2 + labelOffset + (xOffset ?? 0);
+    const baseOffset = longestLabel + labelOffset + (xOffset ?? 0);
     const translateX = isRightSide
       ? chartBounds.right + baseOffset
       : chartBounds.left - baseOffset;
