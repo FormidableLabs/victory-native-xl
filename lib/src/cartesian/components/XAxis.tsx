@@ -54,6 +54,20 @@ export const XAxis = <
       ? xScale.ticks(tickCount)
       : xScaleProp.ticks(tickCount);
 
+  const longestLabel = xTicksNormalized.reduce((longest, tick) => {
+    const val = isNumericalData ? tick : ix[tick];
+    const contentX = formatXLabel(val as never);
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
+    return labelWidth > longest ? labelWidth : longest;
+  }, 0);
+
+  const maxLabelHeight = labelRotate
+    ? Math.abs(longestLabel * getOffsetFromAngle(labelRotate))
+    : 0;
+
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const p1 = vec(xScale(tick), yScale(y2));
     const p2 = vec(xScale(tick), yScale(y1));
@@ -173,6 +187,7 @@ export const XAxis = <
 
     const titleFontToUse = titleFont ?? font;
     const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+    const titleSize = titleFontToUse?.getSize() ?? fontSize;
 
     // Calculate horizontal position
     const titleX = (() => {
@@ -183,7 +198,9 @@ export const XAxis = <
     })();
 
     // Calculate vertical offset from axis
-    const baseOffset = fontSize * 2 + labelOffset + (yOffset ?? 0);
+    // offset by the maxLabelHeight (if rotated labels) + font size of the ticks + the font size of this title itself + the label offset optional prop + y offset optional prop
+    const baseOffset =
+      maxLabelHeight + fontSize + titleSize + labelOffset + (yOffset ?? 0);
     const translateY =
       axisSide === "bottom"
         ? chartBounds.bottom + baseOffset
@@ -200,7 +217,16 @@ export const XAxis = <
         />
       </Group>
     );
-  }, [title, chartBounds, font, fontSize, labelOffset, axisSide, labelColor]);
+  }, [
+    title,
+    chartBounds,
+    font,
+    fontSize,
+    labelOffset,
+    axisSide,
+    labelColor,
+    maxLabelHeight,
+  ]);
 
   return (
     <>

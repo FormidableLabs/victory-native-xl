@@ -340,6 +340,47 @@ export const transformInputData = <
     }
   }
 
+  if (xAxis?.title) {
+    const fontSize = xAxis.title.font?.getSize() ?? xAxis.font?.getSize() ?? 0;
+    console.log({ fontSize });
+    const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
+    const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
+    const offset = fontSize + (xAxis?.title?.yOffset ?? 0);
+
+    // bottom, outset
+    if (xAxis?.axisSide === "bottom" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([yScaleRange0, yScaleRange1 - offset]);
+    }
+
+    // top, outset
+    if (xAxis?.axisSide === "top" && xAxis?.labelPosition === "outset") {
+      yAxesTransformed[0]?.yScale.range([yScaleRange0 + offset, yScaleRange1]);
+    }
+  }
+
+  if (yAxes.some((yAxis) => yAxis.title)) {
+    yAxes.forEach((yAxis) => {
+      if (yAxis.title) {
+        const fontSize =
+          yAxis.title.font?.getSize() ?? yAxis.font?.getSize() ?? 0;
+        const offset = fontSize + (yAxis?.title?.xOffset ?? 0);
+
+        const xScaleRange0 = xScale.range().at(0) as number;
+        const xScaleRange1 = xScale.range().at(-1) as number;
+
+        // left, outset
+        if (yAxis?.axisSide === "left" && yAxis?.labelPosition === "outset") {
+          xScale.range([xScaleRange0 + offset, xScaleRange1]);
+        }
+
+        // right, outset
+        if (yAxis?.axisSide === "right" && yAxis?.labelPosition === "outset") {
+          xScale.range([xScaleRange0, xScaleRange1 - offset]);
+        }
+      }
+    });
+  }
+
   const ox = ixNum.map((x) => xScale(x)!);
 
   return {
