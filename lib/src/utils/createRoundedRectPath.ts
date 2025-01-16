@@ -41,7 +41,7 @@ export const createRoundedRectPath = (
 
   const nonUniformRoundedRect = {
     rect: {
-      x: x - barWidth / 2,
+      x: x,
       y: y,
       width: barWidth,
       height: barHeight,
