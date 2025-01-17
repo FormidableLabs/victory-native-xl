@@ -236,6 +236,7 @@ function CartesianChartContent<
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
+
     const chartBounds = {
       left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
       right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
@@ -569,7 +570,7 @@ function CartesianChartContent<
     points,
   };
 
-  const clipRect = boundsToClip(chartBounds);
+  const clipRect = boundsToClip(chartBounds, domainPadding);
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
       ? normalizedAxisProps.yAxes?.map((axis, index) => {

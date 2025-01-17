@@ -1,10 +1,18 @@
 import { rect, type ClipDef } from "@shopify/react-native-skia";
-import type { ChartBounds } from "../types";
+import type { ChartBounds, SidedNumber } from "../types";
 
-export const boundsToClip = (bounds: ChartBounds): ClipDef =>
+export const boundsToClip = (
+  bounds: ChartBounds,
+  domainPadding: SidedNumber | undefined,
+): ClipDef =>
   rect(
     bounds.left,
     bounds.top,
-    bounds.right - bounds.left,
+    (bounds.right + typeof domainPadding === "number"
+      ? domainPadding
+      : domainPadding?.right) -
+      (bounds.left - typeof domainPadding === "number"
+        ? domainPadding
+        : domainPadding?.left),
     bounds.bottom - bounds.top,
   );
