@@ -23,16 +23,14 @@ export const BarWithPadding = () => {
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
         <CartesianChart
+          experimentalPadding={25}
           data={data}
           xKey="year"
           yKeys={["amountPerMonth"]}
           // domainPadding={{ left: 25, right: 25 }}
           padding={25}
         >
-          {({ points, chartBounds, ...rest }) => {
-            console.log("points", points.amountPerMonth);
-            console.log("chartBounds", chartBounds);
-            console.log("canvasSize", rest.canvasSize);
+          {({ points, chartBounds }) => {
             return (
               <Bar
                 points={points.amountPerMonth}

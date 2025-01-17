@@ -115,6 +115,7 @@ type CartesianChartProps<
       }>
     | undefined
   > | null>;
+  experimentalPadding?: SidedNumber;
 };
 
 export function CartesianChart<
@@ -158,6 +159,7 @@ function CartesianChartContent<
   customGestures,
   actionsRef,
   viewport,
+  experimentalPadding,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
@@ -572,7 +574,9 @@ function CartesianChartContent<
   };
 
   const clipRect = boundsToClip(
-    padding ? applyPadding(chartBounds, padding) : chartBounds,
+    experimentalPadding
+      ? applyPadding(chartBounds, experimentalPadding)
+      : chartBounds,
   );
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
