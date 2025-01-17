@@ -5,6 +5,11 @@ export const ChartRoutes: {
   url?: string;
 }[] = [
   {
+    title: "Padded Bar Chart",
+    description: "This chart shows off a bar chart with padding.",
+    path: "/bar-with-padding",
+  },
+  {
     title: "Line Chart",
     description:
       "This chart shows off a line with scatter points. This view also features Victory’s extensive customization options for the grid, axis chart, colors, and curve.",
@@ -20,11 +25,6 @@ export const ChartRoutes: {
     description:
       "This is a single Bar chart in Victory that supports customized spacing between each bar as well as pan/zoom.",
     path: "/bar-chart",
-  },
-  {
-    title: "test",
-    description: "test",
-    path: "/test",
   },
   {
     title: "Bar Group",

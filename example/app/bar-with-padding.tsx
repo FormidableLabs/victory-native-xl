@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Bar, CartesianChart } from "victory-native";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { appColors } from "../consts/colors";
 
 const data = [
@@ -18,7 +18,7 @@ const data = [
   },
 ];
 
-export const MortgageInterestChart = () => {
+export const BarWithPadding = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
@@ -36,10 +36,6 @@ export const MortgageInterestChart = () => {
             return (
               <Bar
                 points={points.amountPerMonth}
-                roundedCorners={{
-                  topLeft: 6,
-                  topRight: 6,
-                }}
                 barWidth={50}
                 chartBounds={chartBounds}
               />
@@ -64,4 +60,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MortgageInterestChart;
+export default BarWithPadding;
