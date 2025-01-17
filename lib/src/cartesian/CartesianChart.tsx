@@ -55,6 +55,7 @@ import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
+import applyPadding from "../utils/applyPadding";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -570,7 +571,9 @@ function CartesianChartContent<
     points,
   };
 
-  const clipRect = boundsToClip(chartBounds, domainPadding);
+  const clipRect = boundsToClip(
+    padding ? applyPadding(chartBounds, padding) : chartBounds,
+  );
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
       ? normalizedAxisProps.yAxes?.map((axis, index) => {

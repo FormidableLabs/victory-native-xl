@@ -26,12 +26,13 @@ export const MortgageInterestChart = () => {
           data={data}
           xKey="year"
           yKeys={["amountPerMonth"]}
-          domainPadding={{ left: 25, right: 25 }}
+          // domainPadding={{ left: 25, right: 25 }}
+          padding={25}
         >
           {({ points, chartBounds, ...rest }) => {
             console.log("points", points.amountPerMonth);
-            console.log(chartBounds);
-            console.log(rest);
+            console.log("chartBounds", chartBounds);
+            console.log("canvasSize", rest.canvasSize);
             return (
               <Bar
                 points={points.amountPerMonth}
