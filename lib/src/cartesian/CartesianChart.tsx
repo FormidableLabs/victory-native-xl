@@ -107,21 +107,11 @@ type CartesianChartProps<
   > | null>;
 };
 
-export type CartesianChartPropsType<
-  RawData extends Record<string, unknown>,
-  XK extends keyof InputFields<RawData>,
-  YK extends keyof NumericalFields<RawData>,
-> = CartesianChartProps<RawData, XK, YK>;
-
 export function CartesianChart<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
->({
-  transformState,
-  children,
-  ...rest
-}: CartesianChartPropsType<RawData, XK, YK>) {
+>({ transformState, children, ...rest }: CartesianChartProps<RawData, XK, YK>) {
   return (
     <CartesianTransformProvider transformState={transformState}>
       <CartesianChartContent {...{ ...rest, transformState }}>
