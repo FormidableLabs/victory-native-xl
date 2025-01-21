@@ -4,7 +4,6 @@ export default function applyPadding(
   bounds: ChartBounds,
   padding: SidedNumber,
 ) {
-  console.log("applyPadding bounds", bounds);
   const paddedBounds = {
     left:
       bounds.left -
@@ -18,6 +17,5 @@ export default function applyPadding(
       bounds.bottom -
       (typeof padding === "number" ? padding : padding?.bottom ?? 0),
   };
-  console.log("paddedBounds", paddedBounds);
   return paddedBounds;
 }

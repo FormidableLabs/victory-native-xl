@@ -5,9 +5,16 @@ export const ChartRoutes: {
   url?: string;
 }[] = [
   {
-    title: "Padded Bar Chart",
-    description: "This chart shows off a bar chart with padding.",
+    title: "Padded Bar Chart [BUG REPRO]",
+    description:
+      "This chart repros an issue where domainPadding isn't applied as expected.",
     path: "/bar-with-padding",
+  },
+  {
+    title: "Domain padding scroll [BUG REPRO]",
+    description:
+      "This chart repros a bug where domainPadding affects scroll behavior.",
+    path: "/domain-padding-scroll",
   },
   {
     title: "Line Chart",

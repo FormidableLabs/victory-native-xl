@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Bar, CartesianChart } from "victory-native";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { InputSlider } from "../components/InputSlider";
 import { appColors } from "../consts/colors";
 
 const data = [
@@ -19,18 +20,27 @@ const data = [
 ];
 
 export const BarWithPadding = () => {
+  const [experimentalPadding, setExperimentalPadding] = React.useState(0);
+  const [padding, setPadding] = React.useState(0);
+  const [domainPadding, setDomainPadding] = React.useState(0);
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
         <CartesianChart
-          experimentalPadding={25}
+          // pad the clip rect bounds
+          experimentalPadding={{
+            left: experimentalPadding,
+            right: experimentalPadding,
+          }}
           data={data}
           xKey="year"
           yKeys={["amountPerMonth"]}
-          // domainPadding={{ left: 25, right: 25 }}
-          padding={25}
+          domainPadding={{ left: domainPadding, right: domainPadding }}
+          padding={{ left: padding, right: padding }}
         >
           {({ points, chartBounds }) => {
+            console.log("points", points.amountPerMonth);
+            console.log("chartBounds", chartBounds);
             return (
               <Bar
                 points={points.amountPerMonth}
@@ -41,6 +51,35 @@ export const BarWithPadding = () => {
           }}
         </CartesianChart>
       </View>
+      <ScrollView
+        style={styles.optionsScrollView}
+        contentContainerStyle={styles.options}
+      >
+        <InputSlider
+          label="Experimental Padding"
+          maxValue={50}
+          minValue={0}
+          step={1}
+          value={experimentalPadding}
+          onChange={setExperimentalPadding}
+        />
+        <InputSlider
+          label="Padding"
+          maxValue={50}
+          minValue={3}
+          step={1}
+          value={padding}
+          onChange={setPadding}
+        />
+        <InputSlider
+          label="Domain Padding"
+          maxValue={50}
+          minValue={0}
+          step={1}
+          value={domainPadding}
+          onChange={setDomainPadding}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -53,8 +92,24 @@ const styles = StyleSheet.create({
       backgroundColor: appColors.viewBackground.dark,
     },
   },
+  optionsScrollView: {
+    flex: 1,
+    backgroundColor: appColors.cardBackground.light,
+    $dark: {
+      backgroundColor: appColors.cardBackground.dark,
+    },
+  },
   chart: {
     flex: 1.5,
+    width: 350,
+    justifyContent: "center",
+    padding: 20,
+  },
+  options: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
 });
 
