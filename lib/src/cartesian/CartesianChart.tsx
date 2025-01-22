@@ -149,14 +149,8 @@ function CartesianChartContent<
   actionsRef,
   viewport,
 }: CartesianChartProps<RawData, XK, YK>) {
+  // Canvas layout size and rendered status
   const [size, setSize] = React.useState({ width: 0, height: 0 });
-  const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
-  const xScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
-    undefined,
-  );
-  const yScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
-    undefined,
-  );
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
   const onLayout = React.useCallback(
@@ -166,6 +160,7 @@ function CartesianChartContent<
     },
     [],
   );
+
   const normalizedAxisProps = useBuildChartAxis({
     xAxis,
     yAxis,
@@ -185,18 +180,6 @@ function CartesianChartContent<
     () => new ZoomTransform(transform.ky, transform.tx, transform.ty),
     [transform.ky, transform.tx, transform.ty],
   );
-
-  const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
-    ix: [],
-    ox: [],
-    y: yKeys.reduce(
-      (acc, key) => {
-        acc[key] = { i: [], o: [] };
-        return acc;
-      },
-      {} as TransformedData<RawData, XK, YK>["y"],
-    ),
-  });
 
   const {
     yAxes,
@@ -259,6 +242,18 @@ function CartesianChartContent<
     viewport,
   ]);
 
+  const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
+    ix: [],
+    ox: [],
+    y: yKeys.reduce(
+      (acc, key) => {
+        acc[key] = { i: [], o: [] };
+        return acc;
+      },
+      {} as TransformedData<RawData, XK, YK>["y"],
+    ),
+  });
+
   React.useEffect(() => {
     tData.value = _tData;
   }, [_tData, tData]);
@@ -295,6 +290,7 @@ function CartesianChartContent<
   }, [_tData, yKeys]);
 
   // On bounds change, emit
+  const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
   const onChartBoundsRef = useFunctionRef(onChartBoundsChange);
   React.useEffect(() => {
     if (!isEqual(chartBounds, chartBoundsRef.current)) {
@@ -302,6 +298,13 @@ function CartesianChartContent<
       onChartBoundsRef.current?.(chartBounds);
     }
   }, [chartBounds, onChartBoundsRef]);
+
+  const xScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
+    undefined,
+  );
+  const yScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
+    undefined,
+  );
 
   const onScaleRef = useFunctionRef(onScaleChange);
   React.useEffect(() => {
@@ -329,7 +332,6 @@ function CartesianChartContent<
     points,
   };
 
-  const clipRect = boundsToClip(chartBounds);
   const YAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || yAxes)
       ? normalizedAxisProps.yAxes?.map((axis, index) => {
@@ -398,6 +400,8 @@ function CartesianChartContent<
         yScale={primaryYScale}
       />
     ) : null;
+
+  const clipRect = boundsToClip(chartBounds);
 
   return (
     <CartesianGestureHandler<RawData, XK, YK>
