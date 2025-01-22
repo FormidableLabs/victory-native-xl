@@ -3,6 +3,8 @@ import { Bar, CartesianChart } from "victory-native";
 import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { InputSlider } from "../components/InputSlider";
 import { appColors } from "../consts/colors";
+import inter from "../assets/inter-medium.ttf";
+import { useFont } from "@shopify/react-native-skia";
 
 const data = [
   {
@@ -20,23 +22,30 @@ const data = [
 ];
 
 export const BarWithPadding = () => {
-  const [experimentalPadding, setExperimentalPadding] = React.useState(0);
+  const [clipPadding, setClipPadding] = React.useState(0);
   const [padding, setPadding] = React.useState(0);
   const [domainPadding, setDomainPadding] = React.useState(0);
+  const font = useFont(inter, 12);
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.chart}>
         <CartesianChart
           // pad the clip rect bounds
-          experimentalPadding={{
-            left: experimentalPadding,
-            right: experimentalPadding,
+          clipPadding={{
+            left: clipPadding,
+            right: clipPadding,
           }}
           data={data}
           xKey="year"
+          xAxis={{
+            tickCount: 3,
+            tickValues: [2025, 2026, 2027],
+            labelPosition: "outset",
+            font,
+          }}
           yKeys={["amountPerMonth"]}
           domainPadding={{ left: domainPadding, right: domainPadding }}
-          padding={{ left: padding, right: padding }}
+          padding={padding}
         >
           {({ points, chartBounds }) => {
             console.log("points", points.amountPerMonth);
@@ -56,12 +65,12 @@ export const BarWithPadding = () => {
         contentContainerStyle={styles.options}
       >
         <InputSlider
-          label="Experimental Padding"
+          label="Clip Padding (adds padding to the clip rect)"
           maxValue={50}
           minValue={0}
           step={1}
-          value={experimentalPadding}
-          onChange={setExperimentalPadding}
+          value={clipPadding}
+          onChange={setClipPadding}
         />
         <InputSlider
           label="Padding"
