@@ -35,6 +35,7 @@ const sidebars = {
             "cartesian/area/use-area-path",
             "cartesian/area/stacked-area",
             "cartesian/area/use-stacked-area-paths",
+            "cartesian/area/area-range",
           ],
         },
         {

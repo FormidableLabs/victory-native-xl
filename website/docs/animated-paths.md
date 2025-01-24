@@ -13,7 +13,7 @@ import {
   useAnimatedPath,
   type PointsArray,
 } from "victory-native";
-import { Path } from "@shopify/react-native-skai";
+import { Path } from "@shopify/react-native-skia";
 import DATA from "./my-data";
 
 function MyAnimatedLine({ points }: { points: PointsArray }) {
