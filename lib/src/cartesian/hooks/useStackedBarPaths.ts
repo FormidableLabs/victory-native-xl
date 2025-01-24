@@ -105,7 +105,7 @@ export const useStackedBarPaths = ({
 
         if (roundedCorners) {
           const nonUniformRoundedRect = createRoundedRectPath(
-            x,
+            x - barWidth / 2,
             y - (offset ?? 0),
             barWidth,
             barHeight,

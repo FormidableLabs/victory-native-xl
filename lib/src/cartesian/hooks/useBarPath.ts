@@ -35,7 +35,7 @@ export const useBarPath = (
 
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
-          x,
+          x - barWidth / 2,
           y,
           barWidth,
           barHeight,
