@@ -39,8 +39,6 @@ export const BarWithPadding = () => {
           xKey="year"
           xAxis={{
             tickCount: 3,
-            tickValues: [2025, 2026, 2027],
-            labelPosition: "outset",
             font,
           }}
           yKeys={["amountPerMonth"]}
