@@ -1,4 +1,4 @@
-import { type ScaleLinear, scaleBand } from "d3-scale";
+import { type ScaleLinear } from "d3-scale";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
 import type {
@@ -282,9 +282,7 @@ export const transformInputData = <
 
   const xInputBounds: [number, number] =
     ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax];
-  // const xScale = scaleBand()
-  //   .range([0, oRange[1]])
-  //   .domain(data.map((d) => d[xKey] as st));
+
   const xScale = makeScale({
     // if single data point, manually add upper & lower bounds so chart renders properly
     inputBounds: xInputBounds,

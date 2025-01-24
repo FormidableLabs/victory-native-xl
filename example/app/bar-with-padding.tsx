@@ -1,22 +1,22 @@
 import * as React from "react";
 import { Bar, CartesianChart } from "victory-native";
 import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { useFont } from "@shopify/react-native-skia";
 import { InputSlider } from "../components/InputSlider";
 import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
-import { useFont } from "@shopify/react-native-skia";
 
 const data = [
   {
-    year: 2025,
+    year: "2025",
     amountPerMonth: 20084,
   },
   {
-    year: 2026,
+    year: "2026",
     amountPerMonth: 19705,
   },
   {
-    year: 2027,
+    year: "2027",
     amountPerMonth: 19485,
   },
 ];
