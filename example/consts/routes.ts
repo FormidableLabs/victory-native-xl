@@ -11,6 +11,11 @@ export const ChartRoutes: {
     path: "/line-chart",
   },
   {
+    title: "AreaRange Chart",
+    description: "This chart demonstrates the AreaRange",
+    path: "/area-range",
+  },
+  {
     title: "Constant Line Chart",
     description: "This chart shows off constant lines with scatter points. ",
     path: "/constant-line-chart",

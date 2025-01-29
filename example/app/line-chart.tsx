@@ -3,7 +3,6 @@ import * as React from "react";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import {
-  AreaRange,
   CartesianChart,
   type CurveType,
   Line,
@@ -114,16 +113,6 @@ export default function LineChartPage(props: { segment: string }) {
         >
           {({ points }) => (
             <>
-              <AreaRange
-                points={points.sales.map((p) => ({
-                  ...p,
-                  y: p.y! + 20,
-                  y0: p.y! - 20,
-                }))}
-                curveType={curveType}
-                color={`${colors.stroke}40`}
-                animate={{ type: "spring" }}
-              />
               <Line
                 points={points.sales}
                 curveType={curveType}
