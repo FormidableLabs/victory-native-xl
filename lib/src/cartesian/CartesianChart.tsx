@@ -658,18 +658,19 @@ function CartesianChartContent<
 
   let composed = customGestures ?? Gesture.Race();
   if (transformState) {
-    if (transformConfig?.pinch?.enabled ?? true) {
-      composed = Gesture.Race(
-        composed,
-        pinchTransformGesture(transformState, transformConfig?.pinch),
-      );
-    }
-    if (transformConfig?.pan?.enabled ?? true) {
-      composed = Gesture.Race(
-        composed,
-        panTransformGesture(transformState, transformConfig?.pan),
-      );
-    }
+    const enablePinch = transformConfig?.pinch?.enabled ?? true;
+    const enablePan = transformConfig?.pan?.enabled ?? true;
+
+    const gestures = [
+      ...(enablePinch
+        ? [pinchTransformGesture(transformState, transformConfig?.pinch)]
+        : []),
+      ...(enablePan
+        ? [panTransformGesture(transformState, transformConfig?.pan)]
+        : []),
+    ];
+
+    composed = Gesture.Race(composed, Gesture.Simultaneous(...gestures));
   }
   if (chartPressState) {
     composed = Gesture.Race(composed, panGesture);
