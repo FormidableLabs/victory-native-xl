@@ -58,7 +58,7 @@ const PolarChartBase = (
 
   return (
     <View style={[styles.baseContainer, containerStyle]}>
-      <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+      <GestureHandlerRootView style={styles.gestureContainer}>
         <Canvas
           onLayout={onLayout}
           style={StyleSheet.flatten([
@@ -145,5 +145,9 @@ const styles = StyleSheet.create({
   },
   canvasContainer: {
     flex: 1,
+  },
+  gestureContainer: {
+    flex: 1,
+    overflow: "hidden",
   },
 });
