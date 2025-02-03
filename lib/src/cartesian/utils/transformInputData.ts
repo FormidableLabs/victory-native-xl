@@ -342,7 +342,7 @@ export const transformInputData = <
 
   if (xAxis?.title) {
     const fontSize = xAxis.title.font?.getSize() ?? xAxis.font?.getSize() ?? 0;
-    console.log({ fontSize });
+
     const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
     const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
     const offset = fontSize + (xAxis?.title?.yOffset ?? 0);
