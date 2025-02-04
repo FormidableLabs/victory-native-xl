@@ -10,25 +10,31 @@ import DATA from "./my-data";
 
 export function MyChart() {
   return (
-    <CartesianChart data={DATA} xKey="x" yKeys={["y"]}>
+    <CartesianChart data={DATA} xKey="day" yKeys={["middle", "lower", "upper"]}>
       {({ points }) => (
         <>
           {/* Draw shaded area for error bounds */}
           <AreaRange
-            points={points.y.map(p => ({
+            points={points.middle.map((p) => ({
               ...p,
-              y: p.y + errorMargin,  // Upper bound
-              y0: p.y - errorMargin  // Lower bound
+              y: p.middle + errorMargin, // Upper bound
+              y0: p.middle - errorMargin, // Lower bound
             }))}
             color="rgba(100, 100, 255, 0.2)"
-            animate={{ type: "spring" }}
+            animate={{ type: "timing" }}
+          />
+          <AreaRange
+            upperPoints={points.upper}
+            lowerPoints={points.lower}
+            color="rgba(100, 100, 255, 0.2)"
+            animate={{ type: "timing" }}
           />
           {/* Draw the main line */}
           <Line
-            points={points.y}
+            points={points.middle}
             color="blue"
             strokeWidth={2}
-            animate={{ type: "spring" }}
+            animate={{ type: "timing" }}
           />
         </>
       )}
@@ -42,8 +48,23 @@ export function MyChart() {
 ### `points`
 
 An `AreaRangePointsArray` array that extends the standard `PointsArray` type but uses:
+
 - `y` to represent the upper bound
 - `y0` to represent the lower bound
+
+> Used as an alternative to `upperPoints` and `lowerPoints`
+
+### `upperPoints`
+
+A `PointsArray` array that comes from a field of the `points` object exposed the `children` render function of `CartesianChart`.
+
+> It is used with `lowerPoints` as an alternative to `points`
+
+### `lowerPoints`
+
+A `PointsArray` array that comes from a field of the `points` object exposed the `children` render function of `CartesianChart`.
+
+> It is used with `upperPoints` as an alternative to `points`
 
 ### `animate`
 
