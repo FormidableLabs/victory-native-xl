@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.16.1
+
+### Patch Changes
+
+- Fix bar group positioning ([#478](https://github.com/FormidableLabs/victory-native-xl/pull/478))
+
 ## 41.16.0
 
 ### Minor Changes
