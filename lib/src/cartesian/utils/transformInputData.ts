@@ -91,6 +91,64 @@ export const transformInputData = <
     {} as TransformedData<RawData, XK, YK>["y"],
   );
 
+  const rawChartWidth = outputWindow.xMax - outputWindow.xMin;
+  const xTickValues = xAxis?.tickValues;
+  const xTicks = xAxis?.tickCount;
+
+  const tickDomainsX = getDomainFromTicks(xTickValues);
+  const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
+  const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
+
+  // For non‐numeric (ordinal) data, use the index values
+  // if user provides a domain- use that as our min/max
+  // if tickValues are provided- we use that instead
+  // if we find min/max of y values across all yKeys- and use that for yrange instead
+  const ixMin = isNumericalData
+    ? asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0))
+    : 0;
+  const ixMax = isNumericalData
+    ? asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1))
+    : ixNum.length - 1;
+
+  const xTempScale = makeScale({
+    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
+    outputBounds: [0, rawChartWidth],
+  });
+
+  // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
+  // 4consistency we do it here- so we have both y and x ticks to pass to the axis generator
+  const xTicksNormalized = xTickValues
+    ? downsampleTicks(xTickValues, xTicks)
+    : xTempScale.ticks(xTicks);
+
+  // get width of labels only if data is numerical
+  const maxXLabel = isNumericalData
+    ? Math.max(
+        ...xTicksNormalized.map(
+          (xTick) =>
+            xAxis.font
+              ?.getGlyphWidths?.(
+                xAxis.font.getGlyphIDs(
+                  xAxis.formatXLabel?.(xTick as never) || String(xTick),
+                ),
+              )
+              .reduce((sum, w) => sum + w, 0) ?? 0,
+        ),
+      )
+    : 0;
+
+  // workt with adjustedoutputwindow isntead of directly
+  // working with outpuwidnow
+  const adjustedOutputWindow = { ...outputWindow };
+
+  if (labelRotate && xAxis.labelPosition === "outset") {
+    const rotateOffset = Math.abs(maxXLabel * getOffsetFromAngle(labelRotate));
+    if (xAxis.axisSide === "bottom") {
+      adjustedOutputWindow.yMax -= rotateOffset;
+    } else if (xAxis.axisSide === "top") {
+      adjustedOutputWindow.yMin += rotateOffset;
+    }
+  }
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
   const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
@@ -141,24 +199,22 @@ export const transformInputData = <
       const xAxisSide = xAxis?.axisSide;
       const xLabelPosition = xAxis?.labelPosition;
 
-      // bottom, outset
       if (xAxisSide === "bottom" && xLabelPosition === "outset") {
         return [
-          outputWindow.yMin,
-          outputWindow.yMax +
+          adjustedOutputWindow.yMin,
+          adjustedOutputWindow.yMax +
             (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
         ];
       }
-      // Top outset
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
-          outputWindow.yMin +
+          adjustedOutputWindow.yMin +
             (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
-          outputWindow.yMax,
+          adjustedOutputWindow.yMax,
         ];
       }
-      // Inset labels don't need added offsets
-      return [outputWindow.yMin, outputWindow.yMax];
+
+      return [adjustedOutputWindow.yMin, adjustedOutputWindow.yMax];
     })();
 
     const yScale = makeScale({
@@ -244,6 +300,7 @@ export const transformInputData = <
       const labelWidth = yAxesTransformed[index]?.maxYLabel ?? 0;
 
       // Adjust xMin or xMax based on the axis side and label position
+      // make ajdustments  for label rotation here
       if (yAxisSide === "left" && yLabelPosition === "outset") {
         xMinAdjustment += yTickCount > 0 ? labelWidth + yLabelOffset : 0;
       } else if (yAxisSide === "right" && yLabelPosition === "outset") {
@@ -253,32 +310,10 @@ export const transformInputData = <
 
     // Return the adjusted output range
     return [
-      outputWindow.xMin + xMinAdjustment,
-      outputWindow.xMax + xMaxAdjustment,
+      adjustedOutputWindow.xMin + xMinAdjustment,
+      adjustedOutputWindow.xMax + xMaxAdjustment,
     ];
   })();
-
-  const xTickValues = xAxis?.tickValues;
-
-  // The user can specify either:
-  // custom X tick values
-
-  // OR
-  // custom X tick count
-  const xTicks = xAxis?.tickCount;
-  // x tick domain of [number, number]
-  const tickDomainsX = getDomainFromTicks(xTickValues);
-
-  // Input x is just extracting the xKey from each datum
-  const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
-  const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
-
-  // Generate our x-scale
-  // If user provides a domain, use that as our min / max
-  // Else if, tickValues are provided, we use that instead
-  // Else, we find min / max of y values across all yKeys, and use that for y range instead.
-  const ixMin = asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0)),
-    ixMax = asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1));
 
   const xInputBounds: [number, number] =
     ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax];
@@ -295,50 +330,11 @@ export const transformInputData = <
 
   // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
   // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
-  const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
-    : xScale.ticks(xTicks);
-
-  // If labelRotate is true, dynamically adjust yScale range to accommodate the maximum X label width
-  if (labelRotate) {
-    const maxXLabel = Math.max(
-      ...xTicksNormalized.map(
-        (xTick) =>
-          xAxis?.font
-            ?.getGlyphWidths?.(
-              xAxis.font.getGlyphIDs(
-                xAxis?.formatXLabel?.(xTick as never) || String(xTick),
-              ),
-            )
-            .reduce((sum, value) => sum + value, 0) ?? 0,
-      ),
-    );
-
-    // First, we pass labelRotate as radian to Math.sin to get labelOffset multiplier based on maxLabel width
-    // We then use this multiplier to calculate labelOffset for rotated labels
-    const rotateLabelOffset = Math.abs(
-      maxXLabel * getOffsetFromAngle(labelRotate),
-    );
-
-    const yScaleRange0 = yAxesTransformed[0]?.yScale.range().at(0) as number;
-    const yScaleRange1 = yAxesTransformed[0]?.yScale.range().at(-1) as number;
-
-    // bottom, outset
-    if (xAxis?.axisSide === "bottom" && xAxis?.labelPosition === "outset") {
-      yAxesTransformed[0]?.yScale.range([
-        yScaleRange0,
-        yScaleRange1 - rotateLabelOffset,
-      ]);
-    }
-
-    // top, outset
-    if (xAxis?.axisSide === "top" && xAxis?.labelPosition === "outset") {
-      yAxesTransformed[0]?.yScale.range([
-        yScaleRange0 + rotateLabelOffset,
-        yScaleRange1,
-      ]);
-    }
-  }
+  const finalXTicksNormalized = isNumericalData
+    ? xTickValues
+      ? downsampleTicks(xTickValues, xTicks)
+      : xScale.ticks(xTicks)
+    : ixNum;
 
   const ox = ixNum.map((x) => xScale(x)!);
 
@@ -348,7 +344,7 @@ export const transformInputData = <
     isNumericalData,
     ox,
     xScale,
-    xTicksNormalized,
+    xTicksNormalized: finalXTicksNormalized,
     // conform to type NonEmptyArray<T>
     yAxes: [yAxesTransformed[0]!, ...yAxesTransformed.slice(1)],
   };
