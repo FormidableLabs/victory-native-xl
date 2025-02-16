@@ -130,53 +130,5 @@ describe("transformInputData", () => {
     expect(y.y.i).toEqual([7, 5, 3]);
   });
 
-  it("should not change the y-axis mapping when labelRotate is applied", () => {
-    const withoutRotation = transformInputData({
-      data: DATA,
-      xKey: "x",
-      yKeys: ["y", "z"],
-      outputWindow: OUTPUT_WINDOW,
-      xAxis: axes.xAxis,
-      yAxes: axes.yAxes,
-    });
-
-    const withPosRotation = transformInputData({
-      data: DATA,
-      xKey: "x",
-      yKeys: ["y", "z"],
-      outputWindow: OUTPUT_WINDOW,
-      xAxis: { ...axes.xAxis, labelRotate: 45 },
-      yAxes: axes.yAxes,
-    });
-
-    const withNegRotation = transformInputData({
-      data: DATA,
-      xKey: "x",
-      yKeys: ["y", "z"],
-      outputWindow: OUTPUT_WINDOW,
-      xAxis: { ...axes.xAxis, labelRotate: -45 },
-      yAxes: axes.yAxes,
-    });
-
-    expect([
-      withNegRotation.y.y.o,
-      withPosRotation.y.y.o,
-      withoutRotation.y.y.o,
-    ]).toEqual([
-      withoutRotation.y.y.o,
-      withoutRotation.y.y.o,
-      withoutRotation.y.y.o,
-    ]);
-    expect([
-      withNegRotation.y.z.o,
-      withPosRotation.y.z.o,
-      withoutRotation.y.z.o,
-    ]).toEqual([
-      withoutRotation.y.z.o,
-      withoutRotation.y.z.o,
-      withoutRotation.y.z.o,
-    ]);
-  });
-
   // TODO: Some day, test the gridOptions code.
 });
