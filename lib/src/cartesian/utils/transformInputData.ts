@@ -122,20 +122,20 @@ export const transformInputData = <
     : xTempScale.ticks(xTicks);
 
   // get width of labels only if data is numerical
-  const maxXLabel = isNumericalData
-    ? Math.max(
-        ...xTicksNormalized.map(
-          (xTick) =>
-            xAxis.font
-              ?.getGlyphWidths?.(
-                xAxis.font.getGlyphIDs(
-                  xAxis.formatXLabel?.(xTick as never) || String(xTick),
-                ),
-              )
-              .reduce((sum, w) => sum + w, 0) ?? 0,
-        ),
-      )
-    : 0;
+  const maxXLabel = Math.max(
+    ...xTicksNormalized.map((xTick) => {
+      const labelValue = xAxis.formatXLabel
+        ? xAxis.formatXLabel(
+            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+          )
+        : String(xTick);
+      const labelStr = String(labelValue);
+      if (!xAxis.font) return 0;
+      const glyphIDs = xAxis.font.getGlyphIDs(labelStr);
+      const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
+      return widths.reduce((sum, w) => sum + w, 0);
+    }),
+  );
 
   // workt with adjustedoutputwindow isntead of directly
   // working with outpuwidnow
