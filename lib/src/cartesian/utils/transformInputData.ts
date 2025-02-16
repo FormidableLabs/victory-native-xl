@@ -121,7 +121,6 @@ export const transformInputData = <
     ? downsampleTicks(xTickValues, xTicks)
     : xTempScale.ticks(xTicks);
 
-  // get width of labels only if data is numerical
   const maxXLabel = Math.max(
     ...xTicksNormalized.map((xTick) => {
       const labelValue = xAxis.formatXLabel
