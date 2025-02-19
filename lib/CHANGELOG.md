@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.16.2
+
+### Patch Changes
+
+- Add `upperPoints` and `lowerPoints` properties as an alternative to `points` for `AreaRange` component ([#488](https://github.com/FormidableLabs/victory-native-xl/pull/488))
+
+- Make it possible to zoom/pan simultaneously ([#489](https://github.com/FormidableLabs/victory-native-xl/pull/489))
+
 ## 41.16.1
 
 ### Patch Changes
