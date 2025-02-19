@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import { boundsToClip } from "../../utils/boundsToClip";
 import type {
   InputDatum,
@@ -27,10 +28,21 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
+  title,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
+
+  const longestLabel = yTicksNormalized.reduce((longest, tick) => {
+    const contentY = formatYLabel(tick as never);
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
+    return labelWidth > longest ? labelWidth : longest;
+  }, 0);
+
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth =
@@ -86,7 +98,59 @@ export const YAxis = <
     );
   });
 
-  return yAxisNodes;
+  const AxisTitle = useMemo(() => {
+    if (!title) return null;
+
+    const {
+      text,
+      position: titlePosition = "center",
+      xOffset = 2,
+      font: titleFont,
+    } = title;
+
+    const titleFontToUse = titleFont ?? font;
+    const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+    const isRightSide = axisSide === "right";
+
+    // Calculate vertical position
+    const titleY = (() => {
+      const center = (chartBounds.bottom + chartBounds.top) / 2;
+      if (titlePosition === "top") return chartBounds.top;
+      if (titlePosition === "bottom") return chartBounds.bottom;
+      return center;
+    })();
+
+    // Calculate horizontal offset from axis
+    const baseOffset = longestLabel + labelOffset + (xOffset ?? 0);
+    const translateX = isRightSide
+      ? chartBounds.right + baseOffset
+      : chartBounds.left - baseOffset;
+
+    return (
+      <Group
+        transform={[
+          { translateX },
+          { translateY: titleY },
+          { rotate: isRightSide ? Math.PI / 2 : -Math.PI / 2 },
+        ]}
+      >
+        <Text
+          color={labelColor}
+          text={text}
+          font={titleFontToUse!}
+          x={-titleWidth / 2} // Center text horizontally
+          y={0}
+        />
+      </Group>
+    );
+  }, [title, chartBounds, font, labelOffset, fontSize, labelColor, axisSide]);
+
+  return (
+    <>
+      {yAxisNodes}
+      {AxisTitle}
+    </>
+  );
 };
 
 export const YAxisDefaults = {

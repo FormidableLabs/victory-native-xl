@@ -103,7 +103,13 @@ export default function BarChartPage(props: { segment: string }) {
                 const date = new Date(2023, value - 1);
                 return date.toLocaleString("default", { month: "short" });
               },
+              axisSide: "bottom",
               linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+              labelRotate: -45,
+              title: {
+                text: "Months",
+                font,
+              },
             }}
             frame={{
               lineWidth: 0,
@@ -113,6 +119,9 @@ export default function BarChartPage(props: { segment: string }) {
                 yKeys: ["listenCount"],
                 font,
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+                title: {
+                  text: "Listen count",
+                },
               },
             ]}
             data={data}
