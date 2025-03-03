@@ -25,6 +25,7 @@ import type {
   FrameInputProps,
   ChartPressPanConfig,
   Viewport,
+  GestureHandlerConfig,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
@@ -83,6 +84,7 @@ type CartesianChartProps<
   chartPressConfig?: {
     pan?: ChartPressPanConfig;
   };
+  gestureHandlerConfig: GestureHandlerConfig;
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
@@ -146,6 +148,7 @@ function CartesianChartContent<
   domain,
   chartPressState,
   chartPressConfig,
+  gestureHandlerConfig,
   onChartBoundsChange,
   onScaleChange,
   gestureLongPressDelay = 100,
@@ -684,6 +687,7 @@ function CartesianChartContent<
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
       {body}
       <GestureHandler
+        config={gestureHandlerConfig}
         gesture={composed}
         transformState={transformState}
         dimensions={{

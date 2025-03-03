@@ -16,18 +16,21 @@ import {
 import * as React from "react";
 import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
 import { getTransformComponents /*identity4*/ } from "../utils/transform";
+import type { GestureHandlerConfig } from "../types";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
   dimensions: SkRect;
   transformState?: ChartTransformState;
   debug?: boolean;
+  config?: GestureHandlerConfig;
 };
 export const GestureHandler = ({
   gesture,
   dimensions,
   transformState,
   debug = false,
+  config,
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions;
   const style = useAnimatedStyle(() => {
@@ -71,7 +74,7 @@ export const GestureHandler = ({
     };
   });
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector {...config} gesture={gesture}>
       <Animated.View style={style} />
     </GestureDetector>
   );
