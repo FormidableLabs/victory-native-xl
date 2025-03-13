@@ -97,7 +97,6 @@ export const scrollTransformGesture = ({
       const width = (dimensions.totalContentWidth || 300) + 20
       const newValue = prevTranslateX.value - e.translationX
       const maxScroll = width - viewportWidth
-      console.log("newValue", width, newValue, maxScroll, dimensions, "end")
       scrollX.value = Math.max(0, Math.min(maxScroll, newValue))
     })
     .onEnd((e) => {

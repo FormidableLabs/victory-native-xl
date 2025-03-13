@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { StyleSheet } from "react-native"
 import { Group, Line, Text, vec, type SkPoint } from "@shopify/react-native-skia"
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle"
@@ -9,6 +9,7 @@ import { type SharedValue, useDerivedValue } from "react-native-reanimated"
 
 export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof InputFields<RawData>>({
   xScale: xScaleProp,
+  ignoreClip,
   yScale,
   axisSide = "bottom",
   yAxisSide = "left",
@@ -34,9 +35,21 @@ export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof 
     return [{ translateX: -scrollX.value }]
   }, [scrollX])
 
+  // Create a mapping of unique values to their first occurrence index
+  const uniqueValueIndices = useMemo(() => {
+    return ix.reduce((acc, val, index) => {
+      if (!acc.has(val)) {
+        acc.set(val, index)
+      }
+      return acc
+    }, new Map<string, number>())
+  }, [ix])
+
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp
   const [y1 = 0, y2 = 0] = yScale.domain()
   const fontSize = font?.getSize() ?? 0
+
+  // Use tickValues if provided, otherwise generate ticks
   const xTicksNormalized = tickValues
     ? downsampleTicks(tickValues, tickCount)
     : enableRescaling
@@ -44,14 +57,16 @@ export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof 
     : xScaleProp.ticks(tickCount)
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
-    const p1 = vec(xScale(tick), yScale(y2))
-    const p2 = vec(xScale(tick), yScale(y1))
+    // Use the first occurrence index for positioning if available
+    const indexPosition = uniqueValueIndices.get(String(tick)) ?? tick
+    const p1 = vec(xScale(indexPosition), yScale(y2))
+    const p2 = vec(xScale(indexPosition), yScale(y1))
 
-    const val = isNumericalData ? tick : ix[tick]
+    const val = isNumericalData ? tick : ix[indexPosition]
 
     const contentX = formatXLabel(val as never)
     const labelWidth = font?.getGlyphWidths?.(font.getGlyphIDs(contentX)).reduce((sum, value) => sum + value, 0) ?? 0
-    const labelX = xScale(tick) - (labelWidth ?? 0) / 2
+    const labelX = xScale(indexPosition) - (labelWidth ?? 0) / 2
     const canFitLabelContent = true
 
     const labelY = (() => {
@@ -106,7 +121,7 @@ export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof 
     return (
       <React.Fragment key={`x-tick-${tick}`}>
         {lineWidth > 0 ? (
-          <Group transform={transformX} clip={boundsToClip(chartBounds)}>
+          <Group transform={transformX} clip={ignoreClip ? boundsToClip(chartBounds) : undefined}>
             <Line p1={p1} p2={p2} color={lineColor} strokeWidth={lineWidth}>
               {linePathEffect ? linePathEffect : null}
             </Line>

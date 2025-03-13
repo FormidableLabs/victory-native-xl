@@ -474,7 +474,16 @@ function CartesianChartContent<
   const clipRect = boundsToClip(chartBounds)
 
   const FrameComponent =
-    hasMeasuredLayoutSize && (axisOptions || frame) ? <Frame {...normalizedAxisProps.frame} xScale={xScale} yScale={primaryYScale} /> : null
+    hasMeasuredLayoutSize && (axisOptions || frame) ? (
+      <Frame
+        {...normalizedAxisProps.frame}
+        xScale={xScale
+          .copy()
+          .range([chartBounds?.left + 1 || 25, size.width])
+          .domain([0, size.width])}
+        yScale={primaryYScale}
+      />
+    ) : null
 
   const dimensions = React.useMemo(() => {
     const totalContentWidth = _tData.ox.length > 0 ? Math.max(..._tData.ox) - Math.min(..._tData.ox) : 0
@@ -612,7 +621,6 @@ const ChartBody = React.memo(
     return (
       <Canvas style={{ flex: 1 }} onLayout={onLayout}>
         {FrameComponent}
-
         {AxisComponents}
         <Group>
           <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
@@ -628,11 +636,17 @@ const ChartBody = React.memo(
 )
 
 function AxisComponent(props: any) {
+  const clipRect = boundsToClip({
+    bottom: props.chartBounds.bottom + 20,
+    left: props.chartBounds.left,
+    right: props.chartBounds.right,
+    top: props.chartBounds.top,
+  })
   const axis = useChartAxis(props)
   return (
     <>
       {axis.YAxisComponents}
-      {axis.XAxisComponents}
+      <Group clip={clipRect}>{axis.XAxisComponents}</Group>
     </>
   )
 }
