@@ -56,7 +56,7 @@ export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof 
     ? xScale.ticks(tickCount)
     : xScaleProp.ticks(tickCount)
 
-  const xAxisNodes = xTicksNormalized.map((tick) => {
+  const xAxisNodes = xTicksNormalized.map((tick, index) => {
     // Use the first occurrence index for positioning if available
     const indexPosition = uniqueValueIndices.get(String(tick)) ?? tick
     const p1 = vec(xScale(indexPosition), yScale(y2))
@@ -132,6 +132,7 @@ export const XAxis = <RawData extends Record<string, unknown>, XK extends keyof 
             <Text
               transform={[
                 {
+                  translateX: index === 0 ? 10 : 0,
                   rotate: (Math.PI / 180) * (labelRotate ?? 0),
                 },
               ]}

@@ -2,8 +2,7 @@ import { Gesture, type PanGesture, type PinchGesture } from "react-native-gestur
 import { multiply4, scale, translate } from "@shopify/react-native-skia"
 import type { PanGestureConfig } from "react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler"
 import type { ChartTransformState } from "../hooks/useChartTransformState"
-import type { ScaleLinear } from "d3-scale"
-import { withDecay, cancelAnimation, type SharedValue } from "react-native-reanimated"
+import { withDecay, cancelAnimation, type SharedValue, runOnJS } from "react-native-reanimated"
 
 type Dimension = "x" | "y"
 
@@ -80,12 +79,14 @@ export const scrollTransformGesture = ({
   viewportWidth,
   length,
   dimensions,
+  onScroll,
 }: {
   scrollX: SharedValue<number>
   prevTranslateX: SharedValue<number>
   viewportWidth: number
   length: number
   dimensions: Partial<{ totalContentWidth: number }>
+  onScroll?: (data: any) => void
 }): PanGesture => {
   const panGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
@@ -94,10 +95,28 @@ export const scrollTransformGesture = ({
       prevTranslateX.value = scrollX.value
     })
     .onUpdate((e) => {
+      const change = e.translationX / dimensions.width
       const width = (dimensions.totalContentWidth || 300) + 20
       const newValue = prevTranslateX.value - e.translationX
       const maxScroll = width - viewportWidth
       scrollX.value = Math.max(0, Math.min(maxScroll, newValue))
+      if (onScroll) {
+        // need to account for viewport zoom some how - TODO
+        runOnJS(onScroll)({
+          change,
+          diff: prevTranslateX.value - newValue,
+          scrollX: scrollX.value,
+          prevTranslateX: prevTranslateX.value,
+          viewportWidth,
+          length,
+          totalContentWidth: dimensions.totalContentWidth,
+        })
+      }
+    })
+    .onChange((e) => {
+      // const change = e.changeX / dimensions.width
+      // const value = Math.max(scrollX.value + change, 0)
+      // console.log(change, value, "change")
     })
     .onEnd((e) => {
       const width = (dimensions.totalContentWidth || 300) + 20

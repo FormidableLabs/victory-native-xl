@@ -54,7 +54,6 @@ type CartesianChartProps<
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
 > = {
-  scrollState?: boolean
   data: RawData[]
   xKey: XK
   yKeys: YK[]
@@ -86,6 +85,8 @@ type CartesianChartProps<
     pinch?: PinchTransformGestureConfig
   }
   customGestures?: ComposedGesture
+  onScroll?: (data: any) => void
+  scrollState?: boolean
   actionsRef?: MutableRefObject<CartesianActionsHandle<
     | ChartPressState<{
         x: InputFields<RawData>[XK]
@@ -131,6 +132,7 @@ function CartesianChartContent<
   actionsRef,
   viewport,
   scrollState,
+  onScroll,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 })
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined)
@@ -208,8 +210,25 @@ function CartesianChartContent<
   // end stacked bar values
 
   // scroll state
-  const scrollX = useSharedValue(0)
-  const prevTranslateX = useSharedValue(0)
+  const dimensions = React.useMemo(() => {
+    const totalContentWidth = _tData.ox.length > 0 ? Math.max(..._tData.ox) - Math.min(..._tData.ox) : 0
+
+    return {
+      x: Math.min(xScale.range()[0] ?? 0, 0),
+      y: Math.min(primaryYScale.range()[0] ?? 0, 0),
+      width: (xScale.range()[1] ?? 0) - (xScale.range()[0] ?? 0),
+      height: (primaryYScale.range()[1] ?? 0) - (primaryYScale.range()[0] ?? 0),
+      totalContentWidth,
+    }
+  }, [xScale, primaryYScale, _tData.ox])
+
+  // dont love this, but it works for now
+  const scrollX = useSharedValue(dimensions.totalContentWidth)
+  const prevTranslateX = useSharedValue(dimensions.totalContentWidth)
+  React.useEffect(() => {
+    scrollX.value = dimensions.totalContentWidth - dimensions.width
+    prevTranslateX.value = dimensions.totalContentWidth - dimensions.width
+  }, [dimensions.totalContentWidth, dimensions.width])
 
   /**
    * Pan gesture handling
@@ -485,18 +504,6 @@ function CartesianChartContent<
       />
     ) : null
 
-  const dimensions = React.useMemo(() => {
-    const totalContentWidth = _tData.ox.length > 0 ? Math.max(..._tData.ox) - Math.min(..._tData.ox) : 0
-
-    return {
-      x: Math.min(xScale.range()[0] ?? 0, 0),
-      y: Math.min(primaryYScale.range()[0] ?? 0, 0),
-      width: (xScale.range()[1] ?? 0) - (xScale.range()[0] ?? 0),
-      height: (primaryYScale.range()[1] ?? 0) - (primaryYScale.range()[0] ?? 0),
-      totalContentWidth,
-    }
-  }, [xScale, primaryYScale, _tData.ox])
-
   // Memoize the composed gesture
 
   const composedGesture = React.useMemo(() => {
@@ -517,6 +524,7 @@ function CartesianChartContent<
           viewportWidth: size.width,
           length: _tData.ix.length,
           dimensions,
+          onScroll,
         }),
       )
     }
@@ -636,7 +644,7 @@ const ChartBody = React.memo(
 )
 
 function AxisComponent(props: any) {
-  const clipRect = boundsToClip({
+  const xAxisClipRect = boundsToClip({
     bottom: props.chartBounds.bottom + 20,
     left: props.chartBounds.left,
     right: props.chartBounds.right,
@@ -646,7 +654,7 @@ function AxisComponent(props: any) {
   return (
     <>
       {axis.YAxisComponents}
-      <Group clip={clipRect}>{axis.XAxisComponents}</Group>
+      <Group clip={xAxisClipRect}>{axis.XAxisComponents}</Group>
     </>
   )
 }
