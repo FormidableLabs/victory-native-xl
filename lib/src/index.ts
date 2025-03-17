@@ -6,6 +6,8 @@ export {
   type CartesianActionsHandle,
 } from "./cartesian/CartesianChart";
 
+export { CartesianChartScroll } from "./cartesian/CartesianChartScroll";
+
 export {
   type InputDatum,
   type CartesianChartRenderArg,

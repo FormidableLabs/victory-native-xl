@@ -1,7 +1,6 @@
 {
   "name": "victory-native",
   "version": "41.16.1",
-  "private": false,
   "license": "MIT",
   "repository": {
     "type": "git",
