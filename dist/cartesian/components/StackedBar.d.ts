@@ -28,6 +28,6 @@ export declare const StackedBar: ({ points, chartBounds, animate, innerPadding, 
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>[];
 export {};

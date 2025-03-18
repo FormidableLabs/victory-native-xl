@@ -53,14 +53,15 @@ import { CartesianTransformProvider } from "./contexts/CartesianTransformContext
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { useChartAxis } from "./CartesianAxis";
-export type CartesianActionsHandle<T = undefined> =
-  T extends ChartPressState<infer S>
-    ? S extends ChartPressStateInit
-      ? {
-          handleTouch: (v: T, x: number, y: number) => void;
-        }
-      : never
-    : never;
+export type CartesianActionsHandle<T = undefined> = T extends ChartPressState<
+  infer S
+>
+  ? S extends ChartPressStateInit
+    ? {
+        handleTouch: (v: T, x: number, y: number) => void;
+      }
+    : never
+  : never;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -178,13 +179,10 @@ function CartesianChartContent<
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
     ox: [],
-    y: yKeys.reduce(
-      (acc, key) => {
-        acc[key] = { i: [], o: [] };
-        return acc;
-      },
-      {} as TransformedData<RawData, XK, YK>["y"],
-    ),
+    y: yKeys.reduce((acc, key) => {
+      acc[key] = { i: [], o: [] };
+      return acc;
+    }, {} as TransformedData<RawData, XK, YK>["y"]),
   });
 
   const {
@@ -281,9 +279,9 @@ function CartesianChartContent<
   const scrollX = useSharedValue(dimensions.totalContentWidth);
   const prevTranslateX = useSharedValue(dimensions.totalContentWidth);
   React.useEffect(() => {
-    scrollX.value = dimensions.totalContentWidth - dimensions.width;
+    scrollX.value = dimensions.totalContentWidth - dimensions.width + 20;
     prevTranslateX.value = dimensions.totalContentWidth - dimensions.width;
-  }, [dimensions.totalContentWidth, dimensions.width]);
+  }, [dimensions.totalContentWidth, dimensions.width, scrollX, prevTranslateX]);
 
   /**
    * Pan gesture handling
@@ -439,7 +437,7 @@ function CartesianChartContent<
     /**
      * As fingers move, update the shared values accordingly.
      */
-    .onTouchesMove((e) => {
+    .onTouchesMove((e: any) => {
       const vals = activePressSharedValues || [];
       if (!vals.length || e.numberOfTouches === 0) return;
 
@@ -557,6 +555,7 @@ function CartesianChartContent<
     chartBounds,
     canvasSize: size,
     points,
+    scrollX,
   };
 
   const clipRect = boundsToClip(chartBounds);

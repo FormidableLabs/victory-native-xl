@@ -15,6 +15,6 @@ export declare function Scatter({ points, animate, radius, shape, ...rest }: Rea
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>;
 export {};

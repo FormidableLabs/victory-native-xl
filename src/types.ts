@@ -70,6 +70,7 @@ export type CartesianChartRenderArg<RawData extends Record<string, unknown>, YK 
   points: {
     [K in YK]: PointsArray
   }
+  scrollX?: SharedValue<number>
 }
 
 export type Scale = ScaleLinear<number, number>

@@ -10,9 +10,7 @@ const pinchTransformGesture = (state, _config = {}) => {
         dimensions: ["x", "y"],
     };
     const config = Object.assign(Object.assign({}, defaults), _config);
-    const dimensions = Array.isArray(config.dimensions)
-        ? config.dimensions
-        : [config.dimensions];
+    const dimensions = Array.isArray(config.dimensions) ? config.dimensions : [config.dimensions];
     const scaleX = dimensions.includes("x");
     const scaleY = dimensions.includes("y");
     const pinch = react_native_gesture_handler_1.Gesture.Pinch()
@@ -41,9 +39,7 @@ const panTransformGesture = (state, _config = {}) => {
         dimensions: ["x", "y"],
     };
     const config = Object.assign(Object.assign({}, defaults), _config);
-    const dimensions = Array.isArray(config.dimensions)
-        ? config.dimensions
-        : [config.dimensions];
+    const dimensions = Array.isArray(config.dimensions) ? config.dimensions : [config.dimensions];
     const panX = dimensions.includes("x");
     const panY = dimensions.includes("y");
     const pan = react_native_gesture_handler_1.Gesture.Pan()
@@ -89,14 +85,9 @@ const scrollTransformGesture = ({ scrollX, prevTranslateX, viewportWidth, length
             });
         }
     })
-        .onChange((e) => {
-        // const change = e.changeX / dimensions.width
-        // const value = Math.max(scrollX.value + change, 0)
-        // console.log(change, value, "change")
-    })
         .onEnd((e) => {
         const width = (dimensions.totalContentWidth || 300) + 20;
-        const maxScroll = width - viewportWidth;
+        const maxScroll = width - viewportWidth + 25;
         scrollX.value = (0, react_native_reanimated_1.withDecay)({
             velocity: -e.velocityX,
             clamp: [0, maxScroll],

@@ -13,5 +13,5 @@ export declare function Line({ points, animate, curveType, connectMissingData, .
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>;

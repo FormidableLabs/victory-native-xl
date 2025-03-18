@@ -85,8 +85,8 @@ export function useChartAxis({
           const rescaledTicks = axis.tickValues
             ? downsampleTicks(axis.tickValues, axis.tickCount)
             : axis.enableRescaling
-              ? rescaled.ticks(axis.tickCount)
-              : yAxis.yScale.ticks(axis.tickCount);
+            ? rescaled.ticks(axis.tickCount)
+            : yAxis.yScale.ticks(axis.tickCount);
 
           const primaryTicksRescaled = primaryAxisProps.tickValues
             ? downsampleTicks(
@@ -94,8 +94,8 @@ export function useChartAxis({
                 primaryAxisProps.tickCount,
               )
             : primaryAxisProps.enableRescaling
-              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
-              : primaryYScale.ticks(primaryAxisProps.tickCount);
+            ? primaryRescaled.ticks(primaryAxisProps.tickCount)
+            : primaryYScale.ticks(primaryAxisProps.tickCount);
 
           return (
             <YAxis

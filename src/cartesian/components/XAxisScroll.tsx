@@ -71,8 +71,8 @@ export const XAxis = <
   const xTicksNormalized = tickValues
     ? downsampleTicks(tickValues, tickCount)
     : enableRescaling
-      ? xScale.ticks(tickCount)
-      : xScaleProp.ticks(tickCount);
+    ? xScale.ticks(tickCount)
+    : xScaleProp.ticks(tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick, index) => {
     // Use the first occurrence index for positioning if available

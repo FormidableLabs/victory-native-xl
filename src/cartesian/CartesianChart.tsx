@@ -56,14 +56,15 @@ import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 
-export type CartesianActionsHandle<T = undefined> =
-  T extends ChartPressState<infer S>
-    ? S extends ChartPressStateInit
-      ? {
-          handleTouch: (v: T, x: number, y: number) => void;
-        }
-      : never
-    : never;
+export type CartesianActionsHandle<T = undefined> = T extends ChartPressState<
+  infer S
+>
+  ? S extends ChartPressStateInit
+    ? {
+        handleTouch: (v: T, x: number, y: number) => void;
+      }
+    : never
+  : never;
 
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
@@ -198,13 +199,10 @@ function CartesianChartContent<
   const tData = useSharedValue<TransformedData<RawData, XK, YK>>({
     ix: [],
     ox: [],
-    y: yKeys.reduce(
-      (acc, key) => {
-        acc[key] = { i: [], o: [] };
-        return acc;
-      },
-      {} as TransformedData<RawData, XK, YK>["y"],
-    ),
+    y: yKeys.reduce((acc, key) => {
+      acc[key] = { i: [], o: [] };
+      return acc;
+    }, {} as TransformedData<RawData, XK, YK>["y"]),
   });
 
   const {
@@ -584,8 +582,8 @@ function CartesianChartContent<
           const rescaledTicks = axis.tickValues
             ? downsampleTicks(axis.tickValues, axis.tickCount)
             : axis.enableRescaling
-              ? rescaled.ticks(axis.tickCount)
-              : yAxis.yScale.ticks(axis.tickCount);
+            ? rescaled.ticks(axis.tickCount)
+            : yAxis.yScale.ticks(axis.tickCount);
 
           const primaryTicksRescaled = primaryAxisProps.tickValues
             ? downsampleTicks(
@@ -593,8 +591,8 @@ function CartesianChartContent<
                 primaryAxisProps.tickCount,
               )
             : primaryAxisProps.enableRescaling
-              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
-              : primaryYScale.ticks(primaryAxisProps.tickCount);
+            ? primaryRescaled.ticks(primaryAxisProps.tickCount)
+            : primaryYScale.ticks(primaryAxisProps.tickCount);
 
           return (
             <YAxis

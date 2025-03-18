@@ -83,13 +83,10 @@ export const transformInputData = <
     data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
   }
   // // Set up our y-output data structure
-  const y = yKeys.reduce(
-    (acc, k) => {
-      acc[k] = { i: [], o: [] };
-      return acc;
-    },
-    {} as TransformedData<RawData, XK, YK>["y"],
-  );
+  const y = yKeys.reduce((acc, k) => {
+    acc[k] = { i: [], o: [] };
+    return acc;
+  }, {} as TransformedData<RawData, XK, YK>["y"]);
 
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
@@ -175,20 +172,17 @@ export const transformInputData = <
         typeof domainPadding === "number" ? domainPadding : domainPadding?.top,
     });
 
-    const yData = yKeysForAxis.reduce(
-      (acc, key) => {
-        acc[key] = {
-          i: data.map((datum) => datum[key] as MaybeNumber),
-          o: data.map((datum) =>
-            typeof datum[key] === "number"
-              ? yScale(datum[key] as number)
-              : (datum[key] as number),
-          ),
-        };
-        return acc;
-      },
-      {} as Record<string, { i: MaybeNumber[]; o: MaybeNumber[] }>,
-    );
+    const yData = yKeysForAxis.reduce((acc, key) => {
+      acc[key] = {
+        i: data.map((datum) => datum[key] as MaybeNumber),
+        o: data.map((datum) =>
+          typeof datum[key] === "number"
+            ? yScale(datum[key] as number)
+            : (datum[key] as number),
+        ),
+      };
+      return acc;
+    }, {} as Record<string, { i: MaybeNumber[]; o: MaybeNumber[] }>);
 
     const yTicksNormalized = yTickValues
       ? downsampleTicks(yTickValues, yTicks)

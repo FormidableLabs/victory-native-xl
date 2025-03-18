@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -37,7 +47,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CartesianChartScroll = void 0;
+exports.CartesianChartScroll = CartesianChartScroll;
 const React = __importStar(require("react"));
 const react_native_skia_1 = require("@shopify/react-native-skia");
 const react_native_reanimated_1 = require("react-native-reanimated");
@@ -62,7 +72,6 @@ function CartesianChartScroll(_a) {
       {children}
     </CartesianChartContent>);
 }
-exports.CartesianChartScroll = CartesianChartScroll;
 function CartesianChartContent({ data, xKey, yKeys, padding, domainPadding, children, renderOutside = () => null, axisOptions, domain, chartPressState, chartPressConfig, onChartBoundsChange, onScaleChange, gestureLongPressDelay = 100, xAxis, yAxis, frame, transformState, transformConfig, customGestures, actionsRef, viewport, scrollState, onScroll, }) {
     var _a, _b, _c, _d, _e, _f;
     const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -162,9 +171,9 @@ function CartesianChartContent({ data, xKey, yKeys, padding, domainPadding, chil
     const scrollX = (0, react_native_reanimated_1.useSharedValue)(dimensions.totalContentWidth);
     const prevTranslateX = (0, react_native_reanimated_1.useSharedValue)(dimensions.totalContentWidth);
     React.useEffect(() => {
-        scrollX.value = dimensions.totalContentWidth - dimensions.width;
+        scrollX.value = dimensions.totalContentWidth - dimensions.width + 20;
         prevTranslateX.value = dimensions.totalContentWidth - dimensions.width;
-    }, [dimensions.totalContentWidth, dimensions.width]);
+    }, [dimensions.totalContentWidth, dimensions.width, scrollX, prevTranslateX]);
     /**
      * Pan gesture handling
      */
@@ -402,6 +411,7 @@ function CartesianChartContent({ data, xKey, yKeys, padding, domainPadding, chil
         chartBounds,
         canvasSize: size,
         points,
+        scrollX,
     };
     const clipRect = (0, boundsToClip_1.boundsToClip)(chartBounds);
     const FrameComponent = hasMeasuredLayoutSize && (axisOptions || frame) ? (<Frame_1.Frame {...normalizedAxisProps.frame} xScale={xScale

@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { type SharedValue } from "react-native-reanimated";
 import { type ScaleLinear } from "d3-scale";
 import { type Color, type DashPathEffect, type SkFont } from "@shopify/react-native-skia";
@@ -70,6 +69,7 @@ export type CartesianChartRenderArg<RawData extends Record<string, unknown>, YK 
     points: {
         [K in YK]: PointsArray;
     };
+    scrollX?: SharedValue<number>;
 };
 export type Scale = ScaleLinear<number, number>;
 export type YAxisDomain = [number] | [number, number] | null;

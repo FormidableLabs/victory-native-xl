@@ -12,5 +12,5 @@ export type PieLabelProps = {
     text?: string;
     children?: (position: LabelPostion) => ReactNode;
 };
-declare const PieLabel: ({ font, radiusOffset, color, text, children, }: PieLabelProps) => string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
+declare const PieLabel: ({ font, radiusOffset, color, text, children, }: PieLabelProps) => string | number | boolean | Iterable<React.ReactNode> | React.JSX.Element | null | undefined;
 export default PieLabel;

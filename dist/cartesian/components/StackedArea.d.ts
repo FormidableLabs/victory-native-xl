@@ -23,6 +23,6 @@ export declare function StackedArea({ points, y0, animate, curveType, colors, ar
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>[];
 export {};

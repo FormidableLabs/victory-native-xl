@@ -14,5 +14,5 @@ export declare function Area({ points, y0, animate, curveType, connectMissingDat
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>;

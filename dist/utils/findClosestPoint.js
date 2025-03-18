@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findClosestPoint = void 0;
+exports.findClosestPoint = findClosestPoint;
 /**
  * Which of the two points are closer to the target?
  * Returns index of the closer point
@@ -46,4 +46,3 @@ function findClosestPoint(xValues, targetX) {
     }
     return mid;
 }
-exports.findClosestPoint = findClosestPoint;

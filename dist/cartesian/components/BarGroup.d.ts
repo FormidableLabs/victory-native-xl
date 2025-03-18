@@ -34,6 +34,6 @@ declare function BarGroupBar(props: React.PropsWithChildren<BarGroupBarProps>): 
     start?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
     end?: import("@shopify/react-native-skia").AnimatedProp<number> | undefined;
 } & {
-    animate?: PathAnimationConfig | undefined;
+    animate?: PathAnimationConfig;
 }>;
 export {};

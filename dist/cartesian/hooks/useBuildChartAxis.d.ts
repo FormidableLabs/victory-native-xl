@@ -21,6 +21,6 @@ export declare const useBuildChartAxis: <RawData extends Record<string, unknown>
     } | {
         lineWidth: import("../../types").SidedNumber;
         lineColor: Color;
-        linePathEffect?: React.ReactElement<import("@shopify/react-native-skia").AnimatedProps<import("@shopify/react-native-skia").DashPathEffectProps, never>, string | React.JSXElementConstructor<any>> | undefined;
+        linePathEffect?: React.ReactElement<import("@shopify/react-native-skia").AnimatedProps<import("@shopify/react-native-skia").DashPathEffectProps, never>, string | React.JSXElementConstructor<any>>;
     };
 };

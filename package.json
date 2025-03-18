@@ -46,10 +46,14 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "devDependencies": {
+    "@shopify/react-native-skia": "^1.2.3",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
     "@types/d3-zoom": "^3.0.8",
     "@types/react": "~18.2.14",
+    "react-native": "^0.78.0",
+    "react-native-gesture-handler": "^2.0.0",
+    "react-native-reanimated": "^3.0.0",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
   },

@@ -144,14 +144,10 @@ export const scrollTransformGesture = ({
         });
       }
     })
-    .onChange((e) => {
-      // const change = e.changeX / dimensions.width
-      // const value = Math.max(scrollX.value + change, 0)
-      // console.log(change, value, "change")
-    })
+
     .onEnd((e) => {
       const width = (dimensions.totalContentWidth || 300) + 20;
-      const maxScroll = width - viewportWidth;
+      const maxScroll = width - viewportWidth + 25;
       scrollX.value = withDecay({
         velocity: -e.velocityX,
         clamp: [0, maxScroll],
