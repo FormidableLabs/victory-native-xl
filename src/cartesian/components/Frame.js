@@ -1,0 +1,47 @@
+import React from "react";
+import { StyleSheet } from "react-native";
+import { Group, Line, Path, Skia, vec } from "@shopify/react-native-skia";
+export const Frame = ({ xScale, yScale, lineColor, lineWidth, linePathEffect, }) => {
+    const [x1 = 0, x2 = 0] = xScale.domain();
+    const [y1 = 0, y2 = 0] = yScale.domain();
+    const boundingFrame = React.useMemo(() => {
+        const framePath = Skia.Path.Make();
+        if (typeof lineWidth === "number") {
+            framePath.addRect(Skia.XYWHRect(xScale(x1), yScale(y1), xScale(x2) - xScale(x1), yScale(y2) - yScale(y1)));
+            return React.createElement(Path, { key: "full-frame", path: framePath, strokeWidth: lineWidth });
+        }
+        else {
+            const lines = [];
+            const _lineWidth = {
+                top: StyleSheet.hairlineWidth,
+                right: StyleSheet.hairlineWidth,
+                bottom: StyleSheet.hairlineWidth,
+                left: StyleSheet.hairlineWidth,
+                ...lineWidth,
+            };
+            if (_lineWidth.top > 0) {
+                lines.push(React.createElement(Line, { key: "frame-top", p1: vec(xScale(x1), yScale(y1)), p2: vec(xScale(x2), yScale(y1)), strokeWidth: lineWidth.top }));
+            }
+            if (_lineWidth.right > 0) {
+                lines.push(React.createElement(Line, { key: "frame-right", p1: vec(xScale(x2), yScale(y1)), p2: vec(xScale(x2), yScale(y2)), strokeWidth: lineWidth.right }));
+            }
+            if (_lineWidth.bottom > 0) {
+                lines.push(React.createElement(Line, { key: "frame-bottom", p1: vec(xScale(x2), yScale(y2)), p2: vec(xScale(x1), yScale(y2)), strokeWidth: lineWidth.bottom }));
+            }
+            if (_lineWidth.left > 0) {
+                lines.push(React.createElement(Line, { key: "frame-left", p1: vec(xScale(x1), yScale(y2)), p2: vec(xScale(x1), yScale(y1)), strokeWidth: lineWidth.left }));
+            }
+            return lines;
+        }
+    }, [x1, x2, xScale, y1, y2, yScale, lineWidth]);
+    if (typeof lineWidth === "number" && lineWidth <= 0) {
+        return null;
+    }
+    return (React.createElement(Group, { color: lineColor, style: "stroke" },
+        linePathEffect,
+        boundingFrame));
+};
+export const FrameDefaults = {
+    lineColor: "hsla(0, 0%, 0%, 0.25)",
+    lineWidth: StyleSheet.hairlineWidth,
+};
