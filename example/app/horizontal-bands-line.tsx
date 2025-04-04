@@ -38,7 +38,7 @@ function HorizontalBandsShader({
       return [...acc, ...cur];
     }, [] as number[]);
 
-  const horizonalBandsShader = React.useMemo(() => {
+  const horizontalBandsShader = React.useMemo(() => {
     const bandsLength = thresholdsYValues.length;
 
     return Skia.RuntimeEffect.Make(`
@@ -60,7 +60,7 @@ function HorizontalBandsShader({
 
   return (
     <Shader
-      source={horizonalBandsShader}
+      source={horizontalBandsShader}
       uniforms={{
         thresholdsYValues: new Float32Array(thresholdsYValues),
         thresholdsColors: new Float32Array(thresholdsColors),
