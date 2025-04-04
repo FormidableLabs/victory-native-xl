@@ -412,7 +412,7 @@ function CartesianChartContent<
       }
     })
     /**
-     * On start, check if we have any bootstraped updates we need to apply.
+     * On start, check if we have any bootstrapped updates we need to apply.
      */
     .onStart(() => {
       gestureState.value.isGestureActive = true;
