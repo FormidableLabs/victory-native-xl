@@ -18,7 +18,7 @@ This guide will show you how to create this bar chart with some customization li
 
   ```tsx
   const data = Array.from({ length: 6 }, (_, index) => ({
-      // Starting at 1 for Jaunary
+      // Starting at 1 for January
       month: index + 1,
       // Randomizing the listen count between 100 and 50
       listenCount: Math.floor(Math.random() * (100 - 50 + 1)) + 50,

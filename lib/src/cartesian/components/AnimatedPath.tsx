@@ -71,17 +71,17 @@ const syncPropsToSharedValues = (
     keysToRemove.delete(key);
 
     const propVal = props[key];
-    const sharVal = sharedValues[key];
+    const shareVal = sharedValues[key];
 
     // Shared value missing, create it
-    if (!sharVal) {
+    if (!shareVal) {
       sharedValues[key] = isSharedValue(propVal)
         ? propVal
         : makeMutable(propVal);
     }
     // Shared value exists, update it if not already a shared value
     else if (!isSharedValue(propVal)) {
-      sharVal.value = propVal;
+      shareVal.value = propVal;
     }
   }
 

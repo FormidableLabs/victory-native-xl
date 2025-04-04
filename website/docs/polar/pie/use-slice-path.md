@@ -18,7 +18,7 @@ import DATA from "./my-data";
 function MyCustomSlice({ slice }: { slice: PieSliceData }) {
   // 👇 use the hook to generate a path object.
   const path = useSlicePath(slice);
-  /* 👇 experiment wtih any other customizations you want */
+  /* 👇 experiment with any other customizations you want */
   return <Path path={path} color={slice.color} style="fill" />;
 }
 

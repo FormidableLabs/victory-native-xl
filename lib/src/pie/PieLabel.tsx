@@ -3,7 +3,7 @@ import React, { type ReactNode } from "react";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 import { getFontGlyphWidth } from "../utils/getFontGlyphWidth";
 
-type LabelPostion = {
+type LabelPosition = {
   x: number;
   y: number;
   midAngle: number;
@@ -14,7 +14,7 @@ export type PieLabelProps = {
   radiusOffset?: number;
   color?: Color;
   text?: string;
-  children?: (position: LabelPostion) => ReactNode;
+  children?: (position: LabelPosition) => ReactNode;
 };
 
 const PieLabel = ({

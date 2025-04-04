@@ -69,7 +69,7 @@ A `number` which defines the starting angle of the chart. Changing this prop wil
 
 ### `size`
 
-A `number` which defines the size of the chart. This defaults to the canvas' width and height. This can be overriden with this prop (in case you want to position labels outside the chart, for example)
+A `number` which defines the size of the chart. This defaults to the canvas' width and height. This can be overridden with this prop (in case you want to position labels outside the chart, for example)
 
 ### `children`
 

@@ -18,7 +18,7 @@ import DATA from "./my-data";
 function MyCustomSliceAngularInset({ slice }: { slice: PieSliceData }) {
   // 👇 use the hook to generate a path and paint object.
   const [path, insetPaint] = useSliceAngularInsetPath({ slice, angularInset });
-  /* 👇 experiment wtih any other customizations you want */
+  /* 👇 experiment with any other customizations you want */
   return <Path path={path} paint={insetPaint} {...rest} />;
 }
 

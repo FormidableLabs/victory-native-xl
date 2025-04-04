@@ -278,7 +278,7 @@
 
 - Adds onChartBoundsChange prop to CartesianChart ([#117](https://github.com/FormidableLabs/victory-native-xl/pull/117))
 
-- Support "misisng data", add `connectMissingData` prop to line/area charts. Allows for null/undefined y-values. ([#129](https://github.com/FormidableLabs/victory-native-xl/pull/129))
+- Support "missing data", add `connectMissingData` prop to line/area charts. Allows for null/undefined y-values. ([#129](https://github.com/FormidableLabs/victory-native-xl/pull/129))
 
 - Include src files in distribution tarball ([#100](https://github.com/FormidableLabs/victory-native-xl/pull/100))
 
@@ -294,7 +294,7 @@
 
 ### Patch Changes
 
-- Support "misisng data", add `connectMissingData` prop to line/area charts. Allows for null/undefined y-values. ([#129](https://github.com/FormidableLabs/victory-native-xl/pull/129))
+- Support "missing data", add `connectMissingData` prop to line/area charts. Allows for null/undefined y-values. ([#129](https://github.com/FormidableLabs/victory-native-xl/pull/129))
 
 ## 40.0.0-next.6
 
