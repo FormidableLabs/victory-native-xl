@@ -56,6 +56,7 @@ import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
+import { createFallbackChartState } from "./utils/createFallbackChartState";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -218,6 +219,9 @@ function CartesianChartContent<
     xTicksNormalized,
     _tData,
   } = React.useMemo(() => {
+    if (!data.length) {
+      return createFallbackChartState<RawData, XK, YK>(yKeys);
+    }
     const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
       transformInputData({
         data,
