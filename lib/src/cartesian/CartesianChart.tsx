@@ -84,7 +84,7 @@ type CartesianChartProps<
   chartPressConfig?: {
     pan?: ChartPressPanConfig;
   };
-  gestureHandlerConfig: GestureHandlerConfig;
+  gestureHandlerConfig?: GestureHandlerConfig;
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
