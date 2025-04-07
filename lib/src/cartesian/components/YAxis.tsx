@@ -27,11 +27,13 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
+  renderYLabel,
 }: YAxisProps<RawData, YK>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
-  const yAxisNodes = yTicksNormalized.map((tick) => {
+
+  const yAxisNodes = yTicksNormalized.map((tick, index) => {
     const contentY = formatYLabel(tick as never);
     const labelWidth =
       font
@@ -71,8 +73,17 @@ export const YAxis = <
             </Line>
           </Group>
         ) : null}
-        {font
-          ? canFitLabelContent && (
+        {renderYLabel ? (
+          renderYLabel({
+            x: labelX,
+            y: labelY,
+            content: contentY,
+            canFitContent: canFitLabelContent,
+            index: index,
+          })
+        ) : (
+          <>
+            {font && canFitLabelContent && (
               <Text
                 color={labelColor}
                 text={contentY}
@@ -80,8 +91,9 @@ export const YAxis = <
                 y={labelY}
                 x={labelX}
               />
-            )
-          : null}
+            )}
+          </>
+        )}
       </React.Fragment>
     );
   });

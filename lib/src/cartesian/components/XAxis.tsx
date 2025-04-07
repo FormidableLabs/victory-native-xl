@@ -42,6 +42,7 @@ export const XAxis = <
   chartBounds,
   enableRescaling,
   zoom,
+  renderXLabel,
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
@@ -52,7 +53,7 @@ export const XAxis = <
       ? xScale.ticks(tickCount)
       : xScaleProp.ticks(tickCount);
 
-  const xAxisNodes = xTicksNormalized.map((tick) => {
+  const xAxisNodes = xTicksNormalized.map((tick, index) => {
     const p1 = vec(xScale(tick), yScale(y2));
     const p2 = vec(xScale(tick), yScale(y1));
 
@@ -137,23 +138,35 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {font && labelWidth && canFitLabelContent ? (
-          <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
-          </Group>
-        ) : null}
+        {renderXLabel ? (
+          renderXLabel({
+            x: labelX,
+            y: labelY,
+            content: contentX,
+            canFitContent: canFitLabelContent,
+            index: index,
+          })
+        ) : (
+          <>
+            {font && labelWidth && canFitLabelContent ? (
+              <Group transform={[{ translateY: rotateOffset }]}>
+                <Text
+                  transform={[
+                    {
+                      rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                    },
+                  ]}
+                  origin={origin}
+                  color={labelColor}
+                  text={contentX}
+                  font={font}
+                  y={labelY}
+                  x={labelX}
+                />
+              </Group>
+            ) : null}
+          </>
+        )}
         <></>
       </React.Fragment>
     );

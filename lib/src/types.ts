@@ -188,6 +188,7 @@ export type XAxisInputProps<
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  renderXLabel?: (opts: RenderAxisLabelProps) => React.ReactNode;
 };
 
 export type XAxisPropsWithDefaults<
@@ -196,7 +197,12 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
+    | "renderXLabel"
   >
 > &
   Partial<
@@ -207,6 +213,7 @@ export type XAxisPropsWithDefaults<
       | "linePathEffect"
       | "enableRescaling"
       | "labelRotate"
+      | "renderXLabel"
     >
   >;
 
@@ -222,6 +229,14 @@ export type XAxisProps<
   zoom?: ZoomTransform;
 };
 
+type RenderAxisLabelProps = {
+  x: number;
+  y: number;
+  index: number;
+  content: string;
+  canFitContent: boolean;
+};
+
 export type YAxisInputProps<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
@@ -229,6 +244,7 @@ export type YAxisInputProps<
   axisSide?: YAxisSide;
   font?: SkFont | null;
   formatYLabel?: (label: RawData[YK]) => string;
+  renderYLabel?: (opts: RenderAxisLabelProps) => React.ReactNode;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -248,13 +264,21 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "renderYLabel"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "renderYLabel"
     >
   >;
 
