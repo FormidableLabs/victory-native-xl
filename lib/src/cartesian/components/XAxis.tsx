@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import {
   Group,
@@ -17,6 +17,7 @@ import type {
   XAxisProps,
   XAxisPropsWithDefaults,
 } from "../../types";
+import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -42,6 +43,7 @@ export const XAxis = <
   chartBounds,
   enableRescaling,
   zoom,
+  title,
 }: XAxisProps<RawData, XK>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
@@ -51,6 +53,20 @@ export const XAxis = <
     : enableRescaling
       ? xScale.ticks(tickCount)
       : xScaleProp.ticks(tickCount);
+
+  const longestLabel = xTicksNormalized.reduce((longest, tick) => {
+    const val = isNumericalData ? tick : ix[tick];
+    const contentX = formatXLabel(val as never);
+    const labelWidth =
+      font
+        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
+        .reduce((sum, value) => sum + value, 0) ?? 0;
+    return labelWidth > longest ? labelWidth : longest;
+  }, 0);
+
+  const maxLabelHeight = labelRotate
+    ? Math.abs(longestLabel * getOffsetFromAngle(labelRotate))
+    : 0;
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const p1 = vec(xScale(tick), yScale(y2));
@@ -159,7 +175,65 @@ export const XAxis = <
     );
   });
 
-  return xAxisNodes;
+  const AxisTitle = useMemo(() => {
+    if (!title) return null;
+
+    const {
+      text,
+      position: titlePosition = "center",
+      yOffset = 2,
+      font: titleFont,
+    } = title;
+
+    const titleFontToUse = titleFont ?? font;
+    const titleWidth = getFontGlyphWidth(text, titleFontToUse);
+    const titleSize = titleFontToUse?.getSize() ?? fontSize;
+
+    // Calculate horizontal position
+    const titleX = (() => {
+      if (titlePosition === "left") return chartBounds.left;
+      if (titlePosition === "right") return chartBounds.right - titleWidth;
+      // Center by default
+      return (chartBounds.left + chartBounds.right - titleWidth) / 2;
+    })();
+
+    // Calculate vertical offset from axis
+    // offset by the maxLabelHeight (if rotated labels) + font size of the ticks + the font size of this title itself + the label offset optional prop + y offset optional prop
+    const baseOffset =
+      maxLabelHeight + fontSize + titleSize + labelOffset + (yOffset ?? 0);
+    const translateY =
+      axisSide === "bottom"
+        ? chartBounds.bottom + baseOffset
+        : chartBounds.top - baseOffset;
+
+    return (
+      <Group transform={[{ translateX: titleX }, { translateY }]}>
+        <Text
+          color={labelColor}
+          text={text}
+          font={titleFontToUse!}
+          x={0}
+          y={0}
+        />
+      </Group>
+    );
+  }, [
+    title,
+    chartBounds,
+    font,
+    fontSize,
+    labelOffset,
+    axisSide,
+    labelColor,
+    maxLabelHeight,
+  ]);
+
+  return (
+    <>
+      {xAxisNodes}
+      {AxisTitle}
+    </>
+  );
 };
 
 export const XAxisDefaults = {

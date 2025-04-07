@@ -8,6 +8,7 @@ import * as React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
+import notosans from "../assets/notosans.ttf";
 import { appColors } from "../consts/colors";
 import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "../consts/routes";
@@ -30,6 +31,7 @@ const generateData = () =>
 export default function DashedAxesPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const font = useFont(inter, 12);
+  const notoFont = useFont(notosans, 16);
   const [data, setData] = React.useState(generateData);
   const [, setW] = React.useState(0);
   const [, setH] = React.useState(0);
@@ -42,20 +44,32 @@ export default function DashedAxesPage(props: { segment: string }) {
             data={data}
             xKey="month"
             yKeys={["low", "high"]}
-            padding={16}
+            padding={{
+              top: 20,
+              right: 20,
+            }}
             domain={{ y: [0, 65] }}
-            domainPadding={{ top: 20 }}
             xAxis={{
               font,
-              labelOffset: 4,
+              labelOffset: 0,
               linePathEffect: <DashPathEffect intervals={[4, 4]} />,
+              title: {
+                text: "Month",
+                font: notoFont,
+                position: "center",
+                yOffset: 0,
+              },
             }}
             yAxis={[
               {
-                labelOffset: 8,
-
+                labelOffset: 4,
                 font,
-
+                title: {
+                  text: "Temperature",
+                  font: notoFont,
+                  position: "center",
+                  xOffset: 12,
+                },
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },
             ]}
