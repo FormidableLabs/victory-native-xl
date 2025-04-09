@@ -8,6 +8,11 @@ import {
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
 
+import type {
+  UserSelect,
+  TouchAction,
+} from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
+
 export type PrimitiveViewWindow = {
   xMin: number;
   xMax: number;
@@ -296,3 +301,9 @@ export type ChartPressPanConfig = {
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];
+
+export interface GestureHandlerConfig {
+  userSelect?: UserSelect;
+  enableContextMenu?: boolean;
+  touchAction?: TouchAction;
+}
