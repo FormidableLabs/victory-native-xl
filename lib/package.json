@@ -1,0 +1,60 @@
+{
+  "name": "victory-native",
+  "version": "41.16.2",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FormidableLabs/victory-native-xl",
+    "directory": "lib"
+  },
+  "homepage": "https://commerce.nearform.com/open-source/victory-native",
+  "react-native": "src/index",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "exports": {
+    ".": [
+      {
+        "imports": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      },
+      "./dist/index.js"
+    ]
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "d3-zoom": "^3.0.0",
+    "its-fine": "^1.2.5",
+    "react-fast-compare": "^3.2.2"
+  },
+  "peerDependencies": {
+    "@shopify/react-native-skia": ">=1.2.3",
+    "react": "*",
+    "react-native": "*",
+    "react-native-gesture-handler": ">=2.0.0",
+    "react-native-reanimated": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-scale": "^4.0.3",
+    "@types/d3-shape": "^3.1.1",
+    "@types/d3-zoom": "^3.0.8",
+    "@types/react": "~18.2.14",
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.2"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}
