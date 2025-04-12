@@ -51,6 +51,10 @@ useAnimatedPath(path: SkPath, animConfig: PathAnimationConfig): SharedValue<SkPa
 
 An `SkPath` that is e.g. returned from `useLinePath` or `useAreaPath` that should be animated when its points change.
 
+:::info
+Animation for bar charts (i.e. `useBarPath`) is not yet supported.
+:::
+
 ### `animConfig`
 
 The `animConfig` argument is where you specify Reanimated options for animating the path and has a type of:
