@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.17.0
+
+### Minor Changes
+
+- Add gestureHandlerConfig prop to CartesianChart for customizable gesture handling. ([#517](https://github.com/FormidableLabs/victory-native-xl/pull/517))
+
 ## 41.16.2
 
 ### Patch Changes
