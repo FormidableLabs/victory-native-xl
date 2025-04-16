@@ -68,16 +68,16 @@ export default function HorizontalScrollPage() {
           }}
         </CartesianChart>
       </View>
-      <Hightlighted viewport={viewport} matrix={state.matrix} />
+      <Highlighted viewport={viewport} matrix={state.matrix} />
     </SafeAreaView>
   );
 }
 
-type HightlightedProps = {
+type HighlightedProps = {
   viewport: Viewport;
   matrix: SharedValue<Matrix4>;
 };
-const Hightlighted = ({ viewport, matrix }: HightlightedProps) => {
+const Highlighted = ({ viewport, matrix }: HighlightedProps) => {
   const font = useFont(inter, 12);
   const [chartBounds, setChartBounds] = React.useState<ChartBounds>({
     left: 0,
