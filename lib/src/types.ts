@@ -302,8 +302,29 @@ export type ChartPressPanConfig = {
 
 export type NonEmptyArray<T> = [T, ...T[]];
 
+/**
+ * Configuration options for the underlying Gesture Handler.
+ * These properties correspond directly to the properties available on the
+ * [`GestureDetector` component](https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/gesture-detector#properties)
+ * from React Native Gesture Handler.
+ */
 export interface GestureHandlerConfig {
+  /**
+   * Controls how text selection behaves when gestures are active.
+   * Primarily affects web platforms.
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/gesture-detector#userselectuserselect
+   */
   userSelect?: UserSelect;
+  /**
+   * Determines whether the context menu should be enabled.
+   * Primarily affects web platforms.
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/gesture-detector#enablecontextmenuenablecontextmenu
+   */
   enableContextMenu?: boolean;
+  /**
+   * Manages the touch behavior for the element, such as preventing default browser actions like scrolling.
+   * Primarily affects web platforms.
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/gesture-detector#touchactiontouchaction
+   */
   touchAction?: TouchAction;
 }
