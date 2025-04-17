@@ -48,4 +48,4 @@ describe("getFontGlyphWidth", () => {
     expect(getFontGlyphWidth("ab", mockFont)).toBe(15); // 5 + 10
     expect(getFontGlyphWidth("abc", mockFont)).toBe(30); // 5 + 10 + 15
   });
-}); 
+});
