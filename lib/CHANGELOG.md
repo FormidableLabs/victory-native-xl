@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.17.1
+
+### Patch Changes
+
+- fix rotate label transformation ([#504](https://github.com/FormidableLabs/victory-native-xl/pull/504))
+
 ## 41.17.0
 
 ### Minor Changes
