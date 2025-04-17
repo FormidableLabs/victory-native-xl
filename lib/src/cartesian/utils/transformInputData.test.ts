@@ -237,7 +237,7 @@ describe("transformInputData", () => {
 
   it("handles sided domain padding", () => {
     // Test with different padding on each side
-    const { xScale, yAxes } = transformInputData({
+    const { xScale } = transformInputData({
       data: DATA,
       xKey: "x",
       yKeys: ["y", "z"],
