@@ -10,7 +10,7 @@ import {
 } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
 import { ZoomTransform } from "d3-zoom";
-import type { ScaleLinear } from "d3-scale";
+import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
 import type {
   AxisProps,
@@ -27,7 +27,10 @@ import type {
   Viewport,
   GestureHandlerConfig,
 } from "../types";
-import { transformInputData } from "./utils/transformInputData";
+import {
+  transformInputData,
+  type AxisScaleParam,
+} from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
@@ -91,7 +94,7 @@ type CartesianChartProps<
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
-
+  axisScales?: AxisScaleParam;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   onScaleChange?: (
     xScale: ScaleLinear<number, number>,
@@ -161,12 +164,14 @@ function CartesianChartContent<
   customGestures,
   actionsRef,
   viewport,
+  axisScales,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
-  const xScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
-    undefined,
-  );
+  const xScaleRef = React.useRef<
+    ScaleLogarithmic<number, number> | ScaleLinear<number, number> | undefined
+  >(undefined);
+
   const yScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
     undefined,
   );
@@ -239,6 +244,7 @@ function CartesianChartContent<
         yAxes: normalizedAxisProps.yAxes,
         viewport,
         labelRotate: normalizedAxisProps.xAxis.labelRotate,
+        axisScales,
       });
 
     const primaryYAxis = yAxes[0];
