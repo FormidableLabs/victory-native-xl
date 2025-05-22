@@ -1,4 +1,5 @@
 import {
+  curveBasis,
   curveBumpX,
   curveBumpY,
   curveCardinal,
@@ -24,5 +25,6 @@ export const CURVES = {
   catmullRom100: curveCatmullRom.alpha(1),
   monotoneX: curveMonotoneX,
   step: curveStep,
+  basis: curveBasis,
 } as const;
 export type CurveType = keyof typeof CURVES;

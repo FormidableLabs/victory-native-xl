@@ -60,6 +60,7 @@ The `options` argument object has the following fields:
 - `curveType: CurveType`: the type of curve to use for the path, powered by `d3-shape`. The options are:
   - `linear`
   - `natural`
+  - `basis`
   - `bumpX`
   - `bumpY`
   - `cardinal`
