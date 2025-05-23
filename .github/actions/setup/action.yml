@@ -3,7 +3,7 @@ description: Setup Build Step
 inputs:
   node-version:
     required: true
-    default: '18.x'
+    default: '20'
 
 runs:
   using: "composite"
