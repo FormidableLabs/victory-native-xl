@@ -113,11 +113,17 @@ export const PolarChart = <
   const [_, setIsCanvasReady] = React.useState(false);
 
   React.useEffect(() => {
+    let timerId: NodeJS.Timeout | null = null;
     if (hasMeasuredLayoutSize) {
-      setTimeout(() => {
+      timerId = setTimeout(() => {
         setIsCanvasReady(true);
       }, 100);
     }
+    return () => {
+      if (timerId !== null) {
+        clearTimeout(timerId);
+      }
+    };
   }, [hasMeasuredLayoutSize]);
 
   const onLayout = React.useCallback(
