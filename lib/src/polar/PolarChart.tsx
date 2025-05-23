@@ -110,6 +110,15 @@ export const PolarChart = <
 
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
+  const [_, setIsCanvasReady] = React.useState(false);
+
+  React.useEffect(() => {
+    if (hasMeasuredLayoutSize) {
+      setTimeout(() => {
+        setIsCanvasReady(true);
+      }, 100);
+    }
+  }, [hasMeasuredLayoutSize]);
 
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
