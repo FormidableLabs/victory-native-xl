@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.17.2
+
+### Patch Changes
+
+- Add curve type `basis` for lines ([#565](https://github.com/FormidableLabs/victory-native-xl/pull/565))
+
 ## 41.17.1
 
 ### Patch Changes
