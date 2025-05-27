@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.17.3
+
+### Patch Changes
+
+- Bump example app dependencies + fix two issues with updated versions ([#567](https://github.com/FormidableLabs/victory-native-xl/pull/567))
+
 ## 41.17.2
 
 ### Patch Changes
