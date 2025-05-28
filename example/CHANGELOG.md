@@ -1,5 +1,11 @@
 # example
 
+## 1.2.2
+
+### Patch Changes
+
+- Bump example app dependencies + fix two issues with updated versions ([#567](https://github.com/FormidableLabs/victory-native-xl/pull/567))
+
 ## 1.2.1
 
 ### Patch Changes
