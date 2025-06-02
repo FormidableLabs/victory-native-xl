@@ -1,6 +1,7 @@
 {
   "name": "victory-native",
   "version": "41.17.3",
+  "description": "A charting library for React Native with a focus on performance and customization.",
   "private": false,
   "license": "MIT",
   "repository": {
