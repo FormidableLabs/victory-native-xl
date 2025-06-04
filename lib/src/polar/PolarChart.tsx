@@ -110,23 +110,6 @@ export const PolarChart = <
 
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
-  const [_, setIsCanvasReady] = React.useState(false);
-
-  // This is a hack to ensure the canvas is ready before the chart is rendered. It seems like it started somewhere with skia 2.0.0+ or RN 79+. This could periodically be removed and see if works without it.
-
-  React.useEffect(() => {
-    let timerId: NodeJS.Timeout | null = null;
-    if (hasMeasuredLayoutSize) {
-      timerId = setTimeout(() => {
-        setIsCanvasReady(true);
-      }, 100);
-    }
-    return () => {
-      if (timerId !== null) {
-        clearTimeout(timerId);
-      }
-    };
-  }, [hasMeasuredLayoutSize]);
 
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
