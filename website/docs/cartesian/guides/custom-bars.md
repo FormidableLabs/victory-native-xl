@@ -106,9 +106,9 @@ function MyChart() {
                 <LinearGradient
                   start={vec(0, 0)}
                   end={vec(0, 400)}
-                  {/* 👇 using the selected bar, customize children as desired */}
+                  // 👇 using the selected bar, customize children as desired
                   colors={
-                    i == activeXItem
+                    index == activeXItem
                       ? ["green", "blue"]
                       : ["#a78bfa", "#a78bfa50"]
                   }
