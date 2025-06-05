@@ -14,7 +14,7 @@
     "@gorhom/bottom-sheet": "^4",
     "@react-native-community/slider": "4.5.6",
     "@react-native-segmented-control/segmented-control": "2.5.7",
-    "@shopify/react-native-skia": "2.0.1",
+    "@shopify/react-native-skia": "2.0.2",
     "canvaskit-wasm": "^0.40.0",
     "d3-scale": "^4.0.2",
     "date-fns": "^2.30.0",
