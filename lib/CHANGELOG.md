@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.17.4
+
+### Patch Changes
+
+- remove temporary polar chart hack by bumping skia dep ([#575](https://github.com/FormidableLabs/victory-native-xl/pull/575))
+
 ## 41.17.3
 
 ### Patch Changes
