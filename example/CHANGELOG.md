@@ -1,5 +1,11 @@
 # example
 
+## 1.2.3
+
+### Patch Changes
+
+- remove temporary polar chart hack by bumping skia dep ([#575](https://github.com/FormidableLabs/victory-native-xl/pull/575))
+
 ## 1.2.2
 
 ### Patch Changes
