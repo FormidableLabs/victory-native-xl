@@ -14,11 +14,11 @@ import type {
   XAxisPropsWithDefaults,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
-import { makeScale, type AxisScale } from "./makeScale";
+import { makeScale, type AxisScaletype } from "./makeScale";
 
-export type AxisScaleParam = {
-  xAxisScale?: AxisScale;
-  yAxisScale?: AxisScale;
+export type AxisScales = {
+  xAxisScale?: AxisScaletype;
+  yAxisScale?: AxisScaletype;
 };
 
 /**
@@ -68,7 +68,7 @@ export const transformInputData = <
     y?: [number, number];
   };
   labelRotate?: number;
-  axisScales?: AxisScaleParam;
+  axisScales?: AxisScales;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;

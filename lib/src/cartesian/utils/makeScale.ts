@@ -10,7 +10,7 @@ const scaleFunctions = {
   log: scaleLog,
 };
 
-export type AxisScale = keyof typeof scaleFunctions;
+export type AxisScaletype = keyof typeof scaleFunctions;
 
 export const makeScale = ({
   inputBounds,

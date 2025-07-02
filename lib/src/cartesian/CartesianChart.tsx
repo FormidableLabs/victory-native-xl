@@ -27,10 +27,7 @@ import type {
   Viewport,
   GestureHandlerConfig,
 } from "../types";
-import {
-  transformInputData,
-  type AxisScaleParam,
-} from "./utils/transformInputData";
+import { transformInputData } from "./utils/transformInputData";
 import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
@@ -94,7 +91,6 @@ type CartesianChartProps<
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
   axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
-  axisScales?: AxisScaleParam;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   onScaleChange?: (
     xScale: ScaleLinear<number, number>,
@@ -164,7 +160,6 @@ function CartesianChartContent<
   customGestures,
   actionsRef,
   viewport,
-  axisScales,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
@@ -244,7 +239,7 @@ function CartesianChartContent<
         yAxes: normalizedAxisProps.yAxes,
         viewport,
         labelRotate: normalizedAxisProps.xAxis.labelRotate,
-        axisScales,
+        axisScales: axisOptions?.axisScales,
       });
 
     const primaryYAxis = yAxes[0];
