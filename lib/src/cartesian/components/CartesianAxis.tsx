@@ -251,6 +251,7 @@ export const CartesianAxisDefaultProps = {
   tickCount: 5,
   labelOffset: { x: 2, y: 4 },
   axisSide: { x: "bottom", y: "left" },
+  axisScales: { xAxisScale: "linear", yAxisScale: "linear" },
   labelPosition: "outset",
   formatXLabel: (label: ValueOf<InputDatum>) => String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),

@@ -12,6 +12,7 @@ import {
 } from "victory-native";
 import type { AxisLabelPosition } from "lib/src/types";
 import { useDarkMode } from "react-native-dark";
+import type { AxisScaletype } from "lib/src/cartesian/utils/makeScale";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
 import {
@@ -44,6 +45,7 @@ export default function LineChartPage(props: { segment: string }) {
       strokeWidth,
       xAxisSide,
       yAxisSide,
+      axisScales,
       xLabelOffset,
       yLabelOffset,
       xTickCount,
@@ -84,6 +86,7 @@ export default function LineChartPage(props: { segment: string }) {
           padding={chartPadding}
           yKeys={["sales"]}
           axisOptions={{
+            axisScales,
             font,
             lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
             lineColor: {
@@ -287,7 +290,6 @@ export default function LineChartPage(props: { segment: string }) {
           value={xAxisSide}
           values={["top", "bottom"]}
         />
-
         <InputSegment<AxisLabelPosition>
           label="X Axis Label position"
           onChange={(val) =>
@@ -338,6 +340,14 @@ export default function LineChartPage(props: { segment: string }) {
           }
           value={yAxisSide}
           values={["left", "right"]}
+        />
+        <InputSegment<AxisScaletype>
+          label="Y Axis scales"
+          onChange={(val) =>
+            dispatch({ type: "SET_AXIS_SCALE", payload: { yAxisScale: val } })
+          }
+          value={axisScales?.yAxisScale || "linear"}
+          values={["linear", "log"]}
         />
         <InputColor
           label="Y-axis Label Color"
