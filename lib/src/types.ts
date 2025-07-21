@@ -12,7 +12,6 @@ import type {
   UserSelect,
   TouchAction,
 } from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
-import type { AxisScaletype } from "./cartesian/utils/makeScale";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -36,9 +35,11 @@ export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
 
+export type AxisScaleType = "linear" | "log";
+
 export type AxisScales = {
-  xAxisScale?: AxisScaletype;
-  yAxisScale?: AxisScaletype;
+  xAxisScale?: AxisScaleType;
+  yAxisScale?: AxisScaleType;
 };
 
 export type ScatterOptions = {

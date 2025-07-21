@@ -12,14 +12,10 @@ import type {
   NonEmptyArray,
   YAxisPropsWithDefaults,
   XAxisPropsWithDefaults,
+  AxisScales,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
-import { makeScale, type AxisScaletype } from "./makeScale";
-
-export type AxisScales = {
-  xAxisScale?: AxisScaletype;
-  yAxisScale?: AxisScaletype;
-};
+import { makeScale } from "./makeScale";
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format

@@ -4,13 +4,7 @@ import {
   scaleLog,
   type ScaleLogarithmic,
 } from "d3-scale";
-
-const scaleFunctions = {
-  linear: scaleLinear,
-  log: scaleLog,
-};
-
-export type AxisScaletype = keyof typeof scaleFunctions;
+import type { AxisScaleType } from "lib/src/types";
 
 export const makeScale = ({
   inputBounds,
@@ -27,20 +21,30 @@ export const makeScale = ({
   padStart?: number;
   padEnd?: number;
   isNice?: boolean;
-  axisScale?: keyof typeof scaleFunctions;
+  axisScale?: AxisScaleType;
 }): ScaleLinear<number, number> | ScaleLogarithmic<number, number> => {
-  const scaleFunc = scaleFunctions[axisScale];
+  let scale: ScaleLinear<number, number> | ScaleLogarithmic<number, number>;
 
-  // Linear
-
-  //@ts-ignore
-  const viewScale = scaleFunc()
-    .domain(viewport ?? inputBounds)
-    .range(outputBounds);
-  //@ts-ignore
-  const scale = scaleFunc()
-    .domain(inputBounds)
-    .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+  switch (axisScale) {
+    case "log": {
+      const viewScale = scaleLog()
+        .domain(viewport ?? inputBounds)
+        .range(outputBounds);
+      scale = scaleLog()
+        .domain(inputBounds)
+        .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+      break;
+    }
+    default: {
+      const viewScale = scaleLinear()
+        .domain(viewport ?? inputBounds)
+        .range(outputBounds);
+      scale = scaleLinear()
+        .domain(inputBounds)
+        .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+      break;
+    }
+  }
 
   if (padStart || padEnd) {
     scale

@@ -10,9 +10,8 @@ import {
   type XAxisSide,
   type YAxisSide,
 } from "victory-native";
-import type { AxisLabelPosition } from "lib/src/types";
+import type { AxisLabelPosition, AxisScaleType } from "lib/src/types";
 import { useDarkMode } from "react-native-dark";
-import type { AxisScaletype } from "lib/src/cartesian/utils/makeScale";
 import { InputSlider } from "example/components/InputSlider";
 import { InputSegment } from "example/components/InputSegment";
 import {
@@ -341,7 +340,7 @@ export default function LineChartPage(props: { segment: string }) {
           value={yAxisSide}
           values={["left", "right"]}
         />
-        <InputSegment<AxisScaletype>
+        <InputSegment<AxisScaleType>
           label="Y Axis scales"
           onChange={(val) =>
             dispatch({ type: "SET_AXIS_SCALE", payload: { yAxisScale: val } })
