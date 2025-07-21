@@ -4,7 +4,7 @@ import {
   scaleLog,
   type ScaleLogarithmic,
 } from "d3-scale";
-import type { AxisScaleType } from "lib/src/types";
+import type { AxisScaleType } from "../../types";
 
 export const makeScale = ({
   inputBounds,
