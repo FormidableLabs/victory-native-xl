@@ -1,4 +1,4 @@
-import type { AxisLabelPosition } from "lib/src/types";
+import type { AxisLabelPosition, AxisScales } from "lib/src/types";
 import type { CurveType, XAxisSide, YAxisSide } from "victory-native";
 
 type State = {
@@ -11,6 +11,7 @@ type State = {
   xTickCount: number;
   xAxisSide: XAxisSide;
   yAxisSide: YAxisSide;
+  axisScales: AxisScales;
   scatterRadius: number;
   xAxisLabelPosition: AxisLabelPosition;
   yAxisLabelPosition: AxisLabelPosition;
@@ -33,6 +34,7 @@ type Action =
   | { type: "SET_X_TICK_COUNT"; payload: number }
   | { type: "SET_X_AXIS_SIDE"; payload: XAxisSide }
   | { type: "SET_Y_AXIS_SIDE"; payload: YAxisSide }
+  | { type: "SET_AXIS_SCALE"; payload: AxisScales }
   | { type: "SET_SCATTER_RADIUS"; payload: number }
   | { type: "SET_X_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
   | { type: "SET_Y_AXIS_LABEL_POSITION"; payload: AxisLabelPosition }
@@ -64,6 +66,8 @@ export const optionsReducer = (state: State, action: Action): State => {
       return { ...state, xAxisSide: action.payload };
     case "SET_Y_AXIS_SIDE":
       return { ...state, yAxisSide: action.payload };
+    case "SET_AXIS_SCALE":
+      return { ...state, axisScales: action.payload };
     case "SET_SCATTER_RADIUS":
       return { ...state, scatterRadius: action.payload };
     case "SET_X_AXIS_LABEL_POSITION":
@@ -101,6 +105,9 @@ export const optionsInitialState: State = {
   scatterRadius: 7,
   xAxisSide: "bottom",
   yAxisSide: "left",
+  axisScales: {
+    yAxisScale: "linear",
+  },
   xAxisLabelPosition: "outset",
   yAxisLabelPosition: "outset",
   colors: {},

@@ -12,6 +12,7 @@ import type {
   NonEmptyArray,
   YAxisPropsWithDefaults,
   XAxisPropsWithDefaults,
+  AxisScales,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { makeScale } from "./makeScale";
@@ -45,6 +46,7 @@ export const transformInputData = <
   yAxes,
   viewport,
   labelRotate,
+  axisScales,
 }: {
   data: RawData[];
   xKey: XK;
@@ -62,6 +64,7 @@ export const transformInputData = <
     y?: [number, number];
   };
   labelRotate?: number;
+  axisScales?: AxisScales;
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
@@ -73,6 +76,7 @@ export const transformInputData = <
   }>;
 } => {
   const data = [..._data];
+  const { xAxisScale = "linear", yAxisScale = "linear" } = axisScales || {};
 
   // Determine if xKey data is numerical
   const isNumericalData = data.every(
@@ -113,6 +117,7 @@ export const transformInputData = <
   const xTempScale = makeScale({
     inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
     outputBounds: [0, rawChartWidth],
+    axisScale: xAxisScale,
   });
 
   // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
@@ -228,6 +233,7 @@ export const transformInputData = <
           : domainPadding?.bottom,
       padStart:
         typeof domainPadding === "number" ? domainPadding : domainPadding?.top,
+      axisScale: yAxisScale,
     });
 
     const yData = yKeysForAxis.reduce(
@@ -325,6 +331,7 @@ export const transformInputData = <
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
     padEnd:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.right,
+    axisScale: xAxisScale,
   });
 
   // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function

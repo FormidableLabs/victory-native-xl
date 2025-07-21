@@ -35,6 +35,13 @@ export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
 
+export type AxisScaleType = "linear" | "log";
+
+export type AxisScales = {
+  xAxisScale?: AxisScaleType;
+  yAxisScale?: AxisScaleType;
+};
+
 export type ScatterOptions = {
   radius: number;
 };
@@ -125,6 +132,7 @@ export type AxisProps<
   yTicksNormalized: number[];
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
+  axisScales?: AxisScales;
   font?: SkFont | null;
   lineColor?: Color | { grid: Color | { x: Color; y: Color }; frame: Color };
   lineWidth?:
