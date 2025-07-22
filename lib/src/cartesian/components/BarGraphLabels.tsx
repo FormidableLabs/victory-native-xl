@@ -7,6 +7,8 @@ export type BarLabelConfig = {
   position: "top" | "bottom" | "left" | "right";
   font: SkFont | null;
   color?: Color;
+  labelRotate?: number;
+  format?: (value: number | string) => string;
 };
 
 type BarGraphLabelProps = {
@@ -29,7 +31,11 @@ export const BarGraphLabels = ({
 
   // Loop over the data points and position each label
   return points.map(({ x, y = 0, yValue }) => {
-    const yText = yValue?.toString() ?? "";
+    // Format labels, if a format function is provided
+    const yText = options.format
+      ? options.format(yValue ? yValue : "")
+      : yValue?.toString() ?? "";
+
     const labelWidth = getFontGlyphWidth(yText, font);
 
     let xOffset;
@@ -46,19 +52,19 @@ export const BarGraphLabels = ({
     // Bar Midpoints
     const barVerticalMidpoint =
       (chartInnerTopEdge + chartInnerBottomEdge + Number(y)) / 2;
-    const barHorizontalMidpoint = x - labelWidth / 2;
+    // Move the label left by half its width to properly center the text over the bar
+    // const barHorizontalMidpoint = x - labelWidth / 2;
 
     switch (position) {
       case "top": {
         // Position the label above the bar
-        // Move the label left by half its width to properly center the text over the bar
-        xOffset = barHorizontalMidpoint;
+        xOffset = x;
         yOffset = Number(y) - LABEL_OFFSET_FROM_POSITION;
         break;
       }
       case "bottom": {
         // Position the label at the bottom of the bar
-        xOffset = barHorizontalMidpoint;
+        xOffset = x;
         // Use the chartBounds here so that the label isn't rendered under the graph
         yOffset = chartInnerBottomEdge - LABEL_OFFSET_FROM_POSITION;
         break;
@@ -92,6 +98,17 @@ export const BarGraphLabels = ({
         text={yText}
         font={font}
         color={color}
+        // Rotation of the label
+        transform={
+          options.labelRotate !== undefined
+            ? [{ rotate: (options.labelRotate * Math.PI) / 180 }]
+            : undefined
+        }
+        origin={
+          options.labelRotate !== undefined
+            ? { x: xOffset, y: yOffset }
+            : undefined
+        }
       />
     );
   });
