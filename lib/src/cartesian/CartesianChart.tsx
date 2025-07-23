@@ -121,7 +121,7 @@ type CartesianChartProps<
       }>
     | undefined
   > | null>;
-  ref?: React.RefObject<
+  ref?: React.Ref<
     CartesianChartRef<
       | ChartPressState<{
           x: InputFields<RawData>[XK];
@@ -318,7 +318,10 @@ function CartesianChartContent<
    * Take a "press value" and an x-value and update the shared values accordingly.
    */
   const handleTouch = (
-    v: ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
+    v: ChartPressState<{
+      x: InputFields<RawData>[XK];
+      y: Record<YK, number>;
+    }>,
     x: number,
     y: number,
   ) => {
@@ -390,7 +393,8 @@ function CartesianChartContent<
         handleTouch,
       },
     }),
-    [canvasRef, handleTouch],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [canvasRef],
   );
 
   if (actionsRef) {

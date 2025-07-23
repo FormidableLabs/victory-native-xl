@@ -13,12 +13,12 @@ import {
   useChartPressState,
   type CartesianChartRef,
 } from "victory-native";
-import { Button } from "../components/Button";
 import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
 import { type SharedValue } from "react-native-reanimated";
+import { useDarkMode } from "react-native-dark";
+import { Button } from "../components/Button";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
-import { useDarkMode } from "react-native-dark";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
 
@@ -53,19 +53,22 @@ export default function ChartRefsExample() {
     scatter: "#a78bfa",
   };
   const font = useFont(inter, 12);
-  const chartRef = React.useRef<CartesianChartRef<any>>(null);
-  const actionRef = React.useRef<CartesianActionsHandle>(null);
-  const [snapshotUri, setSnapshotUri] = React.useState<string | null>(null);
-
   // Create chart press state for interactivity
-  const {state} = useChartPressState({
+  const { state } = useChartPressState<{
+    x: number;
+    y: Record<"sales", number>;
+  }>({
     x: 0,
     y: { sales: 0 },
   });
+  const chartRef =
+    React.useRef<CartesianChartRef<typeof state | undefined>>(null);
+  const actionRef = React.useRef<CartesianActionsHandle>(null);
+  const [snapshotUri, setSnapshotUri] = React.useState<string | null>(null);
 
   const handleProgrammaticTouch = () => {
     if (chartRef.current) {
-      const x = Math.floor(Math.random() * data.length)  ;
+      const x = Math.floor(Math.random() * data.length);
       const y = randomNumber();
       chartRef.current.actions.handleTouch(state, x, y);
     }
@@ -220,12 +223,11 @@ const styles = StyleSheet.create({
     height: 300,
     borderRadius: 8,
     overflow: "hidden",
-    width: '100%'
+    width: "100%",
   },
   snapshot: {
     width: "100%",
     height: "100%",
-  
   },
   optionsScrollView: {
     flex: 0.5,

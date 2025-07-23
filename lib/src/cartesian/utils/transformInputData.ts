@@ -130,8 +130,8 @@ export const transformInputData = <
     ...xTicksNormalized.map((xTick) => {
       const labelValue = xAxis.formatXLabel
         ? xAxis.formatXLabel(
-          xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
-        )
+            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+          )
         : String(xTick);
       const labelStr = String(labelValue);
       if (!xAxis.font) return 0;
@@ -207,13 +207,13 @@ export const transformInputData = <
         return [
           adjustedOutputWindow.yMin,
           adjustedOutputWindow.yMax +
-          (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin +
-          (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
           adjustedOutputWindow.yMax,
         ];
       }
