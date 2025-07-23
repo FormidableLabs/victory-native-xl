@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
-import { Canvas, Group } from "@shopify/react-native-skia";
+import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
   type ComposedGesture,
@@ -67,6 +67,11 @@ export type CartesianActionsHandle<T = undefined> =
       : never
     : never;
 
+export type CartesianChartRef<T = undefined> = {
+  canvas: CanvasRef | null;
+  actions: CartesianActionsHandle<T>;
+};
+
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -116,16 +121,30 @@ type CartesianChartProps<
       }>
     | undefined
   > | null>;
+  ref?: React.RefObject<
+    CartesianChartRef<
+      | ChartPressState<{
+          x: InputFields<RawData>[XK];
+          y: Record<YK, number>;
+        }>
+      | undefined
+    >
+  >;
 };
 
 export function CartesianChart<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
->({ transformState, children, ...rest }: CartesianChartProps<RawData, XK, YK>) {
+>({
+  transformState,
+  children,
+  ref,
+  ...rest
+}: CartesianChartProps<RawData, XK, YK>) {
   return (
     <CartesianTransformProvider transformState={transformState}>
-      <CartesianChartContent {...{ ...rest, transformState }}>
+      <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
         {children}
       </CartesianChartContent>
     </CartesianTransformProvider>
@@ -160,6 +179,7 @@ function CartesianChartContent<
   customGestures,
   actionsRef,
   viewport,
+  ref,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
@@ -170,6 +190,7 @@ function CartesianChartContent<
   const yScaleRef = React.useRef<ScaleLinear<number, number> | undefined>(
     undefined,
   );
+  const canvasRef = React.useRef<CanvasRef | null>(null);
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
   const onLayout = React.useCallback(
@@ -307,7 +328,6 @@ function CartesianChartContent<
     if (typeof idx !== "number") return;
 
     const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
-
     // begin stacked bar handling:
     // store the heights of each bar segment
     const barHeights: number[] = [];
@@ -361,6 +381,17 @@ function CartesianChartContent<
 
     lastIdx.value = idx;
   };
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      canvas: canvasRef.current,
+      actions: {
+        handleTouch,
+      },
+    }),
+    [canvasRef, handleTouch],
+  );
 
   if (actionsRef) {
     actionsRef.current = {
@@ -649,7 +680,7 @@ function CartesianChartContent<
 
   // Body of the chart.
   const body = (
-    <Canvas style={{ flex: 1 }} onLayout={onLayout}>
+    <Canvas ref={canvasRef} style={{ flex: 1 }} onLayout={onLayout}>
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
