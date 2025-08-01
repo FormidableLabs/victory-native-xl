@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.18.0
+
+### Minor Changes
+
+- Add scale logarithmic to cartesian charts ([#592](https://github.com/FormidableLabs/victory-native-xl/pull/592))
+
 ## 41.17.4
 
 ### Patch Changes
