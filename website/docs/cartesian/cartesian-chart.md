@@ -298,7 +298,11 @@ const tapGesture = Gesture.Tap().onStart((e) => {
 const composed = Gesture.Race(tapGesture);
 ```
 
-### `actionsRef`
+### `actionsRef`  <i>deprecated</i>
+
+:::warning
+Deprecated in favor of the `ref` prop. Use `ref.actions` to access the same functionality.
+:::
 
 The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
 
@@ -319,6 +323,43 @@ function MyChart() {
   return (
     <CartesianChart
       actionsRef={actionsRef}
+      // ... other props
+    />
+  );
+}
+```
+### `ref`
+
+The `ref` prop provides access to the chart's canvas and actions through a ref object. It exposes both the underlying Skia canvas and chart control methods. Currently exposes:
+
+- `canvas`: Access to the underlying Skia canvas instance, allowing direct canvas operations like ```redraw()```, ```makeImageSnapshot()```, and ```makeImageSnapshotAsync()```  
+- `actions`: Same actions as `actionsRef`, providing methods to control chart behavior programmatically
+  
+Example usage:
+
+```tsx
+function MyChart() {
+  const { state } = useChartPressState({ x: 0, y: { sales: 0 } });
+  const chartRef = useRef<CartesianChartRef<typeof state>>(null);
+
+  const handleSnapshot = async () => {
+    if (chartRef.current?.canvas) {
+      // Take a snapshot of the chart
+        const snapshot = await chartRef.current.canvas.makeImageSnapshot();
+      const base64 = snapshot.encodeToBase64(ImageFormat.PNG, 100);
+      // const imgUri = data:image/png;base64,${base64}`
+      // Use the snapshot...
+    }
+  };
+
+  const simulateTouch = () => {
+    // Use actions to trigger touch programmatically
+    chartRef.current?.actions.handleTouch(state, 100, 200);
+  };
+
+  return (
+    <CartesianChart
+      ref={chartRef}
       // ... other props
     />
   );

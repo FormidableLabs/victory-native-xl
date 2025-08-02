@@ -4,6 +4,7 @@
 export {
   CartesianChart,
   type CartesianActionsHandle,
+  type CartesianChartRef,
 } from "./cartesian/CartesianChart";
 
 export {
