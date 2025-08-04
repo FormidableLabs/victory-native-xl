@@ -14,13 +14,13 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "exports": {
-    ".": [
-      {
-        "imports": "./dist/index.js",
-        "types": "./dist/index.d.ts"
-      },
-      "./dist/index.js"
-    ]
+    ".": {
+      "react-native": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./src/index.ts"
+    }
   },
   "files": [
     "src",
