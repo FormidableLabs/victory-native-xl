@@ -1,4 +1,10 @@
-import { type ScaleLinear, scaleLinear } from "d3-scale";
+import {
+  type ScaleLinear,
+  scaleLinear,
+  scaleLog,
+  type ScaleLogarithmic,
+} from "d3-scale";
+import type { AxisScaleType } from "../../types";
 
 export const makeScale = ({
   inputBounds,
@@ -7,6 +13,7 @@ export const makeScale = ({
   padEnd,
   viewport,
   isNice = false,
+  axisScale = "linear",
 }: {
   inputBounds: [number, number];
   outputBounds: [number, number];
@@ -14,14 +21,30 @@ export const makeScale = ({
   padStart?: number;
   padEnd?: number;
   isNice?: boolean;
-}): ScaleLinear<number, number> => {
-  // Linear
-  const viewScale = scaleLinear()
-    .domain(viewport ?? inputBounds)
-    .range(outputBounds);
-  const scale = scaleLinear()
-    .domain(inputBounds)
-    .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+  axisScale?: AxisScaleType;
+}): ScaleLinear<number, number> | ScaleLogarithmic<number, number> => {
+  let scale: ScaleLinear<number, number> | ScaleLogarithmic<number, number>;
+
+  switch (axisScale) {
+    case "log": {
+      const viewScale = scaleLog()
+        .domain(viewport ?? inputBounds)
+        .range(outputBounds);
+      scale = scaleLog()
+        .domain(inputBounds)
+        .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+      break;
+    }
+    default: {
+      const viewScale = scaleLinear()
+        .domain(viewport ?? inputBounds)
+        .range(outputBounds);
+      scale = scaleLinear()
+        .domain(inputBounds)
+        .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
+      break;
+    }
+  }
 
   if (padStart || padEnd) {
     scale
