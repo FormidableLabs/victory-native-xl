@@ -1,12 +1,11 @@
 import * as React from "react";
-import { Canvas, Group } from "@shopify/react-native-skia";
 import {
-  StyleSheet,
-  View,
-  type ViewStyle,
-  type LayoutChangeEvent,
-  type StyleProp,
-} from "react-native";
+  Canvas,
+  Group,
+  useCanvasRef,
+  type CanvasRef,
+} from "@shopify/react-native-skia";
+import { StyleSheet, View, type ViewStyle, type StyleProp } from "react-native";
 import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import { PolarChartProvider } from "./contexts/PolarChartContext";
@@ -24,7 +23,7 @@ import {
 import { GestureHandler } from "../shared/GestureHandler";
 
 type PolarChartBaseProps = {
-  onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
+  onLayout: ({ width, height }: { width: number; height: number }) => void;
   hasMeasuredLayoutSize: boolean;
   canvasSize: { width: number; height: number };
   containerStyle?: StyleProp<ViewStyle>;
@@ -44,6 +43,7 @@ const PolarChartBase = (
     canvasSize,
     transformState,
   } = props;
+  const ref = useCanvasRef();
   const { width, height } = canvasSize;
   const Bridge: ContextBridge = useContextBridge();
 
@@ -56,11 +56,17 @@ const PolarChartBase = (
     );
   }
 
+  React.useLayoutEffect(() => {
+    ref.current?.measure((_x, _y, width, height) => {
+      onLayout({ width, height });
+    });
+  }, []);
+
   return (
     <View style={[styles.baseContainer, containerStyle]}>
       <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
         <Canvas
-          onLayout={onLayout}
+          ref={ref as React.RefObject<CanvasRef>}
           style={StyleSheet.flatten([
             styles.canvasContainer,
             hasMeasuredLayoutSize ? { width, height } : null,
@@ -112,9 +118,9 @@ export const PolarChart = <
     React.useState(false);
 
   const onLayout = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+    ({ width, height }: { width: number; height: number }) => {
       setHasMeasuredLayoutSize(true);
-      setCanvasSize(layout);
+      setCanvasSize({ width, height });
     },
     [],
   );
