@@ -60,7 +60,7 @@ const PolarChartBase = (
     ref.current?.measure((_x, _y, width, height) => {
       onLayout({ width, height });
     });
-  }, []);
+  }, [onLayout, ref]);
 
   return (
     <View style={[styles.baseContainer, containerStyle]}>

@@ -697,7 +697,7 @@ function CartesianChartContent<
     ref.current?.measure((_x, _y, width, height) => {
       onLayout({ width, height });
     });
-  }, []);
+  }, [onLayout, ref]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
