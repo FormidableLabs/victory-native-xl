@@ -4,8 +4,8 @@ import {
   StyleSheet,
   View,
   type ViewStyle,
-  type LayoutChangeEvent,
   type StyleProp,
+  type LayoutChangeEvent,
 } from "react-native";
 import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
@@ -57,10 +57,9 @@ const PolarChartBase = (
   }
 
   return (
-    <View style={[styles.baseContainer, containerStyle]}>
+    <View style={[styles.baseContainer, containerStyle]} onLayout={onLayout}>
       <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
         <Canvas
-          onLayout={onLayout}
           style={StyleSheet.flatten([
             styles.canvasContainer,
             hasMeasuredLayoutSize ? { width, height } : null,
