@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.19.1
+
+### Patch Changes
+
+- move deprecate canvas onLayout onto parent containers ([#605](https://github.com/FormidableLabs/victory-native-xl/pull/605))
+
 ## 41.19.0
 
 ### Minor Changes
