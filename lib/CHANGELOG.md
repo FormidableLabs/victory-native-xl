@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.19.0
+
+### Minor Changes
+
+- fix: update package.json exports format for Metro compatibility ([#581](https://github.com/FormidableLabs/victory-native-xl/pull/581))
+
 ## 41.18.0
 
 ### Minor Changes
