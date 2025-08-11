@@ -1,5 +1,23 @@
 # victory-native
 
+## 41.19.1
+
+### Patch Changes
+
+- move deprecate canvas onLayout onto parent containers ([#605](https://github.com/FormidableLabs/victory-native-xl/pull/605))
+
+## 41.19.0
+
+### Minor Changes
+
+- fix: update package.json exports format for Metro compatibility ([#581](https://github.com/FormidableLabs/victory-native-xl/pull/581))
+
+## 41.18.0
+
+### Minor Changes
+
+- Add scale logarithmic to cartesian charts ([#592](https://github.com/FormidableLabs/victory-native-xl/pull/592))
+
 ## 41.17.4
 
 ### Patch Changes
