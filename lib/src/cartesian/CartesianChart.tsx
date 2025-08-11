@@ -649,7 +649,7 @@ function CartesianChartContent<
 
   // Body of the chart.
   const body = (
-    <Canvas style={{ flex: 1 }} onLayout={onLayout}>
+    <Canvas style={{ flex: 1 }}>
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
@@ -689,7 +689,10 @@ function CartesianChartContent<
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+    <GestureHandlerRootView
+      style={{ flex: 1, overflow: "hidden" }}
+      onLayout={onLayout}
+    >
       {body}
       <GestureHandler
         config={gestureHandlerConfig}
