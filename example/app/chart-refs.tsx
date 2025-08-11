@@ -17,6 +17,7 @@ import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
 import { type SharedValue } from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
 import { Button } from "../components/Button";
+import { InfoCard } from "../components/InfoCard";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
 
@@ -137,13 +138,11 @@ export default function ChartRefsExample() {
                 color={colors.stroke}
                 strokeWidth={2}
               />
-              {true && (
-                <ToolTip
-                  x={state.x.position}
-                  y={state.y.sales.position}
-                  color={colors.scatter}
-                />
-              )}
+              <ToolTip
+                x={state.x.position}
+                y={state.y.sales.position}
+                color={colors.scatter}
+              />
             </>
           )}
         </CartesianChart>
