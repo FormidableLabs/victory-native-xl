@@ -153,6 +153,11 @@ export const ChartRoutes: {
     description: "Show example of scrolling chart data.",
     path: "/scroll",
   },
+  {
+    title: "Chart Refs",
+    description: "This example demonstrates chart interactions using refs.",
+    path: "/chart-refs",
+  },
 ];
 
 if (__DEV__) {
