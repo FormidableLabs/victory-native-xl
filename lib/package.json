@@ -15,8 +15,8 @@
   "main": "dist/index.js",
   "exports": {
     ".": {
-      "react-native": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "default": "./src/index.ts"
