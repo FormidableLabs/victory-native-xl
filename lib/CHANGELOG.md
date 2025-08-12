@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.19.2
+
+### Patch Changes
+
+- fixes type exports ([#609](https://github.com/FormidableLabs/victory-native-xl/pull/609))
+
 ## 41.19.1
 
 ### Patch Changes
