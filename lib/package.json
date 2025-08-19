@@ -1,6 +1,6 @@
 {
   "name": "victory-native",
-  "version": "41.19.1",
+  "version": "41.19.2",
   "description": "A charting library for React Native with a focus on performance and customization.",
   "private": false,
   "license": "MIT",
@@ -15,8 +15,8 @@
   "main": "dist/index.js",
   "exports": {
     ".": {
-      "react-native": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "default": "./src/index.ts"
