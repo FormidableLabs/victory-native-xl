@@ -17,7 +17,6 @@ import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
 import { type SharedValue } from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
 import { Button } from "../components/Button";
-import { InfoCard } from "../components/InfoCard";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
 
