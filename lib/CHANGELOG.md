@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.19.3
+
+### Patch Changes
+
+- Add ref Prop to CartesianChart to Expose Skia Canvas and Chart Actions ([#599](https://github.com/FormidableLabs/victory-native-xl/pull/599))
+
 ## 41.19.2
 
 ### Patch Changes
