@@ -58,7 +58,7 @@ To enable pan and zoom gestures on a chart, pass the transform state to the char
 import { CartesianChart, useChartTransformState } from "victory-native";
 
 function MyChart() {
-  const transformState = useChartTransformState({
+  const {state: transformState} = useChartTransformState({
     scaleX: 1.5, // Initial X-axis scale
     scaleY: 1.0, // Initial Y-axis scale
   });
