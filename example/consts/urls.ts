@@ -1,2 +1,2 @@
 export const VICTORY_OSS_URL =
-  "https://formidable.com/open-source/victory-native/";
+  "https://commerce.nearform.com/open-source/victory-native/";

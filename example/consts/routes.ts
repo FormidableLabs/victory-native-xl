@@ -165,13 +165,13 @@ if (__DEV__) {
     {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
-      url: "https://formidable.com/open-source/victory-native/getting-started",
+      url: "https://commerce.nearform.com/open-source/victory-native/getting-started",
       path: "/guides/getting-started",
     },
     {
       title: "Multi-Press Guide",
       description: "Guide for supporting multi-press interactions.",
-      url: "https://formidable.com/open-source/victory-native/cartesian/guides/multi-press",
+      url: "https://commerce.nearform.com/open-source/victory-native/cartesian/guides/multi-press",
       path: "/guides/multi-press",
     },
     {
