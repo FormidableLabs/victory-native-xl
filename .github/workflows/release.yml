@@ -20,9 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CHANGESETS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/setup
+
+      - name: Upgrade npm for OIDC
+        run: npm i -g npm@^11.5.1
+
+      - run: npm config set registry https://registry.npmjs.org
 
       - name: Build
         run: yarn run build
@@ -34,5 +39,4 @@ jobs:
           version: yarn run version
           publish: yarn run changeset publish
         env:
-          GITHUB_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
