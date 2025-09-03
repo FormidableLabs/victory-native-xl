@@ -237,7 +237,7 @@ Example usage:
 import { CartesianChart, useChartTransformState } from "victory-native";
 
 function MyChart() {
-  const transformState = useChartTransformState();
+  const { state: transformState } = useChartTransformState();
 
   return (
     <CartesianChart
@@ -298,7 +298,7 @@ const tapGesture = Gesture.Tap().onStart((e) => {
 const composed = Gesture.Race(tapGesture);
 ```
 
-### `actionsRef`  <i>deprecated</i>
+### `actionsRef` <i>deprecated</i>
 
 :::warning
 Deprecated in favor of the `ref` prop. Use `ref.actions` to access the same functionality.
@@ -328,17 +328,18 @@ function MyChart() {
   );
 }
 ```
+
 ### `ref`
 
 The `ref` prop provides access to the chart's canvas and actions through a ref object. It exposes both the underlying Skia canvas and chart control methods. Currently exposes:
 
-- `canvas`: Access to the underlying Skia canvas instance, allowing direct canvas operations like ```redraw()```, ```makeImageSnapshot()```, and ```makeImageSnapshotAsync()```  
+- `canvas`: Access to the underlying Skia canvas instance, allowing direct canvas operations like `redraw()`, `makeImageSnapshot()`, and `makeImageSnapshotAsync()`
 - `actions`: Same actions as `actionsRef`, providing methods to control chart behavior programmatically
 
 :::note React version compatibility
 The `ref` prop on `CartesianChart` requires React 19 or newer, which supports passing a `ref` as a regular prop to function components. If you're on React 18 or earlier, use the deprecated `actionsRef` prop for programmatic interactions. Canvas access via `ref.canvas` is not available without React 19.
 :::
-  
+
 Example usage:
 
 ```tsx
@@ -349,7 +350,7 @@ function MyChart() {
   const handleSnapshot = async () => {
     if (chartRef.current?.canvas) {
       // Take a snapshot of the chart
-        const snapshot = await chartRef.current.canvas.makeImageSnapshot();
+      const snapshot = await chartRef.current.canvas.makeImageSnapshot();
       const base64 = snapshot.encodeToBase64(ImageFormat.PNG, 100);
       // const imgUri = `data:image/png;base64,${base64}`
       // Use the snapshot...
