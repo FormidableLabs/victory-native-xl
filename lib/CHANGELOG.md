@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.20.0
+
+### Minor Changes
+
+- Add `stepAfter` and `stepBefore` to the line curve options ([#618](https://github.com/FormidableLabs/victory-native-xl/pull/618))
+
 ## 41.19.3
 
 ### Patch Changes
