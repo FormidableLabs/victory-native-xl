@@ -724,7 +724,7 @@ function CartesianChartContent<
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
+    <GestureHandlerRootView>
       <View style={{ flex: 1, overflow: "hidden" }} onLayout={onLayout}>
         {body}
         <GestureHandler
