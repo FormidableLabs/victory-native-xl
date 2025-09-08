@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.20.1
+
+### Patch Changes
+
+- use `View` for cartestian chart `onLayout` ([#621](https://github.com/FormidableLabs/victory-native-xl/pull/621))
+
 ## 41.20.0
 
 ### Minor Changes
