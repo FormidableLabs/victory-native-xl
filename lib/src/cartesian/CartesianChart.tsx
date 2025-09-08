@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type LayoutChangeEvent } from "react-native";
+import { View, type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
@@ -724,23 +724,23 @@ function CartesianChartContent<
   }
 
   return (
-    <GestureHandlerRootView
-      style={{ flex: 1, overflow: "hidden" }}
-      onLayout={onLayout}
-    >
-      {body}
-      <GestureHandler
-        config={gestureHandlerConfig}
-        gesture={composed}
-        transformState={transformState}
-        dimensions={{
-          x: Math.min(xScale.range()[0]!, 0),
-          y: Math.min(primaryYScale.range()[0]!, 0),
-          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-          height:
-            primaryYScale.range()[1]! - Math.min(primaryYScale.range()[0]!, 0),
-        }}
-      />
+    <GestureHandlerRootView>
+      <View style={{ flex: 1, overflow: "hidden" }} onLayout={onLayout}>
+        {body}
+        <GestureHandler
+          config={gestureHandlerConfig}
+          gesture={composed}
+          transformState={transformState}
+          dimensions={{
+            x: Math.min(xScale.range()[0]!, 0),
+            y: Math.min(primaryYScale.range()[0]!, 0),
+            width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
+            height:
+              primaryYScale.range()[1]! -
+              Math.min(primaryYScale.range()[0]!, 0),
+          }}
+        />
+      </View>
     </GestureHandlerRootView>
   );
 }
