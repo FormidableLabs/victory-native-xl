@@ -10,7 +10,7 @@ The [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/
 
 ## Example
 
-The example below shows how to use `Pie.SliceAngularInset` to render `LinearGradient` slices.
+The example below shows how to use `Pie.Slice` to render `LinearGradient` slices.
 
 ```tsx
 import { View } from "react-native";
