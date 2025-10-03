@@ -19,7 +19,7 @@ export default function GettingStartedScreen() {
           font,
         }}
         viewport={{
-          x: [5, 20],
+          x: [15, 30],
           y: [0, 120],
         }}
         chartPressState={state}
