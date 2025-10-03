@@ -488,7 +488,7 @@ function CartesianChartContent<
 
         if (!v || !touch) continue;
         if (!v.isActive.value) v.isActive.value = true;
-        handleTouch(v, touch.x, touch.y);
+        handleTouch(v, touch.absoluteX, touch.absoluteY);
       }
     })
     /**
