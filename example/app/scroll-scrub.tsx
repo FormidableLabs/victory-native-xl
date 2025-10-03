@@ -16,7 +16,7 @@ export default function ScrollAndScrub() {
   const { state: transformState } = useChartTransformState();
 
   return (
-    <View style={{ height: 300 }}>
+    <View style={{ maxHeight: 400, flex: 1 }}>
       <CartesianChart
         data={DATA}
         xKey="day"
@@ -27,12 +27,12 @@ export default function ScrollAndScrub() {
         transformConfig={{
           pan: {
             enabled: true,
-            dimensions: ["x", "y"],
+            dimensions: ["x"],
           },
         }}
         viewport={{
           x: [15, 30],
-          y: [15, 120],
+          y: [40, 85],
         }}
         chartPressState={state}
         transformState={transformState}
