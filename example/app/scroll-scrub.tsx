@@ -8,9 +8,9 @@ import {
 } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
-import inter from "../../assets/inter-medium.ttf";
+import inter from "../assets/inter-medium.ttf";
 
-export default function GettingStartedScreen() {
+export default function ScrollAndScrub() {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const { state: transformState } = useChartTransformState();
