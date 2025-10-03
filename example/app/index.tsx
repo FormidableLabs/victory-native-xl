@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import {
   FlatList,
   View,
@@ -16,13 +16,6 @@ import { VICTORY_OSS_URL } from "../consts/urls";
 import { Text } from "../components/Text";
 
 export default function LandingPage() {
-  const router = useRouter();
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      router.replace("/guides/getting-started");
-    }, 100);
-  }, [router]);
   const { width } = useWindowDimensions();
 
   const handleDocsButtonPress = React.useCallback(async () => {
