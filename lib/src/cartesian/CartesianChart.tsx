@@ -445,6 +445,7 @@ function CartesianChartContent<
 
           v.isActive.value = true;
 
+          // [3] and [7] are the X and Y translation components of the 4x4 transformation matrix, respectively.
           const scrolledX = transformState?.matrix.value?.[3] || 0;
           const scrolledY = transformState?.matrix.value?.[7] || 0;
 
