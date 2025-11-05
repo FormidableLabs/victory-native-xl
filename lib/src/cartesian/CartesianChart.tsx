@@ -444,7 +444,16 @@ function CartesianChartContent<
             touchMap.value[touch.id] = i;
 
           v.isActive.value = true;
-          handleTouch(v, touch.x, touch.y);
+
+          // [3] and [7] are the X and Y translation components of the 4x4 transformation matrix, respectively.
+          const scrolledX = transformState?.matrix.value?.[3] || 0;
+          const scrolledY = transformState?.matrix.value?.[7] || 0;
+
+          handleTouch(
+            v,
+            touch.absoluteX - scrolledX,
+            touch.absoluteY - scrolledY,
+          );
         } else {
           gestureState.value.bootstrap.push([v, touch]);
         }
@@ -463,7 +472,15 @@ function CartesianChartContent<
           touchMap.value[touch.id] = i;
 
         v.isActive.value = true;
-        handleTouch(v, touch.x, touch.y);
+
+        const scrolledX = transformState?.matrix.value?.[3] || 0;
+        const scrolledY = transformState?.matrix.value?.[7] || 0;
+
+        handleTouch(
+          v,
+          touch.absoluteX - scrolledX,
+          touch.absoluteY - scrolledY,
+        );
       }
     })
     /**
@@ -488,7 +505,15 @@ function CartesianChartContent<
 
         if (!v || !touch) continue;
         if (!v.isActive.value) v.isActive.value = true;
-        handleTouch(v, touch.x, touch.y);
+
+        const scrolledX = transformState?.matrix.value?.[3] || 0;
+        const scrolledY = transformState?.matrix.value?.[7] || 0;
+
+        handleTouch(
+          v,
+          touch.absoluteX - scrolledX,
+          touch.absoluteY - scrolledY,
+        );
       }
     })
     /**
