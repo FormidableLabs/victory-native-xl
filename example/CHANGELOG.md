@@ -1,5 +1,11 @@
 # example
 
+## 1.3.1
+
+### Patch Changes
+
+- all scrolling and scrubbing ([#633](https://github.com/FormidableLabs/victory-native-xl/pull/633))
+
 ## 1.3.0
 
 ### Minor Changes

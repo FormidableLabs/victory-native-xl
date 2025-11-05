@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.20.2
+
+### Patch Changes
+
+- all scrolling and scrubbing ([#633](https://github.com/FormidableLabs/victory-native-xl/pull/633))
+
 ## 41.20.1
 
 ### Patch Changes
