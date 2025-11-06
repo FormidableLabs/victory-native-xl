@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.20.3
+
+### Patch Changes
+
+- adjust peer deps ([#628](https://github.com/FormidableLabs/victory-native-xl/pull/628))
+
 ## 41.20.2
 
 ### Patch Changes
