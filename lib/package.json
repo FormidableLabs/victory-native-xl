@@ -41,7 +41,7 @@
     "react-fast-compare": "^3.2.2"
   },
   "peerDependencies": {
-    "@shopify/react-native-skia": ">=1.2.3",
+    "@shopify/react-native-skia": ">=1.2.3 <3.0.0",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": ">=2.0.0",
