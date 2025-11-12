@@ -3,7 +3,7 @@
   "exclude": ["src/**/*.test.ts"],
   "compilerOptions": {
     "target": "ES2016",
-    "jsx": "react-native",
+    "jsx": "react-jsx",
     "module": "CommonJS",
     "esModuleInterop": true,
     "strict": true,
