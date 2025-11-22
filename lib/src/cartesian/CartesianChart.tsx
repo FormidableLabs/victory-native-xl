@@ -451,8 +451,8 @@ function CartesianChartContent<
 
           handleTouch(
             v,
-            touch.absoluteX - scrolledX,
-            touch.absoluteY - scrolledY,
+            touch.x - scrolledX - valueFromSidedNumber(padding, "left"),
+            touch.y - scrolledY - valueFromSidedNumber(padding, "top"),
           );
         } else {
           gestureState.value.bootstrap.push([v, touch]);
@@ -478,8 +478,8 @@ function CartesianChartContent<
 
         handleTouch(
           v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
+          touch.x - scrolledX - valueFromSidedNumber(padding, "left"),
+          touch.y - scrolledY - valueFromSidedNumber(padding, "top"),
         );
       }
     })
@@ -511,8 +511,8 @@ function CartesianChartContent<
 
         handleTouch(
           v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
+          touch.x - scrolledX - valueFromSidedNumber(padding, "left"),
+          touch.y - scrolledY - valueFromSidedNumber(padding, "top"),
         );
       }
     })
