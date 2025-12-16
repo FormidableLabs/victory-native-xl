@@ -33,27 +33,19 @@ export const YAxis = <
   const fontSize = font?.getSize() ?? 0;
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
+
+    // Handle both string and string array formats for multiline labels
+    const lines = Array.isArray(contentY) ? contentY : contentY.split("\n");
+
+    // Calculate width for each line and find the max width
+    const lineWidths = lines.map(
+      (line: string) =>
+        font
+          ?.getGlyphWidths?.(font.getGlyphIDs(line))
+          .reduce((sum, value) => sum + value, 0) ?? 0,
+    );
+
     const labelY = yScale(tick) + fontSize / 3;
-    const labelX = (() => {
-      // left, outset
-      if (axisSide === "left" && labelPosition === "outset") {
-        return chartBounds.left - (labelWidth + labelOffset);
-      }
-      // left, inset
-      if (axisSide === "left" && labelPosition === "inset") {
-        return chartBounds.left + labelOffset;
-      }
-      // right, outset
-      if (axisSide === "right" && labelPosition === "outset") {
-        return chartBounds.right + labelOffset;
-      }
-      // right, inset
-      return chartBounds.right - (labelWidth + labelOffset);
-    })();
 
     const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
 
@@ -73,13 +65,44 @@ export const YAxis = <
         ) : null}
         {font
           ? canFitLabelContent && (
-              <Text
-                color={labelColor}
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
+              <>
+                {lines.map((line: string, lineIndex: number) => {
+                  // Calculate x position for each line based on line width
+                  const lineWidth = lineWidths[lineIndex];
+                  const lineLabelX = (() => {
+                    // left, outset
+                    if (axisSide === "left" && labelPosition === "outset") {
+                      return (
+                        chartBounds.left - ((lineWidth || 0) + labelOffset)
+                      );
+                    }
+                    // left, inset
+                    if (axisSide === "left" && labelPosition === "inset") {
+                      return chartBounds.left + labelOffset;
+                    }
+                    // right, outset
+                    if (axisSide === "right" && labelPosition === "outset") {
+                      return chartBounds.right + labelOffset;
+                    }
+                    // right, inset
+                    return chartBounds.right - ((lineWidth || 0) + labelOffset);
+                  })();
+
+                  // Calculate y position for each line
+                  const lineY = labelY + lineIndex * fontSize;
+
+                  return (
+                    <Text
+                      key={`line-${lineIndex}`}
+                      color={labelColor}
+                      text={line}
+                      font={font}
+                      y={lineY}
+                      x={lineLabelX}
+                    />
+                  );
+                })}
+              </>
             )
           : null}
       </React.Fragment>

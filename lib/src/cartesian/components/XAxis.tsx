@@ -59,10 +59,18 @@ export const XAxis = <
     const val = isNumericalData ? tick : ix[tick];
 
     const contentX = formatXLabel(val as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
+
+    // Handle both string and string array formats for multiline labels
+    const lines = Array.isArray(contentX) ? contentX : contentX.split("\n");
+
+    // Calculate width for each line and find the max width
+    const lineWidths = lines.map(
+      (line: string) =>
+        font
+          ?.getGlyphWidths?.(font.getGlyphIDs(line))
+          .reduce((sum, value) => sum + value, 0) ?? 0,
+    );
+    const labelWidth = Math.max(...lineWidths, 0);
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
       xScale(tick) >= chartBounds.left &&
@@ -139,19 +147,30 @@ export const XAxis = <
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
           <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
+            {lines.map((line: string, lineIndex: number) => {
+              // Calculate x position for center alignment
+              const lineWidth = lineWidths[lineIndex];
+              const lineLabelX = xScale(tick) - (lineWidth || 0) / 2;
+              // Calculate y position for each line
+              const lineY = labelY + lineIndex * fontSize;
+
+              return (
+                <Text
+                  key={`line-${lineIndex}`}
+                  transform={[
+                    {
+                      rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                    },
+                  ]}
+                  origin={origin}
+                  color={labelColor}
+                  text={line}
+                  font={font}
+                  y={lineY}
+                  x={lineLabelX}
+                />
+              );
+            })}
           </Group>
         ) : null}
         <></>
