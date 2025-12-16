@@ -133,16 +133,18 @@ export const transformInputData = <
             xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
           )
         : String(xTick);
-      
+
       // Handle multiline labels by finding the width of the longest line
-      const lines = Array.isArray(labelValue) ? labelValue : String(labelValue).split("\n");
+      const lines = Array.isArray(labelValue)
+        ? labelValue
+        : String(labelValue).split("\n");
       const lineWidths = lines.map((line: string) => {
         if (!xAxis.font) return 0;
         const glyphIDs = xAxis.font.getGlyphIDs(line);
         const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
         return widths.reduce((sum, w) => sum + w, 0);
       });
-      
+
       return Math.max(...lineWidths, 0);
     }),
   );
@@ -274,23 +276,21 @@ export const transformInputData = <
     });
 
     const maxYLabel = Math.max(
-      ...yTicksNormalized.map(
-        (yTick) => {
-          const label =
-            yAxis?.formatYLabel?.(yTick as RawData[YK]) ||
-            String(yTick);
-          
-          // Handle multiline labels by finding the width of the longest line
-          const lines = Array.isArray(label) ? label : label.split("\n");
-          const lineWidths = lines.map((line: string) =>
+      ...yTicksNormalized.map((yTick) => {
+        const label =
+          yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick);
+
+        // Handle multiline labels by finding the width of the longest line
+        const lines = Array.isArray(label) ? label : label.split("\n");
+        const lineWidths = lines.map(
+          (line: string) =>
             yAxis?.font
               ?.getGlyphWidths?.(yAxis.font.getGlyphIDs(line))
-              .reduce((sum, value) => sum + value, 0) ?? 0
-          );
-          
-          return Math.max(...lineWidths, 0);
-        },
-      ),
+              .reduce((sum, value) => sum + value, 0) ?? 0,
+        );
+
+        return Math.max(...lineWidths, 0);
+      }),
     );
 
     return {

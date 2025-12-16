@@ -160,7 +160,8 @@ export const ChartRoutes: {
   },
   {
     title: "Multiline Axis Labels",
-    description: "Example demonstrating multiline axis labels using both newline characters and string arrays.",
+    description:
+      "Example demonstrating multiline axis labels using both newline characters and string arrays.",
     path: "/multiline-axis",
   },
 ];
