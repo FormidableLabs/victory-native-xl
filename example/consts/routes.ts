@@ -154,6 +154,11 @@ export const ChartRoutes: {
     path: "/scroll",
   },
   {
+    title: "Scroll + Scrub",
+    description: "Show example of scrolling/panning + scrubbing chart values.",
+    path: "/scroll-scrub",
+  },
+  {
     title: "Chart Refs",
     description: "This example demonstrates chart interactions using refs.",
     path: "/chart-refs",

@@ -1,5 +1,23 @@
 # victory-native
 
+## 41.20.2
+
+### Patch Changes
+
+- all scrolling and scrubbing ([#633](https://github.com/FormidableLabs/victory-native-xl/pull/633))
+
+## 41.20.1
+
+### Patch Changes
+
+- use `View` for cartestian chart `onLayout` ([#621](https://github.com/FormidableLabs/victory-native-xl/pull/621))
+
+## 41.20.0
+
+### Minor Changes
+
+- Add `stepAfter` and `stepBefore` to the line curve options ([#618](https://github.com/FormidableLabs/victory-native-xl/pull/618))
+
 ## 41.19.3
 
 ### Patch Changes
