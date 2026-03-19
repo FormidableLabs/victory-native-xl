@@ -70,10 +70,7 @@ const PolarChartBase = (
             <Group matrix={transformState?.matrix}>{children}</Group>
           </Bridge>
         </Canvas>
-        <GestureHandler
-          gesture={composed}
-          dimensions={{ x: 0, y: 0, width: width, height: height }}
-        />
+        <GestureHandler gesture={composed} />
       </GestureHandlerRootView>
     </View>
   );

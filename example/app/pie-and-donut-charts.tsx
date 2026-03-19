@@ -7,8 +7,20 @@ import {
   Rect,
   vec,
 } from "@shopify/react-native-skia";
-import { Pie, PolarChart } from "victory-native";
+import {
+  Pie,
+  PolarChart,
+  setScale,
+  setTranslate,
+  useChartTransformState,
+} from "victory-native";
+import {
+  useAnimatedReaction,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
+import { Button } from "example/components/Button";
 import { Text } from "example/components/Text";
 import { appColors } from "../consts/colors";
 import { descriptionForRoute } from "../consts/routes";
@@ -319,6 +331,74 @@ const HalfDonutChart = () => {
   );
 };
 
+const DonutChartWithPanZoom = () => {
+  const [data] = useState(DATA(6));
+  const { state } = useChartTransformState();
+
+  // Mirror scale + translate into individual shared values so we can animate
+  // them independently (e.g. spring back to identity on reset).
+  const k = useSharedValue(1);
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => ({ k: k.value, tx: tx.value, ty: ty.value }),
+    ({ k, tx, ty }) => {
+      const m = setTranslate(state.matrix.value, tx, ty);
+      state.matrix.value = setScale(m, k);
+    },
+  );
+
+  const resetTransform = () => {
+    k.value = withTiming(1);
+    tx.value = withTiming(0);
+    ty.value = withTiming(0);
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <PolarChart
+        data={data}
+        labelKey={"label"}
+        valueKey={"value"}
+        colorKey={"color"}
+        transformState={state}
+      >
+        <Pie.Chart innerRadius={"50%"}>
+          {({ slice }) => {
+            const { startX, startY, endX, endY } = calculateGradientPoints(
+              slice.radius,
+              slice.startAngle,
+              slice.endAngle,
+              slice.center.x,
+              slice.center.y,
+            );
+            return (
+              <>
+                <Pie.Slice>
+                  <LinearGradient
+                    start={vec(startX, startY)}
+                    end={vec(endX, endY)}
+                    colors={[slice.color, `${slice.color}50`]}
+                    positions={[0, 1]}
+                  />
+                </Pie.Slice>
+                <Pie.SliceAngularInset
+                  angularInset={{
+                    angularStrokeWidth: 4,
+                    angularStrokeColor: "white",
+                  }}
+                />
+              </>
+            );
+          }}
+        </Pie.Chart>
+      </PolarChart>
+      <Button title="Reset zoom" onPress={resetTransform} />
+    </View>
+  );
+};
+
 export default function PieAndDonutCharts(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
 
@@ -360,6 +440,10 @@ export default function PieAndDonutCharts(props: { segment: string }) {
         <View style={styles.chartContainer}>
           <Text style={styles.title}>Half Donut Chart</Text>
           <HalfDonutChart />
+        </View>
+        <View style={styles.chartContainer}>
+          <Text style={styles.title}>Donut Chart with Pan & Zoom</Text>
+          <DonutChartWithPanZoom />
         </View>
       </ScrollView>
     </SafeAreaView>

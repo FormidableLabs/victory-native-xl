@@ -445,14 +445,21 @@ function CartesianChartContent<
 
           v.isActive.value = true;
 
-          // [3] and [7] are the X and Y translation components of the 4x4 transformation matrix, respectively.
+          // Matrix layout (row-major 4x4): [0]=scaleX [3]=translateX [5]=scaleY [7]=translateY.
+          // Use view-relative touch.x/y instead of absoluteX/Y so that the
+          // chart container's screen offset is already factored out, then
+          // divide by the current scale to map back to original canvas coords.
+          // Without the scale division, the tooltip snaps to the wrong data
+          // point whenever the chart is zoomed in (scaleX > 1).
           const scrolledX = transformState?.matrix.value?.[3] || 0;
           const scrolledY = transformState?.matrix.value?.[7] || 0;
+          const scaleX = transformState?.matrix.value?.[0] || 1;
+          const scaleY = transformState?.matrix.value?.[5] || 1;
 
           handleTouch(
             v,
-            touch.absoluteX - scrolledX,
-            touch.absoluteY - scrolledY,
+            (touch.x - scrolledX) / scaleX,
+            (touch.y - scrolledY) / scaleY,
           );
         } else {
           gestureState.value.bootstrap.push([v, touch]);
@@ -475,11 +482,13 @@ function CartesianChartContent<
 
         const scrolledX = transformState?.matrix.value?.[3] || 0;
         const scrolledY = transformState?.matrix.value?.[7] || 0;
+        const scaleX = transformState?.matrix.value?.[0] || 1;
+        const scaleY = transformState?.matrix.value?.[5] || 1;
 
         handleTouch(
           v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
+          (touch.x - scrolledX) / scaleX,
+          (touch.y - scrolledY) / scaleY,
         );
       }
     })
@@ -508,11 +517,13 @@ function CartesianChartContent<
 
         const scrolledX = transformState?.matrix.value?.[3] || 0;
         const scrolledY = transformState?.matrix.value?.[7] || 0;
+        const scaleX = transformState?.matrix.value?.[0] || 1;
+        const scaleY = transformState?.matrix.value?.[5] || 1;
 
         handleTouch(
           v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
+          (touch.x - scrolledX) / scaleX,
+          (touch.y - scrolledY) / scaleY,
         );
       }
     })
@@ -752,19 +763,7 @@ function CartesianChartContent<
     <GestureHandlerRootView>
       <View style={{ flex: 1, overflow: "hidden" }} onLayout={onLayout}>
         {body}
-        <GestureHandler
-          config={gestureHandlerConfig}
-          gesture={composed}
-          transformState={transformState}
-          dimensions={{
-            x: Math.min(xScale.range()[0]!, 0),
-            y: Math.min(primaryYScale.range()[0]!, 0),
-            width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-            height:
-              primaryYScale.range()[1]! -
-              Math.min(primaryYScale.range()[0]!, 0),
-          }}
-        />
+        <GestureHandler config={gestureHandlerConfig} gesture={composed} />
       </View>
     </GestureHandlerRootView>
   );

@@ -3,74 +3,39 @@ import {
   GestureDetector,
   type GestureType,
 } from "react-native-gesture-handler";
-import {
-  // convertToAffineMatrix,
-  // convertToColumnMajor,
-  // type Matrix4,
-  type SkRect,
-} from "@shopify/react-native-skia";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import {
-  /*Platform, type TransformsStyle,*/ type ViewStyle,
-} from "react-native";
 import * as React from "react";
-import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
-import { getTransformComponents /*identity4*/ } from "../utils/transform";
 import type { GestureHandlerConfig } from "../types";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
-  dimensions: SkRect;
-  transformState?: ChartTransformState;
   debug?: boolean;
   config?: GestureHandlerConfig;
 };
 export const GestureHandler = ({
   gesture,
-  dimensions,
-  transformState,
   debug = false,
   config,
 }: GestureHandlerProps) => {
-  const { x, y, width, height } = dimensions;
   const style = useAnimatedStyle(() => {
-    // let m4: Matrix4 = identity4;
-    let transforms: ViewStyle["transform"] = [];
-    if (transformState?.matrix.value) {
-      const decomposed = getTransformComponents(transformState.matrix.value);
-      transforms = [
-        { translateX: decomposed.translateX },
-        { translateY: decomposed.translateY },
-        { scaleX: decomposed.scaleX },
-        { scaleY: decomposed.scaleY },
-      ];
-      // m4 = convertToColumnMajor(transformState.matrix.value);
-    }
+    // Keep the gesture handler fixed over the entire parent container rather
+    // than moving it in sync with the chart's transform. When the handler
+    // followed the transform, panning or zooming the chart created dead zones:
+    // the hit-testable area drifted away from the visible canvas, so touches
+    // starting outside the *original* chart bounds were silently dropped.
+    //
+    // Filling the parent is safe because CartesianChart's handleTouch already
+    // compensates for the current pan/zoom offset when mapping a touch position
+    // back to a data point — the gesture handler itself does not need to move.
+    //
+    // Related issue: https://github.com/FormidableLabs/victory-native-xl/issues/515
     return {
       position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
-      // x,
-      // y,
-      left: x,
-      top: y,
-      width,
-      height,
-      transform: [
-        { translateX: -width / 2 - x },
-        { translateY: -height / 2 },
-        // Running into issues using 'matrix' transforms when enabling the new arch:
-        // https://github.com/facebook/react-native/issues/47467
-        // {
-        //   matrix: m4
-        //     ? Platform.OS === "web"
-        //       ? convertToAffineMatrix(m4)
-        //       : undefined
-        //     : undefined,
-        // },
-        ...transforms,
-        { translateX: x + width / 2 },
-        { translateY: height / 2 },
-      ],
     };
   });
   return (
