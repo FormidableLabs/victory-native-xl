@@ -35,7 +35,7 @@ export const GestureHandler = ({
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
+      backgroundColor: debug ? "rgba(100, 200, 255, 0.4)" : "transparent",
     };
   });
   return (
