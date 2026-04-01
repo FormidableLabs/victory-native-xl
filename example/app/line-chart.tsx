@@ -1,12 +1,19 @@
-import { useFont } from "@shopify/react-native-skia";
+import { Skia, useFont, useFonts } from "@shopify/react-native-skia";
 import * as React from "react";
-import { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { useMemo, useState } from "react";
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import {
   CartesianChart,
   type CurveType,
   Line,
   Scatter,
+  createParagraphLabelRenderer,
   type XAxisSide,
   type YAxisSide,
 } from "victory-native";
@@ -21,6 +28,7 @@ import {
 import { InputColor } from "example/components/InputColor";
 import { InputText } from "example/components/InputText";
 import inter from "../assets/inter-medium.ttf";
+import notoSansCJK from "../assets/Noto_Sans_SC/NotoSansSC-VariableFont_wght.ttf";
 import { appColors } from "../consts/colors";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
@@ -75,6 +83,25 @@ export default function LineChartPage(props: { segment: string }) {
     },
   });
   const font = useFont(inter, fontSize);
+  const cjkFontMgr = useFonts({
+    NotoSansCJK: [
+      Platform.OS === "web" ? { default: notoSansCJK } : notoSansCJK,
+    ],
+  });
+
+  const paragraphLabelRenderer = useMemo(
+    () =>
+      cjkFontMgr
+        ? createParagraphLabelRenderer({
+            textStyle: {
+              fontSize,
+              fontFamilies: ["NotoSansCJK"],
+            },
+            typefaceFontProvider: cjkFontMgr,
+          })
+        : undefined,
+    [cjkFontMgr, fontSize],
+  );
   const [data, setData] = useState(DATA());
 
   return (
@@ -84,31 +111,41 @@ export default function LineChartPage(props: { segment: string }) {
           xKey="day"
           padding={chartPadding}
           yKeys={["sales"]}
-          axisOptions={{
-            axisScales,
+          axisOptions={{ axisScales }}
+          xAxis={{
             font,
-            lineWidth: { grid: { x: 0, y: 2 }, frame: 0 },
-            lineColor: {
-              grid: {
-                x: colors.xLine!,
-                y: colors.yLine!,
-              },
-              frame: colors.frameLine!,
-            },
-            labelColor: { x: colors.xLabel!, y: colors.yLabel! },
-            labelOffset: { x: xLabelOffset, y: yLabelOffset },
-            tickCount: { x: xTickCount, y: yTickCount },
-            axisSide: { x: xAxisSide, y: yAxisSide },
-            labelPosition: {
-              x: xAxisLabelPosition,
-              y: yAxisLabelPosition,
-            },
+            labelRenderer: paragraphLabelRenderer,
+            lineWidth: 0,
+            lineColor: colors.xLine!,
+            labelColor: colors.xLabel!,
+            labelOffset: xLabelOffset,
+            tickCount: xTickCount,
+            axisSide: xAxisSide,
+            labelPosition: xAxisLabelPosition,
             formatXLabel: (value) => {
               return customXLabel ? `${value} ${customXLabel}` : `${value}`;
             },
-            formatYLabel: (value) => {
-              return customYLabel ? `${value} ${customYLabel}` : `${value}`;
+          }}
+          yAxis={[
+            {
+              font,
+              labelRenderer: paragraphLabelRenderer,
+              lineWidth: 2,
+              lineColor: colors.yLine!,
+              labelColor: colors.yLabel!,
+              labelOffset: yLabelOffset,
+              tickCount: yTickCount,
+              axisSide: yAxisSide,
+              labelPosition: yAxisLabelPosition,
+              formatYLabel: (value) => {
+                return customYLabel ? `${value} ${customYLabel}` : `${value}`;
+              },
+              yKeys: ["sales"],
             },
+          ]}
+          frame={{
+            lineWidth: 0,
+            lineColor: colors.frameLine!,
           }}
           data={data}
           domainPadding={domainPadding}

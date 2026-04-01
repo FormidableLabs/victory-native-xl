@@ -4,6 +4,7 @@ import {
   type Color,
   type DashPathEffect,
   type SkFont,
+  type SkPoint,
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
@@ -120,6 +121,27 @@ export type ColorFields<T> = {
 
 export type StringKeyOf<T> = Extract<keyof T, string>;
 
+export type AxisLabelDimensions = {
+  width: number;
+  height: number;
+};
+
+export type AxisLabelRenderArgs = {
+  text: string;
+  color: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation?: number;
+  origin?: SkPoint;
+};
+
+export type AxisLabelRenderer = {
+  measureText: (text: string) => AxisLabelDimensions;
+  render: (args: AxisLabelRenderArgs) => React.ReactNode;
+};
+
 /**
  * @deprecated This prop will eventually be replaced by the new, separate x/y/frame props below. For now it's being kept around for backwards compatibility sake.
  */
@@ -189,6 +211,7 @@ export type XAxisInputProps<
 > = {
   axisSide?: XAxisSide;
   font?: SkFont | null;
+  labelRenderer?: AxisLabelRenderer;
   formatXLabel?: (label: InputFields<RawData>[XK]) => string;
   labelColor?: string;
   labelOffset?: number;
@@ -209,13 +232,19 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    | "font"
+    | "labelRenderer"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
   >
 > &
   Partial<
     Pick<
       XAxisInputProps<RawData, XK>,
       | "font"
+      | "labelRenderer"
       | "tickValues"
       | "linePathEffect"
       | "enableRescaling"
@@ -241,6 +270,7 @@ export type YAxisInputProps<
 > = {
   axisSide?: YAxisSide;
   font?: SkFont | null;
+  labelRenderer?: AxisLabelRenderer;
   formatYLabel?: (label: RawData[YK]) => string;
   labelColor?: string;
   labelOffset?: number;
@@ -261,13 +291,21 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    | "font"
+    | "labelRenderer"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "labelRenderer"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
     >
   >;
 
