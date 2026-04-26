@@ -15,6 +15,7 @@ import type {
   AxisScales,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
+import { getLabelDimensions } from "../../utils/getLabelDimensions";
 import { makeScale } from "./makeScale";
 
 /**
@@ -126,19 +127,27 @@ export const transformInputData = <
     ? downsampleTicks(xTickValues, xTicks)
     : xTempScale.ticks(xTicks);
 
+  const xLabelMeasurements = xTicksNormalized.map((xTick) => {
+    const labelValue = xAxis.formatXLabel
+      ? xAxis.formatXLabel(
+          xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+        )
+      : String(xTick);
+
+    return getLabelDimensions({
+      text: String(labelValue),
+      font: xAxis.font,
+      labelRenderer: xAxis.labelRenderer,
+    });
+  });
+
   const maxXLabel = Math.max(
-    ...xTicksNormalized.map((xTick) => {
-      const labelValue = xAxis.formatXLabel
-        ? xAxis.formatXLabel(
-            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
-          )
-        : String(xTick);
-      const labelStr = String(labelValue);
-      if (!xAxis.font) return 0;
-      const glyphIDs = xAxis.font.getGlyphIDs(labelStr);
-      const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
-      return widths.reduce((sum, w) => sum + w, 0);
-    }),
+    0,
+    ...xLabelMeasurements.map((measurement) => measurement.width),
+  );
+  const maxXLabelHeight = Math.max(
+    0,
+    ...xLabelMeasurements.map((measurement) => measurement.height),
   );
 
   // workt with adjustedoutputwindow isntead of directly
@@ -156,8 +165,6 @@ export const transformInputData = <
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
   const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
-    const fontHeight = yAxis.font?.getSize?.() ?? 0;
-
     const yTickValues = yAxis.tickValues;
     const yTicks = yAxis.tickCount;
     const tickDomainsY = yAxis.domain
@@ -207,13 +214,13 @@ export const transformInputData = <
         return [
           adjustedOutputWindow.yMin,
           adjustedOutputWindow.yMax +
-            (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? -maxXLabelHeight - yLabelOffset * 2 : 0),
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin +
-            (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? maxXLabelHeight + yLabelOffset * 2 : 0),
           adjustedOutputWindow.yMax,
         ];
       }
@@ -268,15 +275,14 @@ export const transformInputData = <
     });
 
     const maxYLabel = Math.max(
+      0,
       ...yTicksNormalized.map(
         (yTick) =>
-          yAxis?.font
-            ?.getGlyphWidths?.(
-              yAxis.font.getGlyphIDs(
-                yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
-              ),
-            )
-            .reduce((sum, value) => sum + value, 0) ?? 0,
+          getLabelDimensions({
+            text: yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
+            font: yAxis.font,
+            labelRenderer: yAxis.labelRenderer,
+          }).width,
       ),
     );
 
