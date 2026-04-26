@@ -52,7 +52,11 @@ import {
   CartesianTransformProvider,
   useCartesianTransformContext,
 } from "./contexts/CartesianTransformContext";
-import { downsampleTicks } from "../utils/tickHelpers";
+import {
+  DEFAULT_TICK_COUNT,
+  downsampleTicks,
+  exactTicksFromScale,
+} from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
@@ -660,20 +664,25 @@ function CartesianChartContent<
           const primaryRescaled = zoomY.rescaleY(primaryYScale);
           const rescaled = zoomY.rescaleY(yAxis.yScale);
 
-          const rescaledTicks = axis.tickValues
-            ? downsampleTicks(axis.tickValues, axis.tickCount)
-            : axis.enableRescaling
-              ? rescaled.ticks(axis.tickCount)
-              : yAxis.yScale.ticks(axis.tickCount);
+          // When enableRescaling (pan/zoom), always derive ticks from the rescaled scale so
+          // tick count matches `tickCount` on the *visible* domain. If we used tickValues +
+          // downsampleTicks here, labels would stay pinned to the full-data list (wrong under zoom).
+          const tickN = axis.tickCount ?? DEFAULT_TICK_COUNT;
+          const rescaledTicks = axis.enableRescaling
+            ? exactTicksFromScale(rescaled, tickN)
+            : axis.tickValues
+              ? downsampleTicks(axis.tickValues, tickN)
+              : exactTicksFromScale(yAxis.yScale, tickN);
 
-          const primaryTicksRescaled = primaryAxisProps.tickValues
-            ? downsampleTicks(
-                primaryAxisProps.tickValues,
-                primaryAxisProps.tickCount,
-              )
-            : primaryAxisProps.enableRescaling
-              ? primaryRescaled.ticks(primaryAxisProps.tickCount)
-              : primaryYScale.ticks(primaryAxisProps.tickCount);
+          const primaryTickN = primaryAxisProps.tickCount ?? DEFAULT_TICK_COUNT;
+          const primaryTicksRescaled = primaryAxisProps.enableRescaling
+            ? exactTicksFromScale(primaryRescaled, primaryTickN)
+            : primaryAxisProps.tickValues
+              ? downsampleTicks(
+                  primaryAxisProps.tickValues,
+                  primaryTickN,
+                )
+              : exactTicksFromScale(primaryYScale, primaryTickN);
 
           return (
             <YAxis

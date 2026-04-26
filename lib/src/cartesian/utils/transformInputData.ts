@@ -1,6 +1,11 @@
 import { type ScaleLinear } from "d3-scale";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
-import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
+import {
+  DEFAULT_TICK_COUNT,
+  downsampleTicks,
+  exactTicksFromScale,
+  getDomainFromTicks,
+} from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
@@ -121,11 +126,11 @@ export const transformInputData = <
     axisScale: xAxisScale,
   });
 
-  // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // 4consistency we do it here- so we have both y and x ticks to pass to the axis generator
+  // Exact tick count on linear X (same as Y / zoom-rescaled axes); log uses d3 .ticks().
+  const xTicksCount = xTicks ?? DEFAULT_TICK_COUNT;
   const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
-    : xTempScale.ticks(xTicks);
+    ? downsampleTicks(xTickValues, xTicksCount)
+    : exactTicksFromScale(xTempScale, xTicksCount);
 
   const xLabelMeasurements = xTicksNormalized.map((xTick) => {
     const labelValue = xAxis.formatXLabel
@@ -273,7 +278,7 @@ export const transformInputData = <
               { length: yTicks },
               (_, i) => yMin + ((yMax - yMin) * i) / (yTicks - 1),
             )
-        : yScale.ticks(yTicks);
+        : exactTicksFromScale(yScale, yTicks ?? DEFAULT_TICK_COUNT);
 
     yKeys.forEach((yKey) => {
       if (yKeysForAxis.includes(yKey)) {
@@ -353,12 +358,10 @@ export const transformInputData = <
     axisScale: xAxisScale,
   });
 
-  // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
   const finalXTicksNormalized = isNumericalData
     ? xTickValues
-      ? downsampleTicks(xTickValues, xTicks)
-      : xScale.ticks(xTicks)
+      ? downsampleTicks(xTickValues, xTicksCount)
+      : exactTicksFromScale(xScale, xTicksCount)
     : ixNum;
 
   const ox = ixNum.map((x) => xScale(x)!);
