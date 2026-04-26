@@ -233,7 +233,10 @@ export const transformInputData = <
       outputBounds: yScaleRange,
       // Reverse viewport y values since canvas coordinates increase downward
       viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
-      isNice: true,
+      // `nice()` expands the domain to round numbers and yields ~tickCount ticks
+      // instead of exactly tickCount; disabled so explicit tickValues / tickCount
+      // are honored and top/bottom segments line up with the data domain.
+      isNice: false,
       padEnd:
         typeof domainPadding === "number"
           ? domainPadding
@@ -258,9 +261,19 @@ export const transformInputData = <
       {} as Record<string, { i: MaybeNumber[]; o: MaybeNumber[] }>,
     );
 
+    // Honor an explicit tickCount exactly: evenly distribute `yTicks` values
+    // across the data domain instead of relying on d3's `scale.ticks(n)`,
+    // which only returns ~n "nice" values.
     const yTicksNormalized = yTickValues
       ? downsampleTicks(yTickValues, yTicks)
-      : yScale.ticks(yTicks);
+      : typeof yTicks === "number" && yTicks > 0
+        ? yTicks === 1
+          ? [(yMin + yMax) / 2]
+          : Array.from(
+              { length: yTicks },
+              (_, i) => yMin + ((yMax - yMin) * i) / (yTicks - 1),
+            )
+        : yScale.ticks(yTicks);
 
     yKeys.forEach((yKey) => {
       if (yKeysForAxis.includes(yKey)) {
