@@ -46,13 +46,21 @@ export const YAxis = <
       labelRenderer,
     });
     const tickY = yScale(tick);
+    // Paragraph: top edge snapped to gridline at top tick, bottom tick shifted up by full height.
+    // Skia Text uses baseline: approximate the same vertical placement when only `font` is set.
     const labelY = labelRenderer
       ? tickY === minTickY && tickY !== maxTickY
         ? tickY
         : tickY === maxTickY && tickY !== minTickY
           ? tickY - labelHeight
           : tickY - labelHeight / 2
-      : tickY + fontSize / 3;
+      : font
+        ? tickY === minTickY && tickY !== maxTickY
+          ? tickY + labelHeight * 0.78
+          : tickY === maxTickY && tickY !== minTickY
+            ? tickY - labelHeight * 0.22
+            : tickY + labelHeight * 0.28
+        : tickY + fontSize / 3;
     const labelX = (() => {
       // left, outset
       if (axisSide === "left" && labelPosition === "outset") {
@@ -72,7 +80,10 @@ export const YAxis = <
 
     const canFitLabelContent = labelRenderer
       ? labelY >= chartBounds.top && labelY + labelHeight <= chartBounds.bottom
-      : labelY > fontSize && labelY < yScale(y2);
+      : font
+        ? labelY - labelHeight * 0.78 >= chartBounds.top &&
+          labelY + labelHeight * 0.25 <= chartBounds.bottom
+        : labelY > fontSize && labelY < yScale(y2);
 
     return (
       <React.Fragment key={`y-tick-${tick}`}>
