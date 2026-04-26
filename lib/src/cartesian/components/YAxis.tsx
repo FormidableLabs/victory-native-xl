@@ -33,6 +33,11 @@ export const YAxis = <
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
+  // For paragraph labels, snap the topmost tick under its gridline and the
+  // bottommost above its gridline so edge labels never clip the chart frame.
+  const tickYPositions = yTicksNormalized.map((t) => yScale(t));
+  const minTickY = tickYPositions.length ? Math.min(...tickYPositions) : 0;
+  const maxTickY = tickYPositions.length ? Math.max(...tickYPositions) : 0;
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
     const { width: labelWidth, height: labelHeight } = getLabelDimensions({
@@ -40,9 +45,14 @@ export const YAxis = <
       font,
       labelRenderer,
     });
+    const tickY = yScale(tick);
     const labelY = labelRenderer
-      ? yScale(tick) - labelHeight / 2
-      : yScale(tick) + fontSize / 3;
+      ? tickY === minTickY && tickY !== maxTickY
+        ? tickY
+        : tickY === maxTickY && tickY !== minTickY
+          ? tickY - labelHeight
+          : tickY - labelHeight / 2
+      : tickY + fontSize / 3;
     const labelX = (() => {
       // left, outset
       if (axisSide === "left" && labelPosition === "outset") {

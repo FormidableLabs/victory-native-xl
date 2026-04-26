@@ -66,13 +66,21 @@ export const XAxis = <
       font,
       labelRenderer,
     });
-    const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
-    const canFitLabelContent =
-      xScale(tick) >= chartBounds.left &&
-      xScale(tick) <= chartBounds.right &&
-      (yAxisSide === "left"
-        ? labelX + labelWidth < chartBounds.right
-        : chartBounds.left < labelX);
+    // Paragraph-rendered labels: anchor to the right side of the gridline and
+    // clamp the trailing label inside chartBounds so the last tick never overflows.
+    const labelX = labelRenderer
+      ? Math.max(
+          chartBounds.left,
+          Math.min(xScale(tick), chartBounds.right - (labelWidth ?? 0)),
+        )
+      : xScale(tick) - (labelWidth ?? 0) / 2;
+    const canFitLabelContent = labelRenderer
+      ? xScale(tick) >= chartBounds.left && xScale(tick) <= chartBounds.right
+      : xScale(tick) >= chartBounds.left &&
+        xScale(tick) <= chartBounds.right &&
+        (yAxisSide === "left"
+          ? labelX + labelWidth < chartBounds.right
+          : chartBounds.left < labelX);
 
     const labelY = (() => {
       if (labelRenderer) {
