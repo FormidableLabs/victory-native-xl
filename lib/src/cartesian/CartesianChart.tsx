@@ -455,7 +455,18 @@ function CartesianChartContent<
             touch.absoluteY - scrolledY,
           );
         } else {
-          gestureState.value.bootstrap.push([v, touch]);
+          // Dedupe by touch id so re-fired updates for the same finger don't
+          // queue multiple bootstraps (caused stale press states on remount).
+          let alreadyBootstrapped = false;
+          for (let j = 0; j < gestureState.value.bootstrap.length; j++) {
+            if (gestureState.value.bootstrap[j]![1].id === touch.id) {
+              alreadyBootstrapped = true;
+              break;
+            }
+          }
+          if (!alreadyBootstrapped) {
+            gestureState.value.bootstrap.push([v, touch]);
+          }
         }
       }
     })
@@ -738,7 +749,11 @@ function CartesianChartContent<
     if (transformConfig?.pan?.enabled ?? true) {
       gestures = Gesture.Simultaneous(
         gestures,
-        panTransformGesture(transformState, transformConfig?.pan),
+        panTransformGesture(transformState, {
+          ...transformConfig?.pan,
+          canvasWidth: size.width,
+          canvasHeight: size.height,
+        }),
       );
     }
 

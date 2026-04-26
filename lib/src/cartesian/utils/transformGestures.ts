@@ -60,6 +60,9 @@ export const pinchTransformGesture = (
 export type PanTransformGestureConfig = {
   enabled?: boolean;
   dimensions?: Dimension | Dimension[];
+  /** When set, panning is clamped so the chart cannot translate past these bounds. */
+  canvasWidth?: number;
+  canvasHeight?: number;
 } & Pick<PanGestureConfig, "activateAfterLongPress">;
 export const panTransformGesture = (
   state: ChartTransformState,
@@ -81,10 +84,29 @@ export const panTransformGesture = (
       state.panActive.value = true;
     })
     .onChange((e) => {
-      state.matrix.value = multiply4(
+      const newMatrix = multiply4(
         translate(panX ? e.changeX : 0, panY ? e.changeY : 0, 0),
         state.matrix.value,
       );
+      // Clamp translation so the chart cannot be panned beyond its original bounds.
+      // matrix[0] = scaleX, matrix[5] = scaleY, matrix[3] = translateX, matrix[7] = translateY
+      if (config.canvasWidth !== undefined && panX) {
+        const scaleX = newMatrix[0] ?? 1;
+        const minTx = config.canvasWidth * (1 - scaleX);
+        (newMatrix as unknown as number[])[3] = Math.min(
+          Math.max((newMatrix[3] ?? 0) as number, minTx),
+          0,
+        );
+      }
+      if (config.canvasHeight !== undefined && panY) {
+        const scaleY = newMatrix[5] ?? 1;
+        const minTy = config.canvasHeight * (1 - scaleY);
+        (newMatrix as unknown as number[])[7] = Math.min(
+          Math.max((newMatrix[7] ?? 0) as number, minTy),
+          0,
+        );
+      }
+      state.matrix.value = newMatrix;
     })
     .onEnd(() => {
       state.panActive.value = false;

@@ -1,5 +1,4 @@
 import {
-  makeMutable,
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
@@ -36,8 +35,8 @@ export const useChartTransformState = (
 
   return {
     state: {
-      panActive: makeMutable(false),
-      zoomActive: makeMutable(false),
+      panActive: useSharedValue(false),
+      zoomActive: useSharedValue(false),
       origin,
       matrix,
       offset,
