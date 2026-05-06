@@ -57,6 +57,7 @@ import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
+import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -303,6 +304,10 @@ function CartesianChartContent<
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;
+  const gestureBounds = {
+    x: Math.min(xScale.range()[0]!, 0),
+    y: Math.min(primaryYScale.range()[0]!, 0),
+  };
 
   // stacked bar values
   const chartHeight = chartBounds.bottom;
@@ -445,15 +450,12 @@ function CartesianChartContent<
 
           v.isActive.value = true;
 
-          // [3] and [7] are the X and Y translation components of the 4x4 transformation matrix, respectively.
-          const scrolledX = transformState?.matrix.value?.[3] || 0;
-          const scrolledY = transformState?.matrix.value?.[7] || 0;
+          const touchPoint = getCartesianTouchCoordinates({
+            touch,
+            gestureBounds,
+          });
 
-          handleTouch(
-            v,
-            touch.absoluteX - scrolledX,
-            touch.absoluteY - scrolledY,
-          );
+          handleTouch(v, touchPoint.x, touchPoint.y);
         } else {
           gestureState.value.bootstrap.push([v, touch]);
         }
@@ -473,14 +475,12 @@ function CartesianChartContent<
 
         v.isActive.value = true;
 
-        const scrolledX = transformState?.matrix.value?.[3] || 0;
-        const scrolledY = transformState?.matrix.value?.[7] || 0;
+        const touchPoint = getCartesianTouchCoordinates({
+          touch,
+          gestureBounds,
+        });
 
-        handleTouch(
-          v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
-        );
+        handleTouch(v, touchPoint.x, touchPoint.y);
       }
     })
     /**
@@ -506,14 +506,12 @@ function CartesianChartContent<
         if (!v || !touch) continue;
         if (!v.isActive.value) v.isActive.value = true;
 
-        const scrolledX = transformState?.matrix.value?.[3] || 0;
-        const scrolledY = transformState?.matrix.value?.[7] || 0;
+        const touchPoint = getCartesianTouchCoordinates({
+          touch,
+          gestureBounds,
+        });
 
-        handleTouch(
-          v,
-          touch.absoluteX - scrolledX,
-          touch.absoluteY - scrolledY,
-        );
+        handleTouch(v, touchPoint.x, touchPoint.y);
       }
     })
     /**
