@@ -10,6 +10,7 @@ import {
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
+import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
 import type {
   InputDatum,
   InputFields,
@@ -25,7 +26,6 @@ export const XAxis = <
   xScale: xScaleProp,
   yScale,
   axisSide = "bottom",
-  yAxisSide = "left",
   labelPosition = "outset",
   labelRotate,
   tickCount = DEFAULT_TICK_COUNT,
@@ -53,8 +53,9 @@ export const XAxis = <
       : xScaleProp.ticks(tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
-    const p1 = vec(xScale(tick), yScale(y2));
-    const p2 = vec(xScale(tick), yScale(y1));
+    const tickPosition = xScale(tick);
+    const p1 = vec(tickPosition, yScale(y2));
+    const p2 = vec(tickPosition, yScale(y1));
 
     const val = isNumericalData ? tick : ix[tick];
 
@@ -63,13 +64,11 @@ export const XAxis = <
       font
         ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
         .reduce((sum, value) => sum + value, 0) ?? 0;
-    const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
-    const canFitLabelContent =
-      xScale(tick) >= chartBounds.left &&
-      xScale(tick) <= chartBounds.right &&
-      (yAxisSide === "left"
-        ? labelX + labelWidth < chartBounds.right
-        : chartBounds.left < labelX);
+    const { canRenderLabel, labelX, labelCenterX } = getXAxisLabelPosition({
+      tickPosition,
+      labelWidth,
+      chartBounds,
+    });
 
     const labelY = (() => {
       // bottom, outset
@@ -101,25 +100,25 @@ export const XAxis = <
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = vec(labelCenterX, labelY);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "bottom" && labelPosition === "inset") {
         // bottom, inset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = vec(labelCenterX, labelY);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "top" && labelPosition === "inset") {
         // top, inset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = vec(labelCenterX, labelY - fontSize / 4);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else {
         // top, outset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = vec(labelCenterX, labelY - fontSize / 4);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
@@ -137,7 +136,7 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {font && labelWidth && canFitLabelContent ? (
+        {font && labelWidth && canRenderLabel ? (
           <Group transform={[{ translateY: rotateOffset }]}>
             <Text
               transform={[

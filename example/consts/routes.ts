@@ -174,6 +174,11 @@ if (__DEV__) {
       path: "/coordinate-debug",
     },
     {
+      title: "Axis Debug",
+      description: "Debug fixture for x-axis label positioning at chart edges.",
+      path: "/axis-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",
