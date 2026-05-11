@@ -168,6 +168,12 @@ export const ChartRoutes: {
 if (__DEV__) {
   ChartRoutes.unshift(
     {
+      title: "Coordinate Debug",
+      description:
+        "Debug fixture for Cartesian press coordinate mapping in nested and transformed charts.",
+      path: "/coordinate-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",
