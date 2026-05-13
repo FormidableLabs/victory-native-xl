@@ -121,24 +121,15 @@ export const CartesianAxis = <
 
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
-    const labelWidth = getFontGlyphWidth(contentY, font);
+
+    // Handle both string and string array formats for multiline labels
+    const lines = Array.isArray(contentY) ? contentY : contentY.split("\n");
+
+    // Calculate width for each line and find the max width
+    const lineWidths = lines.map((line: string) =>
+      getFontGlyphWidth(line, font),
+    );
     const labelY = yScale(tick) + fontSize / 3;
-    const labelX = (() => {
-      // left, outset
-      if (yAxisPosition === "left" && yLabelPosition === "outset") {
-        return xScale(x1) - (labelWidth + yLabelOffset);
-      }
-      // left, inset
-      if (yAxisPosition === "left" && yLabelPosition === "inset") {
-        return xScale(x1) + yLabelOffset;
-      }
-      // right, outset
-      if (yAxisPosition === "right" && yLabelPosition === "outset") {
-        return xScale(x2) + yLabelOffset;
-      }
-      // right, inset
-      return xScale(x2) - (labelWidth + yLabelOffset);
-    })();
 
     const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
 
@@ -154,15 +145,55 @@ export const CartesianAxis = <
         ) : null}
         {font
           ? canFitLabelContent && (
-              <Text
-                color={
-                  typeof labelColor === "string" ? labelColor : labelColor.y
-                }
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
+              <>
+                {lines.map((line: string, lineIndex: number) => {
+                  // Calculate x position for each line based on line width
+                  const lineWidth = lineWidths[lineIndex];
+                  const lineLabelX = (() => {
+                    // left, outset
+                    if (
+                      yAxisPosition === "left" &&
+                      yLabelPosition === "outset"
+                    ) {
+                      return xScale(x1) - ((lineWidth || 0) + yLabelOffset);
+                    }
+                    // left, inset
+                    if (
+                      yAxisPosition === "left" &&
+                      yLabelPosition === "inset"
+                    ) {
+                      return xScale(x1) + yLabelOffset;
+                    }
+                    // right, outset
+                    if (
+                      yAxisPosition === "right" &&
+                      yLabelPosition === "outset"
+                    ) {
+                      return xScale(x2) + yLabelOffset;
+                    }
+                    // right, inset
+                    return xScale(x2) - ((lineWidth || 0) + yLabelOffset);
+                  })();
+
+                  // Calculate y position for each line
+                  const lineY = labelY + lineIndex * fontSize;
+
+                  return (
+                    <Text
+                      key={`y-line-${lineIndex}`}
+                      color={
+                        typeof labelColor === "string"
+                          ? labelColor
+                          : labelColor.y
+                      }
+                      text={line}
+                      font={font}
+                      y={lineY}
+                      x={lineLabelX}
+                    />
+                  );
+                })}
+              </>
             )
           : null}
       </React.Fragment>
@@ -172,7 +203,15 @@ export const CartesianAxis = <
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
     const contentX = formatXLabel(val as never);
-    const labelWidth = getFontGlyphWidth(contentX, font);
+
+    // Handle both string and string array formats for multiline labels
+    const lines = Array.isArray(contentX) ? contentX : contentX.split("\n");
+
+    // Calculate width for each line and find the max width
+    const lineWidths = lines.map((line: string) =>
+      getFontGlyphWidth(line, font),
+    );
+    const labelWidth = Math.max(...lineWidths, 0);
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
       yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
@@ -205,13 +244,28 @@ export const CartesianAxis = <
           />
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
-          <Text
-            color={typeof labelColor === "string" ? labelColor : labelColor.x}
-            text={contentX}
-            font={font}
-            y={labelY}
-            x={labelX}
-          />
+          <>
+            {lines.map((line: string, lineIndex: number) => {
+              // Calculate x position for center alignment
+              const lineWidth = lineWidths[lineIndex];
+              const lineLabelX = xScale(tick) - (lineWidth || 0) / 2;
+              // Calculate y position for each line
+              const lineY = labelY + lineIndex * fontSize;
+
+              return (
+                <Text
+                  key={`x-line-${lineIndex}`}
+                  color={
+                    typeof labelColor === "string" ? labelColor : labelColor.x
+                  }
+                  text={line}
+                  font={font}
+                  y={lineY}
+                  x={lineLabelX}
+                />
+              );
+            })}
+          </>
         ) : null}
       </React.Fragment>
     );

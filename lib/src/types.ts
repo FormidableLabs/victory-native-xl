@@ -146,8 +146,8 @@ export type AxisProps<
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
   axisSide?: { x: XAxisSide; y: YAxisSide };
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string | string[];
+  formatYLabel?: (label: RawData[YK]) => string | string[];
   domain?: YAxisDomain;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
@@ -176,8 +176,8 @@ export type OptionalAxisProps<
 > = {
   tickValues?: number[] | { x: number[]; y: number[] };
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string | string[];
+  formatYLabel?: (label: RawData[YK]) => string | string[];
 };
 
 type DashPathEffectProps = React.ComponentProps<typeof DashPathEffect>;
@@ -189,7 +189,7 @@ export type XAxisInputProps<
 > = {
   axisSide?: XAxisSide;
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  formatXLabel?: (label: InputFields<RawData>[XK]) => string | string[];
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -201,6 +201,11 @@ export type XAxisInputProps<
   yAxisSide?: YAxisSide;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  multiline?: {
+    enabled?: boolean;
+    maxLines?: number;
+    lineHeight?: number;
+  };
 };
 
 export type XAxisPropsWithDefaults<
@@ -209,7 +214,12 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
+    | "multiline"
   >
 > &
   Partial<
@@ -220,6 +230,7 @@ export type XAxisPropsWithDefaults<
       | "linePathEffect"
       | "enableRescaling"
       | "labelRotate"
+      | "multiline"
     >
   >;
 
@@ -241,7 +252,7 @@ export type YAxisInputProps<
 > = {
   axisSide?: YAxisSide;
   font?: SkFont | null;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatYLabel?: (label: RawData[YK]) => string | string[];
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -253,6 +264,11 @@ export type YAxisInputProps<
   domain?: YAxisDomain;
   linePathEffect?: DashPathEffectComponent;
   enableRescaling?: boolean;
+  multiline?: {
+    enabled?: boolean;
+    maxLines?: number;
+    lineHeight?: number;
+  };
 };
 
 export type YAxisPropsWithDefaults<
@@ -261,13 +277,13 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "multiline"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "multiline"
     >
   >;
 

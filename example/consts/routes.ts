@@ -163,6 +163,12 @@ export const ChartRoutes: {
     description: "This example demonstrates chart interactions using refs.",
     path: "/chart-refs",
   },
+  {
+    title: "Multiline Axis Labels",
+    description:
+      "Example demonstrating multiline axis labels using both newline characters and string arrays.",
+    path: "/multiline-axis",
+  },
 ];
 
 if (__DEV__) {
