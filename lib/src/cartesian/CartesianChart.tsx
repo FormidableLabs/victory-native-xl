@@ -56,6 +56,7 @@ import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
+import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 
@@ -546,31 +547,11 @@ function CartesianChartContent<
       }
     });
 
-  if (!chartPressConfig?.pan) {
-    /**
-     * Activate after a long press, which helps with preventing all touch hijacking.
-     * This is important if this chart is inside of some sort of scrollable container.
-     */
-    panGesture.activateAfterLongPress(gestureLongPressDelay);
-  }
-
-  if (chartPressConfig?.pan?.activateAfterLongPress) {
-    panGesture.activateAfterLongPress(
-      chartPressConfig.pan?.activateAfterLongPress,
-    );
-  }
-  if (chartPressConfig?.pan?.activeOffsetX) {
-    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetX);
-  }
-  if (chartPressConfig?.pan?.activeOffsetY) {
-    panGesture.activeOffsetX(chartPressConfig.pan.activeOffsetY);
-  }
-  if (chartPressConfig?.pan?.failOffsetX) {
-    panGesture.failOffsetX(chartPressConfig.pan.failOffsetX);
-  }
-  if (chartPressConfig?.pan?.failOffsetY) {
-    panGesture.failOffsetX(chartPressConfig.pan.failOffsetY);
-  }
+  applyChartPressPanConfig({
+    panGesture,
+    panConfig: chartPressConfig?.pan,
+    gestureLongPressDelay,
+  });
 
   /**
    * Allow end-user to request "raw-ish" data for a given yKey.
