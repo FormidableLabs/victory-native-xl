@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.20.3
+
+### Patch Changes
+
+- Fix Cartesian chart press coordinate mapping for nested layouts and transformed charts. ([#654](https://github.com/FormidableLabs/victory-native-xl/pull/654))
+
+- adjust peer deps ([#628](https://github.com/FormidableLabs/victory-native-xl/pull/628))
+
 ## 41.20.2
 
 ### Patch Changes
