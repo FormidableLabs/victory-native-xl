@@ -2,7 +2,7 @@ import type { ChartBounds, PointsArray } from "../../types";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
 import { getBarWidth } from "../utils/getBarWidth";
 
-type Props = {
+export type UseBarWidthOptions = {
   points: PointsArray | PointsArray[];
   chartBounds: ChartBounds;
   innerPadding: number;
@@ -16,7 +16,7 @@ export const useBarWidth = ({
   innerPadding,
   barCount,
   points,
-}: Props) => {
+}: UseBarWidthOptions) => {
   return getBarWidth({
     customBarWidth,
     chartBounds,

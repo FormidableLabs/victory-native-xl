@@ -15,6 +15,8 @@ export const createRoundedRectPath = (
   roundedCorners: RoundedCorners,
   yValue: number,
 ): NonUniformRRect => {
+  "worklet";
+
   const corners = { ...roundedCorners };
   if (Number(yValue) < 0) {
     [
