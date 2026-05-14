@@ -377,7 +377,7 @@ describe("transformInputData", () => {
       yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
     });
 
-    expect(yAxes[0].yScale.range()[1]).toBe(280);
+    expect(yAxes[0].yScale.range()[1]).toBe(276);
   });
 
   it("measures ordinal x labels using their formatted x values", () => {
@@ -398,7 +398,7 @@ describe("transformInputData", () => {
       yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
     });
 
-    expect(yAxes[0].yScale.range()[1]).toBe(270);
+    expect(yAxes[0].yScale.range()[1]).toBe(266);
   });
 
   it("measures ordinal x label layout from rendered ticks only", () => {
@@ -421,7 +421,29 @@ describe("transformInputData", () => {
       yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
     });
 
-    expect(yAxes[0].yScale.range()[1]).toBe(290);
+    expect(yAxes[0].yScale.range()[1]).toBe(286);
+  });
+
+  it("uses x-axis labelOffset when reserving x label space", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        labelOffset: 6,
+      },
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        font,
+        yKeys: ["y"],
+        labelOffset: 20,
+      })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(278);
   });
 
   it("does not reserve x label space when x ticks are disabled", () => {
