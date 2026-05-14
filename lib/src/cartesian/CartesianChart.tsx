@@ -209,6 +209,7 @@ function CartesianChartContent<
     yKeys,
     axisOptions,
   });
+  const axisScales = axisOptions?.axisScales;
 
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
@@ -262,7 +263,7 @@ function CartesianChartContent<
         yAxes: normalizedAxisProps.yAxes,
         viewport,
         labelRotate: normalizedAxisProps.xAxis.labelRotate,
-        axisScales: axisOptions?.axisScales,
+        axisScales,
       });
 
     const primaryYAxis = yAxes[0];
@@ -296,6 +297,7 @@ function CartesianChartContent<
     domain,
     domainPadding,
     normalizedAxisProps,
+    axisScales,
     viewport,
     axisOptions?.axisScales,
   ]);
