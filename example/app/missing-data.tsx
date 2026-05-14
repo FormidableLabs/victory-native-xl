@@ -103,6 +103,22 @@ export default function MissingDataScreen() {
           )}
         </CartesianChart>
       </View>
+      <Text style={styles.heading}>Single Value Log Scale</Text>
+      <View style={styles.allMissingChart}>
+        <CartesianChart
+          data={SINGLE_VALUE_LOG_DATA}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{ font, axisScales: { yAxisScale: "log" } }}
+        >
+          {({ points }) => (
+            <>
+              <Line points={points.y} color="blue" strokeWidth={3} />
+              <Scatter points={points.y} radius={8} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
       <ScrollView style={styles.controls}>
         <Button
           title="Shuffle data"
@@ -135,6 +151,8 @@ const ALL_MISSING_DATA: { x: number; y: number | null }[] = Array.from(
   { length: 6 },
   (_, x) => ({ x, y: null }),
 );
+
+const SINGLE_VALUE_LOG_DATA = [{ x: 0, y: 1 }];
 
 const styles = StyleSheet.create({
   safeView: {
