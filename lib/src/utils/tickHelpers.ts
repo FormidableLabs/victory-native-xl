@@ -40,7 +40,7 @@ export const getDomainFromTicks = (
   tickValues: number[] | undefined,
 ): [number, number] | undefined => {
   // Check if undefined OR if its not an array of numbers
-  if (!tickValues) return;
+  if (!tickValues || tickValues.length === 0) return;
 
   let numTicksArr;
   if (containsNonNumbers(tickValues)) {

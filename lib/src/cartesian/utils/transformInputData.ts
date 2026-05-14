@@ -127,6 +127,7 @@ export const transformInputData = <
     : xTempScale.ticks(xTicks);
 
   const maxXLabel = Math.max(
+    0,
     ...xTicksNormalized.map((xTick) => {
       const labelValue = xAxis.formatXLabel
         ? xAxis.formatXLabel(
@@ -268,6 +269,7 @@ export const transformInputData = <
     });
 
     const maxYLabel = Math.max(
+      0,
       ...yTicksNormalized.map(
         (yTick) =>
           yAxis?.font

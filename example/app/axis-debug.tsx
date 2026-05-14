@@ -43,6 +43,9 @@ export default function AxisDebugScreen() {
 
         <Text style={styles.heading}>Top Axis</Text>
         <AxisCase font={font} axisSide="top" />
+
+        <Text style={styles.heading}>No X Ticks</Text>
+        <AxisCase font={font} labelRotate={35} tickValues={[]} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -53,11 +56,13 @@ function AxisCase({
   axisSide = "bottom",
   yAxisSide = "left",
   labelRotate = 0,
+  tickValues = TICK_VALUES,
 }: {
   font: ReturnType<typeof useFont>;
   axisSide?: "top" | "bottom";
   yAxisSide?: "left" | "right";
   labelRotate?: number;
+  tickValues?: number[];
 }) {
   return (
     <View style={styles.chartFrame}>
@@ -70,8 +75,8 @@ function AxisCase({
           font,
           axisSide,
           labelRotate,
-          tickCount: TICK_VALUES.length,
-          tickValues: TICK_VALUES,
+          tickCount: tickValues.length,
+          tickValues,
           formatXLabel: formatDateLabel,
         }}
         yAxis={[

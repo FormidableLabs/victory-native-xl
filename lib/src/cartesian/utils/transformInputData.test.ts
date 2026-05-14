@@ -203,5 +203,26 @@ describe("transformInputData", () => {
     expect(y.z.o).toEqual([300, 288, 270]);
   });
 
+  it("keeps rotated x label layout finite when no x ticks are rendered", () => {
+    const { ox, y, yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 0,
+        tickValues: [],
+        labelRotate: 45,
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      labelRotate: 45,
+    });
+
+    expect(ox.every(Number.isFinite)).toBe(true);
+    expect(y.y.o.every((value) => Number.isFinite(value as number))).toBe(true);
+    expect(yAxes[0].yScale.range().every(Number.isFinite)).toBe(true);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });
