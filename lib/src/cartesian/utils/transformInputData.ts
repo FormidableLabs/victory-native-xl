@@ -15,6 +15,7 @@ import type {
   AxisScales,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
+import { getTextLayout } from "../../utils/textLayout";
 import { makeScale } from "./makeScale";
 
 /**
@@ -126,20 +127,20 @@ export const transformInputData = <
     ? downsampleTicks(xTickValues, xTicks)
     : xTempScale.ticks(xTicks);
 
-  const maxXLabel = Math.max(
-    0,
-    ...xTicksNormalized.map((xTick) => {
+  const maxXLabelLayout = xTicksNormalized.reduce(
+    (max, xTick) => {
       const labelValue = xAxis.formatXLabel
         ? xAxis.formatXLabel(
             xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
           )
         : String(xTick);
-      const labelStr = String(labelValue);
-      if (!xAxis.font) return 0;
-      const glyphIDs = xAxis.font.getGlyphIDs(labelStr);
-      const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
-      return widths.reduce((sum, w) => sum + w, 0);
-    }),
+      const layout = getTextLayout(String(labelValue), xAxis.font);
+      return {
+        width: Math.max(max.width, layout.width),
+        height: Math.max(max.height, layout.height),
+      };
+    },
+    { width: 0, height: 0 },
   );
 
   // workt with adjustedoutputwindow isntead of directly
@@ -147,7 +148,9 @@ export const transformInputData = <
   const adjustedOutputWindow = { ...outputWindow };
 
   if (labelRotate && xAxis.labelPosition === "outset") {
-    const rotateOffset = Math.abs(maxXLabel * getOffsetFromAngle(labelRotate));
+    const rotateOffset = Math.abs(
+      maxXLabelLayout.width * getOffsetFromAngle(labelRotate),
+    );
     if (xAxis.axisSide === "bottom") {
       adjustedOutputWindow.yMax -= rotateOffset;
     } else if (xAxis.axisSide === "top") {
@@ -221,13 +224,17 @@ export const transformInputData = <
         return [
           adjustedOutputWindow.yMin,
           adjustedOutputWindow.yMax +
-            (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
+            (xTickCount > 0
+              ? -(maxXLabelLayout.height || fontHeight) - yLabelOffset * 2
+              : 0),
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin +
-            (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
+            (xTickCount > 0
+              ? (maxXLabelLayout.height || fontHeight) + yLabelOffset * 2
+              : 0),
           adjustedOutputWindow.yMax,
         ];
       }
@@ -283,16 +290,11 @@ export const transformInputData = <
 
     const maxYLabel = Math.max(
       0,
-      ...yTicksNormalized.map(
-        (yTick) =>
-          yAxis?.font
-            ?.getGlyphWidths?.(
-              yAxis.font.getGlyphIDs(
-                yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
-              ),
-            )
-            .reduce((sum, value) => sum + value, 0) ?? 0,
-      ),
+      ...yTicksNormalized.map((yTick) => {
+        const label =
+          yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick);
+        return getTextLayout(label, yAxis.font).width;
+      }),
     );
 
     return {

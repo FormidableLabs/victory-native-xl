@@ -11,6 +11,7 @@ import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
+import { getTextLayout } from "../../utils/textLayout";
 import type {
   InputDatum,
   InputFields,
@@ -59,11 +60,9 @@ export const XAxis = <
 
     const val = isNumericalData ? tick : ix[tick];
 
-    const contentX = formatXLabel(val as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
+    const contentX = String(formatXLabel(val as never));
+    const labelLayout = getTextLayout(contentX, font);
+    const labelWidth = labelLayout.width;
     const { canRenderLabel, labelX, labelCenterX } = getXAxisLabelPosition({
       tickPosition,
       labelWidth,
@@ -71,17 +70,19 @@ export const XAxis = <
     });
 
     const labelY = (() => {
+      const multilineOffset = Math.max(0, labelLayout.height - fontSize);
+
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
         return chartBounds.bottom + labelOffset + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {
-        return yScale(y2) - labelOffset;
+        return yScale(y2) - labelOffset - multilineOffset;
       }
       // top, outset
       if (axisSide === "top" && labelPosition === "outset") {
-        return yScale(y1) - labelOffset;
+        return yScale(y1) - labelOffset - multilineOffset;
       }
       // top, inset
       return yScale(y1) + fontSize + labelOffset;
@@ -138,19 +139,22 @@ export const XAxis = <
         ) : null}
         {font && labelWidth && canRenderLabel ? (
           <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
+            {labelLayout.lines.map((line, index) => (
+              <Text
+                key={`x-tick-${tick}-label-line-${index}`}
+                transform={[
+                  {
+                    rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                  },
+                ]}
+                origin={origin}
+                color={labelColor}
+                text={line}
+                font={font}
+                y={labelY + index * labelLayout.lineHeight}
+                x={labelX}
+              />
+            ))}
           </Group>
         ) : null}
         <></>
