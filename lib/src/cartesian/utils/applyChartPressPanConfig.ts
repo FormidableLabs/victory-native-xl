@@ -1,5 +1,10 @@
 import type { ChartPressPanConfig } from "../../types";
 
+type ArrayItem<T> = T extends readonly (infer Item)[] ? Item : T;
+type ChartPressExternalGesture = ArrayItem<
+  NonNullable<ChartPressPanConfig["simultaneousWithExternalGesture"]>
+>;
+
 type ChartPressPanGesture = {
   activateAfterLongPress: (
     delay: NonNullable<ChartPressPanConfig["activateAfterLongPress"]>,
@@ -15,6 +20,9 @@ type ChartPressPanGesture = {
   ) => void;
   failOffsetY: (
     offset: NonNullable<ChartPressPanConfig["failOffsetY"]>,
+  ) => void;
+  simultaneousWithExternalGesture: (
+    ...gestures: ChartPressExternalGesture[]
   ) => void;
 };
 
@@ -46,5 +54,11 @@ export const applyChartPressPanConfig = ({
   }
   if (panConfig.failOffsetY !== undefined) {
     panGesture.failOffsetY(panConfig.failOffsetY);
+  }
+  if (panConfig.simultaneousWithExternalGesture !== undefined) {
+    const gestures = Array.isArray(panConfig.simultaneousWithExternalGesture)
+      ? panConfig.simultaneousWithExternalGesture
+      : [panConfig.simultaneousWithExternalGesture];
+    panGesture.simultaneousWithExternalGesture(...gestures);
   }
 };

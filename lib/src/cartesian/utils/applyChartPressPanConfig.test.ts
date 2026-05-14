@@ -7,6 +7,7 @@ const createPanGesture = () => ({
   activeOffsetY: vi.fn(),
   failOffsetX: vi.fn(),
   failOffsetY: vi.fn(),
+  simultaneousWithExternalGesture: vi.fn(),
 });
 
 describe("applyChartPressPanConfig", () => {
@@ -23,10 +24,12 @@ describe("applyChartPressPanConfig", () => {
     expect(panGesture.activeOffsetY).not.toHaveBeenCalled();
     expect(panGesture.failOffsetX).not.toHaveBeenCalled();
     expect(panGesture.failOffsetY).not.toHaveBeenCalled();
+    expect(panGesture.simultaneousWithExternalGesture).not.toHaveBeenCalled();
   });
 
   it("wires each chartPressConfig pan option to the matching gesture method", () => {
     const panGesture = createPanGesture();
+    const scrollRef = { current: undefined };
 
     applyChartPressPanConfig({
       panGesture,
@@ -37,6 +40,7 @@ describe("applyChartPressPanConfig", () => {
         activeOffsetY: [-8, 8],
         failOffsetX: [-60, 60],
         failOffsetY: [-12, 12],
+        simultaneousWithExternalGesture: scrollRef,
       },
     });
 
@@ -45,6 +49,9 @@ describe("applyChartPressPanConfig", () => {
     expect(panGesture.activeOffsetY).toHaveBeenCalledWith([-8, 8]);
     expect(panGesture.failOffsetX).toHaveBeenCalledWith([-60, 60]);
     expect(panGesture.failOffsetY).toHaveBeenCalledWith([-12, 12]);
+    expect(panGesture.simultaneousWithExternalGesture).toHaveBeenCalledWith(
+      scrollRef,
+    );
   });
 
   it("applies explicit zero values", () => {
@@ -67,6 +74,25 @@ describe("applyChartPressPanConfig", () => {
     expect(panGesture.activeOffsetY).toHaveBeenCalledWith(0);
     expect(panGesture.failOffsetX).toHaveBeenCalledWith(0);
     expect(panGesture.failOffsetY).toHaveBeenCalledWith(0);
+  });
+
+  it("applies multiple external simultaneous gestures", () => {
+    const panGesture = createPanGesture();
+    const scrollRef = { current: undefined };
+    const sheetRef = { current: undefined };
+
+    applyChartPressPanConfig({
+      panGesture,
+      gestureLongPressDelay: 100,
+      panConfig: {
+        simultaneousWithExternalGesture: [scrollRef, sheetRef],
+      },
+    });
+
+    expect(panGesture.simultaneousWithExternalGesture).toHaveBeenCalledWith(
+      scrollRef,
+      sheetRef,
+    );
   });
 
   it("does not apply the default long-press delay when pan config is provided", () => {

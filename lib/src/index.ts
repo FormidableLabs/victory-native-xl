@@ -14,6 +14,7 @@ export {
   type CartesianChartRenderArg,
   type Viewport,
   type ChartBounds,
+  type ChartPressPanConfig,
   type YAxisSide,
   type XAxisSide,
   type PointsArray,
