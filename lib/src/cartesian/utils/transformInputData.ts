@@ -212,10 +212,7 @@ export const transformInputData = <
     ) as [number, number];
 
     const yScaleRange: [number, number] = (() => {
-      const xTickCount =
-        (typeof yAxis?.tickCount === "number"
-          ? yAxis?.tickCount
-          : xAxis?.tickCount) ?? 0;
+      const xTickCount = xAxis?.tickCount ?? 0;
       const yLabelOffset = yAxis.labelOffset ?? 0;
       const xAxisSide = xAxis?.axisSide;
       const xLabelPosition = xAxis?.labelPosition;
