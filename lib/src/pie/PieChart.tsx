@@ -87,11 +87,15 @@ export const PieChart = (props: PieChartProps) => {
     _startAngle,
   ]);
 
-  return data.map((slice, index) => {
-    return (
-      <PieSliceProvider key={index} slice={slice}>
-        {children ? children({ slice }) : <PieSlice />}
-      </PieSliceProvider>
-    );
-  });
+  return (
+    <>
+      {data.map((slice, index) => {
+        return (
+          <PieSliceProvider key={index} slice={slice}>
+            {children ? children({ slice }) : <PieSlice />}
+          </PieSliceProvider>
+        );
+      })}
+    </>
+  );
 };
