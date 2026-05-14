@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { getTextLayout } from "../../utils/textLayout";
@@ -8,8 +7,8 @@ import type {
   NumericalFields,
   ValueOf,
   YAxisProps,
-  YAxisPropsWithDefaults,
 } from "../../types";
+export { YAxisDefaults } from "../utils/axisDefaults";
 
 export const YAxis = <
   RawData extends Record<string, unknown>,
@@ -97,16 +96,3 @@ export const YAxis = <
 
   return yAxisNodes;
 };
-
-export const YAxisDefaults = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
-  tickCount: 5,
-  labelOffset: 4,
-  axisSide: "left",
-  labelPosition: "outset",
-  formatYLabel: (label: ValueOf<InputDatum>) => String(label),
-  labelColor: "#000000",
-  yKeys: [],
-  domain: null,
-} satisfies YAxisPropsWithDefaults<never, never>;

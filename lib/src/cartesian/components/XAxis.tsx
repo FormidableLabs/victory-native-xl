@@ -12,13 +12,8 @@ import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
 import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
 import { getTextLayout } from "../../utils/textLayout";
-import type {
-  InputDatum,
-  InputFields,
-  ValueOf,
-  XAxisProps,
-  XAxisPropsWithDefaults,
-} from "../../types";
+import type { InputDatum, InputFields, ValueOf, XAxisProps } from "../../types";
+export { XAxisDefaults } from "../utils/axisDefaults";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -164,16 +159,3 @@ export const XAxis = <
 
   return xAxisNodes;
 };
-
-export const XAxisDefaults = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
-  tickCount: 5,
-  labelOffset: 2,
-  axisSide: "bottom",
-  yAxisSide: "left",
-  labelPosition: "outset",
-  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
-  labelColor: "#000000",
-  labelRotate: 0,
-} satisfies XAxisPropsWithDefaults<never, never>;
