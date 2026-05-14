@@ -204,6 +204,27 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range().every(Number.isFinite)).toBe(true);
   });
 
+  it("keeps log y scales finite when y values cannot define a positive domain", () => {
+    const { yAxes } = transformInputData({
+      data: [
+        { x: 0, y: null },
+        { x: 1, y: 0 },
+        { x: 2, y: -2 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      axisScales: { yAxisScale: "log" },
+    });
+
+    const yScale = yAxes[0].yScale;
+    expect(yScale.domain()).toEqual([10, 1]);
+    expect(yScale(10)).toBeCloseTo(0);
+    expect(yScale(1)).toBeCloseTo(300);
+  });
+
   it("builds separate y scales for multiple y-axis configurations", () => {
     const baseYAxis = axes.yAxes[0]!;
     const { yAxes, y } = transformInputData({
