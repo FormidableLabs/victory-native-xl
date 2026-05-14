@@ -6,6 +6,7 @@ import {
   type RoundedCorners,
 } from "../../utils/createRoundedRectPath";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
+import { getBarGroupDimensions } from "../utils/getBarGroupDimensions";
 
 export const useBarGroupPaths = (
   points: PointsArray[],
@@ -20,25 +21,15 @@ export const useBarGroupPaths = (
 
   const { yScale } = useCartesianChartContext();
 
-  const groupWidth = React.useMemo(() => {
-    return (
-      ((1 - betweenGroupPadding) * (chartBounds.right - chartBounds.left)) /
-      Math.max(1, numGroups)
-    );
-  }, [betweenGroupPadding, chartBounds.left, chartBounds.right, numGroups]);
-
-  const barWidth = React.useMemo(() => {
-    if (customBarWidth) return customBarWidth;
-    const numerator = (1 - withinGroupPadding) * groupWidth;
-    const denominator = barCount ? barCount : Math.max(1, points.length);
-    return numerator / denominator;
-  }, [customBarWidth, groupWidth, points.length, withinGroupPadding, barCount]);
-
-  const gapWidth = React.useMemo(() => {
-    return (
-      (groupWidth - barWidth * points.length) / Math.max(1, points.length - 1)
-    );
-  }, [barWidth, groupWidth, points.length]);
+  const { barWidth, groupWidth, gapWidth } = getBarGroupDimensions({
+    chartBounds,
+    betweenGroupPadding,
+    withinGroupPadding,
+    groupCount: numGroups,
+    barsPerGroup: points.length,
+    customBarWidth,
+    barCount,
+  });
 
   const paths = React.useMemo(() => {
     return points.map((pointSet, i) => {
