@@ -23,9 +23,16 @@ export const downsampleTicks = (tickValues: number[], tickCount: number) => {
   if (!Array.isArray(tickValues) || tickValues.length <= tickCount) {
     return tickValues;
   }
-  const k = Math.floor(tickValues.length / tickCount);
 
-  return tickValues.filter((_, i) => i % k === 0);
+  if (tickCount === 1) {
+    return [tickValues[0]!];
+  }
+
+  const lastIndex = tickValues.length - 1;
+  return Array.from({ length: tickCount }, (_, i) => {
+    const tickIndex = Math.round((i * lastIndex) / (tickCount - 1));
+    return tickValues[tickIndex]!;
+  });
 };
 
 const getMinValue = (arr: Array<number>): number => {

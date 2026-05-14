@@ -317,5 +317,22 @@ describe("transformInputData", () => {
     expect(yAxes[0].yTicksNormalized).toEqual([]);
   });
 
+  it("downsamples explicit x tick values to tickCount", () => {
+    const { xTicksNormalized } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 3,
+        tickValues: [0, 1, 2, 3, 4],
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(xTicksNormalized).toEqual([0, 2, 4]);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });

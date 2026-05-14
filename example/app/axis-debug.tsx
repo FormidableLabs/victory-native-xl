@@ -49,6 +49,19 @@ export default function AxisDebugScreen() {
 
         <Text style={styles.heading}>Zero Tick Count With Values</Text>
         <AxisCase font={font} labelRotate={35} tickCount={0} />
+
+        <Text style={styles.heading}>Dense Tick Values</Text>
+        <AxisCase
+          font={font}
+          tickCount={3}
+          tickValues={[
+            DATA[0]!.x,
+            DATA[0]!.x + 7 * 24 * 60 * 60 * 1000,
+            DATA[0]!.x + 14 * 24 * 60 * 60 * 1000,
+            DATA[1]!.x,
+            DATA[2]!.x,
+          ]}
+        />
       </ScrollView>
     </SafeAreaView>
   );
