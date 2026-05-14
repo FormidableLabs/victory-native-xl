@@ -1,4 +1,4 @@
-import { Matrix4 } from "@shopify/react-native-skia";
+import type { Matrix4 } from "@shopify/react-native-skia";
 
 export const identity4: Matrix4 = [
   1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
@@ -118,7 +118,7 @@ export const invert4 = (m: Matrix4): Matrix4 => {
   // Check if matrix is invertible
   if (Math.abs(det) < 1e-8) {
     // Return identity matrix if not invertible
-    return Matrix4();
+    return identity4.slice(0) as unknown as Matrix4;
   }
 
   const invDet = 1.0 / det;
