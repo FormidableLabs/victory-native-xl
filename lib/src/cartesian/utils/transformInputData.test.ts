@@ -465,5 +465,25 @@ describe("transformInputData", () => {
     expect(xScale(0)).toBe(16);
   });
 
+  it("does not reserve y label space for empty formatted labels", () => {
+    const { xScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        font,
+        yKeys: ["y"],
+        tickCount: 3,
+        tickValues: [3, 5, 7],
+        formatYLabel: () => "",
+      })),
+    });
+
+    expect(xScale(0)).toBe(0);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });
