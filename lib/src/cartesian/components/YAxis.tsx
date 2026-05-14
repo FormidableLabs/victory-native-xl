@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
+import { getLabelDimensions } from "../../utils/getLabelDimensions";
 import type {
   InputDatum,
   NumericalFields,
@@ -24,6 +25,7 @@ export const YAxis = <
   lineWidth,
   lineColor,
   font,
+  labelRenderer,
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
@@ -33,11 +35,14 @@ export const YAxis = <
   const fontSize = font?.getSize() ?? 0;
   const yAxisNodes = yTicksNormalized.map((tick) => {
     const contentY = formatYLabel(tick as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
-    const labelY = yScale(tick) + fontSize / 3;
+    const { width: labelWidth, height: labelHeight } = getLabelDimensions({
+      text: contentY,
+      font,
+      labelRenderer,
+    });
+    const labelY = labelRenderer
+      ? yScale(tick) - labelHeight / 2
+      : yScale(tick) + fontSize / 3;
     const labelX = (() => {
       // left, outset
       if (axisSide === "left" && labelPosition === "outset") {
@@ -55,7 +60,9 @@ export const YAxis = <
       return chartBounds.right - (labelWidth + labelOffset);
     })();
 
-    const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
+    const canFitLabelContent = labelRenderer
+      ? labelY >= chartBounds.top && labelY + labelHeight <= chartBounds.bottom
+      : labelY > fontSize && labelY < yScale(y2);
 
     return (
       <React.Fragment key={`y-tick-${tick}`}>
@@ -71,15 +78,28 @@ export const YAxis = <
             </Line>
           </Group>
         ) : null}
-        {font
+        {font || labelRenderer
           ? canFitLabelContent && (
-              <Text
-                color={labelColor}
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
+              <>
+                {labelRenderer ? (
+                  labelRenderer.render({
+                    text: contentY,
+                    color: labelColor,
+                    x: labelX,
+                    y: labelY,
+                    width: labelWidth,
+                    height: labelHeight,
+                  })
+                ) : (
+                  <Text
+                    color={labelColor}
+                    text={contentY}
+                    font={font ?? null}
+                    y={labelY}
+                    x={labelX}
+                  />
+                )}
+              </>
             )
           : null}
       </React.Fragment>

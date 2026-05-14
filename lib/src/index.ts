@@ -9,6 +9,7 @@ export {
 
 export {
   type InputDatum,
+  type AxisLabelRenderer,
   type CartesianChartRenderArg,
   type Viewport,
   type ChartBounds,
@@ -65,6 +66,7 @@ export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
+export { createParagraphLabelRenderer } from "./cartesian/utils/createParagraphLabelRenderer";
 
 /**
  * Polar chart exports
