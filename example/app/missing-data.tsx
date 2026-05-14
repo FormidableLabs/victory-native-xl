@@ -87,6 +87,22 @@ export default function MissingDataScreen() {
           )}
         </CartesianChart>
       </View>
+      <Text style={styles.heading}>All Missing Log Scale</Text>
+      <View style={styles.allMissingChart}>
+        <CartesianChart
+          data={ALL_MISSING_DATA}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{ font, axisScales: { yAxisScale: "log" } }}
+        >
+          {({ points }) => (
+            <>
+              <Line points={points.y} color="blue" strokeWidth={3} />
+              <Scatter points={points.y} radius={8} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
       <ScrollView style={styles.controls}>
         <Button
           title="Shuffle data"

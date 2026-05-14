@@ -191,12 +191,18 @@ export const transformInputData = <
     // Set up our y-scale, notice how domain is "flipped" because
     //  we're moving from cartesian to canvas coordinates
     // Also, if single data point, manually add upper & lower bounds so chart renders properly
+    const fallbackYScaleDomain = (yAxisScale === "log" ? [10, 1] : [1, -1]) as [
+      number,
+      number,
+    ];
     const yScaleDomain = (
       !Number.isFinite(yMin) || !Number.isFinite(yMax)
-        ? [1, -1]
-        : yMax === yMin
-          ? [yMax + 1, yMin - 1]
-          : [yMax, yMin]
+        ? fallbackYScaleDomain
+        : yAxisScale === "log" && (yMin <= 0 || yMax <= 0)
+          ? fallbackYScaleDomain
+          : yMax === yMin
+            ? [yMax + 1, yMin - 1]
+            : [yMax, yMin]
     ) as [number, number];
 
     const yScaleRange: [number, number] = (() => {
