@@ -191,6 +191,12 @@ if (__DEV__) {
       path: "/pan-config-debug",
     },
     {
+      title: "Press State Reset Debug",
+      description:
+        "Debug fixture for resetting chart press state when chart data changes.",
+      path: "/press-state-reset-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",
