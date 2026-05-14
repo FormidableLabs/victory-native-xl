@@ -151,6 +151,54 @@ describe("transformInputData", () => {
     expect(yScale(0)).toBeCloseTo(253.8461);
   });
 
+  it("uses explicit x and y domains for scales", () => {
+    const { xScale, yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      domain: { x: [-1, 3], y: [0, 10] },
+    });
+
+    expect(xScale.domain()).toEqual([-1, 3]);
+    expect(xScale(0)).toBe(125);
+    expect(xScale(2)).toBe(375);
+
+    const yScale = yAxes[0].yScale;
+    expect(yScale.domain()).toEqual([10, 0]);
+    expect(yScale(10)).toBe(0);
+    expect(yScale(0)).toBe(300);
+  });
+
+  it("uses explicit tick values to derive x and y domains", () => {
+    const { xScale, yAxes, xTicksNormalized } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickValues: [-2, 4],
+      },
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        yKeys: ["y"],
+        tickValues: [0, 12],
+      })),
+    });
+
+    expect(xScale.domain()).toEqual([-2, 4]);
+    expect(xScale(0)).toBeCloseTo(166.6667);
+    expect(xTicksNormalized).toEqual([-2, 4]);
+
+    const yScale = yAxes[0].yScale;
+    expect(yScale.domain()).toEqual([12, 0]);
+    expect(yScale(12)).toBe(0);
+    expect(yAxes[0].yTicksNormalized).toEqual([0, 12]);
+  });
+
   it("sorts data by xKey", () => {
     const { ix, y } = transformInputData({
       data: [
