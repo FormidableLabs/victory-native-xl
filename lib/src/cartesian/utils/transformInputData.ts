@@ -320,9 +320,11 @@ export const transformInputData = <
       // Adjust xMin or xMax based on the axis side and label position
       // make ajdustments  for label rotation here
       if (yAxisSide === "left" && yLabelPosition === "outset") {
-        xMinAdjustment += yTickCount > 0 ? labelWidth + yLabelOffset : 0;
+        xMinAdjustment +=
+          yTickCount > 0 && labelWidth > 0 ? labelWidth + yLabelOffset : 0;
       } else if (yAxisSide === "right" && yLabelPosition === "outset") {
-        xMaxAdjustment += yTickCount > 0 ? -labelWidth - yLabelOffset : 0;
+        xMaxAdjustment +=
+          yTickCount > 0 && labelWidth > 0 ? -labelWidth - yLabelOffset : 0;
       }
     });
 

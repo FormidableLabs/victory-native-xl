@@ -520,6 +520,7 @@ describe("transformInputData", () => {
         ...axis,
         font,
         yKeys: ["y"],
+        labelOffset: 10,
         tickCount: 3,
         tickValues: [3, 5, 7],
         formatYLabel: () => "",
