@@ -56,6 +56,9 @@ export default function AxisDebugScreen() {
         <Text style={styles.heading}>Hidden X Labels</Text>
         <AxisCase font={font} hideXLabels />
 
+        <Text style={styles.heading}>Large X Label Offset</Text>
+        <AxisCase font={font} xLabelOffset={12} />
+
         <Text style={styles.heading}>Rotated Labels</Text>
         <AxisCase font={font} labelRotate={35} />
 
@@ -133,6 +136,7 @@ function AxisCase({
   multilineLabels = false,
   hideXLabels = false,
   hideYLabels = false,
+  xLabelOffset = 2,
 }: {
   font: ReturnType<typeof useFont>;
   axisSide?: "top" | "bottom";
@@ -143,6 +147,7 @@ function AxisCase({
   multilineLabels?: boolean;
   hideXLabels?: boolean;
   hideYLabels?: boolean;
+  xLabelOffset?: number;
 }) {
   return (
     <View style={styles.chartFrame}>
@@ -155,6 +160,7 @@ function AxisCase({
           font,
           axisSide,
           labelRotate,
+          labelOffset: xLabelOffset,
           tickCount,
           tickValues,
           formatXLabel: hideXLabels

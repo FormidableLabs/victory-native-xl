@@ -214,12 +214,12 @@ export const transformInputData = <
 
     const yScaleRange: [number, number] = (() => {
       const xTickCount = xAxis?.tickCount ?? 0;
-      const yLabelOffset = yAxis.labelOffset ?? 0;
+      const xLabelOffset = xAxis?.labelOffset ?? 0;
       const xAxisSide = xAxis?.axisSide;
       const xLabelPosition = xAxis?.labelPosition;
       const xLabelOutset =
         xTickCount > 0 && maxXLabelLayout.width > 0
-          ? maxXLabelLayout.height + yLabelOffset * 2
+          ? maxXLabelLayout.height + xLabelOffset * 2
           : 0;
 
       if (xAxisSide === "bottom" && xLabelPosition === "outset") {
