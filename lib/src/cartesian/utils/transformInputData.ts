@@ -192,7 +192,11 @@ export const transformInputData = <
     //  we're moving from cartesian to canvas coordinates
     // Also, if single data point, manually add upper & lower bounds so chart renders properly
     const yScaleDomain = (
-      yMax === yMin ? [yMax + 1, yMin - 1] : [yMax, yMin]
+      !Number.isFinite(yMin) || !Number.isFinite(yMax)
+        ? [1, -1]
+        : yMax === yMin
+          ? [yMax + 1, yMin - 1]
+          : [yMax, yMin]
     ) as [number, number];
 
     const yScaleRange: [number, number] = (() => {
