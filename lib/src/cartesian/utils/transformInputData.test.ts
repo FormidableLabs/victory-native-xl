@@ -183,6 +183,27 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.domain()).toEqual([7, 3]);
   });
 
+  it("keeps y scales finite when every y value is missing", () => {
+    const { ox, y, yAxes } = transformInputData({
+      data: [
+        { x: 0, y: null },
+        { x: 1, y: null },
+        { x: 2, y: null },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(y.y.i).toEqual([null, null, null]);
+    expect(y.y.o).toEqual([null, null, null]);
+    expect(ox.every(Number.isFinite)).toBe(true);
+    expect(yAxes[0].yScale.domain()).toEqual([1, -1]);
+    expect(yAxes[0].yScale.range().every(Number.isFinite)).toBe(true);
+  });
+
   it("builds separate y scales for multiple y-axis configurations", () => {
     const baseYAxis = axes.yAxes[0]!;
     const { yAxes, y } = transformInputData({
