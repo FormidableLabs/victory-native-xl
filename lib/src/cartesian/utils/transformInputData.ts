@@ -14,8 +14,8 @@ import type {
   XAxisPropsWithDefaults,
   AxisScales,
 } from "../../types";
-import { asNumber } from "../../utils/asNumber";
 import { getTextLayout } from "../../utils/textLayout";
+import { getXScaleInputBounds } from "./getXScaleInputBounds";
 import { getXAxisTicks } from "./getXAxisTicks";
 import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
@@ -106,19 +106,15 @@ export const transformInputData = <
   const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
   const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
 
-  // For non‐numeric (ordinal) data, use the index values
-  // if user provides a domain- use that as our min/max
-  // if tickValues are provided- we use that instead
-  // if we find min/max of y values across all yKeys- and use that for yrange instead
-  const ixMin = isNumericalData
-    ? asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0))
-    : 0;
-  const ixMax = isNumericalData
-    ? asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1))
-    : ixNum.length - 1;
+  const xInputBounds = getXScaleInputBounds({
+    isNumericalData,
+    ixNum,
+    domain: domain?.x,
+    tickDomain: tickDomainsX,
+  });
 
   const xTempScale = makeScale({
-    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
+    inputBounds: xInputBounds,
     outputBounds: [0, rawChartWidth],
     axisScale: xAxisScale,
   });
@@ -318,8 +314,6 @@ export const transformInputData = <
     ];
   })();
 
-  const xInputBounds: [number, number] =
-    ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax];
   const xScale = makeScale({
     // if single data point, manually add upper & lower bounds so chart renders properly
     inputBounds: xInputBounds,
