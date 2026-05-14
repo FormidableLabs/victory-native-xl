@@ -1,6 +1,6 @@
-import React from "react";
 import type { ChartBounds, PointsArray } from "../../types";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
+import { getBarWidth } from "../utils/getBarWidth";
 
 type Props = {
   points: PointsArray | PointsArray[];
@@ -17,36 +17,11 @@ export const useBarWidth = ({
   barCount,
   points,
 }: Props) => {
-  // stacked bars pass a PointsArray[] type which requires us to get
-  // the points length from the length of the first entry.
-  const pointsLength =
-    points.length > 0 && Array.isArray(points[0])
-      ? points[0].length
-      : points.length;
-
-  const barWidth = React.useMemo(() => {
-    if (customBarWidth) return customBarWidth;
-    const domainWidth = chartBounds.right - chartBounds.left;
-
-    const numerator = (1 - innerPadding) * domainWidth;
-
-    const denominator = barCount
-      ? barCount
-      : pointsLength - 1 <= 0
-        ? // don't divide by 0 if there's only one data point
-          pointsLength
-        : pointsLength - 1;
-
-    const barWidth = numerator / denominator;
-
-    return barWidth;
-  }, [
+  return getBarWidth({
     customBarWidth,
-    chartBounds.left,
-    chartBounds.right,
+    chartBounds,
     innerPadding,
-    pointsLength,
     barCount,
-  ]);
-  return barWidth;
+    points,
+  });
 };
