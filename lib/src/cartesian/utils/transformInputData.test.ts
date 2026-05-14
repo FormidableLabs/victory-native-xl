@@ -358,6 +358,29 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range()[1]).toBe(280);
   });
 
+  it("does not reserve x label space when x ticks are disabled", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        tickCount: 0,
+        tickValues: [],
+      },
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        font,
+        yKeys: ["y"],
+        tickCount: 3,
+      })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(300);
+  });
+
   it("reserves horizontal space by the widest line of multiline y labels", () => {
     const { xScale } = transformInputData({
       data: DATA,
