@@ -195,13 +195,16 @@ export const transformInputData = <
       number,
       number,
     ];
+    const singleValueYScaleDomain = (
+      yAxisScale === "log" ? [yMax * 10, yMin / 10] : [yMax + 1, yMin - 1]
+    ) as [number, number];
     const yScaleDomain = (
       !Number.isFinite(yMin) || !Number.isFinite(yMax)
         ? fallbackYScaleDomain
         : yAxisScale === "log" && (yMin <= 0 || yMax <= 0)
           ? fallbackYScaleDomain
           : yMax === yMin
-            ? [yMax + 1, yMin - 1]
+            ? singleValueYScaleDomain
             : [yMax, yMin]
     ) as [number, number];
 

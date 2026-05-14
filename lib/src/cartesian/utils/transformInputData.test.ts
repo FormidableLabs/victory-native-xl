@@ -225,6 +225,22 @@ describe("transformInputData", () => {
     expect(yScale(1)).toBeCloseTo(300);
   });
 
+  it("keeps single-value log y scales positive and finite", () => {
+    const { y, yAxes } = transformInputData({
+      data: [{ x: 0, y: 1 }],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      axisScales: { yAxisScale: "log" },
+    });
+
+    const yScale = yAxes[0].yScale;
+    expect(yScale.domain()).toEqual([10, 0.1]);
+    expect(Number.isFinite(y.y.o[0])).toBe(true);
+  });
+
   it("builds separate y scales for multiple y-axis configurations", () => {
     const baseYAxis = axes.yAxes[0]!;
     const { yAxes, y } = transformInputData({
