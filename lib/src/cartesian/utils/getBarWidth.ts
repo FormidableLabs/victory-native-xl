@@ -1,6 +1,6 @@
 import type { ChartBounds, PointsArray } from "../../types";
 
-type GetBarWidthArgs = {
+export type GetBarWidthArgs = {
   points: PointsArray | PointsArray[];
   chartBounds: Pick<ChartBounds, "left" | "right">;
   innerPadding: number;

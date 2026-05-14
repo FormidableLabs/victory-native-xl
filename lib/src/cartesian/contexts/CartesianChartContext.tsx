@@ -5,14 +5,14 @@ import React, {
   type PropsWithChildren,
 } from "react";
 
-interface CartesianChartContext {
+export type CartesianChartContextValue = {
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
-}
+};
 
-const CartesianChartContext = createContext<CartesianChartContext | undefined>(
-  undefined,
-);
+const CartesianChartContext = createContext<
+  CartesianChartContextValue | undefined
+>(undefined);
 
 interface CartesianChartProviderProps {
   xScale: ScaleLinear<number, number, never>;
