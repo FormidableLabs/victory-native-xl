@@ -358,6 +358,27 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range()[1]).toBe(280);
   });
 
+  it("measures ordinal x labels using their formatted x values", () => {
+    const { yAxes } = transformInputData({
+      data: [
+        { x: "first", y: 3 },
+        { x: "second", y: 7 },
+        { x: "third", y: 5 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        formatXLabel: (label) => (label === "second" ? "Day\nTwo\nPeak" : ""),
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(270);
+  });
+
   it("does not reserve x label space when x ticks are disabled", () => {
     const { yAxes } = transformInputData({
       data: DATA,

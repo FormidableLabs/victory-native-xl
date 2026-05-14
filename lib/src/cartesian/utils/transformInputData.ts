@@ -127,13 +127,15 @@ export const transformInputData = <
     ? downsampleTicks(xTickValues, xTicks)
     : xTempScale.ticks(xTicks);
 
-  const maxXLabelLayout = xTicksNormalized.reduce(
+  const xTicksForLabelLayout = isNumericalData ? xTicksNormalized : ixNum;
+  const maxXLabelLayout = xTicksForLabelLayout.reduce(
     (max, xTick) => {
+      const labelInput = isNumericalData ? xTick : ix[xTick];
       const labelValue = xAxis.formatXLabel
         ? xAxis.formatXLabel(
-            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+            labelInput as unknown as Parameters<typeof xAxis.formatXLabel>[0],
           )
-        : String(xTick);
+        : String(labelInput ?? xTick);
       const layout = getTextLayout(String(labelValue), xAxis.font);
       return {
         width: Math.max(max.width, layout.width),
