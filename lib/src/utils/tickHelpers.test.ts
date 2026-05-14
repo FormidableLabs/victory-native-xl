@@ -10,7 +10,7 @@ describe("tickHelpers", () => {
     expect(getDomainFromTicks([4, 8, 12])).toEqual([4, 12]);
   });
 
-  it("returns all ticks when the requested count is zero", () => {
-    expect(downsampleTicks([4, 8, 12], 0)).toEqual([4, 8, 12]);
+  it("returns no ticks when the requested count is zero", () => {
+    expect(downsampleTicks([4, 8, 12], 0)).toEqual([]);
   });
 });

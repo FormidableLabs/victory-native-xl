@@ -282,5 +282,40 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range().every(Number.isFinite)).toBe(true);
   });
 
+  it("renders no x ticks when tickCount is zero with explicit tick values", () => {
+    const { xTicksNormalized } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 0,
+        tickValues: [0, 1, 2],
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(xTicksNormalized).toEqual([]);
+  });
+
+  it("renders no y ticks when tickCount is zero with explicit tick values", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        yKeys: ["y"],
+        tickCount: 0,
+        tickValues: [3, 5, 7],
+      })),
+    });
+
+    expect(yAxes[0].yTicksNormalized).toEqual([]);
+  });
+
   // TODO: Some day, test the gridOptions code.
 });
