@@ -9,16 +9,16 @@ import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import { getTransformComponents } from "../../utils/transform";
 import type { ChartTransformState } from "../hooks/useChartTransformState";
 
-interface CartesianTransformContext {
+export type CartesianTransformContextValue = {
   k: number;
   kx: number;
   ky: number;
   tx: number;
   ty: number;
-}
+};
 
 const CartesianTransformContext = createContext<
-  CartesianTransformContext | undefined
+  CartesianTransformContextValue | undefined
 >(undefined);
 
 type CartesianTransformProviderProps = PropsWithChildren<{

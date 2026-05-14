@@ -31,6 +31,10 @@ export {
 
 export { useChartTransformState } from "./cartesian/hooks/useChartTransformState";
 export {
+  useCartesianTransformContext,
+  type CartesianTransformContextValue,
+} from "./cartesian/contexts/CartesianTransformContext";
+export {
   getTransformComponents,
   setScale,
   setTranslate,
