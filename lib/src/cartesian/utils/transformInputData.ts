@@ -16,6 +16,7 @@ import type {
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
 import { getTextLayout } from "../../utils/textLayout";
+import { getXAxisTicks } from "./getXAxisTicks";
 import { makeScale } from "./makeScale";
 
 /**
@@ -121,13 +122,13 @@ export const transformInputData = <
     axisScale: xAxisScale,
   });
 
-  // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // 4consistency we do it here- so we have both y and x ticks to pass to the axis generator
-  const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
-    : xTempScale.ticks(xTicks);
-
-  const xTicksForLabelLayout = isNumericalData ? xTicksNormalized : ixNum;
+  const xTicksForLabelLayout = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount: xTicks,
+    tickValues: xTickValues,
+    xScale: xTempScale,
+  });
   const maxXLabelLayout = xTicksForLabelLayout.reduce(
     (max, xTick) => {
       const labelInput = isNumericalData ? xTick : ix[xTick];
@@ -352,11 +353,13 @@ export const transformInputData = <
 
   // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
   // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
-  const finalXTicksNormalized = isNumericalData
-    ? xTickValues
-      ? downsampleTicks(xTickValues, xTicks)
-      : xScale.ticks(xTicks)
-    : ixNum;
+  const finalXTicksNormalized = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount: xTicks,
+    tickValues: xTickValues,
+    xScale,
+  });
 
   const ox = ixNum.map((x) => xScale(x)!);
 

@@ -156,6 +156,28 @@ describe("transformInputData", () => {
     expect(xTicksNormalized).toEqual([0, 1, 2]);
   });
 
+  it("downsamples ordinal x ticks to tickCount", () => {
+    const { xTicksNormalized } = transformInputData({
+      data: [
+        { x: "alpha", y: 3 },
+        { x: "beta", y: 7 },
+        { x: "gamma", y: 5 },
+        { x: "delta", y: 4 },
+        { x: "epsilon", y: 9 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 3,
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(xTicksNormalized).toEqual([0, 2, 4]);
+  });
+
   it("centers a single datum by expanding equal x and y domains", () => {
     const { ox, y } = transformInputData({
       data: [{ x: 5, y: 10 }],
@@ -377,6 +399,29 @@ describe("transformInputData", () => {
     });
 
     expect(yAxes[0].yScale.range()[1]).toBe(270);
+  });
+
+  it("measures ordinal x label layout from rendered ticks only", () => {
+    const { yAxes } = transformInputData({
+      data: [
+        { x: "first", y: 3 },
+        { x: "middle", y: 7 },
+        { x: "last", y: 5 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        tickCount: 2,
+        formatXLabel: (label) =>
+          label === "middle" ? "Long\nMiddle\nLabel" : String(label),
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(290);
   });
 
   it("does not reserve x label space when x ticks are disabled", () => {

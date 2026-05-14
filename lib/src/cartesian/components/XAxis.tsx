@@ -9,10 +9,11 @@ import {
 } from "@shopify/react-native-skia";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
-import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
+import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
 import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
 import { getTextLayout } from "../../utils/textLayout";
 import type { InputDatum, InputFields, ValueOf, XAxisProps } from "../../types";
+import { getXAxisTicks } from "../utils/getXAxisTicks";
 export { XAxisDefaults } from "../utils/axisDefaults";
 
 export const XAxis = <
@@ -42,11 +43,13 @@ export const XAxis = <
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
-  const xTicksNormalized = tickValues
-    ? downsampleTicks(tickValues, tickCount)
-    : enableRescaling
-      ? xScale.ticks(tickCount)
-      : xScaleProp.ticks(tickCount);
+  const xTicksNormalized = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount,
+    tickValues,
+    xScale: enableRescaling ? xScale : xScaleProp,
+  });
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const tickPosition = xScale(tick);

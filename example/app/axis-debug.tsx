@@ -15,6 +15,12 @@ const DATA = [
 
 const TICK_VALUES = DATA.map((datum) => datum.x);
 
+const ORDINAL_DATA = [
+  { x: "Alpha", y: 115907.5 },
+  { x: "Long\nMiddle\nLabel", y: 116531.42 },
+  { x: "Omega", y: 126870.02 },
+];
+
 const formatDateLabel = (value: number) => {
   if (!value) return "";
   const date = new Date(value);
@@ -71,8 +77,43 @@ export default function AxisDebugScreen() {
             DATA[2]!.x,
           ]}
         />
+
+        <Text style={styles.heading}>Ordinal Tick Count</Text>
+        <OrdinalAxisCase font={font} />
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function OrdinalAxisCase({ font }: { font: ReturnType<typeof useFont> }) {
+  return (
+    <View style={styles.chartFrame}>
+      <CartesianChart
+        data={ORDINAL_DATA}
+        xKey="x"
+        yKeys={["y"]}
+        padding={{ bottom: 24, top: 24 }}
+        xAxis={{
+          font,
+          tickCount: 2,
+          formatXLabel: (value) => String(value),
+        }}
+        yAxis={[
+          {
+            font,
+            tickCount: 3,
+            formatYLabel: (value) => `${Math.round(Number(value) / 1000)}k`,
+          },
+        ]}
+      >
+        {({ points }) => (
+          <>
+            <Line points={points.y} color="#2563eb" strokeWidth={3} />
+            <Scatter points={points.y} color="#a78bfa" radius={4} />
+          </>
+        )}
+      </CartesianChart>
+    </View>
   );
 }
 
