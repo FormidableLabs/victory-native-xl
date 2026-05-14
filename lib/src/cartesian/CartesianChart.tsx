@@ -50,6 +50,7 @@ import {
 } from "./utils/transformGestures";
 import {
   CartesianTransformProvider,
+  CartesianTransformValueProvider,
   useCartesianTransformContext,
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
@@ -719,14 +720,16 @@ function CartesianChartContent<
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
-      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
-        <Group clip={clipRect}>
-          <Group matrix={transformState?.matrix}>
-            {hasMeasuredLayoutSize && children(renderArg)}
+      <CartesianTransformValueProvider value={transform}>
+        <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
+          <Group clip={clipRect}>
+            <Group matrix={transformState?.matrix}>
+              {hasMeasuredLayoutSize && children(renderArg)}
+            </Group>
           </Group>
-        </Group>
-      </CartesianChartProvider>
-      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+        </CartesianChartProvider>
+        {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+      </CartesianTransformValueProvider>
     </Canvas>
   );
 

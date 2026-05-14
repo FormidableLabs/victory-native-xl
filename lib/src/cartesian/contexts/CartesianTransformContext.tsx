@@ -24,6 +24,22 @@ const CartesianTransformContext = createContext<
 type CartesianTransformProviderProps = PropsWithChildren<{
   transformState?: ChartTransformState;
 }>;
+
+type CartesianTransformValueProviderProps = PropsWithChildren<{
+  value: CartesianTransformContextValue;
+}>;
+
+export const CartesianTransformValueProvider = ({
+  value,
+  children,
+}: CartesianTransformValueProviderProps) => {
+  return (
+    <CartesianTransformContext.Provider value={value}>
+      {children}
+    </CartesianTransformContext.Provider>
+  );
+};
+
 export const CartesianTransformProvider = ({
   transformState,
   children,
@@ -85,9 +101,9 @@ export const CartesianTransformProvider = ({
   );
 
   return (
-    <CartesianTransformContext.Provider value={{ ...transform }}>
+    <CartesianTransformValueProvider value={transform}>
       {children}
-    </CartesianTransformContext.Provider>
+    </CartesianTransformValueProvider>
   );
 };
 
