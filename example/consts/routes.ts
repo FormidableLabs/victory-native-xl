@@ -179,6 +179,12 @@ if (__DEV__) {
       path: "/axis-debug",
     },
     {
+      title: "Pan Config Debug",
+      description:
+        "Debug fixture for chart press pan configuration passthrough.",
+      path: "/pan-config-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",
