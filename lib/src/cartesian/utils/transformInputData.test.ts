@@ -118,6 +118,39 @@ describe("transformInputData", () => {
     expect(yScale(8)).toEqual(0); // max maps to top
   });
 
+  it("applies sided domain padding to the x scale", () => {
+    const { xScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      domainPadding: { left: 50, right: 100 },
+    });
+
+    expect(xScale.domain()).toEqual([-0.2, 2.4]);
+    expect(xScale(0)).toBeCloseTo(38.4615);
+    expect(xScale(2)).toBeCloseTo(423.0769);
+  });
+
+  it("applies sided domain padding to the y scale", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes,
+      domainPadding: { top: 30, bottom: 60 },
+    });
+
+    const yScale = yAxes[0].yScale;
+    expect(yScale.domain()).toEqual([11, -2]);
+    expect(yScale(10)).toBeCloseTo(23.0769);
+    expect(yScale(0)).toBeCloseTo(253.8461);
+  });
+
   it("sorts data by xKey", () => {
     const { ix, y } = transformInputData({
       data: [
