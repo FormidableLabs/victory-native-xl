@@ -292,8 +292,8 @@ export const transformInputData = <
       0,
       ...yTicksNormalized.map((yTick) => {
         const label =
-          yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick);
-        return getTextLayout(label, yAxis.font).width;
+          yAxis?.formatYLabel?.(yTick as RawData[YK]) ?? String(yTick);
+        return getTextLayout(String(label), yAxis.font).width;
       }),
     );
 

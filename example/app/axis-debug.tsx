@@ -50,6 +50,9 @@ export default function AxisDebugScreen() {
         <Text style={styles.heading}>Right Y Axis</Text>
         <AxisCase font={font} yAxisSide="right" />
 
+        <Text style={styles.heading}>Hidden Y Labels</Text>
+        <AxisCase font={font} hideYLabels />
+
         <Text style={styles.heading}>Rotated Labels</Text>
         <AxisCase font={font} labelRotate={35} />
 
@@ -125,6 +128,7 @@ function AxisCase({
   tickValues = TICK_VALUES,
   tickCount = tickValues.length,
   multilineLabels = false,
+  hideYLabels = false,
 }: {
   font: ReturnType<typeof useFont>;
   axisSide?: "top" | "bottom";
@@ -133,6 +137,7 @@ function AxisCase({
   tickValues?: number[];
   tickCount?: number;
   multilineLabels?: boolean;
+  hideYLabels?: boolean;
 }) {
   return (
     <View style={styles.chartFrame}>
@@ -157,9 +162,11 @@ function AxisCase({
             axisSide: yAxisSide,
             tickCount: 3,
             formatYLabel: (value) =>
-              multilineLabels
-                ? `${Math.round(Number(value) / 1000)}\nk`
-                : `${Math.round(Number(value) / 1000)}k`,
+              hideYLabels
+                ? ""
+                : multilineLabels
+                  ? `${Math.round(Number(value) / 1000)}\nk`
+                  : `${Math.round(Number(value) / 1000)}k`,
           },
         ]}
       >
