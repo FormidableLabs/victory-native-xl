@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Text, vec } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
+import { getTextLayout } from "../../utils/textLayout";
 import type {
   InputDatum,
   NumericalFields,
@@ -32,12 +33,13 @@ export const YAxis = <
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
   const yAxisNodes = yTicksNormalized.map((tick) => {
-    const contentY = formatYLabel(tick as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentY))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
-    const labelY = yScale(tick) + fontSize / 3;
+    const contentY = String(formatYLabel(tick as never));
+    const labelLayout = getTextLayout(contentY, font);
+    const labelWidth = labelLayout.width;
+    const labelY =
+      yScale(tick) +
+      fontSize / 3 -
+      Math.max(0, labelLayout.height - fontSize) / 2;
     const labelX = (() => {
       // left, outset
       if (axisSide === "left" && labelPosition === "outset") {
@@ -55,7 +57,9 @@ export const YAxis = <
       return chartBounds.right - (labelWidth + labelOffset);
     })();
 
-    const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
+    const lastLabelY =
+      labelY + (labelLayout.lines.length - 1) * labelLayout.lineHeight;
+    const canFitLabelContent = labelY > fontSize && lastLabelY < yScale(y2);
 
     return (
       <React.Fragment key={`y-tick-${tick}`}>
@@ -73,13 +77,18 @@ export const YAxis = <
         ) : null}
         {font
           ? canFitLabelContent && (
-              <Text
-                color={labelColor}
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
+              <>
+                {labelLayout.lines.map((line, index) => (
+                  <Text
+                    key={`y-tick-${tick}-label-line-${index}`}
+                    color={labelColor}
+                    text={line}
+                    font={font}
+                    y={labelY + index * labelLayout.lineHeight}
+                    x={labelX}
+                  />
+                ))}
+              </>
             )
           : null}
       </React.Fragment>

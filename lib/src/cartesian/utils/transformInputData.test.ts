@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { SkFont } from "@shopify/react-native-skia";
 import type {
   InputDatum,
   ValueOf,
@@ -18,6 +19,11 @@ const OUTPUT_WINDOW = {
   xMin: 0,
   xMax: 500,
 };
+const font = {
+  getSize: () => 10,
+  getGlyphIDs: (text: string) => Array.from(text).map((_, index) => index),
+  getGlyphWidths: (glyphs: number[]) => glyphs.map(() => 4),
+} as unknown as SkFont;
 
 const axes = {
   xAxis: {
@@ -332,6 +338,42 @@ describe("transformInputData", () => {
     });
 
     expect(xTicksNormalized).toEqual([0, 2, 4]);
+  });
+
+  it("reserves vertical space for multiline x labels", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        formatXLabel: () => "Day\n1",
+        tickValues: [0, 1, 2],
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(280);
+  });
+
+  it("reserves horizontal space by the widest line of multiline y labels", () => {
+    const { xScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        font,
+        yKeys: ["y"],
+        formatYLabel: () => "Long\nY",
+      })),
+    });
+
+    expect(xScale(0)).toBe(16);
   });
 
   // TODO: Some day, test the gridOptions code.

@@ -21,6 +21,12 @@ const formatDateLabel = (value: number) => {
   return `${date.toLocaleString("default", { month: "short" })} ${date.getDate()}`;
 };
 
+const formatDateMultilineLabel = (value: number) => {
+  if (!value) return "";
+  const date = new Date(value);
+  return `${date.toLocaleString("default", { month: "short" })}\n${date.getDate()}`;
+};
+
 export default function AxisDebugScreen() {
   const font = useFont(inter, 12);
 
@@ -43,6 +49,9 @@ export default function AxisDebugScreen() {
 
         <Text style={styles.heading}>Top Axis</Text>
         <AxisCase font={font} axisSide="top" />
+
+        <Text style={styles.heading}>Multiline Labels</Text>
+        <AxisCase font={font} multilineLabels />
 
         <Text style={styles.heading}>No X Ticks</Text>
         <AxisCase font={font} labelRotate={35} tickValues={[]} />
@@ -74,6 +83,7 @@ function AxisCase({
   labelRotate = 0,
   tickValues = TICK_VALUES,
   tickCount = tickValues.length,
+  multilineLabels = false,
 }: {
   font: ReturnType<typeof useFont>;
   axisSide?: "top" | "bottom";
@@ -81,6 +91,7 @@ function AxisCase({
   labelRotate?: number;
   tickValues?: number[];
   tickCount?: number;
+  multilineLabels?: boolean;
 }) {
   return (
     <View style={styles.chartFrame}>
@@ -95,14 +106,19 @@ function AxisCase({
           labelRotate,
           tickCount,
           tickValues,
-          formatXLabel: formatDateLabel,
+          formatXLabel: multilineLabels
+            ? formatDateMultilineLabel
+            : formatDateLabel,
         }}
         yAxis={[
           {
             font,
             axisSide: yAxisSide,
             tickCount: 3,
-            formatYLabel: (value) => `${Math.round(Number(value) / 1000)}k`,
+            formatYLabel: (value) =>
+              multilineLabels
+                ? `${Math.round(Number(value) / 1000)}\nk`
+                : `${Math.round(Number(value) / 1000)}k`,
           },
         ]}
       >
