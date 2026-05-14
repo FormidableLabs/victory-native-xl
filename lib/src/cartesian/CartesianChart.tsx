@@ -59,6 +59,7 @@ import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
+import { resetChartPressState } from "./utils/resetChartPressState";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -193,6 +194,9 @@ function CartesianChartContent<
     undefined,
   );
   const canvasRef = React.useRef<CanvasRef | null>(null);
+  const chartPressStateRef = React.useRef(chartPressState);
+  chartPressStateRef.current = chartPressState;
+  const yKeysKey = yKeys.join("\u0000");
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
     React.useState(false);
   const onLayout = React.useCallback(
@@ -432,6 +436,22 @@ function CartesianChartContent<
       TouchData,
     ][],
   });
+
+  React.useEffect(() => {
+    const vals = chartPressStateRef.current;
+    const states = Array.isArray(vals) ? vals : [vals];
+
+    for (const state of states) {
+      if (state) resetChartPressState(state);
+    }
+
+    touchMap.value = {};
+    gestureState.value = {
+      isGestureActive: false,
+      bootstrap: [],
+    };
+    lastIdx.value = null;
+  }, [data, gestureState, lastIdx, touchMap, xKey, yKeysKey]);
 
   const panGesture = Gesture.Pan()
     /**
