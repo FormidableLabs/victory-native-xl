@@ -174,6 +174,12 @@ if (__DEV__) {
       path: "/coordinate-debug",
     },
     {
+      title: "Transform Stroke Debug",
+      description:
+        "Debug fixture for keeping stroke width stable while a chart is transformed.",
+      path: "/transform-stroke-debug",
+    },
+    {
       title: "Axis Debug",
       description: "Debug fixture for x-axis label positioning at chart edges.",
       path: "/axis-debug",
