@@ -409,11 +409,16 @@ function CartesianChartContent<
     [canvasRef],
   );
 
-  if (actionsRef) {
-    actionsRef.current = {
-      handleTouch,
-    };
-  }
+  const handleTouchRef = useFunctionRef(handleTouch);
+  React.useImperativeHandle(
+    actionsRef,
+    () => ({
+      handleTouch: (value, x, y) => {
+        handleTouchRef.current?.(value, x, y);
+      },
+    }),
+    [handleTouchRef],
+  );
 
   /**
    * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
