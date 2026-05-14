@@ -93,7 +93,11 @@ export default function MissingDataScreen() {
           data={ALL_MISSING_DATA}
           xKey="x"
           yKeys={["y"]}
-          axisOptions={{ font, axisScales: { yAxisScale: "log" } }}
+          axisOptions={{
+            font,
+            axisScales: { yAxisScale: "log" },
+            formatYLabel: formatSparseLogYLabel,
+          }}
         >
           {({ points }) => (
             <>
@@ -109,7 +113,11 @@ export default function MissingDataScreen() {
           data={SINGLE_VALUE_LOG_DATA}
           xKey="x"
           yKeys={["y"]}
-          axisOptions={{ font, axisScales: { yAxisScale: "log" } }}
+          axisOptions={{
+            font,
+            axisScales: { yAxisScale: "log" },
+            formatYLabel: formatSparseLogYLabel,
+          }}
         >
           {({ points }) => (
             <>
@@ -153,6 +161,16 @@ const ALL_MISSING_DATA: { x: number; y: number | null }[] = Array.from(
 );
 
 const SINGLE_VALUE_LOG_DATA = [{ x: 0, y: 1 }];
+const VISIBLE_LOG_LABELS = [0.2, 0.5, 1, 2, 5, 10];
+
+const formatSparseLogYLabel = (label: number | null) => {
+  const value = Number(label);
+  const shouldShow = VISIBLE_LOG_LABELS.some(
+    (visibleValue) => Math.abs(value - visibleValue) < Number.EPSILON,
+  );
+
+  return shouldShow ? `${label}` : "";
+};
 
 const styles = StyleSheet.create({
   safeView: {
