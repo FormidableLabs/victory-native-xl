@@ -8,6 +8,7 @@ type ChartPressPanGesture = Pick<
   | "activeOffsetY"
   | "failOffsetX"
   | "failOffsetY"
+  | "simultaneousWithExternalGesture"
 >;
 
 type ApplyChartPressPanConfigArgs = {
@@ -40,5 +41,11 @@ export const applyChartPressPanConfig = ({
   }
   if (panConfig.failOffsetY !== undefined) {
     panGesture.failOffsetY(panConfig.failOffsetY);
+  }
+  if (panConfig.simultaneousWithExternalGesture !== undefined) {
+    const gestures = Array.isArray(panConfig.simultaneousWithExternalGesture)
+      ? panConfig.simultaneousWithExternalGesture
+      : [panConfig.simultaneousWithExternalGesture];
+    panGesture.simultaneousWithExternalGesture(...gestures);
   }
 };

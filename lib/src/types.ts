@@ -300,12 +300,17 @@ type ExtractParams<
   P extends Parameters<T> = Parameters<T>,
 > = P["length"] extends 1 ? P[0] : P;
 
+type ExternalGesture = Parameters<
+  PanGesture["simultaneousWithExternalGesture"]
+>[number];
+
 export type ChartPressPanConfig = {
   activateAfterLongPress?: ExtractParams<PanGesture["activateAfterLongPress"]>;
   activeOffsetX?: ExtractParams<PanGesture["activeOffsetX"]>;
   activeOffsetY?: ExtractParams<PanGesture["activeOffsetY"]>;
   failOffsetX?: ExtractParams<PanGesture["failOffsetX"]>;
   failOffsetY?: ExtractParams<PanGesture["failOffsetY"]>;
+  simultaneousWithExternalGesture?: ExternalGesture | ExternalGesture[];
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];
