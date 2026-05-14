@@ -17,6 +17,7 @@ import type {
 import { asNumber } from "../../utils/asNumber";
 import { getTextLayout } from "../../utils/textLayout";
 import { getXAxisTicks } from "./getXAxisTicks";
+import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
 
 /**
@@ -192,25 +193,7 @@ export const transformInputData = <
           }, -Infinity);
         }),
       );
-    // Set up our y-scale, notice how domain is "flipped" because
-    //  we're moving from cartesian to canvas coordinates
-    // Also, if single data point, manually add upper & lower bounds so chart renders properly
-    const fallbackYScaleDomain = (yAxisScale === "log" ? [10, 1] : [1, -1]) as [
-      number,
-      number,
-    ];
-    const singleValueYScaleDomain = (
-      yAxisScale === "log" ? [yMax * 10, yMin / 10] : [yMax + 1, yMin - 1]
-    ) as [number, number];
-    const yScaleDomain = (
-      !Number.isFinite(yMin) || !Number.isFinite(yMax)
-        ? fallbackYScaleDomain
-        : yAxisScale === "log" && (yMin <= 0 || yMax <= 0)
-          ? fallbackYScaleDomain
-          : yMax === yMin
-            ? singleValueYScaleDomain
-            : [yMax, yMin]
-    ) as [number, number];
+    const yScaleDomain = getYScaleDomain({ yMin, yMax, yAxisScale });
 
     const yScaleRange: [number, number] = (() => {
       const xTickCount = xAxis?.tickCount ?? 0;
