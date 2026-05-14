@@ -163,8 +163,6 @@ export const transformInputData = <
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
   const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
-    const fontHeight = yAxis.font?.getSize?.() ?? 0;
-
     const yTickValues = yAxis.tickValues;
     const yTicks = yAxis.tickCount;
     const tickDomainsY = yAxis.domain
@@ -219,22 +217,20 @@ export const transformInputData = <
       const yLabelOffset = yAxis.labelOffset ?? 0;
       const xAxisSide = xAxis?.axisSide;
       const xLabelPosition = xAxis?.labelPosition;
+      const xLabelOutset =
+        xTickCount > 0 && maxXLabelLayout.width > 0
+          ? maxXLabelLayout.height + yLabelOffset * 2
+          : 0;
 
       if (xAxisSide === "bottom" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin,
-          adjustedOutputWindow.yMax +
-            (xTickCount > 0
-              ? -(maxXLabelLayout.height || fontHeight) - yLabelOffset * 2
-              : 0),
+          adjustedOutputWindow.yMax - xLabelOutset,
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
-          adjustedOutputWindow.yMin +
-            (xTickCount > 0
-              ? (maxXLabelLayout.height || fontHeight) + yLabelOffset * 2
-              : 0),
+          adjustedOutputWindow.yMin + xLabelOutset,
           adjustedOutputWindow.yMax,
         ];
       }

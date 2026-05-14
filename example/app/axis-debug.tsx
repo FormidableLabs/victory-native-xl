@@ -53,6 +53,9 @@ export default function AxisDebugScreen() {
         <Text style={styles.heading}>Hidden Y Labels</Text>
         <AxisCase font={font} hideYLabels />
 
+        <Text style={styles.heading}>Hidden X Labels</Text>
+        <AxisCase font={font} hideXLabels />
+
         <Text style={styles.heading}>Rotated Labels</Text>
         <AxisCase font={font} labelRotate={35} />
 
@@ -128,6 +131,7 @@ function AxisCase({
   tickValues = TICK_VALUES,
   tickCount = tickValues.length,
   multilineLabels = false,
+  hideXLabels = false,
   hideYLabels = false,
 }: {
   font: ReturnType<typeof useFont>;
@@ -137,6 +141,7 @@ function AxisCase({
   tickValues?: number[];
   tickCount?: number;
   multilineLabels?: boolean;
+  hideXLabels?: boolean;
   hideYLabels?: boolean;
 }) {
   return (
@@ -152,9 +157,11 @@ function AxisCase({
           labelRotate,
           tickCount,
           tickValues,
-          formatXLabel: multilineLabels
-            ? formatDateMultilineLabel
-            : formatDateLabel,
+          formatXLabel: hideXLabels
+            ? () => ""
+            : multilineLabels
+              ? formatDateMultilineLabel
+              : formatDateLabel,
         }}
         yAxis={[
           {

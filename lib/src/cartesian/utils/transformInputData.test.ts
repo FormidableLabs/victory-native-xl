@@ -447,6 +447,28 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range()[1]).toBe(300);
   });
 
+  it("does not reserve x label space for empty formatted labels", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        formatXLabel: () => "",
+      },
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        font,
+        yKeys: ["y"],
+        tickCount: 3,
+      })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(300);
+  });
+
   it("reserves horizontal space by the widest line of multiline y labels", () => {
     const { xScale } = transformInputData({
       data: DATA,
