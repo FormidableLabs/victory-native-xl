@@ -17,6 +17,7 @@ import type {
 import { getTextLayout } from "../../utils/textLayout";
 import { getXScaleInputBounds } from "./getXScaleInputBounds";
 import { getXAxisTicks } from "./getXAxisTicks";
+import { getYScaleInputBounds } from "./getYScaleInputBounds";
 import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
 
@@ -167,28 +168,12 @@ export const transformInputData = <
       : getDomainFromTicks(yAxis.tickValues);
 
     const yKeysForAxis = yAxis.yKeys ?? yKeys;
-    const yMin =
-      domain?.y?.[0] ??
-      tickDomainsY?.[0] ??
-      Math.min(
-        ...yKeysForAxis.map((key) => {
-          return data.reduce((min, curr) => {
-            if (typeof curr[key] !== "number") return min;
-            return Math.min(min, curr[key] as number);
-          }, Infinity);
-        }),
-      );
-    const yMax =
-      domain?.y?.[1] ??
-      tickDomainsY?.[1] ??
-      Math.max(
-        ...yKeysForAxis.map((key) => {
-          return data.reduce((max, curr) => {
-            if (typeof curr[key] !== "number") return max;
-            return Math.max(max, curr[key] as number);
-          }, -Infinity);
-        }),
-      );
+    const { yMin, yMax } = getYScaleInputBounds({
+      data,
+      yKeys: yKeysForAxis as string[],
+      domain: domain?.y,
+      tickDomain: tickDomainsY,
+    });
     const yScaleDomain = getYScaleDomain({ yMin, yMax, yAxisScale });
 
     const yScaleRange: [number, number] = (() => {
