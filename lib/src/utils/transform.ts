@@ -15,10 +15,10 @@ export const getTransformComponents = (m: Matrix4 | undefined) => {
   "worklet";
 
   return {
-    scaleX: m?.[MatrixValues.ScaleX] || 1,
-    scaleY: m?.[MatrixValues.ScaleY] || 1,
-    translateX: m?.[MatrixValues.TranslateX] || 0,
-    translateY: m?.[MatrixValues.TranslateY] || 0,
+    scaleX: m?.[MatrixValues.ScaleX] ?? 1,
+    scaleY: m?.[MatrixValues.ScaleY] ?? 1,
+    translateX: m?.[MatrixValues.TranslateX] ?? 0,
+    translateY: m?.[MatrixValues.TranslateY] ?? 0,
   };
 };
 

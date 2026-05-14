@@ -46,6 +46,13 @@ describe("transform helpers", () => {
     });
   });
 
+  it("preserves zero scale values", () => {
+    expect(getTransformComponents(setScale(identity4, 0))).toMatchObject({
+      scaleX: 0,
+      scaleY: 0,
+    });
+  });
+
   it("inverts the identity matrix", () => {
     expectMatrixCloseTo(invert4(identity4), identity4);
   });
