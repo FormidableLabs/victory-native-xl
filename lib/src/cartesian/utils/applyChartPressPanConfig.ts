@@ -32,19 +32,19 @@ export const applyChartPressPanConfig = ({
     return;
   }
 
-  if (panConfig.activateAfterLongPress) {
+  if (panConfig.activateAfterLongPress !== undefined) {
     panGesture.activateAfterLongPress(panConfig.activateAfterLongPress);
   }
-  if (panConfig.activeOffsetX) {
+  if (panConfig.activeOffsetX !== undefined) {
     panGesture.activeOffsetX(panConfig.activeOffsetX);
   }
-  if (panConfig.activeOffsetY) {
+  if (panConfig.activeOffsetY !== undefined) {
     panGesture.activeOffsetY(panConfig.activeOffsetY);
   }
-  if (panConfig.failOffsetX) {
+  if (panConfig.failOffsetX !== undefined) {
     panGesture.failOffsetX(panConfig.failOffsetX);
   }
-  if (panConfig.failOffsetY) {
+  if (panConfig.failOffsetY !== undefined) {
     panGesture.failOffsetY(panConfig.failOffsetY);
   }
 };

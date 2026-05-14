@@ -60,6 +60,7 @@ import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
+import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
