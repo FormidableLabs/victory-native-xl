@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Path, Skia, vec } from "@shopify/react-native-skia";
 import type { FrameProps } from "../../types";
+export { FrameDefaults } from "../utils/axisDefaults";
 
 export const Frame = ({
   xScale,
@@ -91,9 +92,4 @@ export const Frame = ({
       {boundingFrame}
     </Group>
   );
-};
-
-export const FrameDefaults = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
 };
