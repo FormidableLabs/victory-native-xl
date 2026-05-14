@@ -16,11 +16,11 @@ export const downsampleTicks = (tickValues: number[], tickCount: number) => {
     throw new Error("TickValues array must only contain numbers.");
   }
 
-  if (
-    !tickCount ||
-    !Array.isArray(tickValues) ||
-    tickValues.length <= tickCount
-  ) {
+  if (tickCount <= 0) {
+    return [];
+  }
+
+  if (!Array.isArray(tickValues) || tickValues.length <= tickCount) {
     return tickValues;
   }
   const k = Math.floor(tickValues.length / tickCount);
