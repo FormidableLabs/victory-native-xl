@@ -391,6 +391,26 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range().every(Number.isFinite)).toBe(true);
   });
 
+  it("maps y values with the final y scale when x labels are rotated", () => {
+    const { y, yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        tickValues: [0, 1, 2],
+        labelRotate: 45,
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      labelRotate: 45,
+    });
+
+    const yScale = yAxes[0].yScale;
+    expect(y.y.o).toEqual(DATA.map((datum) => yScale(datum.y)));
+  });
+
   it("renders no x ticks when tickCount is zero with explicit tick values", () => {
     const { xTicksNormalized } = transformInputData({
       data: DATA,
