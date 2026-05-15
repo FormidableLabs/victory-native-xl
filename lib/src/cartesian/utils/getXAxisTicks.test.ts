@@ -14,6 +14,25 @@ describe("getXAxisTicks", () => {
     expect(ticks).toEqual([0, 0.5, 1, 1.5, 2]);
   });
 
+  it("derives numerical ticks from the scale supplied by the axis caller", () => {
+    const fixedViewportTicks = getXAxisTicks({
+      isNumericalData: true,
+      ix: Array.from({ length: 12 }, (_, index) => index),
+      tickCount: 3,
+      xScale: scaleLinear([5, 11], [0, 300]),
+    });
+
+    const rescaledViewportTicks = getXAxisTicks({
+      isNumericalData: true,
+      ix: Array.from({ length: 12 }, (_, index) => index),
+      tickCount: 3,
+      xScale: scaleLinear([0, 6], [0, 300]),
+    });
+
+    expect(fixedViewportTicks).toEqual([6, 8, 10]);
+    expect(rescaledViewportTicks).toEqual([0, 2, 4, 6]);
+  });
+
   it("downsamples explicit tick values", () => {
     const ticks = getXAxisTicks({
       isNumericalData: true,

@@ -185,6 +185,12 @@ if (__DEV__) {
       path: "/axis-debug",
     },
     {
+      title: "Axis Rescaling Debug",
+      description:
+        "Debug fixture for fixed versus rescaled x-axis ticks while panning.",
+      path: "/axis-rescaling-debug",
+    },
+    {
       title: "Pan Config Debug",
       description:
         "Debug fixture for chart press pan configuration passthrough.",
