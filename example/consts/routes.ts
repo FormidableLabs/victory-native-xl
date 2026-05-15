@@ -186,6 +186,12 @@ if (__DEV__) {
       path: "/context-bridge-debug",
     },
     {
+      title: "Memory Stress Debug",
+      description:
+        "Debug fixture for live Cartesian updates, animation, and mount cycling.",
+      path: "/memory-stress-debug",
+    },
+    {
       title: "Axis Debug",
       description: "Debug fixture for x-axis label positioning at chart edges.",
       path: "/axis-debug",
