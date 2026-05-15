@@ -15,6 +15,11 @@ const DATA = [
 
 const TICK_VALUES = DATA.map((datum) => datum.x);
 
+const ZERO_DATA = DATA.map((datum) => ({
+  ...datum,
+  y: 0,
+}));
+
 const ORDINAL_DATA = [
   { x: "Alpha", y: 115907.5 },
   { x: "Long\nMiddle\nLabel", y: 116531.42 },
@@ -61,6 +66,14 @@ export default function AxisDebugScreen() {
 
         <Text style={styles.heading}>Rotated Labels</Text>
         <AxisCase font={font} labelRotate={35} />
+
+        <Text style={styles.heading}>Rotated Zero Values</Text>
+        <AxisCase
+          font={font}
+          data={ZERO_DATA}
+          domain={{ y: [0, 10] }}
+          labelRotate={35}
+        />
 
         <Text style={styles.heading}>Top Axis</Text>
         <AxisCase font={font} axisSide="top" />
@@ -128,6 +141,7 @@ function OrdinalAxisCase({ font }: { font: ReturnType<typeof useFont> }) {
 
 function AxisCase({
   font,
+  data = DATA,
   axisSide = "bottom",
   yAxisSide = "left",
   labelRotate = 0,
@@ -137,8 +151,10 @@ function AxisCase({
   hideXLabels = false,
   hideYLabels = false,
   xLabelOffset = 2,
+  domain,
 }: {
   font: ReturnType<typeof useFont>;
+  data?: typeof DATA;
   axisSide?: "top" | "bottom";
   yAxisSide?: "left" | "right";
   labelRotate?: number;
@@ -148,13 +164,15 @@ function AxisCase({
   hideXLabels?: boolean;
   hideYLabels?: boolean;
   xLabelOffset?: number;
+  domain?: { y?: [number] | [number, number] };
 }) {
   return (
     <View style={styles.chartFrame}>
       <CartesianChart
-        data={DATA}
+        data={data}
         xKey="x"
         yKeys={["y"]}
+        domain={domain}
         padding={{ bottom: 24, top: 24 }}
         xAxis={{
           font,
