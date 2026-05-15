@@ -17,6 +17,7 @@ import inter from "../assets/inter-medium.ttf";
 
 const POINT_COUNT = 80;
 const UPDATE_MS = 250;
+const CYCLE_MS = 1500;
 
 type Datum = {
   x: number;
@@ -47,6 +48,8 @@ export default function MemoryStressDebugScreen() {
   const [tick, setTick] = React.useState(0);
   const [running, setRunning] = React.useState(true);
   const [mounted, setMounted] = React.useState(true);
+  const [autoCycling, setAutoCycling] = React.useState(false);
+  const [cycleCount, setCycleCount] = React.useState(0);
   const data = makeData(tick);
 
   React.useEffect(() => {
@@ -60,6 +63,19 @@ export default function MemoryStressDebugScreen() {
       clearInterval(interval);
     };
   }, [running]);
+
+  React.useEffect(() => {
+    if (!autoCycling) return;
+
+    const interval = setInterval(() => {
+      setMounted((value) => !value);
+      setCycleCount((value) => value + 1);
+    }, CYCLE_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [autoCycling]);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -76,7 +92,15 @@ export default function MemoryStressDebugScreen() {
           />
           <Button
             title={mounted ? "Unmount" : "Mount"}
-            onPress={() => setMounted((value) => !value)}
+            onPress={() => {
+              setMounted((value) => !value);
+              setCycleCount((value) => value + 1);
+            }}
+          />
+          <Button
+            title={autoCycling ? "Stop Cycle" : "Auto Cycle"}
+            onPress={() => setAutoCycling((value) => !value)}
+            style={autoCycling ? styles.activeButton : undefined}
           />
         </View>
 
@@ -84,6 +108,10 @@ export default function MemoryStressDebugScreen() {
           <Text style={styles.readoutText}>tick: {tick}</Text>
           <Text style={styles.readoutText}>points: {data.length}</Text>
           <Text style={styles.readoutText}>mounted: {String(mounted)}</Text>
+          <Text style={styles.readoutText}>
+            autoCycle: {String(autoCycling)}
+          </Text>
+          <Text style={styles.readoutText}>cycles: {cycleCount}</Text>
         </View>
 
         {mounted ? (
@@ -181,6 +209,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
+  },
+  activeButton: {
+    borderColor: "#2563eb",
+    borderWidth: 2,
   },
   readout: {
     padding: 12,
