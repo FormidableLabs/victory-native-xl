@@ -191,6 +191,12 @@ if (__DEV__) {
       path: "/axis-rescaling-debug",
     },
     {
+      title: "Bar Edge Debug",
+      description:
+        "Debug fixture for dynamic bar counts and centered edge bar overflow.",
+      path: "/bar-edge-debug",
+    },
+    {
       title: "Pan Config Debug",
       description:
         "Debug fixture for chart press pan configuration passthrough.",

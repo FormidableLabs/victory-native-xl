@@ -68,6 +68,30 @@ describe("getBarWidth", () => {
     ).toBe(15);
   });
 
+  it("uses barCount to keep dynamic subset widths stable", () => {
+    const largeDataSet = Array.from({ length: 32 }, (_, i) => ({
+      x: i * 10,
+      xValue: i,
+      y: i,
+      yValue: i,
+    })) satisfies PointsArray;
+
+    const widthForTwoBars = getBarWidth({
+      points: largeDataSet.slice(0, 2),
+      chartBounds,
+      innerPadding: 0.25,
+      barCount: largeDataSet.length,
+    });
+    const widthForAllBars = getBarWidth({
+      points: largeDataSet,
+      chartBounds,
+      innerPadding: 0.25,
+      barCount: largeDataSet.length,
+    });
+
+    expect(widthForTwoBars).toBe(widthForAllBars);
+  });
+
   it("uses the first series length for stacked bars", () => {
     expect(
       getBarWidth({
