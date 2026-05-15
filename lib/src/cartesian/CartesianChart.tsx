@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
+import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import {
   type ComposedGesture,
   Gesture,
@@ -155,11 +156,28 @@ export function CartesianChart<
   ...rest
 }: CartesianChartProps<RawData, XK, YK>) {
   return (
-    <CartesianTransformProvider transformState={transformState}>
-      <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
-        {children}
-      </CartesianChartContent>
-    </CartesianTransformProvider>
+    <FiberProvider>
+      <CartesianTransformProvider transformState={transformState}>
+        <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
+          {children}
+        </CartesianChartContent>
+      </CartesianTransformProvider>
+    </FiberProvider>
+  );
+}
+
+function CartesianCanvas({
+  canvasRef,
+  children,
+}: React.PropsWithChildren<{
+  canvasRef: React.Ref<CanvasRef>;
+}>) {
+  const Bridge: ContextBridge = useContextBridge();
+
+  return (
+    <Canvas ref={canvasRef} style={{ flex: 1 }}>
+      <Bridge>{children}</Bridge>
+    </Canvas>
   );
 }
 
@@ -767,21 +785,21 @@ function CartesianChartContent<
 
   // Body of the chart.
   const body = (
-    <Canvas ref={canvasRef} style={{ flex: 1 }}>
-      {YAxisComponents}
-      {XAxisComponents}
-      {FrameComponent}
-      <CartesianTransformValueProvider value={transform}>
-        <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
+    <CartesianTransformValueProvider value={transform}>
+      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
+        <CartesianCanvas canvasRef={canvasRef}>
+          {YAxisComponents}
+          {XAxisComponents}
+          {FrameComponent}
           <Group clip={clipRect}>
             <Group matrix={transformState?.matrix}>
               {hasMeasuredLayoutSize && children(renderArg)}
             </Group>
           </Group>
-        </CartesianChartProvider>
-        {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-      </CartesianTransformValueProvider>
-    </Canvas>
+          {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+        </CartesianCanvas>
+      </CartesianChartProvider>
+    </CartesianTransformValueProvider>
   );
 
   let composed = customGestures ?? Gesture.Race();
