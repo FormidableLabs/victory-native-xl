@@ -180,6 +180,12 @@ if (__DEV__) {
       path: "/transform-stroke-debug",
     },
     {
+      title: "Context Bridge Debug",
+      description:
+        "Debug fixture for React context access from Cartesian chart children.",
+      path: "/context-bridge-debug",
+    },
+    {
       title: "Axis Debug",
       description: "Debug fixture for x-axis label positioning at chart edges.",
       path: "/axis-debug",

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Group, type CanvasRef } from "@shopify/react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
+import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import {
   type ComposedGesture,
   Gesture,
@@ -160,11 +161,39 @@ export function CartesianChart<
   ...rest
 }: CartesianChartProps<RawData, XK, YK>) {
   return (
-    <CartesianTransformProvider transformState={transformState}>
-      <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
-        {children}
-      </CartesianChartContent>
-    </CartesianTransformProvider>
+    <FiberProvider>
+      <CartesianTransformProvider transformState={transformState}>
+        <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
+          {children}
+        </CartesianChartContent>
+      </CartesianTransformProvider>
+    </FiberProvider>
+  );
+}
+
+function CartesianCanvas({
+  children,
+  ...props
+}: React.PropsWithChildren<
+  Pick<
+    React.ComponentProps<typeof ChartWrapper>,
+    | "isHeadless"
+    | "explicitSize"
+    | "onLayout"
+    | "hasMeasuredLayoutSize"
+    | "canvasSize"
+    | "canvasRef"
+    | "gestureOverlay"
+  >
+>) {
+  const Bridge: ContextBridge = useContextBridge();
+
+  return (
+    <ChartWrapper
+      {...props}
+      chartContent={children}
+      wrapCanvasContent={(content) => <Bridge>{content}</Bridge>}
+    />
   );
 }
 
@@ -770,16 +799,12 @@ function CartesianChartContent<
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
-      <CartesianTransformValueProvider value={transform}>
-        <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
-          <Group clip={clipRect}>
-            <Group matrix={transformState?.matrix}>
-              {hasMeasuredLayoutSize && children(renderArg)}
-            </Group>
-          </Group>
-        </CartesianChartProvider>
-        {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-      </CartesianTransformValueProvider>
+      <Group clip={clipRect}>
+        <Group matrix={transformState?.matrix}>
+          {hasMeasuredLayoutSize && children(renderArg)}
+        </Group>
+      </Group>
+      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </>
   );
 
@@ -826,15 +851,20 @@ function CartesianChartContent<
   }
 
   return (
-    <ChartWrapper
-      isHeadless={isHeadless}
-      explicitSize={explicitSize}
-      onLayout={onLayout}
-      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-      canvasSize={size}
-      canvasRef={canvasRef}
-      chartContent={chartContent}
-      gestureOverlay={gestureOverlay}
-    />
+    <CartesianTransformValueProvider value={transform}>
+      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
+        <CartesianCanvas
+          isHeadless={isHeadless}
+          explicitSize={explicitSize}
+          onLayout={onLayout}
+          hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+          canvasSize={size}
+          canvasRef={canvasRef}
+          gestureOverlay={gestureOverlay}
+        >
+          {chartContent}
+        </CartesianCanvas>
+      </CartesianChartProvider>
+    </CartesianTransformValueProvider>
   );
 }
