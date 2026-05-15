@@ -197,6 +197,11 @@ if (__DEV__) {
       path: "/press-state-reset-debug",
     },
     {
+      title: "Press Race Debug",
+      description: "Debug fixture for stale long-press bootstrap touch replay.",
+      path: "/press-race-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",

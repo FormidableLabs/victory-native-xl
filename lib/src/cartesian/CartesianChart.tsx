@@ -61,6 +61,10 @@ import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { resetChartPressState } from "./utils/resetChartPressState";
+import {
+  type ChartPressBootstrapEntry,
+  pruneChartPressBootstrap,
+} from "./utils/chartPressBootstrap";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -437,10 +441,10 @@ function CartesianChartContent<
     : [chartPressState];
   const gestureState = useSharedValue({
     isGestureActive: false,
-    bootstrap: [] as [
+    bootstrap: [] as ChartPressBootstrapEntry<
       ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
-      TouchData,
-    ][],
+      TouchData
+    >[],
   });
 
   React.useEffect(() => {
@@ -486,7 +490,11 @@ function CartesianChartContent<
 
           handleTouch(v, touchPoint.x, touchPoint.y);
         } else {
-          gestureState.value.bootstrap.push([v, touch]);
+          gestureState.value.bootstrap.push({
+            pressIndex: i,
+            state: v,
+            touch,
+          });
         }
       }
     })
@@ -495,12 +503,14 @@ function CartesianChartContent<
      */
     .onStart(() => {
       gestureState.value.isGestureActive = true;
+      const bootstrap = gestureState.value.bootstrap.slice(0);
+      gestureState.value.bootstrap = [];
 
-      for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
-        const [v, touch] = gestureState.value.bootstrap[i]!;
+      for (let i = 0; i < bootstrap.length; i++) {
+        const { pressIndex, state: v, touch } = bootstrap[i]!;
         // Update the mapping
         if (typeof touchMap.value[touch.id] !== "number")
-          touchMap.value[touch.id] = i;
+          touchMap.value[touch.id] = pressIndex;
 
         v.isActive.value = true;
 
@@ -516,8 +526,18 @@ function CartesianChartContent<
      * Clear gesture state on gesture end.
      */
     .onFinalize(() => {
-      gestureState.value.isGestureActive = false;
-      gestureState.value.bootstrap = [];
+      const vals = activePressSharedValues || [];
+      for (const val of vals) {
+        if (val) {
+          val.isActive.value = false;
+        }
+      }
+
+      touchMap.value = {};
+      gestureState.value = {
+        isGestureActive: false,
+        bootstrap: [],
+      };
     })
     /**
      * As fingers move, update the shared values accordingly.
@@ -547,6 +567,12 @@ function CartesianChartContent<
      * On each finger up, start to update values and "free up" the touch map.
      */
     .onTouchesUp((e) => {
+      gestureState.value.bootstrap = pruneChartPressBootstrap({
+        bootstrap: gestureState.value.bootstrap,
+        changedTouches: e.changedTouches,
+        numberOfTouches: e.numberOfTouches,
+      });
+
       for (const touch of e.changedTouches) {
         const vals = activePressSharedValues || [];
 
