@@ -9,7 +9,12 @@ import {
 } from "@shopify/react-native-skia";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
-import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
+import {
+  DEFAULT_TICK_COUNT,
+  downsampleTicks,
+  exactTicksFromScale,
+} from "../../utils/tickHelpers";
+import { getLabelDimensions } from "../../utils/getLabelDimensions";
 import type {
   InputDatum,
   InputFields,
@@ -35,6 +40,7 @@ export const XAxis = <
   lineWidth = StyleSheet.hairlineWidth,
   lineColor = "hsla(0, 0%, 0%, 0.25)",
   font,
+  labelRenderer,
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   ix = [],
   isNumericalData,
@@ -46,11 +52,12 @@ export const XAxis = <
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
-  const xTicksNormalized = tickValues
-    ? downsampleTicks(tickValues, tickCount)
-    : enableRescaling
-      ? xScale.ticks(tickCount)
-      : xScaleProp.ticks(tickCount);
+  const scaleForXTicks = enableRescaling ? xScale : xScaleProp;
+  const xTicksNormalized = enableRescaling
+    ? exactTicksFromScale(scaleForXTicks, tickCount)
+    : tickValues
+      ? downsampleTicks(tickValues, tickCount)
+      : exactTicksFromScale(xScaleProp, tickCount);
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const p1 = vec(xScale(tick), yScale(y2));
@@ -59,19 +66,41 @@ export const XAxis = <
     const val = isNumericalData ? tick : ix[tick];
 
     const contentX = formatXLabel(val as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
-    const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
-    const canFitLabelContent =
-      xScale(tick) >= chartBounds.left &&
-      xScale(tick) <= chartBounds.right &&
-      (yAxisSide === "left"
-        ? labelX + labelWidth < chartBounds.right
-        : chartBounds.left < labelX);
+    const { width: labelWidth, height: labelHeight } = getLabelDimensions({
+      text: contentX,
+      font,
+      labelRenderer,
+    });
+    // Paragraph-rendered labels: anchor to the right side of the gridline and
+    // clamp the trailing label inside chartBounds so the last tick never overflows.
+    const labelX = labelRenderer
+      ? Math.max(
+          chartBounds.left,
+          Math.min(xScale(tick), chartBounds.right - (labelWidth ?? 0)),
+        )
+      : xScale(tick) - (labelWidth ?? 0) / 2;
+    const canFitLabelContent = labelRenderer
+      ? xScale(tick) >= chartBounds.left && xScale(tick) <= chartBounds.right
+      : xScale(tick) >= chartBounds.left &&
+        xScale(tick) <= chartBounds.right &&
+        (yAxisSide === "left"
+          ? labelX + labelWidth < chartBounds.right
+          : chartBounds.left < labelX);
 
     const labelY = (() => {
+      if (labelRenderer) {
+        if (axisSide === "bottom" && labelPosition === "outset") {
+          return chartBounds.bottom + labelOffset;
+        }
+        if (axisSide === "bottom" && labelPosition === "inset") {
+          return yScale(y2) - labelOffset - labelHeight;
+        }
+        if (axisSide === "top" && labelPosition === "outset") {
+          return yScale(y1) - labelOffset - labelHeight;
+        }
+        return yScale(y1) + labelOffset;
+      }
+
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
         return chartBounds.bottom + labelOffset + fontSize;
@@ -101,25 +130,33 @@ export const XAxis = <
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = labelRenderer
+          ? vec(labelX + labelWidth / 2, labelY + labelHeight / 2)
+          : vec(labelX + labelWidth / 2, labelY);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "bottom" && labelPosition === "inset") {
         // bottom, inset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = labelRenderer
+          ? vec(labelX + labelWidth / 2, labelY + labelHeight / 2)
+          : vec(labelX + labelWidth / 2, labelY);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "top" && labelPosition === "inset") {
         // top, inset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = labelRenderer
+          ? vec(labelX + labelWidth / 2, labelY + labelHeight / 2)
+          : vec(labelX + labelWidth / 2, labelY - fontSize / 4);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else {
         // top, outset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = labelRenderer
+          ? vec(labelX + labelWidth / 2, labelY + labelHeight / 2)
+          : vec(labelX + labelWidth / 2, labelY - fontSize / 4);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
@@ -137,21 +174,43 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {font && labelWidth && canFitLabelContent ? (
+        {(font || labelRenderer) && labelWidth && canFitLabelContent ? (
           <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
+            {labelRenderer ? (
+              <Group
+                transform={[
+                  {
+                    rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                  },
+                ]}
+                origin={origin}
+              >
+                {labelRenderer.render({
+                  text: contentX,
+                  color: labelColor,
+                  x: labelX,
+                  y: labelY,
+                  width: labelWidth,
+                  height: labelHeight,
+                  rotation: labelRotate ?? 0,
+                  origin,
+                })}
+              </Group>
+            ) : (
+              <Text
+                transform={[
+                  {
+                    rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                  },
+                ]}
+                origin={origin}
+                color={labelColor}
+                text={contentX}
+                font={font ?? null}
+                y={labelY}
+                x={labelX}
+              />
+            )}
           </Group>
         ) : null}
         <></>

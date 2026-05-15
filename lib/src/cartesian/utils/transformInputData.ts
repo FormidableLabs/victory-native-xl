@@ -1,6 +1,11 @@
 import { type ScaleLinear } from "d3-scale";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
-import { downsampleTicks, getDomainFromTicks } from "../../utils/tickHelpers";
+import {
+  DEFAULT_TICK_COUNT,
+  downsampleTicks,
+  exactTicksFromScale,
+  getDomainFromTicks,
+} from "../../utils/tickHelpers";
 import type {
   AxisProps,
   NumericalFields,
@@ -15,6 +20,7 @@ import type {
   AxisScales,
 } from "../../types";
 import { asNumber } from "../../utils/asNumber";
+import { getLabelDimensions } from "../../utils/getLabelDimensions";
 import { makeScale } from "./makeScale";
 
 /**
@@ -120,25 +126,33 @@ export const transformInputData = <
     axisScale: xAxisScale,
   });
 
-  // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // 4consistency we do it here- so we have both y and x ticks to pass to the axis generator
+  // Exact tick count on linear X (same as Y / zoom-rescaled axes); log uses d3 .ticks().
+  const xTicksCount = xTicks ?? DEFAULT_TICK_COUNT;
   const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
-    : xTempScale.ticks(xTicks);
+    ? downsampleTicks(xTickValues, xTicksCount)
+    : exactTicksFromScale(xTempScale, xTicksCount);
+
+  const xLabelMeasurements = xTicksNormalized.map((xTick) => {
+    const labelValue = xAxis.formatXLabel
+      ? xAxis.formatXLabel(
+          xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+        )
+      : String(xTick);
+
+    return getLabelDimensions({
+      text: String(labelValue),
+      font: xAxis.font,
+      labelRenderer: xAxis.labelRenderer,
+    });
+  });
 
   const maxXLabel = Math.max(
-    ...xTicksNormalized.map((xTick) => {
-      const labelValue = xAxis.formatXLabel
-        ? xAxis.formatXLabel(
-            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
-          )
-        : String(xTick);
-      const labelStr = String(labelValue);
-      if (!xAxis.font) return 0;
-      const glyphIDs = xAxis.font.getGlyphIDs(labelStr);
-      const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
-      return widths.reduce((sum, w) => sum + w, 0);
-    }),
+    0,
+    ...xLabelMeasurements.map((measurement) => measurement.width),
+  );
+  const maxXLabelHeight = Math.max(
+    0,
+    ...xLabelMeasurements.map((measurement) => measurement.height),
   );
 
   // workt with adjustedoutputwindow isntead of directly
@@ -156,8 +170,6 @@ export const transformInputData = <
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
   const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
-    const fontHeight = yAxis.font?.getSize?.() ?? 0;
-
     const yTickValues = yAxis.tickValues;
     const yTicks = yAxis.tickCount;
     const tickDomainsY = yAxis.domain
@@ -207,13 +219,13 @@ export const transformInputData = <
         return [
           adjustedOutputWindow.yMin,
           adjustedOutputWindow.yMax +
-            (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? -maxXLabelHeight - yLabelOffset * 2 : 0),
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin +
-            (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
+            (xTickCount > 0 ? maxXLabelHeight + yLabelOffset * 2 : 0),
           adjustedOutputWindow.yMax,
         ];
       }
@@ -226,7 +238,10 @@ export const transformInputData = <
       outputBounds: yScaleRange,
       // Reverse viewport y values since canvas coordinates increase downward
       viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
-      isNice: true,
+      // `nice()` expands the domain to round numbers and yields ~tickCount ticks
+      // instead of exactly tickCount; disabled so explicit tickValues / tickCount
+      // are honored and top/bottom segments line up with the data domain.
+      isNice: false,
       padEnd:
         typeof domainPadding === "number"
           ? domainPadding
@@ -251,9 +266,19 @@ export const transformInputData = <
       {} as Record<string, { i: MaybeNumber[]; o: MaybeNumber[] }>,
     );
 
+    // Honor an explicit tickCount exactly: evenly distribute `yTicks` values
+    // across the data domain instead of relying on d3's `scale.ticks(n)`,
+    // which only returns ~n "nice" values.
     const yTicksNormalized = yTickValues
       ? downsampleTicks(yTickValues, yTicks)
-      : yScale.ticks(yTicks);
+      : typeof yTicks === "number" && yTicks > 0
+        ? yTicks === 1
+          ? [(yMin + yMax) / 2]
+          : Array.from(
+              { length: yTicks },
+              (_, i) => yMin + ((yMax - yMin) * i) / (yTicks - 1),
+            )
+        : exactTicksFromScale(yScale, yTicks ?? DEFAULT_TICK_COUNT);
 
     yKeys.forEach((yKey) => {
       if (yKeysForAxis.includes(yKey)) {
@@ -268,15 +293,14 @@ export const transformInputData = <
     });
 
     const maxYLabel = Math.max(
+      0,
       ...yTicksNormalized.map(
         (yTick) =>
-          yAxis?.font
-            ?.getGlyphWidths?.(
-              yAxis.font.getGlyphIDs(
-                yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
-              ),
-            )
-            .reduce((sum, value) => sum + value, 0) ?? 0,
+          getLabelDimensions({
+            text: yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
+            font: yAxis.font,
+            labelRenderer: yAxis.labelRenderer,
+          }).width,
       ),
     );
 
@@ -334,12 +358,10 @@ export const transformInputData = <
     axisScale: xAxisScale,
   });
 
-  // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
   const finalXTicksNormalized = isNumericalData
     ? xTickValues
-      ? downsampleTicks(xTickValues, xTicks)
-      : xScale.ticks(xTicks)
+      ? downsampleTicks(xTickValues, xTicksCount)
+      : exactTicksFromScale(xScale, xTicksCount)
     : ixNum;
 
   const ox = ixNum.map((x) => xScale(x)!);
