@@ -192,6 +192,12 @@ if (__DEV__) {
       path: "/memory-stress-debug",
     },
     {
+      title: "Pie Animation Stress Debug",
+      description:
+        "Debug fixture for comparing multiple animated and static pie updates.",
+      path: "/pie-animation-stress-debug",
+    },
+    {
       title: "Axis Debug",
       description: "Debug fixture for x-axis label positioning at chart edges.",
       path: "/axis-debug",
