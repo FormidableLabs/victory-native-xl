@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
-import { useSharedValue } from "react-native-reanimated";
+import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import {
   type ComposedGesture,
   Gesture,
@@ -75,6 +75,10 @@ export type CartesianActionsHandle<T = undefined> =
       : never
     : never;
 
+export type CartesianActionsRef<T = undefined> =
+  | MutableRefObject<CartesianActionsHandle<T> | null>
+  | SharedValue<CartesianActionsHandle<T> | null>;
+
 export type CartesianChartRef<T = undefined> = {
   canvas: CanvasRef | null;
   actions: CartesianActionsHandle<T>;
@@ -122,13 +126,13 @@ type CartesianChartProps<
     pinch?: PinchTransformGestureConfig;
   };
   customGestures?: ComposedGesture;
-  actionsRef?: MutableRefObject<CartesianActionsHandle<
+  actionsRef?: CartesianActionsRef<
     | ChartPressState<{
         x: InputFields<RawData>[XK];
         y: Record<YK, number>;
       }>
     | undefined
-  > | null>;
+  >;
   ref?: React.Ref<
     CartesianChartRef<
       | ChartPressState<{
@@ -334,73 +338,77 @@ function CartesianChartContent<
   /**
    * Take a "press value" and an x-value and update the shared values accordingly.
    */
-  const handleTouch = (
-    v: ChartPressState<{
-      x: InputFields<RawData>[XK];
-      y: Record<YK, number>;
-    }>,
-    x: number,
-    y: number,
-  ) => {
-    "worklet";
-    const idx = findClosestPoint(tData.value.ox, x);
+  const handleTouch = React.useCallback(
+    (
+      v: ChartPressState<{
+        x: InputFields<RawData>[XK];
+        y: Record<YK, number>;
+      }>,
+      x: number,
+      y: number,
+    ) => {
+      "worklet";
+      const idx = findClosestPoint(tData.value.ox, x);
 
-    if (typeof idx !== "number") return;
+      if (typeof idx !== "number") return;
 
-    const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
-    // begin stacked bar handling:
-    // store the heights of each bar segment
-    const barHeights: number[] = [];
-    for (const yk in v.y) {
-      if (isInYs(yk)) {
-        const height = asNumber(tData.value.y[yk].i[idx]);
-        barHeights.push(height);
-      }
-    }
-
-    const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
-    // Calculate the actual yValue of the touch within the domain of the yScale
-    const yDomainValue =
-      (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
-
-    // track the cumulative height and the y-index of the touched segment
-    let cumulativeHeight = 0;
-    let yIndex = -1;
-
-    // loop through the bar heights to find which bar was touched
-    for (let i = 0; i < barHeights.length; i++) {
-      // Accumulate the height as we go along
-      cumulativeHeight += barHeights[i]!;
-      // Check if the y-value touched falls within the current segment
-      if (yDomainValue <= cumulativeHeight) {
-        // If it does, set yIndex to the current segment index and break
-        yIndex = i;
-        break;
-      }
-    }
-
-    // Update the yIndex value in the state or context
-    v.yIndex.value = yIndex;
-    // end stacked bar handling
-
-    if (v) {
-      try {
-        v.matchedIndex.value = idx;
-        v.x.value.value = tData.value.ix[idx]!;
-        v.x.position.value = asNumber(tData.value.ox[idx]);
-        for (const yk in v.y) {
-          if (isInYs(yk)) {
-            v.y[yk].value.value = asNumber(tData.value.y[yk].i[idx]);
-            v.y[yk].position.value = asNumber(tData.value.y[yk].o[idx]);
-          }
+      const isInYs = (yk: string): yk is YK & string =>
+        yKeys.includes(yk as YK);
+      // begin stacked bar handling:
+      // store the heights of each bar segment
+      const barHeights: number[] = [];
+      for (const yk in v.y) {
+        if (isInYs(yk)) {
+          const height = asNumber(tData.value.y[yk].i[idx]);
+          barHeights.push(height);
         }
-      } catch (err) {
-        // no-op
       }
-    }
 
-    lastIdx.value = idx;
-  };
+      const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
+      // Calculate the actual yValue of the touch within the domain of the yScale
+      const yDomainValue =
+        (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
+
+      // track the cumulative height and the y-index of the touched segment
+      let cumulativeHeight = 0;
+      let yIndex = -1;
+
+      // loop through the bar heights to find which bar was touched
+      for (let i = 0; i < barHeights.length; i++) {
+        // Accumulate the height as we go along
+        cumulativeHeight += barHeights[i]!;
+        // Check if the y-value touched falls within the current segment
+        if (yDomainValue <= cumulativeHeight) {
+          // If it does, set yIndex to the current segment index and break
+          yIndex = i;
+          break;
+        }
+      }
+
+      // Update the yIndex value in the state or context
+      v.yIndex.value = yIndex;
+      // end stacked bar handling
+
+      if (v) {
+        try {
+          v.matchedIndex.value = idx;
+          v.x.value.value = tData.value.ix[idx]!;
+          v.x.position.value = asNumber(tData.value.ox[idx]);
+          for (const yk in v.y) {
+            if (isInYs(yk)) {
+              v.y[yk].value.value = asNumber(tData.value.y[yk].i[idx]);
+              v.y[yk].position.value = asNumber(tData.value.y[yk].o[idx]);
+            }
+          }
+        } catch (err) {
+          // no-op
+        }
+      }
+
+      lastIdx.value = idx;
+    },
+    [chartHeight, lastIdx, tData, yKeys, yScaleBottom, yScaleTop],
+  );
 
   React.useImperativeHandle(
     ref,
@@ -415,8 +423,13 @@ function CartesianChartContent<
   );
 
   const handleTouchRef = useFunctionRef(handleTouch);
+  const mutableActionsRef =
+    actionsRef && "current" in actionsRef ? actionsRef : undefined;
+  const sharedActionsRef =
+    actionsRef && "value" in actionsRef ? actionsRef : undefined;
+
   React.useImperativeHandle(
-    actionsRef,
+    mutableActionsRef,
     () => ({
       handleTouch: (value, x, y) => {
         handleTouchRef.current?.(value, x, y);
@@ -424,6 +437,18 @@ function CartesianChartContent<
     }),
     [handleTouchRef],
   );
+
+  React.useEffect(() => {
+    if (!sharedActionsRef) return;
+
+    sharedActionsRef.value = {
+      handleTouch,
+    };
+
+    return () => {
+      sharedActionsRef.value = null;
+    };
+  }, [handleTouch, sharedActionsRef]);
 
   /**
    * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
