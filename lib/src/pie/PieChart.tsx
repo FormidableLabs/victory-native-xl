@@ -1,7 +1,8 @@
 import * as React from "react";
-import { vec, type Color } from "@shopify/react-native-skia";
+import { type Color } from "@shopify/react-native-skia";
 import { PieSlice, type PieSliceData } from "./PieSlice";
 import { handleTranslateInnerRadius } from "./utils/innerRadius";
+import { getPieLayout } from "./utils/pieLayout";
 import { PieSliceProvider } from "./contexts/PieSliceContext";
 import { usePolarChartContext } from "../polar/contexts/PolarChartContext";
 
@@ -37,13 +38,7 @@ export const PieChart = (props: PieChartProps) => {
     0,
   );
 
-  const width = size ?? canvasSize.width; // Get the dynamic canvas size
-  const height = size ?? canvasSize.height; // Get the dynamic canvas size
-
-  // The size of the chart will need to be adjusted if the labels are positioned outside the chart.
-  // ie we need to decrease the Pie Charts radius to account for the labels so the labels don't get cut off.
-  const radius = Math.min(width, height) / 2; // Calculate the radius based on canvas size
-  const center = vec(canvasSize.width / 2, canvasSize.height / 2);
+  const { center, radius } = getPieLayout({ canvasSize, size });
 
   const data = React.useMemo(() => {
     let startAngle = _startAngle; // Initialize the start angle for the first slice
