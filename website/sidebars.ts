@@ -17,6 +17,7 @@ const sidebars = {
           label: "Guides",
           items: [
             "cartesian/guides/basic-bar-chart",
+            "cartesian/guides/horizontal-bar-chart",
             "cartesian/guides/multi-press",
             "cartesian/guides/custom-bars",
           ],
