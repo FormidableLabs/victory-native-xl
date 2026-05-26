@@ -17,7 +17,7 @@ type ChartWrapperProps = {
   onLayout: (e: LayoutChangeEvent) => void;
   hasMeasuredLayoutSize: boolean;
   canvasSize: ChartCanvasSize;
-  canvasRef?: React.RefObject<CanvasRef | null>;
+  canvasRef?: React.Ref<CanvasRef>;
   chartContent: React.ReactNode;
   gestureOverlay?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
