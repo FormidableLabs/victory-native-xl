@@ -73,6 +73,11 @@ export type CartesianChartRef<T = undefined> = {
   actions: CartesianActionsHandle<T>;
 };
 
+export type CartesianChartExplicitSize = {
+  width: number;
+  height: number;
+};
+
 type CartesianChartProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -131,6 +136,11 @@ type CartesianChartProps<
       | undefined
     >
   >;
+  /**
+   * When provided, initializes chart dimensions without waiting for React Native
+   * `onLayout`.
+   */
+  explicitSize?: CartesianChartExplicitSize;
 };
 
 export function CartesianChart<
@@ -181,8 +191,11 @@ function CartesianChartContent<
   actionsRef,
   viewport,
   ref,
+  explicitSize,
 }: CartesianChartProps<RawData, XK, YK>) {
-  const [size, setSize] = React.useState({ width: 0, height: 0 });
+  const [size, setSize] = React.useState(
+    explicitSize ?? { width: 0, height: 0 },
+  );
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
   const xScaleRef = React.useRef<
     ScaleLogarithmic<number, number> | ScaleLinear<number, number> | undefined
@@ -192,14 +205,19 @@ function CartesianChartContent<
     undefined,
   );
   const canvasRef = React.useRef<CanvasRef | null>(null);
-  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
-    React.useState(false);
+  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] = React.useState(
+    Boolean(explicitSize),
+  );
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      if (explicitSize) {
+        return;
+      }
+
       setHasMeasuredLayoutSize(true);
       setSize(layout);
     },
-    [],
+    [explicitSize],
   );
   const normalizedAxisProps = useBuildChartAxis({
     xAxis,
@@ -705,7 +723,6 @@ function CartesianChartContent<
       />
     ) : null;
 
-  // Body of the chart.
   const body = (
     <Canvas ref={canvasRef} style={{ flex: 1 }}>
       {YAxisComponents}
@@ -748,7 +765,15 @@ function CartesianChartContent<
 
   return (
     <GestureHandlerRootView>
-      <View style={{ flex: 1, overflow: "hidden" }} onLayout={onLayout}>
+      <View
+        style={{
+          flex: explicitSize ? undefined : 1,
+          width: explicitSize?.width,
+          height: explicitSize?.height,
+          overflow: "hidden",
+        }}
+        onLayout={explicitSize ? undefined : onLayout}
+      >
         {body}
         <GestureHandler
           config={gestureHandlerConfig}
