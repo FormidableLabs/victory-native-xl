@@ -7,6 +7,7 @@ import { type PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { useHorizontalBarPath } from "../hooks/useHorizontalBarPath";
 import type { RoundedCorners } from "../../utils/createRoundedRectPath";
 import { BarGraphLabels, type BarLabelConfig } from "./BarGraphLabels";
+import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
 type HorizontalBarPathProps = Partial<
   Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">
@@ -46,6 +47,7 @@ export const HorizontalBar = ({
   labels,
   ...ops
 }: PropsWithChildren<CartesianHorizontalBarProps>) => {
+  const { orientation } = useCartesianChartContext();
   const { path, barWidth: bw } = useHorizontalBarPath(
     points,
     chartBounds,
@@ -54,6 +56,15 @@ export const HorizontalBar = ({
     barWidth,
     barCount,
   );
+
+  if (orientation !== "horizontal") {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        'HorizontalBar must be rendered inside a CartesianChart with orientation="horizontal".',
+      );
+    }
+    return null;
+  }
 
   return (
     <>

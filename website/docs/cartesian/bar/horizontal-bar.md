@@ -64,5 +64,13 @@ export function MyChart() {
 - `points[key].y` is the category center on screen.
 - `points[key].xValue` remains the raw category value.
 - `points[key].yValue` remains the raw numeric value.
+- `HorizontalBar` is only supported inside `CartesianChart orientation="horizontal"`.
+
+When using `chartPressState`, the press values keep their data-semantic names:
+
+- `state.x.value.value` is the raw category from `xKey`.
+- `state.x.position.value` is the category's vertical screen position.
+- `state.y[key].value.value` is the numeric series value.
+- `state.y[key].position.value` is the value's horizontal screen position.
 
 Grouped and stacked horizontal bars are not part of the initial component. Use `BarGroup` and `StackedBar` for vertical grouped and stacked bars.
