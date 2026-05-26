@@ -4,10 +4,12 @@ import React, {
   createContext,
   type PropsWithChildren,
 } from "react";
+import type { CartesianChartOrientation } from "../../types";
 
 export type CartesianChartContextValue = {
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
+  orientation: CartesianChartOrientation;
 };
 
 const CartesianChartContext = createContext<
@@ -17,18 +19,20 @@ const CartesianChartContext = createContext<
 interface CartesianChartProviderProps {
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
+  orientation?: CartesianChartOrientation;
 }
 
 export const CartesianChartProvider = (
   props: PropsWithChildren<CartesianChartProviderProps>,
 ) => {
-  const { children, xScale, yScale } = props;
+  const { children, xScale, yScale, orientation = "vertical" } = props;
 
   return (
     <CartesianChartContext.Provider
       value={{
         xScale,
         yScale,
+        orientation,
       }}
     >
       {children}

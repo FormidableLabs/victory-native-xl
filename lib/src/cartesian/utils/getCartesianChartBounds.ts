@@ -1,4 +1,9 @@
-import type { ChartBounds, SidedNumber, Viewport } from "../../types";
+import type {
+  CartesianChartOrientation,
+  ChartBounds,
+  SidedNumber,
+  Viewport,
+} from "../../types";
 import { valueFromSidedNumber } from "../../utils/valueFromSidedNumber";
 
 type CartesianScale = {
@@ -25,11 +30,13 @@ export const getCartesianChartBounds = ({
   yScale,
   viewport,
   domainPadding,
+  orientation = "vertical",
 }: {
   xScale: CartesianScale;
   yScale: CartesianScale;
   viewport?: Viewport;
   domainPadding?: SidedNumber;
+  orientation?: CartesianChartOrientation;
 }): ChartBounds => {
   const hasXViewport = viewport?.x !== undefined;
   const hasYViewport = viewport?.y !== undefined;
@@ -54,10 +61,20 @@ export const getCartesianChartBounds = ({
       getScaleValue(xScale, viewport?.x?.[1] ?? getDomainValue(xScale, -1, 0)) +
       rightPadding,
     top:
-      getScaleValue(yScale, viewport?.y?.[1] ?? getDomainValue(yScale, 0, 0)) -
+      getScaleValue(
+        yScale,
+        orientation === "horizontal"
+          ? (viewport?.y?.[0] ?? getDomainValue(yScale, 0, 0))
+          : (viewport?.y?.[1] ?? getDomainValue(yScale, 0, 0)),
+      ) -
       topPadding,
     bottom:
-      getScaleValue(yScale, viewport?.y?.[0] ?? getDomainValue(yScale, -1, 0)) +
+      getScaleValue(
+        yScale,
+        orientation === "horizontal"
+          ? (viewport?.y?.[1] ?? getDomainValue(yScale, -1, 0))
+          : (viewport?.y?.[0] ?? getDomainValue(yScale, -1, 0)),
+      ) +
       bottomPadding,
   };
 };
