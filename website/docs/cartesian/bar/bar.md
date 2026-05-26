@@ -58,13 +58,15 @@ The `roundedCorners` prop allows you to customize the roundedness of each corner
 - `bottomRight?: number`: Defines the radius of the bottom-right corner of the Bar. If not provided, the default is 0 (no rounding).
 - `bottomLeft?: number`: Defines the radius of the bottom-left corner of the Bar. If not provided, the default is 0 (no rounding).
 
+Corner radii are capped to half of the rendered bar width so rounded bars keep valid geometry. Negative bars automatically swap top and bottom corner semantics so "top" corners still apply to the visible end of a positive bar and "bottom" corners still apply to the visible end of a negative bar.
+
 ### `barWidth`
 
-The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by the `chartBounds` and number of data points. Takes precedence over the `barCount` prop. Use this for the most fine grained control of bar width
+The `barWidth` prop takes a number and sets the width of the bar to that number. If not provided, the default is determined by the `chartBounds` and number of data points. Takes precedence over the `barCount` prop. Use this for the most fine grained control of bar width. Explicit `barWidth={0}` is respected.
 
 ### `barCount`
 
-The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
+The `barCount` prop takes a number and sets the width of the bar as if there were `barCount` x data points. If not provided, the default is determined by the `chartBounds` and number of data points. This is useful for keeping a fixed bar width when the visible data window changes.
 
 ### `labels`
 

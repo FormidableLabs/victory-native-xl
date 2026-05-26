@@ -1,13 +1,14 @@
-# `useStackedBarGroupPaths`
+# `useStackedBarPaths`
 
-The `useStackedBarGroupPaths` hook takes an _array_ of `PointsArray`, a `ChartBounds` object, a `barOptions` render prop, an array of colors of type `Color` and some padding options, and returns a list of `StackedBarPath[]` paths.
+The `useStackedBarPaths` hook takes an _array_ of `PointsArray`, a `ChartBounds` object, a `barOptions` render prop, an array of colors of type `Color` and some padding options, and returns a list of `StackedBarPath[]` paths.
 
 ## Arguments
 
-`useStackedBarGroupPaths` has a function signature as follows:
+`useStackedBarPaths` has a function signature as follows:
 
 ```ts
-useBarGroupPaths(points: PointsArray[];
+useStackedBarPaths({
+  points: PointsArray[];
   chartBounds: ChartBounds;
   innerPadding?: number;
   barWidth?: number;
@@ -24,6 +25,7 @@ useBarGroupPaths(points: PointsArray[];
     columnIndex: number;
     rowIndex: number;
   }) => CustomizablePathProps & { roundedCorners?: RoundedCorners };
+}): StackedBarPath[];
 ```
 
 ### `points`
@@ -37,6 +39,18 @@ A `ChartBounds` object needed to appropriately draw the bars. This generally com
 ### `colors`
 
 The `colors` prop takes an array of `Color` values to use for the bars. The order of the colors should match the order of the `points` prop.
+
+### `innerPadding`
+
+An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars should be "white space". Defaults to `0.25`.
+
+### `barWidth`
+
+An optional explicit width for each stacked bar. This takes precedence over `barCount` and the computed width.
+
+### `barCount`
+
+An optional count used to compute bar width as if there were `barCount` x data points. This is useful for keeping stacked bar widths stable when rendering dynamic subsets of a larger dataset.
 
 ### `barOptions`
 
@@ -63,7 +77,7 @@ This prop allows you to customize each individual bar in the stacked bar chart. 
 
 ## Returns
 
-`useBarGroupPaths` returns an array of the with the following structure:
+`useStackedBarPaths` returns an array with the following structure:
 
 ```ts
 type StackedBarPath = {

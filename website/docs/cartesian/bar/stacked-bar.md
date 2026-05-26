@@ -107,7 +107,7 @@ The `barWidth` prop takes a number and sets the width of the bar to that number.
 
 ### `barCount`
 
-The `barCount` prop takes a number and sets the width of the bar as if there X data points. If not provided, the default is determined by the `chartBounds` and number of data points. Useful for getting a fixed bar width regardless of the number of data points. Use this for a more general control of bar width.
+The `barCount` prop takes a number and sets the width of the bar as if there were `barCount` x data points. If not provided, the default is determined by the `chartBounds` and number of data points. This is useful for keeping stacked bar widths stable when the visible data window changes.
 
 ### `barOptions`
 
