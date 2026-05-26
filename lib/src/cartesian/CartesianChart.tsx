@@ -138,9 +138,14 @@ type CartesianChartProps<
   >;
   /**
    * When provided, initializes chart dimensions without waiting for React Native
-   * `onLayout`.
+   * `onLayout`. Required when using `headless`.
    */
   explicitSize?: CartesianChartExplicitSize;
+  /**
+   * When `true` (with `explicitSize`), renders a Skia-only subtree suitable for
+   * headless renderers that cannot mount React Native views.
+   */
+  headless?: boolean;
 };
 
 export function CartesianChart<
@@ -192,6 +197,7 @@ function CartesianChartContent<
   viewport,
   ref,
   explicitSize,
+  headless,
 }: CartesianChartProps<RawData, XK, YK>) {
   const [size, setSize] = React.useState(
     explicitSize ?? { width: 0, height: 0 },
@@ -208,6 +214,7 @@ function CartesianChartContent<
   const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] = React.useState(
     Boolean(explicitSize),
   );
+  const isHeadless = Boolean(headless && explicitSize);
   const onLayout = React.useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       if (explicitSize) {
@@ -723,8 +730,8 @@ function CartesianChartContent<
       />
     ) : null;
 
-  const body = (
-    <Canvas ref={canvasRef} style={{ flex: 1 }}>
+  const chartContent = (
+    <>
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
@@ -736,6 +743,14 @@ function CartesianChartContent<
         </Group>
       </CartesianChartProvider>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+    </>
+  );
+
+  const body = isHeadless ? (
+    <Group>{chartContent}</Group>
+  ) : (
+    <Canvas ref={canvasRef} style={{ flex: 1 }}>
+      {chartContent}
     </Canvas>
   );
 
@@ -761,6 +776,10 @@ function CartesianChartContent<
   }
   if (chartPressState) {
     composed = Gesture.Race(composed, panGesture);
+  }
+
+  if (isHeadless) {
+    return body;
   }
 
   return (
