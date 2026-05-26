@@ -6,6 +6,8 @@ Horizontal bar charts keep the usual Victory Native data shape: `xKey` identifie
 
 ## Example
 
+For a step-by-step walkthrough, see the [horizontal bar chart guide](../guides/horizontal-bar-chart.md).
+
 ```tsx
 import { CartesianChart, HorizontalBar } from "victory-native";
 
