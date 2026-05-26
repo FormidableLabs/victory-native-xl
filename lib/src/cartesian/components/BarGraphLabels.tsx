@@ -3,6 +3,7 @@ import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
 import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
+import { getBarLabelPosition } from "../utils/getBarLabelPosition";
 
 export type BarLabelConfig = {
   position: "top" | "bottom" | "left" | "right";
@@ -16,9 +17,6 @@ type BarGraphLabelProps = {
   barWidth?: number;
   options: BarLabelConfig;
 };
-
-// Arbitrary offset so that the label is not touching the bar
-const LABEL_OFFSET_FROM_POSITION = 5;
 
 export const BarGraphLabels = ({
   points,
@@ -34,113 +32,23 @@ export const BarGraphLabels = ({
     const yText = yValue?.toString() ?? "";
     const labelWidth = getFontGlyphWidth(yText, font);
     const fontSize = font?.getSize() ?? 0;
-
-    let xOffset;
-    let yOffset;
-
-    if (orientation === "horizontal") {
-      const baselineX = xScale(0);
-      const barInnerLeftEdge = Math.min(baselineX, x);
-      const barOuterRightEdge = Math.max(baselineX, x);
-      const barInnerTopEdge = Number(y) - barWidth / 2;
-      const barOuterBottomEdge = Number(y) + barWidth / 2;
-      const barHorizontalMidpoint =
-        barInnerLeftEdge + (barOuterRightEdge - barInnerLeftEdge) / 2;
-      const barVerticalMidpoint = Number(y) + fontSize / 3;
-
-      switch (position) {
-        case "top": {
-          xOffset = barHorizontalMidpoint - labelWidth / 2;
-          yOffset = barInnerTopEdge - LABEL_OFFSET_FROM_POSITION;
-          break;
-        }
-        case "bottom": {
-          xOffset = barHorizontalMidpoint - labelWidth / 2;
-          yOffset = barOuterBottomEdge + fontSize + LABEL_OFFSET_FROM_POSITION;
-          break;
-        }
-        case "left": {
-          xOffset = barInnerLeftEdge - labelWidth - LABEL_OFFSET_FROM_POSITION;
-          yOffset = barVerticalMidpoint;
-          break;
-        }
-        case "right": {
-          xOffset = barOuterRightEdge + LABEL_OFFSET_FROM_POSITION;
-          yOffset = barVerticalMidpoint;
-          break;
-        }
-        default: {
-          xOffset = x;
-          yOffset = Number(y);
-        }
-      }
-
-      return (
-        <Text
-          key={`${xOffset}-${yOffset}-${yText}`}
-          x={xOffset}
-          y={yOffset}
-          text={yText}
-          font={font}
-          color={color}
-        />
-      );
-    }
-
-    // Bar Edges
-    const barInnerLeftEdge = x - barWidth / 2;
-    const barOuterRightEdge = x + barWidth / 2;
-
-    // Chart Edges
-    const { top: chartInnerTopEdge, bottom: chartInnerBottomEdge } =
-      chartBounds;
-
-    // Bar Midpoints
-    const barVerticalMidpoint =
-      (chartInnerTopEdge + chartInnerBottomEdge + Number(y)) / 2;
-    const barHorizontalMidpoint = x - labelWidth / 2;
-
-    switch (position) {
-      case "top": {
-        // Position the label above the bar
-        // Move the label left by half its width to properly center the text over the bar
-        xOffset = barHorizontalMidpoint;
-        yOffset = Number(y) - LABEL_OFFSET_FROM_POSITION;
-        break;
-      }
-      case "bottom": {
-        // Position the label at the bottom of the bar
-        xOffset = barHorizontalMidpoint;
-        // Use the chartBounds here so that the label isn't rendered under the graph
-        yOffset = chartInnerBottomEdge - LABEL_OFFSET_FROM_POSITION;
-        break;
-      }
-      case "left": {
-        // Position the label to the left of the bar
-        // Move the label to the inner left edge then by the labels full width so
-        // that the label is not render inside the bar
-        xOffset = barInnerLeftEdge - labelWidth - LABEL_OFFSET_FROM_POSITION;
-        yOffset = barVerticalMidpoint;
-        break;
-      }
-      case "right": {
-        // Position the label to the right of the bar
-        // Move the label to the outer right edge of the bar
-        xOffset = barOuterRightEdge + LABEL_OFFSET_FROM_POSITION;
-        yOffset = barVerticalMidpoint;
-        break;
-      }
-      default: {
-        xOffset = x;
-        yOffset = Number(y);
-      }
-    }
+    const labelPosition = getBarLabelPosition({
+      orientation,
+      position,
+      x,
+      y: Number(y),
+      labelWidth,
+      fontSize,
+      barWidth,
+      chartBounds,
+      baselineX: xScale(0),
+    });
 
     return (
       <Text
-        key={`${xOffset}-${yOffset}-${yText}`}
-        x={xOffset}
-        y={yOffset}
+        key={`${labelPosition.x}-${labelPosition.y}-${yText}`}
+        x={labelPosition.x}
+        y={labelPosition.y}
         text={yText}
         font={font}
         color={color}

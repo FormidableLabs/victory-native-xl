@@ -31,7 +31,6 @@ import type {
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { transformHorizontalInputData } from "./utils/transformHorizontalInputData";
-import { findClosestPoint } from "../utils/findClosestPoint";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
 import type {
@@ -65,6 +64,7 @@ import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { resetChartPressState } from "./utils/resetChartPressState";
+import { getClosestDatumIndex } from "./utils/getClosestDatumIndex";
 import {
   type ChartPressBootstrapEntry,
   pruneChartPressBootstrap,
@@ -388,10 +388,12 @@ function CartesianChartContent<
       y: number,
     ) => {
       "worklet";
-      const idx = findClosestPoint(
-        tData.value.ox,
-        orientation === "horizontal" ? y : x,
-      );
+      const idx = getClosestDatumIndex({
+        orientation,
+        categoryPositions: tData.value.ox,
+        touchX: x,
+        touchY: y,
+      });
 
       if (typeof idx !== "number") return;
 

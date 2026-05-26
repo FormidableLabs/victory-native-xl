@@ -16,6 +16,7 @@ import type {
   Scale,
   YAxisSide,
 } from "../../types";
+import { getCategoryYAxisLabelPosition } from "../utils/getCategoryYAxisLabelPosition";
 
 type CategoryYAxisProps<
   RawData extends Record<string, unknown>,
@@ -65,28 +66,21 @@ export const CategoryYAxis = <
     const labelLayout = getTextLayout(contentY, font);
     const labelWidth = labelLayout.width;
     const tickPosition = yScale(tick);
-    const labelY =
-      tickPosition +
-      fontSize / 3 -
-      Math.max(0, labelLayout.height - fontSize) / 2;
-    const labelX = (() => {
-      if (axisSide === "left" && labelPosition === "outset") {
-        return chartBounds.left - (labelWidth + labelOffset);
-      }
-      if (axisSide === "left" && labelPosition === "inset") {
-        return chartBounds.left + labelOffset;
-      }
-      if (axisSide === "right" && labelPosition === "outset") {
-        return chartBounds.right + labelOffset;
-      }
-      return chartBounds.right - (labelWidth + labelOffset);
-    })();
-
-    const lastLabelY =
-      labelY + (labelLayout.lines.length - 1) * labelLayout.lineHeight;
-    const canFitLabelContent =
-      labelY > chartBounds.top + fontSize / 2 &&
-      lastLabelY < chartBounds.bottom + fontSize / 2;
+    const {
+      x: labelX,
+      y: labelY,
+      canFitContent,
+    } = getCategoryYAxisLabelPosition({
+      axisSide,
+      labelPosition,
+      labelOffset,
+      labelWidth,
+      lineCount: labelLayout.lines.length,
+      lineHeight: labelLayout.lineHeight,
+      fontSize,
+      tickPosition,
+      chartBounds,
+    });
 
     return (
       <React.Fragment key={`category-y-tick-${tick}`}>
@@ -103,7 +97,7 @@ export const CategoryYAxis = <
           </Group>
         ) : null}
         {font
-          ? canFitLabelContent && (
+          ? canFitContent && (
               <>
                 {labelLayout.lines.map((line, index) => (
                   <Text
