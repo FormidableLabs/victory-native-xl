@@ -1,11 +1,17 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
-import { type ChartLayoutModeProps } from "./ChartLayoutModeProps";
+import { type ChartExplicitSize } from "./ChartExplicitSize";
 import {
   applyChartLayoutChange,
   getInitialChartCanvasSizeState,
   isChartHeadless,
 } from "./chartCanvasSizeUtils";
+
+/** Runtime layout args after prop destructuring (wider than {@link ChartLayoutModeProps}). */
+export type UseChartCanvasSizeProps = {
+  explicitSize?: ChartExplicitSize;
+  headless?: boolean;
+};
 
 export type { ChartCanvasSize } from "./chartCanvasSizeUtils";
 export {
@@ -17,7 +23,7 @@ export {
 export function useChartCanvasSize({
   explicitSize,
   headless,
-}: ChartLayoutModeProps) {
+}: UseChartCanvasSizeProps) {
   const [size, setSize] = React.useState(
     () => getInitialChartCanvasSizeState(explicitSize).size,
   );

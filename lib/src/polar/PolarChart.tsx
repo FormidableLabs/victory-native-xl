@@ -118,6 +118,7 @@ export const PolarChart = <
     colorKey,
     valueKey,
     explicitSize,
+    headless,
     transformState,
     children,
     ...rest
@@ -128,7 +129,7 @@ export const PolarChart = <
     hasMeasuredLayoutSize,
     onLayout,
     isHeadless,
-  } = useChartCanvasSize(props);
+  } = useChartCanvasSize({ explicitSize, headless });
 
   const providerProps = {
     data,
