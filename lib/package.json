@@ -30,8 +30,10 @@
     "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run --config vitest.config.ts && vitest run --config vitest.headless.config.ts",
+    "test:watch": "vitest",
+    "test:headless": "vitest run --config vitest.headless.config.ts",
+    "test:headless:update-golden": "UPDATE_GOLDEN=1 vitest run --config vitest.headless.config.ts"
   },
   "dependencies": {
     "d3-scale": "^4.0.2",
@@ -48,10 +50,18 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "devDependencies": {
+    "@shopify/react-native-skia": "2.0.2",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
     "@types/d3-zoom": "^3.0.8",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "~18.2.14",
+    "@vitejs/plugin-react": "^4.3.4",
+    "canvaskit-wasm": "^0.40.0",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
   },
