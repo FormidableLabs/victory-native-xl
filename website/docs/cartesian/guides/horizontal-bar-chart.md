@@ -127,10 +127,10 @@ For dense charts or label-position demos, increase the relevant `domainPadding` 
 
 ## Current Scope
 
-The initial horizontal bar support is for single-series `HorizontalBar` charts. `HorizontalBar` should be rendered inside `CartesianChart orientation="horizontal"`.
+The initial horizontal bar support covers single-series `HorizontalBar` charts and grouped `HorizontalBarGroup` charts. Horizontal bar marks should be rendered inside `CartesianChart orientation="horizontal"`.
 
-Grouped and stacked horizontal bars are not part of this component yet; use `BarGroup` and `StackedBar` for vertical grouped and stacked charts.
+Stacked horizontal bars are not part of these components yet; use `StackedBar` for vertical stacked charts.
 
 When using `chartPressState`, the state fields keep their data roles rather than their screen-axis roles. `state.x.value.value` is still the raw category from `xKey`, while `state.x.position.value` is that category's vertical screen position. `state.y[key].value.value` is still the numeric series value, while `state.y[key].position.value` is that value's horizontal screen position.
 
-For API details, see the [`HorizontalBar` component reference](../bar/horizontal-bar.md).
+For API details, see the [`HorizontalBar` component reference](../bar/horizontal-bar.md) and [`HorizontalBarGroup` component reference](../bar/horizontal-bar-group.md).

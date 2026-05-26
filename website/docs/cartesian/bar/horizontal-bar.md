@@ -73,4 +73,4 @@ When using `chartPressState`, the press values keep their data-semantic names:
 - `state.y[key].value.value` is the numeric series value.
 - `state.y[key].position.value` is the value's horizontal screen position.
 
-Grouped and stacked horizontal bars are not part of the initial component. Use `BarGroup` and `StackedBar` for vertical grouped and stacked bars.
+For grouped horizontal bars, use [`HorizontalBarGroup`](./horizontal-bar-group.md). Stacked horizontal bars are not part of the initial horizontal bar components; use `StackedBar` for vertical stacked bars.

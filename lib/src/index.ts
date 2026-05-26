@@ -77,7 +77,9 @@ export { StackedBar } from "./cartesian/components/StackedBar";
 
 // Bar group
 export { useBarGroupPaths } from "./cartesian/hooks/useBarGroupPaths";
+export { useHorizontalBarGroupPaths } from "./cartesian/hooks/useHorizontalBarGroupPaths";
 export { BarGroup } from "./cartesian/components/BarGroup";
+export { HorizontalBarGroup } from "./cartesian/components/HorizontalBarGroup";
 
 // Area
 export { useAreaPath } from "./cartesian/hooks/useAreaPath";

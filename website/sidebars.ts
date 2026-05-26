@@ -46,6 +46,7 @@ const sidebars = {
             "cartesian/bar/bar",
             "cartesian/bar/use-bar-path",
             "cartesian/bar/horizontal-bar",
+            "cartesian/bar/horizontal-bar-group",
             "cartesian/bar/bar-group",
             "cartesian/bar/use-bar-group-paths",
             "cartesian/bar/stacked-bar",
