@@ -89,3 +89,11 @@ A `StyleProp<ViewStyle>` that styles the `View` which wraps the `Canvas` of the 
 ### `canvasStyle`
 
 A `StyleProp<ViewStyle>` that styles the `Canvas` upon which the `Polar` chart is drawn.
+
+### `explicitSize`
+
+An object `{ width: number; height: number }` that seeds chart dimensions without waiting for React Native `onLayout`. **Required when using `headless`.** See [Headless rendering](../headless-rendering.md).
+
+### `headless`
+
+When `true` (and `explicitSize` is set), renders a Skia-only subtree with no `View`, `Canvas`, or gesture handlers—intended for offscreen render hosts. See [Headless rendering](../headless-rendering.md).

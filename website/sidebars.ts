@@ -3,6 +3,7 @@ const sidebars = {
   docsSidebar: [
     "introduction",
     "getting-started",
+    "headless-rendering",
     {
       type: "category",
       label: "Cartesian Charts",
