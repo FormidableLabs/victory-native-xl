@@ -21,6 +21,7 @@ import {
 } from "../cartesian/utils/transformGestures";
 import { GestureHandler } from "../shared/GestureHandler";
 import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
+import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
 import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 
@@ -95,20 +96,11 @@ type PolarChartProps<
   colorKey: ColorKey;
   labelKey: LabelKey;
   valueKey: ValueKey;
-  /**
-   * When provided, initializes chart dimensions without waiting for React Native
-   * `onLayout`. Required when using `headless`.
-   */
-  explicitSize?: ChartExplicitSize;
-  /**
-   * When `true` (with `explicitSize`), renders a Skia-only subtree suitable for
-   * headless renderers that cannot mount React Native views.
-   */
-  headless?: boolean;
-} & Omit<
-  PolarChartBaseProps,
-  "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "explicitSize"
->;
+} & ChartLayoutModeProps &
+  Omit<
+    PolarChartBaseProps,
+    "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "explicitSize"
+  >;
 
 export const PolarChart = <
   RawData extends Record<string, unknown>,
@@ -126,7 +118,6 @@ export const PolarChart = <
     colorKey,
     valueKey,
     explicitSize,
-    headless,
     transformState,
     children,
     ...rest
@@ -137,7 +128,7 @@ export const PolarChart = <
     hasMeasuredLayoutSize,
     onLayout,
     isHeadless,
-  } = useChartCanvasSize({ explicitSize, headless });
+  } = useChartCanvasSize(props);
 
   const providerProps = {
     data,

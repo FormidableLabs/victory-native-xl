@@ -52,7 +52,7 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
-import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
+import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
 import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 import { boundsToClip } from "../utils/boundsToClip";
@@ -136,17 +136,7 @@ type CartesianChartProps<
       | undefined
     >
   >;
-  /**
-   * When provided, initializes chart dimensions without waiting for React Native
-   * `onLayout`. Required when using `headless`.
-   */
-  explicitSize?: ChartExplicitSize;
-  /**
-   * When `true` (with `explicitSize`), renders a Skia-only subtree suitable for
-   * headless renderers that cannot mount React Native views.
-   */
-  headless?: boolean;
-};
+} & ChartLayoutModeProps;
 
 export function CartesianChart<
   RawData extends Record<string, unknown>,
@@ -171,36 +161,36 @@ function CartesianChartContent<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
->({
-  data,
-  xKey,
-  yKeys,
-  padding,
-  domainPadding,
-  children,
-  renderOutside = () => null,
-  axisOptions,
-  domain,
-  chartPressState,
-  chartPressConfig,
-  gestureHandlerConfig,
-  onChartBoundsChange,
-  onScaleChange,
-  gestureLongPressDelay = 100,
-  xAxis,
-  yAxis,
-  frame,
-  transformState,
-  transformConfig,
-  customGestures,
-  actionsRef,
-  viewport,
-  ref,
-  explicitSize,
-  headless,
-}: CartesianChartProps<RawData, XK, YK>) {
+>(props: CartesianChartProps<RawData, XK, YK>) {
+  const {
+    data,
+    xKey,
+    yKeys,
+    padding,
+    domainPadding,
+    children,
+    renderOutside = () => null,
+    axisOptions,
+    domain,
+    chartPressState,
+    chartPressConfig,
+    gestureHandlerConfig,
+    onChartBoundsChange,
+    onScaleChange,
+    gestureLongPressDelay = 100,
+    xAxis,
+    yAxis,
+    frame,
+    transformState,
+    transformConfig,
+    customGestures,
+    actionsRef,
+    viewport,
+    ref,
+    explicitSize,
+  } = props;
   const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
-    useChartCanvasSize({ explicitSize, headless });
+    useChartCanvasSize(props);
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
   const xScaleRef = React.useRef<
     ScaleLogarithmic<number, number> | ScaleLinear<number, number> | undefined

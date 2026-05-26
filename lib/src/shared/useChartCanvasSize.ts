@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type LayoutChangeEvent } from "react-native";
-import { type ChartExplicitSize } from "./ChartExplicitSize";
+import { type ChartLayoutModeProps } from "./ChartLayoutModeProps";
 import {
   applyChartLayoutChange,
   getInitialChartCanvasSizeState,
@@ -17,10 +17,7 @@ export {
 export function useChartCanvasSize({
   explicitSize,
   headless,
-}: {
-  explicitSize?: ChartExplicitSize;
-  headless?: boolean;
-}) {
+}: ChartLayoutModeProps) {
   const [size, setSize] = React.useState(
     () => getInitialChartCanvasSizeState(explicitSize).size,
   );
