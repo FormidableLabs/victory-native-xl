@@ -6,7 +6,7 @@ import {
 } from "../../utils/createRoundedRectPath";
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
-import { getBarWidth } from "../utils/getBarWidth";
+import { getBarThickness } from "../utils/getBarThickness";
 import { getHorizontalBarRect } from "../utils/getHorizontalBarRect";
 
 export const useHorizontalBarPath = (
@@ -18,14 +18,12 @@ export const useHorizontalBarPath = (
   barCount?: number,
 ) => {
   const { xScale } = useCartesianChartContext();
-  const barWidth = getBarWidth({
+  const barWidth = getBarThickness({
     points,
-    chartBounds: {
-      left: chartBounds.top,
-      right: chartBounds.bottom,
-    },
+    axisStart: chartBounds.top,
+    axisEnd: chartBounds.bottom,
     innerPadding,
-    customBarWidth,
+    customBarThickness: customBarWidth,
     barCount,
   });
 
