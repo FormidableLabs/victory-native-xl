@@ -23,68 +23,10 @@ import { GestureHandler } from "../shared/GestureHandler";
 import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
-import { useChartCanvasSize } from "../shared/useChartCanvasSize";
-
-type PolarChartBaseProps = {
-  onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
-  hasMeasuredLayoutSize: boolean;
-  canvasSize: { width: number; height: number };
-  explicitSize?: ChartExplicitSize;
-  containerStyle?: StyleProp<ViewStyle>;
-  canvasStyle?: StyleProp<ViewStyle>;
-  transformState?: ChartTransformState;
-};
-
-const PolarChartBase = (
-  props: React.PropsWithChildren<PolarChartBaseProps>,
-) => {
-  const {
-    containerStyle,
-    canvasStyle,
-    children,
-    onLayout,
-    hasMeasuredLayoutSize,
-    canvasSize,
-    explicitSize,
-    transformState,
-  } = props;
-  const { width, height } = canvasSize;
-  const Bridge: ContextBridge = useContextBridge();
-
-  let composed = Gesture.Race();
-  if (transformState) {
-    composed = Gesture.Race(
-      composed,
-      pinchTransformGesture(transformState),
-      panTransformGesture(transformState),
-    );
-  }
-
-  return (
-    <ChartWrapper
-      isHeadless={false}
-      explicitSize={explicitSize}
-      onLayout={onLayout}
-      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-      canvasSize={canvasSize}
-      containerVariant="polar"
-      containerStyle={containerStyle}
-      canvasStyle={canvasStyle}
-      chartContent={
-        <Group matrix={transformState?.matrix}>
-          {hasMeasuredLayoutSize && children}
-        </Group>
-      }
-      wrapCanvasContent={(content) => <Bridge>{content}</Bridge>}
-      gestureOverlay={
-        <GestureHandler
-          gesture={composed}
-          dimensions={{ x: 0, y: 0, width, height }}
-        />
-      }
-    />
-  );
-};
+import {
+  useChartCanvasSize,
+  type ChartCanvasSize,
+} from "../shared/useChartCanvasSize";
 
 type PolarChartProps<
   RawData extends Record<string, unknown>,
@@ -96,11 +38,81 @@ type PolarChartProps<
   colorKey: ColorKey;
   labelKey: LabelKey;
   valueKey: ValueKey;
-} & ChartLayoutModeProps &
-  Omit<
-    PolarChartBaseProps,
-    "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "explicitSize"
-  >;
+  containerStyle?: StyleProp<ViewStyle>;
+  canvasStyle?: StyleProp<ViewStyle>;
+  transformState?: ChartTransformState;
+} & ChartLayoutModeProps;
+
+type PolarChartBaseProps = {
+  isHeadless: boolean;
+  explicitSize?: ChartExplicitSize;
+  onLayout: (e: LayoutChangeEvent) => void;
+  hasMeasuredLayoutSize: boolean;
+  canvasSize: ChartCanvasSize;
+  containerStyle?: StyleProp<ViewStyle>;
+  canvasStyle?: StyleProp<ViewStyle>;
+  transformState?: ChartTransformState;
+  children: React.ReactNode;
+};
+
+/** Renders chart shell; must be a child of {@link FiberProvider} for context bridge. */
+const PolarChartBase = ({
+  isHeadless,
+  explicitSize,
+  onLayout,
+  hasMeasuredLayoutSize,
+  canvasSize,
+  containerStyle,
+  canvasStyle,
+  transformState,
+  children,
+}: PolarChartBaseProps) => {
+  const { width, height } = canvasSize;
+  const Bridge: ContextBridge = useContextBridge();
+
+  const chartContent = (
+    <Group matrix={transformState?.matrix}>
+      {hasMeasuredLayoutSize && children}
+    </Group>
+  );
+
+  let gestureOverlay: React.ReactNode;
+  if (!isHeadless) {
+    let composed = Gesture.Race();
+    if (transformState) {
+      composed = Gesture.Race(
+        composed,
+        pinchTransformGesture(transformState),
+        panTransformGesture(transformState),
+      );
+    }
+
+    gestureOverlay = (
+      <GestureHandler
+        gesture={composed}
+        dimensions={{ x: 0, y: 0, width, height }}
+      />
+    );
+  }
+
+  return (
+    <ChartWrapper
+      isHeadless={isHeadless}
+      explicitSize={explicitSize}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={canvasSize}
+      containerVariant="polar"
+      containerStyle={containerStyle}
+      canvasStyle={canvasStyle}
+      chartContent={chartContent}
+      wrapCanvasContent={
+        isHeadless ? undefined : (content) => <Bridge>{content}</Bridge>
+      }
+      gestureOverlay={gestureOverlay}
+    />
+  );
+};
 
 export const PolarChart = <
   RawData extends Record<string, unknown>,
@@ -120,8 +132,9 @@ export const PolarChart = <
     explicitSize,
     headless,
     transformState,
+    containerStyle,
+    canvasStyle,
     children,
-    ...rest
   } = props;
 
   const {
@@ -131,45 +144,23 @@ export const PolarChart = <
     isHeadless,
   } = useChartCanvasSize({ explicitSize, headless });
 
-  const providerProps = {
-    data,
-    labelKey: labelKey.toString(),
-    colorKey: colorKey.toString(),
-    valueKey: valueKey.toString(),
-    canvasSize,
-  };
-
-  if (isHeadless) {
-    return (
-      <FiberProvider>
-        <PolarChartProvider {...providerProps}>
-          <ChartWrapper
-            isHeadless
-            explicitSize={explicitSize}
-            onLayout={onLayout}
-            hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-            canvasSize={canvasSize}
-            containerVariant="polar"
-            chartContent={
-              <Group matrix={transformState?.matrix}>
-                {hasMeasuredLayoutSize && children}
-              </Group>
-            }
-          />
-        </PolarChartProvider>
-      </FiberProvider>
-    );
-  }
-
   return (
     <FiberProvider>
-      <PolarChartProvider {...providerProps}>
+      <PolarChartProvider
+        data={data}
+        labelKey={labelKey.toString()}
+        colorKey={colorKey.toString()}
+        valueKey={valueKey.toString()}
+        canvasSize={canvasSize}
+      >
         <PolarChartBase
-          {...rest}
+          isHeadless={isHeadless}
           explicitSize={explicitSize}
           onLayout={onLayout}
           hasMeasuredLayoutSize={hasMeasuredLayoutSize}
           canvasSize={canvasSize}
+          containerStyle={containerStyle}
+          canvasStyle={canvasStyle}
           transformState={transformState}
         >
           {children}
