@@ -27,6 +27,12 @@ export const ChartRoutes: {
     path: "/bar-chart",
   },
   {
+    title: "Horizontal Bar Chart",
+    description:
+      "This chart renders categories on the vertical axis and numeric values on the horizontal axis.",
+    path: "/horizontal-bar",
+  },
+  {
     title: "Bar Group",
     description:
       "This chart demonstrates grouping and displaying multiple sets of data in a Bar chart. Victory supports customizing the spacing between each bar inside the group and spacing around the groups.",

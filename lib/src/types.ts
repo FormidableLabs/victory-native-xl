@@ -37,6 +37,8 @@ export type AxisLabelPosition = "inset" | "outset";
 
 export type AxisScaleType = "linear" | "log";
 
+export type CartesianChartOrientation = "vertical" | "horizontal";
+
 export type AxisScales = {
   xAxisScale?: AxisScaleType;
   yAxisScale?: AxisScaleType;

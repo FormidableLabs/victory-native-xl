@@ -2,6 +2,7 @@ import React from "react";
 import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
 import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type { ChartBounds, PointsArray } from "../../types";
+import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 
 export type BarLabelConfig = {
   position: "top" | "bottom" | "left" | "right";
@@ -26,14 +27,65 @@ export const BarGraphLabels = ({
   options,
 }: BarGraphLabelProps) => {
   const { position, font, color } = options;
+  const { orientation, xScale } = useCartesianChartContext();
 
   // Loop over the data points and position each label
   return points.map(({ x, y = 0, yValue }) => {
     const yText = yValue?.toString() ?? "";
     const labelWidth = getFontGlyphWidth(yText, font);
+    const fontSize = font?.getSize() ?? 0;
 
     let xOffset;
     let yOffset;
+
+    if (orientation === "horizontal") {
+      const baselineX = xScale(0);
+      const barInnerLeftEdge = Math.min(baselineX, x);
+      const barOuterRightEdge = Math.max(baselineX, x);
+      const barInnerTopEdge = Number(y) - barWidth / 2;
+      const barOuterBottomEdge = Number(y) + barWidth / 2;
+      const barHorizontalMidpoint =
+        barInnerLeftEdge + (barOuterRightEdge - barInnerLeftEdge) / 2;
+      const barVerticalMidpoint = Number(y) + fontSize / 3;
+
+      switch (position) {
+        case "top": {
+          xOffset = barHorizontalMidpoint - labelWidth / 2;
+          yOffset = barInnerTopEdge - LABEL_OFFSET_FROM_POSITION;
+          break;
+        }
+        case "bottom": {
+          xOffset = barHorizontalMidpoint - labelWidth / 2;
+          yOffset = barOuterBottomEdge + fontSize + LABEL_OFFSET_FROM_POSITION;
+          break;
+        }
+        case "left": {
+          xOffset = barInnerLeftEdge - labelWidth - LABEL_OFFSET_FROM_POSITION;
+          yOffset = barVerticalMidpoint;
+          break;
+        }
+        case "right": {
+          xOffset = barOuterRightEdge + LABEL_OFFSET_FROM_POSITION;
+          yOffset = barVerticalMidpoint;
+          break;
+        }
+        default: {
+          xOffset = x;
+          yOffset = Number(y);
+        }
+      }
+
+      return (
+        <Text
+          key={`${xOffset}-${yOffset}-${yText}`}
+          x={xOffset}
+          y={yOffset}
+          text={yText}
+          font={font}
+          color={color}
+        />
+      );
+    }
 
     // Bar Edges
     const barInnerLeftEdge = x - barWidth / 2;
