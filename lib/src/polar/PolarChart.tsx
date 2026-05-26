@@ -23,77 +23,50 @@ import { GestureHandler } from "../shared/GestureHandler";
 import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
-import {
-  useChartCanvasSize,
-  type ChartCanvasSize,
-} from "../shared/useChartCanvasSize";
-
-type PolarChartProps<
-  RawData extends Record<string, unknown>,
-  LabelKey extends StringKeyOf<InputFields<RawData>>,
-  ValueKey extends StringKeyOf<NumericalFields<RawData>>,
-  ColorKey extends StringKeyOf<ColorFields<RawData>>,
-> = {
-  data: RawData[];
-  colorKey: ColorKey;
-  labelKey: LabelKey;
-  valueKey: ValueKey;
-  containerStyle?: StyleProp<ViewStyle>;
-  canvasStyle?: StyleProp<ViewStyle>;
-  transformState?: ChartTransformState;
-} & ChartLayoutModeProps;
+import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 
 type PolarChartBaseProps = {
-  isHeadless: boolean;
-  explicitSize?: ChartExplicitSize;
-  onLayout: (e: LayoutChangeEvent) => void;
+  onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
   hasMeasuredLayoutSize: boolean;
-  canvasSize: ChartCanvasSize;
+  canvasSize: { width: number; height: number };
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
   transformState?: ChartTransformState;
-  children: React.ReactNode;
+  isHeadless: boolean;
+  explicitSize?: ChartExplicitSize;
 };
 
-/** Renders chart shell; must be a child of {@link FiberProvider} for context bridge. */
-const PolarChartBase = ({
-  isHeadless,
-  explicitSize,
-  onLayout,
-  hasMeasuredLayoutSize,
-  canvasSize,
-  containerStyle,
-  canvasStyle,
-  transformState,
-  children,
-}: PolarChartBaseProps) => {
+const PolarChartBase = (
+  props: React.PropsWithChildren<PolarChartBaseProps>,
+) => {
+  const {
+    containerStyle,
+    canvasStyle,
+    children,
+    onLayout,
+    hasMeasuredLayoutSize,
+    canvasSize,
+    transformState,
+    isHeadless,
+    explicitSize,
+  } = props;
   const { width, height } = canvasSize;
   const Bridge: ContextBridge = useContextBridge();
+
+  let composed = Gesture.Race();
+  if (transformState) {
+    composed = Gesture.Race(
+      composed,
+      pinchTransformGesture(transformState),
+      panTransformGesture(transformState),
+    );
+  }
 
   const chartContent = (
     <Group matrix={transformState?.matrix}>
       {hasMeasuredLayoutSize && children}
     </Group>
   );
-
-  let gestureOverlay: React.ReactNode;
-  if (!isHeadless) {
-    let composed = Gesture.Race();
-    if (transformState) {
-      composed = Gesture.Race(
-        composed,
-        pinchTransformGesture(transformState),
-        panTransformGesture(transformState),
-      );
-    }
-
-    gestureOverlay = (
-      <GestureHandler
-        gesture={composed}
-        dimensions={{ x: 0, y: 0, width, height }}
-      />
-    );
-  }
 
   return (
     <ChartWrapper
@@ -109,11 +82,33 @@ const PolarChartBase = ({
       wrapCanvasContent={
         isHeadless ? undefined : (content) => <Bridge>{content}</Bridge>
       }
-      gestureOverlay={gestureOverlay}
+      gestureOverlay={
+        isHeadless ? undefined : (
+          <GestureHandler
+            gesture={composed}
+            dimensions={{ x: 0, y: 0, width, height }}
+          />
+        )
+      }
     />
   );
 };
 
+type PolarChartProps<
+  RawData extends Record<string, unknown>,
+  LabelKey extends StringKeyOf<InputFields<RawData>>,
+  ValueKey extends StringKeyOf<NumericalFields<RawData>>,
+  ColorKey extends StringKeyOf<ColorFields<RawData>>,
+> = {
+  data: RawData[];
+  colorKey: ColorKey;
+  labelKey: LabelKey;
+  valueKey: ValueKey;
+} & ChartLayoutModeProps &
+  Omit<
+    PolarChartBaseProps,
+    "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "isHeadless"
+  >;
 export const PolarChart = <
   RawData extends Record<string, unknown>,
   LabelKey extends StringKeyOf<InputFields<RawData>>,
@@ -124,25 +119,17 @@ export const PolarChart = <
     PolarChartProps<RawData, LabelKey, ValueKey, ColorKey>
   >,
 ) => {
-  const {
-    data,
-    labelKey,
-    colorKey,
-    valueKey,
-    explicitSize,
-    headless,
-    transformState,
-    containerStyle,
-    canvasStyle,
-    children,
-  } = props;
+  const { data, labelKey, colorKey, valueKey } = props;
 
   const {
     size: canvasSize,
     hasMeasuredLayoutSize,
     onLayout,
     isHeadless,
-  } = useChartCanvasSize({ explicitSize, headless });
+  } = useChartCanvasSize({
+    explicitSize: props.explicitSize,
+    headless: props.headless,
+  });
 
   return (
     <FiberProvider>
@@ -154,17 +141,12 @@ export const PolarChart = <
         canvasSize={canvasSize}
       >
         <PolarChartBase
-          isHeadless={isHeadless}
-          explicitSize={explicitSize}
+          {...props}
           onLayout={onLayout}
           hasMeasuredLayoutSize={hasMeasuredLayoutSize}
           canvasSize={canvasSize}
-          containerStyle={containerStyle}
-          canvasStyle={canvasStyle}
-          transformState={transformState}
-        >
-          {children}
-        </PolarChartBase>
+          isHeadless={isHeadless}
+        />
       </PolarChartProvider>
     </FiberProvider>
   );
