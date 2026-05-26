@@ -295,6 +295,7 @@ function CartesianChartContent<
     domainPadding,
     normalizedAxisProps,
     viewport,
+    axisOptions?.axisScales,
   ]);
 
   React.useEffect(() => {
