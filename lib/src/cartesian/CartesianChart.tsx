@@ -770,7 +770,6 @@ function CartesianChartContent<
       hasMeasuredLayoutSize={hasMeasuredLayoutSize}
       canvasSize={size}
       canvasRef={canvasRef}
-      containerVariant="cartesian"
       chartContent={chartContent}
       gestureOverlay={gestureOverlay}
     />

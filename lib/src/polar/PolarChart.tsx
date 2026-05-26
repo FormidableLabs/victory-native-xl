@@ -75,7 +75,6 @@ const PolarChartBase = (
       onLayout={onLayout}
       hasMeasuredLayoutSize={hasMeasuredLayoutSize}
       canvasSize={canvasSize}
-      containerVariant="polar"
       containerStyle={containerStyle}
       canvasStyle={canvasStyle}
       chartContent={chartContent}

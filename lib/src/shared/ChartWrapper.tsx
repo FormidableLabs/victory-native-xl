@@ -20,7 +20,6 @@ type ChartWrapperProps = {
   canvasRef?: React.RefObject<CanvasRef | null>;
   chartContent: React.ReactNode;
   gestureOverlay?: React.ReactNode;
-  containerVariant: "cartesian" | "polar";
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
   wrapCanvasContent?: (content: React.ReactNode) => React.ReactNode;
@@ -35,7 +34,6 @@ export function ChartWrapper({
   canvasRef,
   chartContent,
   gestureOverlay,
-  containerVariant,
   containerStyle,
   canvasStyle,
   wrapCanvasContent,
@@ -45,79 +43,41 @@ export function ChartWrapper({
   }
 
   const { width, height } = canvasSize;
-  const canvas = (
-    <Canvas
-      ref={canvasRef}
-      style={StyleSheet.flatten([
-        containerVariant === "polar"
-          ? styles.polarCanvas
-          : styles.cartesianCanvas,
-        hasMeasuredLayoutSize ? { width, height } : null,
-        canvasStyle,
-      ])}
-    >
-      {wrapCanvasContent ? wrapCanvasContent(chartContent) : chartContent}
-    </Canvas>
-  );
-
-  const inner = (
-    <>
-      {canvas}
-      {gestureOverlay}
-    </>
-  );
-
-  if (containerVariant === "cartesian") {
-    return (
-      <GestureHandlerRootView>
-        <View
-          style={[
-            {
-              flex: explicitSize ? undefined : 1,
-              width: explicitSize?.width,
-              height: explicitSize?.height,
-              overflow: "hidden",
-            },
-            containerStyle,
-          ]}
-          onLayout={explicitSize ? undefined : onLayout}
-        >
-          {inner}
-        </View>
-      </GestureHandlerRootView>
-    );
-  }
 
   return (
-    <View
-      style={[
-        styles.polarContainer,
-        explicitSize
-          ? { width: explicitSize.width, height: explicitSize.height }
-          : null,
-        containerStyle,
-      ]}
-      onLayout={explicitSize ? undefined : onLayout}
-    >
-      <GestureHandlerRootView style={styles.polarGestureRoot}>
-        {inner}
-      </GestureHandlerRootView>
-    </View>
+    <GestureHandlerRootView>
+      <View
+        style={[
+          !explicitSize && styles.flex1,
+          styles.overflowHidden,
+          explicitSize
+            ? { width: explicitSize.width, height: explicitSize.height }
+            : null,
+          containerStyle,
+        ]}
+        onLayout={explicitSize ? undefined : onLayout}
+      >
+        <Canvas
+          ref={canvasRef}
+          style={StyleSheet.flatten([
+            styles.flex1,
+            hasMeasuredLayoutSize ? { width, height } : null,
+            canvasStyle,
+          ])}
+        >
+          {wrapCanvasContent ? wrapCanvasContent(chartContent) : chartContent}
+        </Canvas>
+        {gestureOverlay}
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  cartesianCanvas: {
+  flex1: {
     flex: 1,
   },
-  polarContainer: {
-    flex: 1,
-  },
-  polarGestureRoot: {
-    flex: 1,
+  overflowHidden: {
     overflow: "hidden",
-  },
-  polarCanvas: {
-    flex: 1,
   },
 });
