@@ -7,6 +7,7 @@ import {
 } from "../../utils/createRoundedRectPath";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 import { getBarGroupDimensions } from "../utils/getBarGroupDimensions";
+import { getVerticalBarGroupRect } from "../utils/getVerticalBarGroupRect";
 
 export const useBarGroupPaths = (
   points: PointsArray[],
@@ -32,24 +33,33 @@ export const useBarGroupPaths = (
   });
 
   const paths = React.useMemo(() => {
+    const baselineY = yScale(0);
+
     return points.map((pointSet, i) => {
       const p = Skia.Path.Make();
-      const offset = -groupWidth / 2 + i * (barWidth + gapWidth);
-      pointSet.forEach(({ x, y, yValue }) => {
-        if (typeof y !== "number") return;
-        const barHeight = yScale(0) - y;
+      pointSet.forEach((point) => {
+        const rect = getVerticalBarGroupRect({
+          point,
+          baselineY,
+          barWidth,
+          groupWidth,
+          gapWidth,
+          barIndex: i,
+        });
+        if (!rect) return;
+
         if (roundedCorners) {
           const nonUniformRoundedRect = createRoundedRectPath(
-            x + offset,
-            y,
-            barWidth,
-            barHeight,
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,
             roundedCorners,
-            Number(yValue),
+            Number(point.yValue),
           );
           p.addRRect(nonUniformRoundedRect);
         } else {
-          p.addRect(Skia.XYWHRect(x + offset, y, barWidth, barHeight));
+          p.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
         }
       });
       return p;
