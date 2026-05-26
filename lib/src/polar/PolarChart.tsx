@@ -1,13 +1,11 @@
 import * as React from "react";
-import { Canvas, Group } from "@shopify/react-native-skia";
+import { Group } from "@shopify/react-native-skia";
 import {
-  StyleSheet,
-  View,
   type ViewStyle,
   type StyleProp,
   type LayoutChangeEvent,
 } from "react-native";
-import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
+import { Gesture } from "react-native-gesture-handler";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import { PolarChartProvider } from "./contexts/PolarChartContext";
 import type {
@@ -22,11 +20,15 @@ import {
   pinchTransformGesture,
 } from "../cartesian/utils/transformGestures";
 import { GestureHandler } from "../shared/GestureHandler";
+import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
+import { ChartWrapper } from "../shared/ChartWrapper";
+import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 
 type PolarChartBaseProps = {
   onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
   hasMeasuredLayoutSize: boolean;
   canvasSize: { width: number; height: number };
+  explicitSize?: ChartExplicitSize;
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
   transformState?: ChartTransformState;
@@ -42,6 +44,7 @@ const PolarChartBase = (
     onLayout,
     hasMeasuredLayoutSize,
     canvasSize,
+    explicitSize,
     transformState,
   } = props;
   const { width, height } = canvasSize;
@@ -57,25 +60,28 @@ const PolarChartBase = (
   }
 
   return (
-    <View style={[styles.baseContainer, containerStyle]} onLayout={onLayout}>
-      <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
-        <Canvas
-          style={StyleSheet.flatten([
-            styles.canvasContainer,
-            hasMeasuredLayoutSize ? { width, height } : null,
-            canvasStyle,
-          ])}
-        >
-          <Bridge>
-            <Group matrix={transformState?.matrix}>{children}</Group>
-          </Bridge>
-        </Canvas>
+    <ChartWrapper
+      isHeadless={false}
+      explicitSize={explicitSize}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={canvasSize}
+      containerVariant="polar"
+      containerStyle={containerStyle}
+      canvasStyle={canvasStyle}
+      chartContent={
+        <Group matrix={transformState?.matrix}>
+          {hasMeasuredLayoutSize && children}
+        </Group>
+      }
+      wrapCanvasContent={(content) => <Bridge>{content}</Bridge>}
+      gestureOverlay={
         <GestureHandler
           gesture={composed}
-          dimensions={{ x: 0, y: 0, width: width, height: height }}
+          dimensions={{ x: 0, y: 0, width, height }}
         />
-      </GestureHandlerRootView>
-    </View>
+      }
+    />
   );
 };
 
@@ -89,10 +95,21 @@ type PolarChartProps<
   colorKey: ColorKey;
   labelKey: LabelKey;
   valueKey: ValueKey;
+  /**
+   * When provided, initializes chart dimensions without waiting for React Native
+   * `onLayout`. Required when using `headless`.
+   */
+  explicitSize?: ChartExplicitSize;
+  /**
+   * When `true` (with `explicitSize`), renders a Skia-only subtree suitable for
+   * headless renderers that cannot mount React Native views.
+   */
+  headless?: boolean;
 } & Omit<
   PolarChartBaseProps,
-  "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" // omit exposing internal props for calculating canvas layout/size
+  "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "explicitSize"
 >;
+
 export const PolarChart = <
   RawData extends Record<string, unknown>,
   LabelKey extends StringKeyOf<InputFields<RawData>>,
@@ -103,46 +120,69 @@ export const PolarChart = <
     PolarChartProps<RawData, LabelKey, ValueKey, ColorKey>
   >,
 ) => {
-  const { data, labelKey, colorKey, valueKey } = props;
+  const {
+    data,
+    labelKey,
+    colorKey,
+    valueKey,
+    explicitSize,
+    headless,
+    transformState,
+    children,
+    ...rest
+  } = props;
 
-  const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 });
+  const {
+    size: canvasSize,
+    hasMeasuredLayoutSize,
+    onLayout,
+    isHeadless,
+  } = useChartCanvasSize({ explicitSize, headless });
 
-  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
-    React.useState(false);
+  const providerProps = {
+    data,
+    labelKey: labelKey.toString(),
+    colorKey: colorKey.toString(),
+    valueKey: valueKey.toString(),
+    canvasSize,
+  };
 
-  const onLayout = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setHasMeasuredLayoutSize(true);
-      setCanvasSize(layout);
-    },
-    [],
-  );
+  if (isHeadless) {
+    return (
+      <FiberProvider>
+        <PolarChartProvider {...providerProps}>
+          <ChartWrapper
+            isHeadless
+            explicitSize={explicitSize}
+            onLayout={onLayout}
+            hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+            canvasSize={canvasSize}
+            containerVariant="polar"
+            chartContent={
+              <Group matrix={transformState?.matrix}>
+                {hasMeasuredLayoutSize && children}
+              </Group>
+            }
+          />
+        </PolarChartProvider>
+      </FiberProvider>
+    );
+  }
 
   return (
     <FiberProvider>
-      <PolarChartProvider
-        data={data}
-        labelKey={labelKey.toString()}
-        colorKey={colorKey.toString()}
-        valueKey={valueKey.toString()}
-        canvasSize={canvasSize}
-      >
+      <PolarChartProvider {...providerProps}>
         <PolarChartBase
-          {...props}
+          {...rest}
+          explicitSize={explicitSize}
           onLayout={onLayout}
           hasMeasuredLayoutSize={hasMeasuredLayoutSize}
           canvasSize={canvasSize}
-        />
+          transformState={transformState}
+        >
+          {children}
+        </PolarChartBase>
       </PolarChartProvider>
     </FiberProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  baseContainer: {
-    flex: 1,
-  },
-  canvasContainer: {
-    flex: 1,
-  },
-});
