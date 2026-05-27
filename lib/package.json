@@ -30,8 +30,8 @@
     "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --config vitest.config.ts && vitest run --config vitest.headless.config.ts",
-    "test:watch": "vitest",
+    "test": "vitest run --config test/config/vitest.config.mts && vitest run --config vitest.headless.config.ts",
+    "test:watch": "vitest --config test/config/vitest.config.mts",
     "test:headless": "vitest run --config vitest.headless.config.ts",
     "test:headless:update-golden": "UPDATE_GOLDEN=1 vitest run --config vitest.headless.config.ts"
   },
@@ -63,7 +63,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "typescript": "^5.1.6",
-    "vitest": "^0.34.2"
+    "vitest": "^4.1.7"
   },
   "publishConfig": {
     "provenance": true
