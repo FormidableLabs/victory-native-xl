@@ -25,6 +25,7 @@ example/ios/*
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+lib/test/headless/**/*.diff.png
 
 # macOS
 .DS_Store

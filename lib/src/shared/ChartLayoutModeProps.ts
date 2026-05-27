@@ -16,5 +16,5 @@ export type ChartLayoutModeProps =
     }
   | {
       explicitSize: ChartExplicitSize;
-      headless: true;
+      headless?: boolean;
     };
