@@ -3,6 +3,8 @@ import {
   applyChartLayoutChange,
   getInitialChartCanvasSizeState,
   isChartHeadless,
+  resolveChartCanvasSizeState,
+  shouldWarnMissingHeadlessExplicitSize,
 } from "./chartCanvasSizeUtils";
 
 describe("getInitialChartCanvasSizeState", () => {
@@ -29,6 +31,55 @@ describe("isChartHeadless", () => {
     expect(isChartHeadless(true)).toBe(false);
     expect(isChartHeadless(false, { width: 100, height: 100 })).toBe(false);
     expect(isChartHeadless(true, { width: 100, height: 100 })).toBe(true);
+  });
+});
+
+describe("resolveChartCanvasSizeState", () => {
+  it("returns the measured layout state without explicitSize", () => {
+    expect(
+      resolveChartCanvasSizeState({
+        size: { width: 120, height: 80 },
+        hasMeasuredLayoutSize: true,
+      }),
+    ).toEqual({
+      size: { width: 120, height: 80 },
+      hasMeasuredLayoutSize: true,
+    });
+  });
+
+  it("uses explicitSize over the measured layout state", () => {
+    expect(
+      resolveChartCanvasSizeState(
+        {
+          size: { width: 120, height: 80 },
+          hasMeasuredLayoutSize: true,
+        },
+        { width: 320, height: 240 },
+      ),
+    ).toEqual({
+      size: { width: 320, height: 240 },
+      hasMeasuredLayoutSize: true,
+    });
+  });
+});
+
+describe("shouldWarnMissingHeadlessExplicitSize", () => {
+  it("warns only when headless is requested without explicitSize", () => {
+    expect(shouldWarnMissingHeadlessExplicitSize()).toBe(false);
+    expect(shouldWarnMissingHeadlessExplicitSize(false)).toBe(false);
+    expect(
+      shouldWarnMissingHeadlessExplicitSize(false, {
+        width: 100,
+        height: 100,
+      }),
+    ).toBe(false);
+    expect(
+      shouldWarnMissingHeadlessExplicitSize(true, {
+        width: 100,
+        height: 100,
+      }),
+    ).toBe(false);
+    expect(shouldWarnMissingHeadlessExplicitSize(true)).toBe(true);
   });
 });
 
