@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
 
-const chainableGesture = () => {
-  const proxy = new Proxy(() => proxy, {
+type ChainableGesture = {
+  (..._args: unknown[]): ChainableGesture;
+  [_key: string]: (..._args: unknown[]) => ChainableGesture;
+};
+
+const chainableGesture = (): ChainableGesture => {
+  const proxy: ChainableGesture = new Proxy((() => proxy) as ChainableGesture, {
     get: () => chainableGesture,
     apply: () => proxy,
   });
