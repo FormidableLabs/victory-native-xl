@@ -1,12 +1,12 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { compareGoldenPng } from "./compareGoldenPng";
+import { compareGoldenPng } from "./utils/compareGoldenPng";
 import {
   smokeCartesianChart,
   smokeCartesianSize,
 } from "./fixtures/smokeCartesianChart";
-import { renderHeadlessToPng } from "./renderHeadlessToPng";
+import { renderHeadlessToPng } from "./utils/renderHeadlessToPng";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const goldenPath = path.join(__dirname, "__golden__", "cartesian-smoke.png");
