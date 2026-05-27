@@ -1,9 +1,5 @@
 name: Setup
 description: Setup Build Step
-inputs:
-  node-version:
-    required: true
-    default: '20'
 
 runs:
   using: "composite"
@@ -11,7 +7,7 @@ runs:
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version-file: .node-version
         cache: yarn
 
     - name: Install dependencies
