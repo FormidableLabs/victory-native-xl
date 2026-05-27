@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.21.0
+
+### Minor Changes
+
+- Add explicitSize and headless rendering support to CartesianChart and PolarChart ([#657](https://github.com/FormidableLabs/victory-native-xl/pull/657))
+
 ## 41.20.3
 
 ### Patch Changes
