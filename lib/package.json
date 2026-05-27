@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc -p ./tsconfig.build.json",
-    "dev": "tsc --watch",
+    "dev": "tsc -p ./tsconfig.build.json --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config test/config/vitest.config.mts && vitest run --config vitest.headless.config.ts",
     "test:watch": "vitest --config test/config/vitest.config.mts",

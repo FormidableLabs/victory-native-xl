@@ -17,6 +17,7 @@
     ],
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -30,6 +31,6 @@
     "target": "esnext",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["website"],
+  "exclude": ["website", "lib/dist"],
   "extends": "expo/tsconfig.base"
 }
