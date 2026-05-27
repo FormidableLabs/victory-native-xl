@@ -62,8 +62,8 @@ function HorizontalBandsShader({
     <Shader
       source={horizontalBandsShader}
       uniforms={{
-        thresholdsYValues: new Float32Array(thresholdsYValues),
-        thresholdsColors: new Float32Array(thresholdsColors),
+        thresholdsYValues,
+        thresholdsColors,
       }}
     />
   );
