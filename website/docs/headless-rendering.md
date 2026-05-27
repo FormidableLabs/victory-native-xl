@@ -68,21 +68,3 @@ You can pass **`explicitSize`** alone to skip layout measurement while still ren
 | Layout gating | Chart children render only after dimensions are known (`explicitSize` or first `onLayout`). |
 
 See also: [`CartesianChart` props](./cartesian/cartesian-chart.md), [`PolarChart` props](./polar/polar-chart.md).
-
-## Testing
-
-Headless rendering is covered by golden PNG tests under `lib/test/headless/`. They render smoke fixtures with Skia’s Node headless API and compare output to committed reference images via `pixelmatch`.
-
-From the repo root:
-
-```bash
-yarn workspace victory-native test:headless
-```
-
-To refresh golden images after an intentional visual change:
-
-```bash
-yarn workspace victory-native test:headless:update-golden
-```
-
-These tests run as part of `yarn test` / `yarn check:code`.
