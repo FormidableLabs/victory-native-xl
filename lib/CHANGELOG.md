@@ -1,5 +1,11 @@
 # victory-native
 
+## 41.21.1
+
+### Patch Changes
+
+- Fix `chartPressConfig.pan` Y offset options being applied to X gesture methods. ([#655](https://github.com/FormidableLabs/victory-native-xl/pull/655))
+
 ## 41.21.0
 
 ### Minor Changes
