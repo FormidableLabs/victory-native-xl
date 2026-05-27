@@ -33,7 +33,7 @@ export default defineConfig({
     include: ["test/headless/**/*.test.ts"],
     environment: "node",
     setupFiles: ["test/headless/setup.ts"],
-    threads: false,
+    fileParallelism: false,
     server: {
       deps: {
         external: ["@shopify/react-native-skia", "canvaskit-wasm"],
