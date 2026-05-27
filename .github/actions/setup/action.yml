@@ -11,6 +11,10 @@ runs:
         node-version-file: .node-version
         cache: yarn
 
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
     - name: Install dependencies
       shell: bash
-      run: yarn install
+      run: yarn install --immutable
