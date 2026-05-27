@@ -1,13 +1,11 @@
 import * as React from "react";
-import { Canvas, Group } from "@shopify/react-native-skia";
+import { Group } from "@shopify/react-native-skia";
 import {
-  StyleSheet,
-  View,
   type ViewStyle,
   type StyleProp,
   type LayoutChangeEvent,
 } from "react-native";
-import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
+import { Gesture } from "react-native-gesture-handler";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import { PolarChartProvider } from "./contexts/PolarChartContext";
 import type {
@@ -22,6 +20,10 @@ import {
   pinchTransformGesture,
 } from "../cartesian/utils/transformGestures";
 import { GestureHandler } from "../shared/GestureHandler";
+import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
+import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
+import { ChartWrapper } from "../shared/ChartWrapper";
+import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 
 type PolarChartBaseProps = {
   onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
@@ -30,6 +32,8 @@ type PolarChartBaseProps = {
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
   transformState?: ChartTransformState;
+  isHeadless: boolean;
+  explicitSize?: ChartExplicitSize;
 };
 
 const PolarChartBase = (
@@ -43,6 +47,8 @@ const PolarChartBase = (
     hasMeasuredLayoutSize,
     canvasSize,
     transformState,
+    isHeadless,
+    explicitSize,
   } = props;
   const { width, height } = canvasSize;
   const Bridge: ContextBridge = useContextBridge();
@@ -56,26 +62,34 @@ const PolarChartBase = (
     );
   }
 
+  const chartContent = (
+    <Group matrix={transformState?.matrix}>
+      {hasMeasuredLayoutSize && children}
+    </Group>
+  );
+
   return (
-    <View style={[styles.baseContainer, containerStyle]} onLayout={onLayout}>
-      <GestureHandlerRootView style={{ flex: 1, overflow: "hidden" }}>
-        <Canvas
-          style={StyleSheet.flatten([
-            styles.canvasContainer,
-            hasMeasuredLayoutSize ? { width, height } : null,
-            canvasStyle,
-          ])}
-        >
-          <Bridge>
-            <Group matrix={transformState?.matrix}>{children}</Group>
-          </Bridge>
-        </Canvas>
-        <GestureHandler
-          gesture={composed}
-          dimensions={{ x: 0, y: 0, width: width, height: height }}
-        />
-      </GestureHandlerRootView>
-    </View>
+    <ChartWrapper
+      isHeadless={isHeadless}
+      explicitSize={explicitSize}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={canvasSize}
+      containerStyle={containerStyle}
+      canvasStyle={canvasStyle}
+      chartContent={chartContent}
+      wrapCanvasContent={
+        isHeadless ? undefined : (content) => <Bridge>{content}</Bridge>
+      }
+      gestureOverlay={
+        isHeadless ? undefined : (
+          <GestureHandler
+            gesture={composed}
+            dimensions={{ x: 0, y: 0, width, height }}
+          />
+        )
+      }
+    />
   );
 };
 
@@ -89,10 +103,11 @@ type PolarChartProps<
   colorKey: ColorKey;
   labelKey: LabelKey;
   valueKey: ValueKey;
-} & Omit<
-  PolarChartBaseProps,
-  "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" // omit exposing internal props for calculating canvas layout/size
->;
+} & ChartLayoutModeProps &
+  Omit<
+    PolarChartBaseProps,
+    "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "isHeadless"
+  >;
 export const PolarChart = <
   RawData extends Record<string, unknown>,
   LabelKey extends StringKeyOf<InputFields<RawData>>,
@@ -105,18 +120,15 @@ export const PolarChart = <
 ) => {
   const { data, labelKey, colorKey, valueKey } = props;
 
-  const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 });
-
-  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
-    React.useState(false);
-
-  const onLayout = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setHasMeasuredLayoutSize(true);
-      setCanvasSize(layout);
-    },
-    [],
-  );
+  const {
+    size: canvasSize,
+    hasMeasuredLayoutSize,
+    onLayout,
+    isHeadless,
+  } = useChartCanvasSize({
+    explicitSize: props.explicitSize,
+    headless: props.headless,
+  });
 
   return (
     <FiberProvider>
@@ -132,17 +144,9 @@ export const PolarChart = <
           onLayout={onLayout}
           hasMeasuredLayoutSize={hasMeasuredLayoutSize}
           canvasSize={canvasSize}
+          isHeadless={isHeadless}
         />
       </PolarChartProvider>
     </FiberProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  baseContainer: {
-    flex: 1,
-  },
-  canvasContainer: {
-    flex: 1,
-  },
-});

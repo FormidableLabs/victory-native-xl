@@ -371,6 +371,16 @@ function MyChart() {
 }
 ```
 
+In **headless** mode, `ref.current.canvas` is always `null` because no `Canvas` is mounted. Use your host's offscreen Skia surface instead. See [Headless rendering](../headless-rendering.md).
+
+### `explicitSize`
+
+An object `{ width: number; height: number }` that seeds chart dimensions without waiting for React Native `onLayout`. **Required when using `headless`.** Can be used alone to render at a fixed size while keeping the normal mounted chart chrome.
+
+### `headless`
+
+When `true` (and `explicitSize` is set), renders a Skia-only subtree with no `View`, `Canvas`, or gesture handlers—intended for offscreen render hosts. See [Headless rendering](../headless-rendering.md).
+
 ### `onScaleChange`
 
 A callback function that is called whenever the chart's scales change, either due to data updates or zoom/pan transformations. The function receives two parameters:

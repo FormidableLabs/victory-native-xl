@@ -48,6 +48,22 @@ $ yarn check:code
 $ yarn test
 ```
 
+### Headless golden tests
+
+Headless rendering is covered by golden PNG tests under `lib/test/headless/`. They render smoke fixtures with Skia’s Node headless API and compare output to committed reference images via `pixelmatch`. These tests run as part of `yarn test` and `yarn check:code`.
+
+From the repo root:
+
+```sh
+$ yarn workspace victory-native test:headless
+```
+
+To refresh golden images after an intentional visual change:
+
+```sh
+$ yarn workspace victory-native test:headless:update-golden
+```
+
 ### Before submitting a PR
 
 Thanks for taking the time to help us make Victory Native XL even better! Before you go ahead and submit a PR, make sure that you have done the following:

@@ -1,11 +1,9 @@
 import * as React from "react";
-import { View, type LayoutChangeEvent } from "react-native";
-import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
+import { Group, type CanvasRef } from "@shopify/react-native-skia";
 import { useSharedValue } from "react-native-reanimated";
 import {
   type ComposedGesture,
   Gesture,
-  GestureHandlerRootView,
   type TouchData,
 } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
@@ -54,6 +52,9 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
+import { ChartWrapper } from "../shared/ChartWrapper";
+import { useChartCanvasSize } from "../shared/useChartCanvasSize";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
@@ -69,6 +70,10 @@ export type CartesianActionsHandle<T = undefined> =
     : never;
 
 export type CartesianChartRef<T = undefined> = {
+  /**
+   * The Skia canvas ref for imperative drawing. This is `null` in headless mode
+   * because no `Canvas` is mounted; the host must supply an offscreen surface.
+   */
   canvas: CanvasRef | null;
   actions: CartesianActionsHandle<T>;
 };
@@ -131,7 +136,7 @@ type CartesianChartProps<
       | undefined
     >
   >;
-};
+} & ChartLayoutModeProps;
 
 export function CartesianChart<
   RawData extends Record<string, unknown>,
@@ -181,8 +186,11 @@ function CartesianChartContent<
   actionsRef,
   viewport,
   ref,
+  explicitSize,
+  headless,
 }: CartesianChartProps<RawData, XK, YK>) {
-  const [size, setSize] = React.useState({ width: 0, height: 0 });
+  const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
+    useChartCanvasSize({ explicitSize, headless });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
   const xScaleRef = React.useRef<
     ScaleLogarithmic<number, number> | ScaleLinear<number, number> | undefined
@@ -192,15 +200,6 @@ function CartesianChartContent<
     undefined,
   );
   const canvasRef = React.useRef<CanvasRef | null>(null);
-  const [hasMeasuredLayoutSize, setHasMeasuredLayoutSize] =
-    React.useState(false);
-  const onLayout = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setHasMeasuredLayoutSize(true);
-      setSize(layout);
-    },
-    [],
-  );
   const normalizedAxisProps = useBuildChartAxis({
     xAxis,
     yAxis,
@@ -296,6 +295,7 @@ function CartesianChartContent<
     domainPadding,
     normalizedAxisProps,
     viewport,
+    axisOptions?.axisScales,
   ]);
 
   React.useEffect(() => {
@@ -705,9 +705,8 @@ function CartesianChartContent<
       />
     ) : null;
 
-  // Body of the chart.
-  const body = (
-    <Canvas ref={canvasRef} style={{ flex: 1 }}>
+  const chartContent = (
+    <>
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
@@ -719,51 +718,61 @@ function CartesianChartContent<
         </Group>
       </CartesianChartProvider>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-    </Canvas>
+    </>
   );
 
-  let composed = customGestures ?? Gesture.Race();
-  if (transformState) {
-    let gestures = Gesture.Simultaneous();
+  let gestureOverlay: React.ReactNode;
+  if (!isHeadless) {
+    let composed = customGestures ?? Gesture.Race();
+    if (transformState) {
+      let gestures = Gesture.Simultaneous();
 
-    if (transformConfig?.pinch?.enabled ?? true) {
-      gestures = Gesture.Simultaneous(
-        gestures,
-        pinchTransformGesture(transformState, transformConfig?.pinch),
-      );
+      if (transformConfig?.pinch?.enabled ?? true) {
+        gestures = Gesture.Simultaneous(
+          gestures,
+          pinchTransformGesture(transformState, transformConfig?.pinch),
+        );
+      }
+
+      if (transformConfig?.pan?.enabled ?? true) {
+        gestures = Gesture.Simultaneous(
+          gestures,
+          panTransformGesture(transformState, transformConfig?.pan),
+        );
+      }
+
+      composed = Gesture.Race(composed, Gesture.Simultaneous(gestures));
+    }
+    if (chartPressState) {
+      composed = Gesture.Race(composed, panGesture);
     }
 
-    if (transformConfig?.pan?.enabled ?? true) {
-      gestures = Gesture.Simultaneous(
-        gestures,
-        panTransformGesture(transformState, transformConfig?.pan),
-      );
-    }
-
-    composed = Gesture.Race(composed, Gesture.Simultaneous(gestures));
-  }
-  if (chartPressState) {
-    composed = Gesture.Race(composed, panGesture);
+    gestureOverlay = (
+      <GestureHandler
+        config={gestureHandlerConfig}
+        gesture={composed}
+        transformState={transformState}
+        dimensions={{
+          x: Math.min(xScale.range()[0]!, 0),
+          y: Math.min(primaryYScale.range()[0]!, 0),
+          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
+          height:
+            primaryYScale.range()[1]! - Math.min(primaryYScale.range()[0]!, 0),
+        }}
+      />
+    );
   }
 
   return (
-    <GestureHandlerRootView>
-      <View style={{ flex: 1, overflow: "hidden" }} onLayout={onLayout}>
-        {body}
-        <GestureHandler
-          config={gestureHandlerConfig}
-          gesture={composed}
-          transformState={transformState}
-          dimensions={{
-            x: Math.min(xScale.range()[0]!, 0),
-            y: Math.min(primaryYScale.range()[0]!, 0),
-            width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-            height:
-              primaryYScale.range()[1]! -
-              Math.min(primaryYScale.range()[0]!, 0),
-          }}
-        />
-      </View>
-    </GestureHandlerRootView>
+    <ChartWrapper
+      isHeadless={isHeadless}
+      explicitSize={explicitSize}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={size}
+      canvasRef={canvasRef}
+      chartContent={chartContent}
+      gestureOverlay={gestureOverlay}
+    />
   );
 }

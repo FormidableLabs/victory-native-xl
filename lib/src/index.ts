@@ -6,6 +6,8 @@ export {
   type CartesianActionsHandle,
   type CartesianChartRef,
 } from "./cartesian/CartesianChart";
+export { type ChartExplicitSize } from "./shared/ChartExplicitSize";
+export { type ChartLayoutModeProps } from "./shared/ChartLayoutModeProps";
 
 export {
   type InputDatum,
