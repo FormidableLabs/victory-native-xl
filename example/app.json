@@ -24,7 +24,7 @@
       "userInterfaceStyle": "automatic",
       "package": "com.formidable.victorynativexldemo"
     },
-    "plugins": ["expo-router", "expo-asset"],
+    "plugins": ["expo-router", "expo-asset", "expo-font"],
     "extra": {
       "router": {
         "origin": false
