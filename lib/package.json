@@ -49,7 +49,7 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "devDependencies": {
-    "@shopify/react-native-skia": "v2.0.0-next.4",
+    "@shopify/react-native-skia": "2.0.2",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
     "@types/d3-zoom": "^3.0.8",
