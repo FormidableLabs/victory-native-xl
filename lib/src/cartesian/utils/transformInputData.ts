@@ -206,7 +206,7 @@ export const transformInputData = <
       inputBounds: yScaleDomain,
       outputBounds: yScaleRange,
       // Reverse viewport y values since canvas coordinates increase downward
-      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
+      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : undefined,
       isNice: true,
       padEnd:
         typeof domainPadding === "number"
@@ -303,7 +303,7 @@ export const transformInputData = <
     // if single data point, manually add upper & lower bounds so chart renders properly
     inputBounds: xInputBounds,
     outputBounds: oRange,
-    viewport: viewport?.x ?? xInputBounds,
+    viewport: viewport?.x,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
     padEnd:

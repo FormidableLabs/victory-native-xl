@@ -134,6 +134,28 @@ describe("transformInputData", () => {
     expect(xScale(2)).toBeCloseTo(423.0769);
   });
 
+  it("keeps the full x scale domain when domain padding is used with a viewport", () => {
+    const { xScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      domainPadding: { left: 50, right: 100 },
+      viewport: {
+        x: [0.5, 1.5],
+      },
+    });
+
+    expect(xScale.domain()).toEqual([0, 2]);
+    expect(xScale(0.5)).toBeCloseTo(50);
+    expect(xScale(1)).toBeCloseTo(225);
+    expect(xScale(1.5)).toBeCloseTo(400);
+    expect(xScale(0)).toBeCloseTo(-125);
+    expect(xScale(2)).toBeCloseTo(575);
+  });
+
   it("applies sided domain padding to the y scale", () => {
     const { yAxes } = transformInputData({
       data: DATA,

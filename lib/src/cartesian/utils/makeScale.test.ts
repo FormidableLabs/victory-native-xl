@@ -49,6 +49,23 @@ describe("makeScale", () => {
     expect(scale(10)).toBe(400);
   });
 
+  it("applies padding to a viewport without replacing the full input domain", () => {
+    const scale = makeScale({
+      inputBounds: [0, 10],
+      outputBounds: [0, 100],
+      viewport: [2, 4],
+      padStart: 10,
+      padEnd: 10,
+    });
+
+    expect(scale.domain()).toEqual([0, 10]);
+    expect(scale(2)).toBeCloseTo(10);
+    expect(scale(3)).toBeCloseTo(50);
+    expect(scale(4)).toBeCloseTo(90);
+    expect(scale(0)).toBeCloseTo(-70);
+    expect(scale(10)).toBeCloseTo(330);
+  });
+
   it("creates a log scale", () => {
     const scale = makeScale({
       inputBounds: [1, 100],
