@@ -23,11 +23,14 @@ export const getBarWidth = ({
       : points.length;
   const domainWidth = chartBounds.right - chartBounds.left;
   const numerator = (1 - innerPadding) * domainWidth;
-  const denominator = barCount
-    ? barCount
-    : pointsLength - 1 <= 0
-      ? pointsLength
-      : pointsLength - 1;
+  const denominator =
+    barCount && barCount > 0
+      ? barCount
+      : pointsLength - 1 <= 0
+        ? pointsLength
+        : pointsLength - 1;
+
+  if (denominator <= 0) return 0;
 
   return numerator / denominator;
 };

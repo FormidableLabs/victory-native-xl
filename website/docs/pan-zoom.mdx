@@ -136,12 +136,13 @@ import { Line, useCartesianTransformContext } from "victory-native";
 
 function TransformAwareLine({ points }) {
   const { kx } = useCartesianTransformContext();
+  const strokeScale = Math.max(Math.abs(kx), 0.001);
 
   return (
     <Line
       points={points}
       color="blue"
-      strokeWidth={Math.max(1, 3 / kx)}
+      strokeWidth={Math.max(1, 3 / strokeScale)}
     />
   );
 }

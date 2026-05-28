@@ -57,6 +57,26 @@ describe("getBarWidth", () => {
     ).toBe(150);
   });
 
+  it("returns zero for empty points", () => {
+    expect(
+      getBarWidth({
+        points: [],
+        chartBounds,
+        innerPadding: 0.25,
+      }),
+    ).toBe(0);
+  });
+
+  it("returns zero for empty stacked bar points", () => {
+    expect(
+      getBarWidth({
+        points: [[]],
+        chartBounds,
+        innerPadding: 0.25,
+      }),
+    ).toBe(0);
+  });
+
   it("uses barCount when provided", () => {
     expect(
       getBarWidth({
@@ -66,6 +86,26 @@ describe("getBarWidth", () => {
         barCount: 10,
       }),
     ).toBe(15);
+  });
+
+  it("ignores non-positive barCount values", () => {
+    expect(
+      getBarWidth({
+        points,
+        chartBounds,
+        innerPadding: 0.25,
+        barCount: 0,
+      }),
+    ).toBe(37.5);
+
+    expect(
+      getBarWidth({
+        points,
+        chartBounds,
+        innerPadding: 0.25,
+        barCount: -1,
+      }),
+    ).toBe(37.5);
   });
 
   it("uses barCount to keep dynamic subset widths stable", () => {
