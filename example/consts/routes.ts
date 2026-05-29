@@ -221,6 +221,12 @@ if (__DEV__) {
       path: "/pan-config-debug",
     },
     {
+      title: "Scroll Transform Press Debug",
+      description:
+        "Debug fixture for chart press and transform pan gestures inside a scroll view.",
+      path: "/scroll-transform-press-debug",
+    },
+    {
       title: "Press State Reset Debug",
       description:
         "Debug fixture for resetting chart press state when chart data changes.",
