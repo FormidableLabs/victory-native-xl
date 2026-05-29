@@ -8,7 +8,6 @@ import {
   type TouchData,
 } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
-import { ZoomTransform } from "d3-zoom";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
 import type {
@@ -67,6 +66,7 @@ import {
   type ChartPressBootstrapEntry,
   pruneChartPressBootstrap,
 } from "./utils/chartPressBootstrap";
+import { createSafeZoomTransform } from "./utils/createSafeZoomTransform";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -256,11 +256,11 @@ function CartesianChartContent<
   // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
   const zoomX = React.useMemo(
-    () => new ZoomTransform(transform.k, transform.tx, transform.ty),
+    () => createSafeZoomTransform(transform.k, transform.tx, transform.ty),
     [transform.k, transform.tx, transform.ty],
   );
   const zoomY = React.useMemo(
-    () => new ZoomTransform(transform.ky, transform.tx, transform.ty),
+    () => createSafeZoomTransform(transform.ky, transform.tx, transform.ty),
     [transform.ky, transform.tx, transform.ty],
   );
 

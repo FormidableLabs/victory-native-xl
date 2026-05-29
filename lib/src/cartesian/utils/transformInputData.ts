@@ -21,6 +21,18 @@ import { getYScaleInputBounds } from "./getYScaleInputBounds";
 import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
 
+const getYOutputValue = (
+  value: MaybeNumber,
+  yScale: ScaleLinear<number, number>,
+  yAxisScale: AxisScales["yAxisScale"],
+): MaybeNumber => {
+  if (typeof value !== "number") return value;
+  if (yAxisScale === "log" && value <= 0) return null;
+
+  const output = yScale(value);
+  return Number.isFinite(output) ? output : null;
+};
+
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
  *  that's easier for us to consume. End result looks something like:
@@ -222,9 +234,7 @@ export const transformInputData = <
         acc[key] = {
           i: data.map((datum) => datum[key] as MaybeNumber),
           o: data.map((datum) =>
-            typeof datum[key] === "number"
-              ? yScale(datum[key] as number)
-              : (datum[key] as number),
+            getYOutputValue(datum[key] as MaybeNumber, yScale, yAxisScale),
           ),
         };
         return acc;
@@ -239,11 +249,8 @@ export const transformInputData = <
     yKeys.forEach((yKey) => {
       if (yKeysForAxis.includes(yKey)) {
         y[yKey].i = data.map((datum) => datum[yKey] as MaybeNumber);
-        y[yKey].o = data.map(
-          (datum) =>
-            (typeof datum[yKey] === "number"
-              ? yScale(datum[yKey] as number)
-              : datum[yKey]) as MaybeNumber,
+        y[yKey].o = data.map((datum) =>
+          getYOutputValue(datum[yKey] as MaybeNumber, yScale, yAxisScale),
         );
       }
     });

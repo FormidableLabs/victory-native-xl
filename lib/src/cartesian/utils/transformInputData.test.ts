@@ -336,7 +336,7 @@ describe("transformInputData", () => {
   });
 
   it("keeps log y scales finite when y values cannot define a positive domain", () => {
-    const { yAxes } = transformInputData({
+    const { y, yAxes } = transformInputData({
       data: [
         { x: 0, y: null },
         { x: 1, y: 0 },
@@ -354,6 +354,32 @@ describe("transformInputData", () => {
     expect(yScale.domain()).toEqual([10, 1]);
     expect(yScale(10)).toBeCloseTo(0);
     expect(yScale(1)).toBeCloseTo(300);
+    expect(y.y.o).toEqual([null, null, null]);
+    expect(yAxes[0].yData.y!.o).toEqual([null, null, null]);
+  });
+
+  it("treats non-positive log y values as missing points", () => {
+    const { y, yAxes } = transformInputData({
+      data: [
+        { x: 0, y: 10 },
+        { x: 1, y: 0 },
+        { x: 2, y: -2 },
+        { x: 3, y: null },
+        { x: 4, y: 1 },
+      ],
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+      axisScales: { yAxisScale: "log" },
+    });
+
+    expect(y.y.i).toEqual([10, 0, -2, null, 1]);
+    expect(Number.isFinite(y.y.o[0] as number)).toBe(true);
+    expect(y.y.o.slice(1, 4)).toEqual([null, null, null]);
+    expect(Number.isFinite(y.y.o[4] as number)).toBe(true);
+    expect(yAxes[0].yData.y!.o).toEqual(y.y.o);
   });
 
   it("keeps single-value log y scales positive and finite", () => {
