@@ -211,7 +211,7 @@ export const transformHorizontalInputData = <
   const xScale = makeScale({
     inputBounds: valueInputBounds,
     outputBounds: xRange,
-    viewport: viewport?.x ?? valueInputBounds,
+    viewport: viewport?.x,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
     padEnd:
@@ -223,7 +223,7 @@ export const transformHorizontalInputData = <
   const yScale = makeScale({
     inputBounds: categoryInputBounds,
     outputBounds: categoryRange,
-    viewport: viewport?.y ?? categoryInputBounds,
+    viewport: viewport?.y,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.top,
     padEnd:
