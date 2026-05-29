@@ -93,6 +93,27 @@ You can customize the pan gesture behavior using the `transformConfig` prop:
 </CartesianChart>
 ```
 
+When a chart is inside a vertical `ScrollView`, `dimensions: "x"` only controls
+how the chart moves after pan activation. Use pan activation/failure offsets to
+let vertical scroll gestures pass through while still allowing horizontal chart
+panning:
+
+```tsx
+<CartesianChart
+  transformState={state}
+  transformConfig={{
+    pan: {
+      dimensions: "x",
+      activeOffsetX: [-20, 20],
+      failOffsetY: [-12, 12],
+    },
+    pinch: { enabled: false },
+  }}
+>
+  {/* chart content */}
+</CartesianChart>
+```
+
 ## Utility Functions
 
 Several utility functions are available to help work with chart transformations:

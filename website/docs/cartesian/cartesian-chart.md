@@ -273,12 +273,36 @@ An optional configuration object for customizing transform behavior when `transf
     enabled?: boolean; // Enable/disable panning gesture (defaults to true)
     dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be panned
     activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+    activeOffsetX?: number | [number, number]; // Horizontal movement required before pan activates
+    activeOffsetY?: number | [number, number]; // Vertical movement required before pan activates
+    failOffsetX?: number | [number, number]; // Horizontal movement range before pan fails
+    failOffsetY?: number | [number, number]; // Vertical movement range before pan fails
   },
   pinch?: {
     enabled?: boolean; // Enable/disable pinch gesture (defaults to true)
     dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be zoomed
   }
 }
+```
+
+The pan offset options correspond to React Native Gesture Handler pan gesture
+configuration and explicit `0` values are honored. These options are useful when
+a chart lives inside a scrollable container. For example, an x-only chart pan can
+wait for clear horizontal intent and fail quickly for vertical scroll intent:
+
+```typescript
+<CartesianChart
+  transformState={transformState}
+  transformConfig={{
+    pan: {
+      dimensions: "x",
+      activeOffsetX: [-20, 20],
+      failOffsetY: [-12, 12],
+    },
+    pinch: { enabled: false },
+  }}
+  // ... other props
+/>
 ```
 
 For example, to restrict panning and zooming to only the x-axis:
