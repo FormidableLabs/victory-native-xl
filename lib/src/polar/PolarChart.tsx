@@ -50,7 +50,6 @@ const PolarChartBase = (
     isHeadless,
     explicitSize,
   } = props;
-  const { width, height } = canvasSize;
   const Bridge: ContextBridge = useContextBridge();
 
   let composed = Gesture.Race();
@@ -82,12 +81,7 @@ const PolarChartBase = (
         isHeadless ? undefined : (content) => <Bridge>{content}</Bridge>
       }
       gestureOverlay={
-        isHeadless ? undefined : (
-          <GestureHandler
-            gesture={composed}
-            dimensions={{ x: 0, y: 0, width, height }}
-          />
-        )
+        isHeadless ? undefined : <GestureHandler gesture={composed} />
       }
     />
   );
