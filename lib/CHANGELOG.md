@@ -1,5 +1,75 @@
 # victory-native
 
+## 41.22.0
+
+### Minor Changes
+
+- Assign Cartesian chart mutable `actionsRef` through React's imperative handle, and allow Reanimated shared-value action refs for worklet custom gestures. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Export bar overlay helpers including `useBarWidth`, `getBarWidth`, `useCartesianChartContext`, and `createRoundedRectPath`. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Export and provide `useCartesianTransformContext` so chart children can read the current transform scale and translation. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Add `chartPressConfig.pan.simultaneousWithExternalGesture` for running chart press gestures simultaneously with external gesture refs such as parent scroll views. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Support newline-delimited multiline labels for Cartesian x and y axes. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Add transform pan activation and failure offset options so chart panning can coordinate with parent scroll gestures. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+### Patch Changes
+
+- Keep Cartesian y scales finite when every value for a y key is missing. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Cap rounded Cartesian bar corner radii to half of the rendered bar width. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Bridge Cartesian chart context into the Skia canvas to avoid multiple-renderer context provider warnings. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Apply explicit zero values in `chartPressConfig.pan` and wire Y-axis pan offsets to the matching gesture methods. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Limit downsampled explicit axis `tickValues` to the requested `tickCount`. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Avoid reserving Cartesian x-axis label space when x-label formatting intentionally returns empty labels. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Avoid reserving Cartesian y-axis label offset space when y-label formatting intentionally returns empty labels. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Preserve explicit empty y-axis labels during Cartesian layout measurement so hidden labels do not reserve y-axis space. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Respect explicit `barWidth={0}` on Cartesian bar groups. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Respect explicit `barWidth={0}` on Cartesian bar components. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Preserve the full scale domain when `domainPadding` is used with a viewport. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Keep first and last x-axis labels visible by clamping label drawing inside the chart bounds. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Keep the chart gesture overlay aligned with the visible chart area during pan and zoom transforms. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Return JSX elements from grouped bar, stacked bar, and pie chart components so their declaration types can be used as JSX components. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Preserve legacy `axisOptions` frame line color and width when normalizing Cartesian axes. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Keep log y scales finite when missing or non-positive values cannot define a valid positive domain, and treat non-positive log values as missing points. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Measure Cartesian ordinal x-axis labels using formatted x values instead of tick indexes. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Avoid reserving Cartesian x-axis label space when x ticks are disabled. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Use ordinal x-data indexes when normalizing Cartesian x-axis ticks so categorical axes respect `tickCount` and avoid extra scale-generated ticks. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Reset Cartesian chart press state when chart data changes so tooltips do not remain active on stale data. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Keep rotated x-axis label layout finite when no x ticks are rendered. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Keep single-value log y scales positive and finite. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Prevent `CartesianChart` from replaying a `chartPressState` touch that was released before long-press pan activation. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Preserve explicit zero scale values when reading transform matrix components while keeping axis rescaling finite. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Use the x-axis `labelOffset` when reserving Cartesian x-label layout space instead of reading the current y-axis offset. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
+- Respect `tickCount={0}` when explicit axis `tickValues` are provided so no ticks or tick labels are rendered. ([#664](https://github.com/FormidableLabs/victory-native-xl/pull/664))
+
 ## 41.21.1
 
 ### Patch Changes
