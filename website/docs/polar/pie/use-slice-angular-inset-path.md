@@ -1,6 +1,6 @@
-# `useSliceAngularPath`
+# `useSliceAngularInsetPath`
 
-The `useSliceAngularPath` hook takes a `PieSliceData` as input, and returns an array of Skia `[SkPath, SkPaint]` objects that represent the path and the paint for that pie slice.
+The `useSliceAngularInsetPath` hook takes a `PieSliceData` as input, and returns a `SkPath` object that represents the path for that pie slice.
 
 :::info
 
@@ -11,15 +11,15 @@ The `useSliceAngularPath` hook takes a `PieSliceData` as input, and returns an a
 ## Example
 
 ```tsx
-import { Pie, useSliceAngularPath, type PieSliceData } from "victory-native";
+import { Pie, useSliceAngularInsetPath, type PieSliceData } from "victory-native";
 import { Path } from "@shopify/react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomSliceAngularInset({ slice }: { slice: PieSliceData }) {
   // 👇 use the hook to generate a path and paint object.
-  const [path, insetPaint] = useSliceAngularInsetPath({ slice, angularInset });
+  const path = useSliceAngularInsetPath({ slice });
   /* 👇 experiment with any other customizations you want */
-  return <Path path={path} paint={insetPaint} {...rest} />;
+  return <Path path={path} style="stroke" strokeWidth={4} color="lightblue" {...rest} />;
 }
 
 export function MyChart() {
@@ -34,10 +34,10 @@ export function MyChart() {
 
 ## Arguments
 
-`useSliceAngularPath` has a function signature as follows:
+`useSliceAngularInsetPath` has a function signature as follows:
 
 ```ts
-useSliceAngularPath(slice: PieSliceData): [SkPath, SkPaint]
+useSliceAngularInsetPath(slice: PieSliceData): SkPath
 ```
 
 ### `slice`
@@ -46,6 +46,6 @@ The `slice` argument is a `PieSliceData` object used to generate the slices's pa
 
 ## Returns
 
-### [SkPath, SkPaint]
+### SkPath
 
-The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element. The `SkPaint` path object to be used as the `paint` argument of a Skia `<Path />` element.
+The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element.
