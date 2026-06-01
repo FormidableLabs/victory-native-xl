@@ -67,6 +67,7 @@ import {
   pruneChartPressBootstrap,
 } from "./utils/chartPressBootstrap";
 import { createSafeZoomTransform } from "./utils/createSafeZoomTransform";
+import { getCartesianChartBounds } from "./utils/getCartesianChartBounds";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -309,16 +310,12 @@ function CartesianChartContent<
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
-    const chartBounds = {
-      left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
-      right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
-      top: primaryYScale(
-        viewport?.y?.[1] ?? (primaryYScale.domain().at(0) || 0),
-      ),
-      bottom: primaryYScale(
-        viewport?.y?.[0] ?? (primaryYScale.domain().at(-1) || 0),
-      ),
-    };
+    const chartBounds = getCartesianChartBounds({
+      xScale,
+      yScale: primaryYScale,
+      viewport,
+      domainPadding,
+    });
 
     return {
       xTicksNormalized,
@@ -340,7 +337,6 @@ function CartesianChartContent<
     normalizedAxisProps,
     axisScales,
     viewport,
-    axisOptions?.axisScales,
   ]);
 
   React.useEffect(() => {
@@ -349,11 +345,6 @@ function CartesianChartContent<
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;
-  const gestureBounds = {
-    x: Math.min(xScale.range()[0]!, 0),
-    y: Math.min(primaryYScale.range()[0]!, 0),
-  };
-
   // stacked bar values
   const chartHeight = chartBounds.bottom;
   const yScaleTop = primaryYAxis.yScale.domain().at(0);
@@ -539,7 +530,7 @@ function CartesianChartContent<
 
           const touchPoint = getCartesianTouchCoordinates({
             touch,
-            gestureBounds,
+            transform: transformState?.matrix.value,
           });
 
           handleTouch(v, touchPoint.x, touchPoint.y);
@@ -570,7 +561,7 @@ function CartesianChartContent<
 
         const touchPoint = getCartesianTouchCoordinates({
           touch,
-          gestureBounds,
+          transform: transformState?.matrix.value,
         });
 
         handleTouch(v, touchPoint.x, touchPoint.y);
@@ -611,7 +602,7 @@ function CartesianChartContent<
 
         const touchPoint = getCartesianTouchCoordinates({
           touch,
-          gestureBounds,
+          transform: transformState?.matrix.value,
         });
 
         handleTouch(v, touchPoint.x, touchPoint.y);
@@ -835,18 +826,7 @@ function CartesianChartContent<
     }
 
     gestureOverlay = (
-      <GestureHandler
-        config={gestureHandlerConfig}
-        gesture={composed}
-        transformState={transformState}
-        dimensions={{
-          x: Math.min(xScale.range()[0]!, 0),
-          y: Math.min(primaryYScale.range()[0]!, 0),
-          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-          height:
-            primaryYScale.range()[1]! - Math.min(primaryYScale.range()[0]!, 0),
-        }}
-      />
+      <GestureHandler config={gestureHandlerConfig} gesture={composed} />
     );
   }
 
