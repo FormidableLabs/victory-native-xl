@@ -64,17 +64,15 @@ export const getCartesianChartBounds = ({
       getScaleValue(
         yScale,
         orientation === "horizontal"
-          ? (viewport?.y?.[0] ?? getDomainValue(yScale, 0, 0))
-          : (viewport?.y?.[1] ?? getDomainValue(yScale, 0, 0)),
-      ) -
-      topPadding,
+          ? viewport?.y?.[0] ?? getDomainValue(yScale, 0, 0)
+          : viewport?.y?.[1] ?? getDomainValue(yScale, 0, 0),
+      ) - topPadding,
     bottom:
       getScaleValue(
         yScale,
         orientation === "horizontal"
-          ? (viewport?.y?.[1] ?? getDomainValue(yScale, -1, 0))
-          : (viewport?.y?.[0] ?? getDomainValue(yScale, -1, 0)),
-      ) +
-      bottomPadding,
+          ? viewport?.y?.[1] ?? getDomainValue(yScale, -1, 0)
+          : viewport?.y?.[0] ?? getDomainValue(yScale, -1, 0),
+      ) + bottomPadding,
   };
 };
