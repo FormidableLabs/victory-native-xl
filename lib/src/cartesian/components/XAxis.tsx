@@ -9,14 +9,12 @@ import {
 } from "@shopify/react-native-skia";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
-import { DEFAULT_TICK_COUNT, downsampleTicks } from "../../utils/tickHelpers";
-import type {
-  InputDatum,
-  InputFields,
-  ValueOf,
-  XAxisProps,
-  XAxisPropsWithDefaults,
-} from "../../types";
+import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
+import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
+import { getTextLayout } from "../../utils/textLayout";
+import type { InputDatum, InputFields, ValueOf, XAxisProps } from "../../types";
+import { getXAxisTicks } from "../utils/getXAxisTicks";
+export { XAxisDefaults } from "../utils/axisDefaults";
 
 export const XAxis = <
   RawData extends Record<string, unknown>,
@@ -25,7 +23,6 @@ export const XAxis = <
   xScale: xScaleProp,
   yScale,
   axisSide = "bottom",
-  yAxisSide = "left",
   labelPosition = "outset",
   labelRotate,
   tickCount = DEFAULT_TICK_COUNT,
@@ -46,43 +43,44 @@ export const XAxis = <
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;
-  const xTicksNormalized = tickValues
-    ? downsampleTicks(tickValues, tickCount)
-    : enableRescaling
-      ? xScale.ticks(tickCount)
-      : xScaleProp.ticks(tickCount);
+  const xTicksNormalized = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount,
+    tickValues,
+    xScale: enableRescaling ? xScale : xScaleProp,
+  });
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
-    const p1 = vec(xScale(tick), yScale(y2));
-    const p2 = vec(xScale(tick), yScale(y1));
+    const tickPosition = xScale(tick);
+    const p1 = vec(tickPosition, yScale(y2));
+    const p2 = vec(tickPosition, yScale(y1));
 
     const val = isNumericalData ? tick : ix[tick];
 
-    const contentX = formatXLabel(val as never);
-    const labelWidth =
-      font
-        ?.getGlyphWidths?.(font.getGlyphIDs(contentX))
-        .reduce((sum, value) => sum + value, 0) ?? 0;
-    const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
-    const canFitLabelContent =
-      xScale(tick) >= chartBounds.left &&
-      xScale(tick) <= chartBounds.right &&
-      (yAxisSide === "left"
-        ? labelX + labelWidth < chartBounds.right
-        : chartBounds.left < labelX);
+    const contentX = String(formatXLabel(val as never));
+    const labelLayout = getTextLayout(contentX, font);
+    const labelWidth = labelLayout.width;
+    const { canRenderLabel, labelX, labelCenterX } = getXAxisLabelPosition({
+      tickPosition,
+      labelWidth,
+      chartBounds,
+    });
 
     const labelY = (() => {
+      const multilineOffset = Math.max(0, labelLayout.height - fontSize);
+
       // bottom, outset
       if (axisSide === "bottom" && labelPosition === "outset") {
         return chartBounds.bottom + labelOffset + fontSize;
       }
       // bottom, inset
       if (axisSide === "bottom" && labelPosition === "inset") {
-        return yScale(y2) - labelOffset;
+        return yScale(y2) - labelOffset - multilineOffset;
       }
       // top, outset
       if (axisSide === "top" && labelPosition === "outset") {
-        return yScale(y1) - labelOffset;
+        return yScale(y1) - labelOffset - multilineOffset;
       }
       // top, inset
       return yScale(y1) + fontSize + labelOffset;
@@ -101,25 +99,25 @@ export const XAxis = <
 
       if (axisSide === "bottom" && labelPosition === "outset") {
         // bottom, outset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = vec(labelCenterX, labelY);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "bottom" && labelPosition === "inset") {
         // bottom, inset
-        origin = vec(labelX + labelWidth / 2, labelY);
+        origin = vec(labelCenterX, labelY);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else if (axisSide === "top" && labelPosition === "inset") {
         // top, inset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = vec(labelCenterX, labelY - fontSize / 4);
         rotateOffset = Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
       } else {
         // top, outset
-        origin = vec(labelX + labelWidth / 2, labelY - fontSize / 4);
+        origin = vec(labelCenterX, labelY - fontSize / 4);
         rotateOffset = -Math.abs(
           (labelWidth / 2) * getOffsetFromAngle(labelRotate),
         );
@@ -137,21 +135,24 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {font && labelWidth && canFitLabelContent ? (
+        {font && labelWidth && canRenderLabel ? (
           <Group transform={[{ translateY: rotateOffset }]}>
-            <Text
-              transform={[
-                {
-                  rotate: (Math.PI / 180) * (labelRotate ?? 0),
-                },
-              ]}
-              origin={origin}
-              color={labelColor}
-              text={contentX}
-              font={font}
-              y={labelY}
-              x={labelX}
-            />
+            {labelLayout.lines.map((line, index) => (
+              <Text
+                key={`x-tick-${tick}-label-line-${index}`}
+                transform={[
+                  {
+                    rotate: (Math.PI / 180) * (labelRotate ?? 0),
+                  },
+                ]}
+                origin={origin}
+                color={labelColor}
+                text={line}
+                font={font}
+                y={labelY + index * labelLayout.lineHeight}
+                x={labelX}
+              />
+            ))}
           </Group>
         ) : null}
         <></>
@@ -161,16 +162,3 @@ export const XAxis = <
 
   return xAxisNodes;
 };
-
-export const XAxisDefaults = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
-  tickCount: 5,
-  labelOffset: 2,
-  axisSide: "bottom",
-  yAxisSide: "left",
-  labelPosition: "outset",
-  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
-  labelColor: "#000000",
-  labelRotate: 0,
-} satisfies XAxisPropsWithDefaults<never, never>;

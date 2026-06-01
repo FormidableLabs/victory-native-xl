@@ -174,6 +174,70 @@ if (__DEV__) {
       path: "/coordinate-debug",
     },
     {
+      title: "Transform Stroke Debug",
+      description:
+        "Debug fixture for keeping stroke width stable while a chart is transformed.",
+      path: "/transform-stroke-debug",
+    },
+    {
+      title: "Context Bridge Debug",
+      description:
+        "Debug fixture for React context access from Cartesian chart children.",
+      path: "/context-bridge-debug",
+    },
+    {
+      title: "Memory Stress Debug",
+      description:
+        "Debug fixture for live Cartesian updates, animation, and mount cycling.",
+      path: "/memory-stress-debug",
+    },
+    {
+      title: "Pie Animation Stress Debug",
+      description:
+        "Debug fixture for comparing multiple animated and static pie updates.",
+      path: "/pie-animation-stress-debug",
+    },
+    {
+      title: "Axis Debug",
+      description: "Debug fixture for x-axis label positioning at chart edges.",
+      path: "/axis-debug",
+    },
+    {
+      title: "Axis Rescaling Debug",
+      description:
+        "Debug fixture for fixed versus rescaled x-axis ticks while panning.",
+      path: "/axis-rescaling-debug",
+    },
+    {
+      title: "Bar Edge Debug",
+      description:
+        "Debug fixture for dynamic bar counts and centered edge bar overflow.",
+      path: "/bar-edge-debug",
+    },
+    {
+      title: "Pan Config Debug",
+      description:
+        "Debug fixture for chart press pan configuration passthrough.",
+      path: "/pan-config-debug",
+    },
+    {
+      title: "Scroll Transform Press Debug",
+      description:
+        "Debug fixture for chart press and transform pan gestures inside a scroll view.",
+      path: "/scroll-transform-press-debug",
+    },
+    {
+      title: "Press State Reset Debug",
+      description:
+        "Debug fixture for resetting chart press state when chart data changes.",
+      path: "/press-state-reset-debug",
+    },
+    {
+      title: "Press Race Debug",
+      description: "Debug fixture for stale long-press bootstrap touch replay.",
+      path: "/press-race-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",

@@ -15,6 +15,8 @@ export const createRoundedRectPath = (
   roundedCorners: RoundedCorners,
   yValue: number,
 ): NonUniformRRect => {
+  "worklet";
+
   const corners = { ...roundedCorners };
   if (Number(yValue) < 0) {
     [
@@ -30,14 +32,11 @@ export const createRoundedRectPath = (
     ];
   }
 
-  const topLeft = Math.min((Math.ceil(barWidth) / 2, corners.topLeft) || 0);
-  const topRight = Math.min((Math.ceil(barWidth) / 2, corners.topRight) || 0);
-  const bottomLeft = Math.min(
-    (Math.ceil(barWidth) / 2, corners.bottomLeft) || 0,
-  );
-  const bottomRight = Math.min(
-    (Math.ceil(barWidth) / 2, corners.bottomRight) || 0,
-  );
+  const maxCornerRadius = Math.ceil(barWidth) / 2;
+  const topLeft = Math.min(maxCornerRadius, corners.topLeft || 0);
+  const topRight = Math.min(maxCornerRadius, corners.topRight || 0);
+  const bottomLeft = Math.min(maxCornerRadius, corners.bottomLeft || 0);
+  const bottomRight = Math.min(maxCornerRadius, corners.bottomRight || 0);
 
   const nonUniformRoundedRect = {
     rect: {

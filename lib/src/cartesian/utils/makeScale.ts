@@ -24,12 +24,18 @@ export const makeScale = ({
   axisScale?: AxisScaleType;
 }): ScaleLinear<number, number> | ScaleLogarithmic<number, number> => {
   let scale: ScaleLinear<number, number> | ScaleLogarithmic<number, number>;
+  const hasViewport = viewport !== undefined;
+  const hasPadding = padStart !== undefined || padEnd !== undefined;
+  const viewOutputBounds: [number, number] =
+    hasViewport && hasPadding
+      ? [outputBounds[0] + (padStart ?? 0), outputBounds[1] - (padEnd ?? 0)]
+      : outputBounds;
 
   switch (axisScale) {
     case "log": {
       const viewScale = scaleLog()
         .domain(viewport ?? inputBounds)
-        .range(outputBounds);
+        .range(viewOutputBounds);
       scale = scaleLog()
         .domain(inputBounds)
         .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
@@ -38,7 +44,7 @@ export const makeScale = ({
     default: {
       const viewScale = scaleLinear()
         .domain(viewport ?? inputBounds)
-        .range(outputBounds);
+        .range(viewOutputBounds);
       scale = scaleLinear()
         .domain(inputBounds)
         .range([viewScale(inputBounds[0]), viewScale(inputBounds[1])]);
@@ -46,7 +52,7 @@ export const makeScale = ({
     }
   }
 
-  if (padStart || padEnd) {
+  if (!hasViewport && hasPadding) {
     scale
       .domain([
         scale.invert(outputBounds[0] - (padStart ?? 0)),

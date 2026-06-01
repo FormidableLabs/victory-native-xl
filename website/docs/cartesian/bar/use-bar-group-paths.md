@@ -42,7 +42,15 @@ export function MyChart() {
 `useBarGroupPaths` has a function signature as follows:
 
 ```ts
-useBarGroupPaths(points: PointsArray[], chartBounds: ChartBounds, betweenGroupPadding?: number, withinGroupPadding?: number ): { paths: SkPath[]; barWidth: number; groupWidth: number; gapWidth: number; }
+useBarGroupPaths(
+  points: PointsArray[],
+  chartBounds: ChartBounds,
+  betweenGroupPadding?: number,
+  withinGroupPadding?: number,
+  roundedCorners?: RoundedCorners,
+  barWidth?: number,
+  barCount?: number,
+): { paths: SkPath[]; barWidth: number; groupWidth: number; gapWidth: number; }
 ```
 
 ### `points`
@@ -60,6 +68,18 @@ An optional `number` between 0 and 1 that represents what fraction of the horizo
 ### `withinGroupPadding`
 
 An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars _within a group_ should be "white space". Defaults to `0.2`. Use `0` for no gap between bars within a group, and values closer to `1` to make bars increasingly narrow.
+
+### `roundedCorners`
+
+An optional `RoundedCorners` object for generating rounded grouped bar paths. Corner radii are capped to half of the rendered bar width.
+
+### `barWidth`
+
+An optional explicit bar width for each bar within the group. This takes precedence over `barCount` and the computed width. Explicit `0` is respected.
+
+### `barCount`
+
+An optional count used to compute group width as if there were `barCount` x data points. This is useful for keeping grouped bar widths stable when rendering dynamic subsets of a larger dataset.
 
 ## Returns
 

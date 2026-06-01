@@ -13,6 +13,7 @@ import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";
 import { InputSegment } from "../components/InputSegment";
+import { Text } from "../components/Text";
 
 export default function MissingDataScreen() {
   const font = useFont(inter, 12);
@@ -70,6 +71,62 @@ export default function MissingDataScreen() {
           )}
         </CartesianChart>
       </View>
+      <Text style={styles.heading}>All Missing Values</Text>
+      <View style={styles.allMissingChart}>
+        <CartesianChart
+          data={ALL_MISSING_DATA}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{ font }}
+        >
+          {({ points }) => (
+            <>
+              <Line points={points.y} color="blue" strokeWidth={3} />
+              <Scatter points={points.y} radius={8} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
+      <Text style={styles.heading}>All Missing Log Scale</Text>
+      <View style={styles.allMissingChart}>
+        <CartesianChart
+          data={ALL_MISSING_DATA}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{
+            font,
+            axisScales: { yAxisScale: "log" },
+            formatYLabel: formatSparseLogYLabel,
+          }}
+        >
+          {({ points }) => (
+            <>
+              <Line points={points.y} color="blue" strokeWidth={3} />
+              <Scatter points={points.y} radius={8} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
+      <Text style={styles.heading}>Single Value Log Scale</Text>
+      <View style={styles.allMissingChart}>
+        <CartesianChart
+          data={SINGLE_VALUE_LOG_DATA}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{
+            font,
+            axisScales: { yAxisScale: "log" },
+            formatYLabel: formatSparseLogYLabel,
+          }}
+        >
+          {({ points }) => (
+            <>
+              <Line points={points.y} color="blue" strokeWidth={3} />
+              <Scatter points={points.y} radius={8} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
       <ScrollView style={styles.controls}>
         <Button
           title="Shuffle data"
@@ -98,6 +155,23 @@ const DATA = () =>
     };
   });
 
+const ALL_MISSING_DATA: { x: number; y: number | null }[] = Array.from(
+  { length: 6 },
+  (_, x) => ({ x, y: null }),
+);
+
+const SINGLE_VALUE_LOG_DATA = [{ x: 0, y: 1 }];
+const VISIBLE_LOG_LABELS = [0.2, 0.5, 1, 2, 5, 10];
+
+const formatSparseLogYLabel = (label: number | null) => {
+  const value = Number(label);
+  const shouldShow = VISIBLE_LOG_LABELS.some(
+    (visibleValue) => Math.abs(value - visibleValue) < Number.EPSILON,
+  );
+
+  return shouldShow ? `${label}` : "";
+};
+
 const styles = StyleSheet.create({
   safeView: {
     flex: 1,
@@ -108,5 +182,14 @@ const styles = StyleSheet.create({
   },
   controls: {
     padding: 16,
+  },
+  heading: {
+    paddingHorizontal: 32,
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  allMissingChart: {
+    height: 220,
+    padding: 32,
   },
 });

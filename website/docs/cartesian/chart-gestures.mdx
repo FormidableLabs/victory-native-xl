@@ -50,6 +50,41 @@ You'll pass the `useChartPressState().state` value into the `chartPressState` pr
 
 As outlined in [the Cartesian Chart page](./cartesian-chart.md#chartpressstate), the `chartPressState` prop of the `CartesianChart` component will accept a `ChartPressState` value returned from the `useChartPressState` hook and use that to track the users gesture state.
 
+## Press gesture configuration
+
+Use `chartPressConfig.pan` to pass configuration through to the underlying React Native Gesture Handler pan gesture. Explicit `0` values are applied, so values such as `activateAfterLongPress: 0` are valid.
+
+When a chart is inside another gesture-aware container, such as a Gesture Handler `ScrollView`, pass the external gesture ref through `simultaneousWithExternalGesture` so scrolling and chart pressing can both be recognized.
+
+```tsx
+import { useRef } from "react";
+import { ScrollView } from "react-native-gesture-handler";
+import { CartesianChart, useChartPressState } from "victory-native";
+
+function ScrollableChart() {
+  const scrollRef = useRef<ScrollView>(null);
+  const { state } = useChartPressState({ x: 0, y: { value: 0 } });
+
+  return (
+    <ScrollView ref={scrollRef}>
+      <CartesianChart
+        data={data}
+        xKey="x"
+        yKeys={["value"]}
+        chartPressState={state}
+        chartPressConfig={{
+          pan: {
+            simultaneousWithExternalGesture: scrollRef,
+          },
+        }}
+      >
+        {/* ... */}
+      </CartesianChart>
+    </ScrollView>
+  );
+}
+```
+
 ## Multi-press support
 
 The `CartesianChart` component can track as many fingers as you want, but two will likely be the max you'd reasonably want to use. See [the multi-press guide](./guides/multi-press.md) to see an example of multi-press in action.

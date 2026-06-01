@@ -55,11 +55,15 @@ export const StackedBar = ({
     colors,
   });
 
-  return paths.map((p: StackedBarPath) => {
-    return React.createElement(animate ? AnimatedPath : Path, {
-      ...p,
-      style: "fill",
-      ...(Boolean(animate) && { animate }),
-    });
-  });
+  return (
+    <>
+      {paths.map((p: StackedBarPath) => {
+        return React.createElement(animate ? AnimatedPath : Path, {
+          ...p,
+          style: "fill",
+          ...(Boolean(animate) && { animate }),
+        });
+      })}
+    </>
+  );
 };

@@ -169,6 +169,14 @@ The `yAxis` is an optional prop allows you to configure the **Y axes** of the ch
 |  **`linePathEffect`**   | <pre>`DashPathEffect`</pre>                 | Currently accepts the `<DashPathEffect />` from `react-native-skia` so one can add dashes to their axis lines. In the future this prop may accept other line path effects as well.                                                                                                                                                                                                                                               |
 |  **`enableRescaling`**  | <pre>boolean</pre>                          | When `true`, allows the axis ticks to be rescaled during pan/zoom transformations. When `false`, the ticks will remain fixed at their initial values regardless of zoom level. Defaults to `false`.                                                                                                                                                                                                                              |
 
+### Axis label and tick notes
+
+Axis label formatters may return newline-delimited strings, such as `"Jan\n2024"`, to render multiline labels. Layout measurement reserves space using the widest line and total line height.
+
+Returning an empty string from `formatXLabel` or `formatYLabel` intentionally hides that label. Hidden labels do not reserve fallback label space or label offset space.
+
+When explicit `tickValues` are combined with `tickCount`, the tick values are downsampled to the requested count. Passing `tickCount={0}` renders no ticks or tick labels, including when explicit `tickValues` are provided.
+
 ### `frame`
 
 The `frame` is an optional prop allows you to configure the frame of the chart. If it is not present then the chart will not render any frame. It is an object with the following properties:
@@ -220,8 +228,11 @@ The `chartPressConfig` prop allows you to configure the pan gesture handler used
 - `activeOffsetY`: The minimum vertical pan distance required before the gesture activates
 - `failOffsetX`: The maximum allowed horizontal pan distance before the gesture fails
 - `failOffsetY`: The maximum allowed vertical pan distance before the gesture fails
+- `simultaneousWithExternalGesture`: One or more external Gesture Handler gesture refs that should run simultaneously with the chart press gesture. This is useful for charts inside scroll views or other gesture-aware containers.
 
 These properties correspond directly to the [React Native Gesture Handler's PanGesture configuration options](https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/pan-gesture#configuration).
+
+Explicit `0` values are honored for these options. For example, `activateAfterLongPress: 0` is applied rather than treated as an omitted value.
 
 ### `transformState`
 
@@ -262,12 +273,36 @@ An optional configuration object for customizing transform behavior when `transf
     enabled?: boolean; // Enable/disable panning gesture (defaults to true)
     dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be panned
     activateAfterLongPress?: number; // Minimum time to press before pan gesture is activated
+    activeOffsetX?: number | [number, number]; // Horizontal movement required before pan activates
+    activeOffsetY?: number | [number, number]; // Vertical movement required before pan activates
+    failOffsetX?: number | [number, number]; // Horizontal movement range before pan fails
+    failOffsetY?: number | [number, number]; // Vertical movement range before pan fails
   },
   pinch?: {
     enabled?: boolean; // Enable/disable pinch gesture (defaults to true)
     dimensions?: "x" | "y" | ("x" | "y")[]; // Control which dimensions can be zoomed
   }
 }
+```
+
+The pan offset options correspond to React Native Gesture Handler pan gesture
+configuration and explicit `0` values are honored. These options are useful when
+a chart lives inside a scrollable container. For example, an x-only chart pan can
+wait for clear horizontal intent and fail quickly for vertical scroll intent:
+
+```typescript
+<CartesianChart
+  transformState={transformState}
+  transformConfig={{
+    pan: {
+      dimensions: "x",
+      activeOffsetX: [-20, 20],
+      failOffsetY: [-12, 12],
+    },
+    pinch: { enabled: false },
+  }}
+  // ... other props
+/>
 ```
 
 For example, to restrict panning and zooming to only the x-axis:
@@ -298,13 +333,15 @@ const tapGesture = Gesture.Tap().onStart((e) => {
 const composed = Gesture.Race(tapGesture);
 ```
 
+If a custom gesture runs on the UI thread and needs to call chart actions from a worklet, pass a Reanimated shared value to `actionsRef` and read `actionsRef.value` inside the gesture callback.
+
 ### `actionsRef` <i>deprecated</i>
 
 :::warning
 Deprecated in favor of the `ref` prop. Use `ref.actions` to access the same functionality.
 :::
 
-The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts a ref object that will be populated with methods to control chart behavior. Currently supported actions:
+The `actionsRef` prop allows you to get programmatic access to certain chart actions. It accepts either a React mutable ref or a Reanimated shared value ref that will be populated with methods to control chart behavior. Use a mutable ref for normal JS callbacks, and a shared value ref when a worklet gesture needs to read the actions on the UI thread. Currently supported actions:
 
 - `handleTouch`: Programmatically trigger the chart's touch handling behavior at specific coordinates. This is useful for programmatically highlighting specific data points.
 
@@ -323,6 +360,30 @@ function MyChart() {
   return (
     <CartesianChart
       actionsRef={actionsRef}
+      // ... other props
+    />
+  );
+}
+```
+
+Shared-value ref example for custom gestures:
+
+```tsx
+function MyChart() {
+  const { state } = useChartPressState({ x: 0, y: { highTmp: 0 } });
+  const actionsRef = useSharedValue<CartesianActionsHandle<typeof state> | null>(
+    null,
+  );
+
+  const tap = Gesture.Tap().onStart((event) => {
+    actionsRef.value?.handleTouch(state, event.x, event.y);
+  });
+
+  return (
+    <CartesianChart
+      actionsRef={actionsRef}
+      chartPressState={state}
+      customGestures={tap}
       // ... other props
     />
   );
@@ -462,6 +523,23 @@ console.log(points[YKey]); // [{ x: 0, xValue: 0, y: 0, yValue: 0 }, ...] etc
 ```
 
 :::
+
+### Chart context hook
+
+`useCartesianChartContext` exposes the current Cartesian `xScale` and `yScale` to custom components rendered inside a `CartesianChart`. This is useful for custom overlays that need the same scales as the built-in marks.
+
+```tsx
+import { useCartesianChartContext } from "victory-native";
+
+function CustomOverlay() {
+  const { xScale, yScale } = useCartesianChartContext();
+
+  // Use xScale/yScale to draw custom Skia content.
+  return null;
+}
+```
+
+The hook must be used from components rendered as chart children or `renderOutside` content.
 
 ### `canvasSize`
 

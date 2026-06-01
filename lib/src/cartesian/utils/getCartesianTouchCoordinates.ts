@@ -1,4 +1,5 @@
-import type { SkRect } from "@shopify/react-native-skia";
+import type { Matrix4 } from "@shopify/react-native-skia";
+import { getTransformComponents } from "../../utils/transform";
 
 type TouchPoint = {
   x?: number;
@@ -27,18 +28,24 @@ const finiteOrFallback = (
 
 export const getCartesianTouchCoordinates = ({
   touch,
-  gestureBounds,
+  transform,
 }: {
   touch: TouchPoint;
-  gestureBounds: Pick<SkRect, "x" | "y">;
+  transform?: Matrix4;
 }): ChartTouchPoint => {
   "worklet";
 
-  // `handleTouch` compares against canvas-space positions from `tData`.
-  // RNGH `touch.x/y` are local to the gesture handler; `gestureBounds` shifts
-  // that local space back into the chart canvas when the handler starts < 0.
+  const { scaleX, scaleY, translateX, translateY } =
+    getTransformComponents(transform);
+  const safeScaleX = scaleX === 0 || !Number.isFinite(scaleX) ? 1 : scaleX;
+  const safeScaleY = scaleY === 0 || !Number.isFinite(scaleY) ? 1 : scaleY;
+
+  // `handleTouch` compares against pre-transform canvas-space positions from
+  // `tData`, while the gesture handler fills the visible chart container.
+  // Invert the active chart transform so a press on transformed content still
+  // maps back to the matching data point.
   return {
-    x: finiteOrFallback(touch.x, touch.absoluteX) + gestureBounds.x,
-    y: finiteOrFallback(touch.y, touch.absoluteY) + gestureBounds.y,
+    x: (finiteOrFallback(touch.x, touch.absoluteX) - translateX) / safeScaleX,
+    y: (finiteOrFallback(touch.y, touch.absoluteY) - translateY) / safeScaleY,
   };
 };

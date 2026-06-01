@@ -58,6 +58,8 @@ This guide will show you how to create this bar chart with some customization li
 
   By default, the first and last bar will be cut off by the edge of the chart. This is because the `Bar` component is using the `chartBounds` to know where to draw the bars. The `chartBounds` are the bounds of the chart, not the bounds of the data. To fix this, we can add some domain padding to the chart.
 
+  If the number of visible bars changes at runtime, keep the rendered bar width stable by passing either `barCount` with the maximum visible bar count or a fixed `barWidth`. Then choose x-domain padding that fits that stable width. This keeps bars centered on their x values while avoiding first and last bar clipping across smaller dynamic windows.
+
 4. Next we want to render axis labels with the month names. We will need a font object from **React Native Skia**. To get a font object, we use the `useFont` hook and pass it a ttf file and a size. We will also use the `formatXLabel` prop to format the month number from a number to a month name.
 
   ```tsx

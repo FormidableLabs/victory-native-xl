@@ -14,8 +14,24 @@ import type {
   XAxisPropsWithDefaults,
   AxisScales,
 } from "../../types";
-import { asNumber } from "../../utils/asNumber";
+import { getTextLayout } from "../../utils/textLayout";
+import { getXScaleInputBounds } from "./getXScaleInputBounds";
+import { getXAxisTicks } from "./getXAxisTicks";
+import { getYScaleInputBounds } from "./getYScaleInputBounds";
+import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
+
+const getYOutputValue = (
+  value: MaybeNumber,
+  yScale: ScaleLinear<number, number>,
+  yAxisScale: AxisScales["yAxisScale"],
+): MaybeNumber => {
+  if (typeof value !== "number") return value;
+  if (yAxisScale === "log" && value <= 0) return null;
+
+  const output = yScale(value);
+  return Number.isFinite(output) ? output : null;
+};
 
 /**
  * This is a fatty. Takes raw user input data, and transforms it into a format
@@ -103,42 +119,41 @@ export const transformInputData = <
   const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
   const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
 
-  // For non‐numeric (ordinal) data, use the index values
-  // if user provides a domain- use that as our min/max
-  // if tickValues are provided- we use that instead
-  // if we find min/max of y values across all yKeys- and use that for yrange instead
-  const ixMin = isNumericalData
-    ? asNumber(domain?.x?.[0] ?? tickDomainsX?.[0] ?? ixNum.at(0))
-    : 0;
-  const ixMax = isNumericalData
-    ? asNumber(domain?.x?.[1] ?? tickDomainsX?.[1] ?? ixNum.at(-1))
-    : ixNum.length - 1;
+  const xInputBounds = getXScaleInputBounds({
+    isNumericalData,
+    ixNum,
+    domain: domain?.x,
+    tickDomain: tickDomainsX,
+  });
 
   const xTempScale = makeScale({
-    inputBounds: ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax],
+    inputBounds: xInputBounds,
     outputBounds: [0, rawChartWidth],
     axisScale: xAxisScale,
   });
 
-  // normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
-  // 4consistency we do it here- so we have both y and x ticks to pass to the axis generator
-  const xTicksNormalized = xTickValues
-    ? downsampleTicks(xTickValues, xTicks)
-    : xTempScale.ticks(xTicks);
-
-  const maxXLabel = Math.max(
-    ...xTicksNormalized.map((xTick) => {
+  const xTicksForLabelLayout = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount: xTicks,
+    tickValues: xTickValues,
+    xScale: xTempScale,
+  });
+  const maxXLabelLayout = xTicksForLabelLayout.reduce(
+    (max, xTick) => {
+      const labelInput = isNumericalData ? xTick : ix[xTick];
       const labelValue = xAxis.formatXLabel
         ? xAxis.formatXLabel(
-            xTick as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+            labelInput as unknown as Parameters<typeof xAxis.formatXLabel>[0],
           )
-        : String(xTick);
-      const labelStr = String(labelValue);
-      if (!xAxis.font) return 0;
-      const glyphIDs = xAxis.font.getGlyphIDs(labelStr);
-      const widths = xAxis.font.getGlyphWidths?.(glyphIDs) ?? [];
-      return widths.reduce((sum, w) => sum + w, 0);
-    }),
+        : String(labelInput ?? xTick);
+      const layout = getTextLayout(String(labelValue), xAxis.font);
+      return {
+        width: Math.max(max.width, layout.width),
+        height: Math.max(max.height, layout.height),
+      };
+    },
+    { width: 0, height: 0 },
   );
 
   // workt with adjustedoutputwindow isntead of directly
@@ -146,7 +161,9 @@ export const transformInputData = <
   const adjustedOutputWindow = { ...outputWindow };
 
   if (labelRotate && xAxis.labelPosition === "outset") {
-    const rotateOffset = Math.abs(maxXLabel * getOffsetFromAngle(labelRotate));
+    const rotateOffset = Math.abs(
+      maxXLabelLayout.width * getOffsetFromAngle(labelRotate),
+    );
     if (xAxis.axisSide === "bottom") {
       adjustedOutputWindow.yMax -= rotateOffset;
     } else if (xAxis.axisSide === "top") {
@@ -156,8 +173,6 @@ export const transformInputData = <
   // 1. Set up our y axes first...
   // Transform data for each y-axis configuration
   const yAxesTransformed = (yAxes ?? [{}])?.map((yAxis) => {
-    const fontHeight = yAxis.font?.getSize?.() ?? 0;
-
     const yTickValues = yAxis.tickValues;
     const yTicks = yAxis.tickCount;
     const tickDomainsY = yAxis.domain
@@ -165,55 +180,33 @@ export const transformInputData = <
       : getDomainFromTicks(yAxis.tickValues);
 
     const yKeysForAxis = yAxis.yKeys ?? yKeys;
-    const yMin =
-      domain?.y?.[0] ??
-      tickDomainsY?.[0] ??
-      Math.min(
-        ...yKeysForAxis.map((key) => {
-          return data.reduce((min, curr) => {
-            if (typeof curr[key] !== "number") return min;
-            return Math.min(min, curr[key] as number);
-          }, Infinity);
-        }),
-      );
-    const yMax =
-      domain?.y?.[1] ??
-      tickDomainsY?.[1] ??
-      Math.max(
-        ...yKeysForAxis.map((key) => {
-          return data.reduce((max, curr) => {
-            if (typeof curr[key] !== "number") return max;
-            return Math.max(max, curr[key] as number);
-          }, -Infinity);
-        }),
-      );
-    // Set up our y-scale, notice how domain is "flipped" because
-    //  we're moving from cartesian to canvas coordinates
-    // Also, if single data point, manually add upper & lower bounds so chart renders properly
-    const yScaleDomain = (
-      yMax === yMin ? [yMax + 1, yMin - 1] : [yMax, yMin]
-    ) as [number, number];
+    const { yMin, yMax } = getYScaleInputBounds({
+      data,
+      yKeys: yKeysForAxis as string[],
+      domain: domain?.y,
+      tickDomain: tickDomainsY,
+    });
+    const yScaleDomain = getYScaleDomain({ yMin, yMax, yAxisScale });
 
     const yScaleRange: [number, number] = (() => {
-      const xTickCount =
-        (typeof yAxis?.tickCount === "number"
-          ? yAxis?.tickCount
-          : xAxis?.tickCount) ?? 0;
-      const yLabelOffset = yAxis.labelOffset ?? 0;
+      const xTickCount = xAxis?.tickCount ?? 0;
+      const xLabelOffset = xAxis?.labelOffset ?? 0;
       const xAxisSide = xAxis?.axisSide;
       const xLabelPosition = xAxis?.labelPosition;
+      const xLabelOutset =
+        xTickCount > 0 && maxXLabelLayout.width > 0
+          ? maxXLabelLayout.height + xLabelOffset * 2
+          : 0;
 
       if (xAxisSide === "bottom" && xLabelPosition === "outset") {
         return [
           adjustedOutputWindow.yMin,
-          adjustedOutputWindow.yMax +
-            (xTickCount > 0 ? -fontHeight - yLabelOffset * 2 : 0),
+          adjustedOutputWindow.yMax - xLabelOutset,
         ];
       }
       if (xAxisSide === "top" && xLabelPosition === "outset") {
         return [
-          adjustedOutputWindow.yMin +
-            (xTickCount > 0 ? fontHeight + yLabelOffset * 2 : 0),
+          adjustedOutputWindow.yMin + xLabelOutset,
           adjustedOutputWindow.yMax,
         ];
       }
@@ -225,7 +218,7 @@ export const transformInputData = <
       inputBounds: yScaleDomain,
       outputBounds: yScaleRange,
       // Reverse viewport y values since canvas coordinates increase downward
-      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : yScaleDomain,
+      viewport: viewport?.y ? [viewport.y[1], viewport.y[0]] : undefined,
       isNice: true,
       padEnd:
         typeof domainPadding === "number"
@@ -241,9 +234,7 @@ export const transformInputData = <
         acc[key] = {
           i: data.map((datum) => datum[key] as MaybeNumber),
           o: data.map((datum) =>
-            typeof datum[key] === "number"
-              ? yScale(datum[key] as number)
-              : (datum[key] as number),
+            getYOutputValue(datum[key] as MaybeNumber, yScale, yAxisScale),
           ),
         };
         return acc;
@@ -258,26 +249,19 @@ export const transformInputData = <
     yKeys.forEach((yKey) => {
       if (yKeysForAxis.includes(yKey)) {
         y[yKey].i = data.map((datum) => datum[yKey] as MaybeNumber);
-        y[yKey].o = data.map(
-          (datum) =>
-            (typeof datum[yKey] === "number"
-              ? yScale(datum[yKey] as number)
-              : datum[yKey]) as MaybeNumber,
+        y[yKey].o = data.map((datum) =>
+          getYOutputValue(datum[yKey] as MaybeNumber, yScale, yAxisScale),
         );
       }
     });
 
     const maxYLabel = Math.max(
-      ...yTicksNormalized.map(
-        (yTick) =>
-          yAxis?.font
-            ?.getGlyphWidths?.(
-              yAxis.font.getGlyphIDs(
-                yAxis?.formatYLabel?.(yTick as RawData[YK]) || String(yTick),
-              ),
-            )
-            .reduce((sum, value) => sum + value, 0) ?? 0,
-      ),
+      0,
+      ...yTicksNormalized.map((yTick) => {
+        const label =
+          yAxis?.formatYLabel?.(yTick as RawData[YK]) ?? String(yTick);
+        return getTextLayout(String(label), yAxis.font).width;
+      }),
     );
 
     return {
@@ -307,9 +291,11 @@ export const transformInputData = <
       // Adjust xMin or xMax based on the axis side and label position
       // make ajdustments  for label rotation here
       if (yAxisSide === "left" && yLabelPosition === "outset") {
-        xMinAdjustment += yTickCount > 0 ? labelWidth + yLabelOffset : 0;
+        xMinAdjustment +=
+          yTickCount > 0 && labelWidth > 0 ? labelWidth + yLabelOffset : 0;
       } else if (yAxisSide === "right" && yLabelPosition === "outset") {
-        xMaxAdjustment += yTickCount > 0 ? -labelWidth - yLabelOffset : 0;
+        xMaxAdjustment +=
+          yTickCount > 0 && labelWidth > 0 ? -labelWidth - yLabelOffset : 0;
       }
     });
 
@@ -320,13 +306,11 @@ export const transformInputData = <
     ];
   })();
 
-  const xInputBounds: [number, number] =
-    ixMin === ixMax ? [ixMin - 1, ixMax + 1] : [ixMin, ixMax];
   const xScale = makeScale({
     // if single data point, manually add upper & lower bounds so chart renders properly
     inputBounds: xInputBounds,
     outputBounds: oRange,
-    viewport: viewport?.x ?? xInputBounds,
+    viewport: viewport?.x,
     padStart:
       typeof domainPadding === "number" ? domainPadding : domainPadding?.left,
     padEnd:
@@ -336,11 +320,13 @@ export const transformInputData = <
 
   // Normalize xTicks values either via the d3 scaleLinear ticks() function or our custom downSample function
   // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
-  const finalXTicksNormalized = isNumericalData
-    ? xTickValues
-      ? downsampleTicks(xTickValues, xTicks)
-      : xScale.ticks(xTicks)
-    : ixNum;
+  const finalXTicksNormalized = getXAxisTicks({
+    isNumericalData,
+    ix,
+    tickCount: xTicks,
+    tickValues: xTickValues,
+    xScale,
+  });
 
   const ox = ixNum.map((x) => xScale(x)!);
 

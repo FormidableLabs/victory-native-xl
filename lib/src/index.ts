@@ -4,6 +4,7 @@
 export {
   CartesianChart,
   type CartesianActionsHandle,
+  type CartesianActionsRef,
   type CartesianChartRef,
 } from "./cartesian/CartesianChart";
 export { type ChartExplicitSize } from "./shared/ChartExplicitSize";
@@ -14,6 +15,7 @@ export {
   type CartesianChartRenderArg,
   type Viewport,
   type ChartBounds,
+  type ChartPressPanConfig,
   type YAxisSide,
   type XAxisSide,
   type PointsArray,
@@ -21,7 +23,10 @@ export {
   type MaybeNumber,
 } from "./types";
 export { type CurveType } from "./cartesian/utils/curves";
-export { type RoundedCorners } from "./utils/createRoundedRectPath";
+export {
+  createRoundedRectPath,
+  type RoundedCorners,
+} from "./utils/createRoundedRectPath";
 
 export { useAnimatedPath } from "./hooks/useAnimatedPath";
 export { AnimatedPath } from "./cartesian/components/AnimatedPath";
@@ -32,6 +37,14 @@ export {
 } from "./cartesian/hooks/useChartPressState";
 
 export { useChartTransformState } from "./cartesian/hooks/useChartTransformState";
+export {
+  useCartesianChartContext,
+  type CartesianChartContextValue,
+} from "./cartesian/contexts/CartesianChartContext";
+export {
+  useCartesianTransformContext,
+  type CartesianTransformContextValue,
+} from "./cartesian/contexts/CartesianTransformContext";
 export {
   getTransformComponents,
   setScale,
@@ -45,6 +58,14 @@ export { Line } from "./cartesian/components/Line";
 
 // Bar
 export { useBarPath } from "./cartesian/hooks/useBarPath";
+export {
+  useBarWidth,
+  type UseBarWidthOptions,
+} from "./cartesian/hooks/useBarWidth";
+export {
+  getBarWidth,
+  type GetBarWidthArgs,
+} from "./cartesian/utils/getBarWidth";
 export { Bar } from "./cartesian/components/Bar";
 
 // StackedBar

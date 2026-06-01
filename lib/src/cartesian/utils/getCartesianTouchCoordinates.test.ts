@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findClosestPoint } from "../../utils/findClosestPoint";
+import { identity4, setScale, setTranslate } from "../../utils/transform";
 import { getCartesianTouchCoordinates } from "./getCartesianTouchCoordinates";
 
 describe("getCartesianTouchCoordinates", () => {
@@ -7,7 +8,6 @@ describe("getCartesianTouchCoordinates", () => {
     expect(
       getCartesianTouchCoordinates({
         touch: { x: 30, y: 40, absoluteX: 128, absoluteY: 240 },
-        gestureBounds: { x: 0, y: 0 },
       }),
     ).toEqual({ x: 30, y: 40 });
   });
@@ -16,16 +16,14 @@ describe("getCartesianTouchCoordinates", () => {
     expect(
       getCartesianTouchCoordinates({
         touch: { x: 20, y: 24, absoluteX: 148, absoluteY: 224 },
-        gestureBounds: { x: 0, y: 0 },
       }),
     ).toEqual({ x: 20, y: 24 });
   });
 
-  it("preserves chart coordinates when the gesture handler starts before the visible chart", () => {
+  it("uses visible chart coordinates when the viewport pushes data offscreen", () => {
     expect(
       getCartesianTouchCoordinates({
-        touch: { x: 80, y: 50 },
-        gestureBounds: { x: -60, y: -10 },
+        touch: { x: 20, y: 40 },
       }),
     ).toEqual({ x: 20, y: 40 });
   });
@@ -34,7 +32,6 @@ describe("getCartesianTouchCoordinates", () => {
     expect(
       getCartesianTouchCoordinates({
         touch: { x: 72, y: 48, absoluteX: 280, absoluteY: 240 },
-        gestureBounds: { x: 0, y: 0 },
       }),
     ).toEqual({ x: 72, y: 48 });
   });
@@ -43,16 +40,36 @@ describe("getCartesianTouchCoordinates", () => {
     expect(
       getCartesianTouchCoordinates({
         touch: { x: 96, y: 40, absoluteX: 220, absoluteY: 160 },
-        gestureBounds: { x: 0, y: 0 },
       }),
     ).toEqual({ x: 96, y: 40 });
+  });
+
+  it("inverts chart transforms when the gesture overlay stays fixed", () => {
+    const transform = setTranslate(setScale(identity4, 2, 4), -60, 20);
+
+    expect(
+      getCartesianTouchCoordinates({
+        touch: { x: 100, y: 220 },
+        transform,
+      }),
+    ).toEqual({ x: 80, y: 50 });
+  });
+
+  it("falls back to unscaled coordinates for non-invertible transform scale", () => {
+    const transform = setScale(identity4, 0, 0);
+
+    expect(
+      getCartesianTouchCoordinates({
+        touch: { x: 100, y: 220 },
+        transform,
+      }),
+    ).toEqual({ x: 100, y: 220 });
   });
 
   it("finds the intended data point when the chart is nested in an offset container", () => {
     const points = [20, 60, 100, 140];
     const touchPoint = getCartesianTouchCoordinates({
       touch: { x: 60, y: 40, absoluteX: 260, absoluteY: 320 },
-      gestureBounds: { x: 0, y: 0 },
     });
 
     expect(findClosestPoint(points, touchPoint.x)).toBe(1);
@@ -63,7 +80,6 @@ describe("getCartesianTouchCoordinates", () => {
     const points = [20, 60, 100, 140];
     const touchPoint = getCartesianTouchCoordinates({
       touch: { x: 60, y: 40, absoluteX: 120, absoluteY: 160 },
-      gestureBounds: { x: 0, y: 0 },
     });
 
     expect(findClosestPoint(points, touchPoint.x)).toBe(1);
@@ -74,7 +90,6 @@ describe("getCartesianTouchCoordinates", () => {
     expect(
       getCartesianTouchCoordinates({
         touch: { x: Number.NaN, y: Number.NaN },
-        gestureBounds: { x: 0, y: 0 },
       }),
     ).toEqual({ x: 0, y: 0 });
   });
