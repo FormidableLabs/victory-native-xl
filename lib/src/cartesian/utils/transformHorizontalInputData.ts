@@ -41,8 +41,8 @@ export const transformHorizontalInputData = <
   outputWindow: PrimitiveViewWindow;
   domain?: { x?: [number] | [number, number]; y?: [number] | [number, number] };
   domainPadding?: SidedNumber;
-  xAxis: XAxisPropsWithDefaults<RawData, XK>;
-  yAxes: YAxisPropsWithDefaults<RawData, YK>[];
+  xAxis: XAxisPropsWithDefaults<RawData, XK, number>;
+  yAxes: YAxisPropsWithDefaults<RawData, YK, InputFields<RawData>[XK]>[];
   viewport?: {
     x?: [number, number];
     y?: [number, number];

@@ -12,6 +12,7 @@ const DATA = [
   { category: "Beta", value: -5 },
   { category: "Gamma", value: 20 },
 ];
+type Datum = (typeof DATA)[number];
 const OUTPUT_WINDOW = {
   yMin: 0,
   yMax: 300,
@@ -29,7 +30,7 @@ const axes = {
     labelPosition: "outset",
     formatXLabel: (label: ValueOf<InputDatum>) => String(label),
     labelColor: "#000000",
-  } satisfies XAxisPropsWithDefaults<(typeof DATA)[number], "category">,
+  } satisfies XAxisPropsWithDefaults<Datum, "category", number>,
   yAxes: [
     {
       lineColor: "hsla(0, 0%, 0%, 0.25)",
@@ -42,7 +43,7 @@ const axes = {
       labelColor: "#000000",
       yKeys: ["value"],
       domain: null,
-    } satisfies YAxisPropsWithDefaults<(typeof DATA)[number], "value">,
+    } satisfies YAxisPropsWithDefaults<Datum, "value", Datum["category"]>,
   ],
 };
 
@@ -208,6 +209,39 @@ describe("transformHorizontalInputData", () => {
     });
 
     expect(yAxes[0].yTicksNormalized).toEqual([]);
+  });
+
+  it("formats value-axis ticks with numeric values and category-axis ticks with xKey values", () => {
+    const formattedXValues: number[] = [];
+    const formattedYValues: string[] = [];
+
+    transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickValues: [0, 10],
+        formatXLabel: (value) => {
+          formattedXValues.push(value);
+          return String(value);
+        },
+      },
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          tickValues: [0, 1],
+          formatYLabel: (category) => {
+            formattedYValues.push(category);
+            return category;
+          },
+        },
+      ],
+    });
+
+    expect(formattedXValues).toEqual([0, 10]);
+    expect(formattedYValues).toEqual(["Alpha", "Beta"]);
   });
 
   it("preserves sorted numeric categories while spacing them as categories", () => {

@@ -13,6 +13,7 @@ export { YAxisDefaults } from "../utils/axisDefaults";
 export const YAxis = <
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
+  Label = RawData[YK],
 >({
   xScale,
   yScale,
@@ -27,7 +28,7 @@ export const YAxis = <
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
   linePathEffect,
   chartBounds,
-}: YAxisProps<RawData, YK>) => {
+}: YAxisProps<RawData, YK, Label>) => {
   const [x1 = 0, x2 = 0] = xScale.domain();
   const [_ = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;

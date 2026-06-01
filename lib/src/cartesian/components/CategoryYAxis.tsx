@@ -24,7 +24,7 @@ type CategoryYAxisProps<
 > = {
   axisSide: YAxisSide;
   font?: SkFont | null;
-  formatYLabel?: (label: never) => string;
+  formatYLabel?: (label: InputFields<RawData>[XK]) => string;
   labelColor: string;
   labelOffset: number;
   labelPosition: AxisLabelPosition;
@@ -52,7 +52,7 @@ export const CategoryYAxis = <
   lineWidth,
   lineColor,
   font,
-  formatYLabel = (label: never) => String(label),
+  formatYLabel = (label: InputFields<RawData>[XK]) => String(label),
   linePathEffect,
   chartBounds,
   ix,
@@ -62,7 +62,10 @@ export const CategoryYAxis = <
 
   return yTicksNormalized.map((tick) => {
     const categoryValue = ix[tick];
-    const contentY = String(formatYLabel(categoryValue as never));
+    const contentY =
+      categoryValue === undefined
+        ? String(tick)
+        : String(formatYLabel(categoryValue));
     const labelLayout = getTextLayout(contentY, font);
     const labelWidth = labelLayout.width;
     const tickPosition = yScale(tick);

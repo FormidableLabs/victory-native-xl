@@ -29,8 +29,10 @@ export const useBuildChartAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 >(
-  args: BuildChartAxisArgs<RawData, XK, YK>,
+  args: BuildChartAxisArgs<RawData, XK, YK, XLabel, YLabel>,
 ) => {
   const { axisOptions, xAxis, yAxis, frame, yKeys } = args;
   return React.useMemo(
@@ -43,10 +45,14 @@ type BuildChartAxisArgs<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = {
-  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
-  xAxis?: XAxisInputProps<RawData, XK>;
-  yAxis?: YAxisInputProps<RawData, YK>[];
+  axisOptions?: Partial<
+    Omit<AxisProps<RawData, XK, YK, XLabel, YLabel>, "xScale" | "yScale">
+  >;
+  xAxis?: XAxisInputProps<RawData, XK, XLabel>;
+  yAxis?: YAxisInputProps<RawData, YK, YLabel>[];
   frame?: FrameInputProps;
   yKeys: YK[];
 };
@@ -55,18 +61,20 @@ export const buildChartAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 >({
   axisOptions,
   xAxis,
   yAxis,
   frame,
   yKeys,
-}: BuildChartAxisArgs<RawData, XK, YK>) => {
+}: BuildChartAxisArgs<RawData, XK, YK, XLabel, YLabel>) => {
   // Helper functions to pick only the relevant properties for each prop type
   const pickXAxisProps = (
-    axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-      OptionalAxisProps<RawData, XK, YK>,
-  ): XAxisPropsWithDefaults<RawData, XK> => ({
+    axisProp: AxisPropWithDefaults<RawData, XK, YK, XLabel, YLabel> &
+      OptionalAxisProps<RawData, XK, YK, XLabel, YLabel>,
+  ): XAxisPropsWithDefaults<RawData, XK, XLabel> => ({
     axisSide: axisProp.axisSide.x,
     yAxisSide: axisProp.axisSide.y,
     tickCount:
@@ -110,9 +118,9 @@ export const buildChartAxis = <
   });
 
   const pickYAxisProps = (
-    axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-      OptionalAxisProps<RawData, XK, YK>,
-  ): YAxisPropsWithDefaults<RawData, YK> => {
+    axisProp: AxisPropWithDefaults<RawData, XK, YK, XLabel, YLabel> &
+      OptionalAxisProps<RawData, XK, YK, XLabel, YLabel>,
+  ): YAxisPropsWithDefaults<RawData, YK, YLabel> => {
     return {
       axisSide: axisProp.axisSide.y,
       formatYLabel: axisProp.formatYLabel,
@@ -159,8 +167,8 @@ export const buildChartAxis = <
   };
 
   const pickFrameProps = (
-    axisProp: AxisPropWithDefaults<RawData, XK, YK> &
-      OptionalAxisProps<RawData, XK, YK>,
+    axisProp: AxisPropWithDefaults<RawData, XK, YK, XLabel, YLabel> &
+      OptionalAxisProps<RawData, XK, YK, XLabel, YLabel>,
   ): FramePropsWithDefaults => ({
     lineColor:
       typeof axisProp.lineColor === "object" && "frame" in axisProp.lineColor
@@ -172,16 +180,22 @@ export const buildChartAxis = <
         : axisProp.lineWidth,
   });
 
-  const defaultAxisOptions: AxisPropWithDefaults<RawData, XK, YK> &
-    OptionalAxisProps<RawData, XK, YK> = {
+  const defaultAxisOptions: AxisPropWithDefaults<
+    RawData,
+    XK,
+    YK,
+    XLabel,
+    YLabel
+  > &
+    OptionalAxisProps<RawData, XK, YK, XLabel, YLabel> = {
     ...CartesianAxisDefaultProps,
     ...axisOptions,
   };
-  const xAxisWithDefaults: XAxisPropsWithDefaults<RawData, XK> = {
+  const xAxisWithDefaults: XAxisPropsWithDefaults<RawData, XK, XLabel> = {
     ...XAxisDefaults,
     ...xAxis,
   };
-  const yAxisWithDefaults: YAxisPropsWithDefaults<RawData, YK>[] = yAxis
+  const yAxisWithDefaults: YAxisPropsWithDefaults<RawData, YK, YLabel>[] = yAxis
     ? yAxis.length === 1
       ? yAxis.map((axis) => ({
           ...YAxisDefaults,
