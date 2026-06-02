@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import type { SkFont } from "@shopify/react-native-skia";
 import type {
   InputDatum,
+  AxisLabelRenderer,
   ValueOf,
   XAxisPropsWithDefaults,
   YAxisPropsWithDefaults,
@@ -119,7 +120,7 @@ describe("transformInputData", () => {
   });
 
   it("applies sided domain padding to the x scale", () => {
-    const { xScale } = transformInputData({
+    const { xScale } = transformInputData<(typeof DATA)[number], "x", "y">({
       data: DATA,
       xKey: "x",
       yKeys: ["y"],
@@ -135,7 +136,7 @@ describe("transformInputData", () => {
   });
 
   it("keeps the full x scale domain when domain padding is used with a viewport", () => {
-    const { xScale } = transformInputData({
+    const { xScale } = transformInputData<(typeof DATA)[number], "x", "y">({
       data: DATA,
       xKey: "x",
       yKeys: ["y"],
@@ -640,8 +641,60 @@ describe("transformInputData", () => {
     expect(yAxes[0].yScale.range()[1]).toBe(300);
   });
 
+  it("reserves x label space using custom renderer measurement", () => {
+    const measured: { value: number; text: string; index: number }[] = [];
+    const labelRenderer = {
+      measure: ({ value, text, index }) => {
+        measured.push({ value, text, index });
+        return { width: 12, height: 24 };
+      },
+      render: () => null,
+    } satisfies AxisLabelRenderer<number>;
+
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickValues: [0, 1],
+        labelRenderer,
+        formatXLabel: (value) => `Day ${value}`,
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(272);
+    expect(measured).toEqual([
+      { value: 0, text: "Day 0", index: 0 },
+      { value: 1, text: "Day 1", index: 1 },
+    ]);
+  });
+
+  it("reserves vertical space for an x-axis title", () => {
+    const { yAxes } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 0,
+        title: {
+          text: "Months",
+          font,
+          offset: 4,
+        },
+      },
+      yAxes: axes.yAxes.map((axis) => ({ ...axis, yKeys: ["y"] })),
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(286);
+  });
+
   it("reserves horizontal space by the widest line of multiline y labels", () => {
-    const { xScale } = transformInputData({
+    const { xScale } = transformInputData<(typeof DATA)[number], "x", "y">({
       data: DATA,
       xKey: "x",
       yKeys: ["y"],
@@ -677,6 +730,61 @@ describe("transformInputData", () => {
     });
 
     expect(xScale(0)).toBe(0);
+  });
+
+  it("reserves y label space using custom renderer measurement", () => {
+    const measured: { value: number; text: string; index: number }[] = [];
+    const labelRenderer = {
+      measure: ({ value, text, index }) => {
+        measured.push({ value, text, index });
+        return { width: 30, height: 12 };
+      },
+      render: () => null,
+    } satisfies AxisLabelRenderer<number>;
+
+    const { xScale } = transformInputData<(typeof DATA)[number], "x", "y">({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        yKeys: ["y"],
+        tickValues: [3, 7],
+        labelOffset: 5,
+        labelRenderer,
+        formatYLabel: (value) => `$${value}`,
+      })),
+    });
+
+    expect(xScale(0)).toBe(35);
+    expect(measured).toEqual([
+      { value: 3, text: "$3", index: 0 },
+      { value: 7, text: "$7", index: 1 },
+    ]);
+  });
+
+  it("reserves horizontal space for a y-axis title", () => {
+    const { xScale } = transformInputData({
+      data: DATA,
+      xKey: "x",
+      yKeys: ["y"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes.map((axis) => ({
+        ...axis,
+        yKeys: ["y"],
+        tickCount: 0,
+        title: {
+          text: "Revenue",
+          font,
+          offset: 6,
+        },
+      })),
+    });
+
+    expect(xScale(0)).toBe(16);
   });
 
   // TODO: Some day, test the gridOptions code.

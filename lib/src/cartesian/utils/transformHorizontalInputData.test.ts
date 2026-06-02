@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import type { SkFont } from "@shopify/react-native-skia";
 import type {
   InputDatum,
+  AxisLabelRenderer,
   ValueOf,
   XAxisPropsWithDefaults,
   YAxisPropsWithDefaults,
@@ -19,6 +21,12 @@ const OUTPUT_WINDOW = {
   xMin: 0,
   xMax: 500,
 };
+const font = {
+  getSize: () => 10,
+  getGlyphIDs: (text: string) => Array.from(text).map((_, index) => index),
+  getGlyphWidths: (glyphs: number[]) => glyphs.map(() => 4),
+} as unknown as SkFont;
+
 const axes = {
   xAxis: {
     lineColor: "hsla(0, 0%, 0%, 0.25)",
@@ -209,6 +217,266 @@ describe("transformHorizontalInputData", () => {
     });
 
     expect(yAxes[0].yTicksNormalized).toEqual([]);
+  });
+
+  it("renders no value-axis ticks when tickCount is zero with explicit tick values", () => {
+    const { xTicksNormalized, yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        tickCount: 0,
+        tickValues: [0, 10, 20],
+      },
+      yAxes: axes.yAxes,
+    });
+
+    expect(xTicksNormalized).toEqual([]);
+    expect(yAxes[0].yScale.range()).toEqual([0, 300]);
+  });
+
+  it("reserves horizontal space by the widest line of multiline category labels", () => {
+    const { xScale } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          font,
+          labelOffset: 6,
+          formatYLabel: (category) =>
+            category === "Beta" ? "Short\nLongest" : "",
+        },
+      ],
+    });
+
+    expect(xScale.range()[0]).toBe(34);
+  });
+
+  it("does not reserve category label space for empty formatted category labels", () => {
+    const { xScale } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          font,
+          labelOffset: 10,
+          tickValues: [0, 1, 2],
+          formatYLabel: () => "",
+        },
+      ],
+    });
+
+    expect(xScale.range()).toEqual([0, 500]);
+  });
+
+  it("reserves vertical space for multiline value-axis labels", () => {
+    const { yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        labelOffset: 3,
+        tickValues: [0, 10],
+        formatXLabel: () => "Value\nTick",
+      },
+      yAxes: axes.yAxes,
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(274);
+  });
+
+  it("uses x-axis labelOffset when reserving value-axis label space", () => {
+    const { yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        labelOffset: 8,
+        tickValues: [0, 10],
+        formatXLabel: () => "Value",
+      },
+      yAxes: axes.yAxes,
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(274);
+  });
+
+  it("reserves rotated value-axis label space in horizontal mode", () => {
+    const { ox, yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        font,
+        tickValues: [0, 10],
+        formatXLabel: () => "Rotated",
+      },
+      yAxes: axes.yAxes,
+      labelRotate: 45,
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBeCloseTo(270.201);
+    expect(ox.every(Number.isFinite)).toBe(true);
+  });
+
+  it("reserves value-axis label space using custom renderer measurement", () => {
+    const measured: { value: number; text: string; index: number }[] = [];
+    const labelRenderer = {
+      measure: ({ value, text, index }) => {
+        measured.push({ value, text, index });
+        return { width: 14, height: 22 };
+      },
+      render: () => null,
+    } satisfies AxisLabelRenderer<number>;
+
+    const { yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        labelOffset: 3,
+        tickValues: [0, 10],
+        labelRenderer,
+        formatXLabel: (value) => `${value}%`,
+      },
+      yAxes: axes.yAxes,
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(272);
+    expect(measured).toEqual([
+      { value: 0, text: "0%", index: 0 },
+      { value: 10, text: "10%", index: 1 },
+    ]);
+  });
+
+  it("reserves vertical space for a value-axis title", () => {
+    const { yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: {
+        ...axes.xAxis,
+        tickCount: 0,
+        title: {
+          text: "Value",
+          font,
+          offset: 4,
+        },
+      },
+      yAxes: axes.yAxes,
+    });
+
+    expect(yAxes[0].yScale.range()[1]).toBe(286);
+  });
+
+  it("uses each category axis configuration for ticks and label reservation", () => {
+    const { xScale, yAxes } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          font,
+          labelOffset: 4,
+          tickValues: [0],
+          formatYLabel: () => "A",
+        },
+        {
+          ...axes.yAxes[0]!,
+          axisSide: "right",
+          font,
+          labelOffset: 8,
+          tickValues: [2],
+          formatYLabel: () => "VeryLongRight",
+        },
+      ],
+    });
+
+    expect(yAxes[0].yTicksNormalized).toEqual([0]);
+    expect(yAxes[1]!.yTicksNormalized).toEqual([2]);
+    expect(xScale.range()).toEqual([8, 440]);
+  });
+
+  it("reserves horizontal space for a category-axis title", () => {
+    const { xScale } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          tickCount: 0,
+          title: {
+            text: "Category",
+            font,
+            offset: 6,
+          },
+        },
+      ],
+    });
+
+    expect(xScale.range()[0]).toBe(16);
+  });
+
+  it("reserves category-axis label space using custom renderer measurement", () => {
+    const measured: { value: string; text: string; index: number }[] = [];
+    const labelRenderer = {
+      measure: ({ value, text, index }) => {
+        measured.push({ value, text, index });
+        return { width: 44, height: 12 };
+      },
+      render: () => null,
+    } satisfies AxisLabelRenderer<string>;
+
+    const { xScale } = transformHorizontalInputData({
+      data: DATA,
+      xKey: "category",
+      yKeys: ["value"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: [
+        {
+          ...axes.yAxes[0]!,
+          tickValues: [0, 1],
+          labelOffset: 7,
+          labelRenderer,
+          formatYLabel: (category) => category.toUpperCase(),
+        },
+      ],
+    });
+
+    expect(xScale.range()[0]).toBe(51);
+    expect(measured).toEqual([
+      { value: "Alpha", text: "ALPHA", index: 0 },
+      { value: "Beta", text: "BETA", index: 1 },
+    ]);
   });
 
   it("formats value-axis ticks with numeric values and category-axis ticks with xKey values", () => {

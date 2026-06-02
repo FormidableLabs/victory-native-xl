@@ -19,6 +19,12 @@ export {
   type CartesianChartOrientation,
   type YAxisSide,
   type XAxisSide,
+  type AxisTitle,
+  type AxisTitlePosition,
+  type AxisLabelMeasureArgs,
+  type AxisLabelMeasurement,
+  type AxisLabelRenderer,
+  type AxisLabelRenderArgs,
   type PointsArray,
   type Scale,
   type MaybeNumber,
@@ -107,6 +113,10 @@ export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
+export {
+  createParagraphLabelRenderer,
+  type CreateParagraphLabelRendererOptions,
+} from "./cartesian/utils/createParagraphLabelRenderer";
 
 /**
  * Polar chart exports

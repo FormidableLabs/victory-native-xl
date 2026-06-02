@@ -11,9 +11,10 @@ import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
 import { getXAxisLabelPosition } from "../utils/getXAxisLabelPosition";
-import { getTextLayout } from "../../utils/textLayout";
 import type { InputDatum, InputFields, ValueOf, XAxisProps } from "../../types";
 import { getXAxisTicks } from "../utils/getXAxisTicks";
+import { getAxisTitleLayout } from "../utils/getAxisTitleLayout";
+import { getAxisLabelLayout } from "../utils/getAxisLabelLayout";
 export { XAxisDefaults } from "../utils/axisDefaults";
 
 export const XAxis = <
@@ -33,11 +34,14 @@ export const XAxis = <
   lineWidth = StyleSheet.hairlineWidth,
   lineColor = "hsla(0, 0%, 0%, 0.25)",
   font,
+  title,
+  labelRenderer,
   formatXLabel = (label: ValueOf<InputDatum>) => String(label),
   ix = [],
   isNumericalData,
   linePathEffect,
   chartBounds,
+  orientation,
   enableRescaling,
   zoom,
 }: XAxisProps<RawData, XK, Label>) => {
@@ -51,16 +55,88 @@ export const XAxis = <
     tickValues,
     xScale: enableRescaling ? xScale : xScaleProp,
   });
-
-  const xAxisNodes = xTicksNormalized.map((tick) => {
+  const xTickLabels = xTicksNormalized.map((tick, index) => {
     const tickPosition = xScale(tick);
+    const val = (isNumericalData ? tick : ix[tick]) as Label;
+    const contentX = String(formatXLabel(val as never));
+    const labelLayout = getAxisLabelLayout({
+      axis: "x",
+      orientation,
+      value: val,
+      text: contentX,
+      index,
+      font,
+      labelRenderer,
+    });
+    return {
+      tick,
+      tickPosition,
+      labelLayout,
+    };
+  });
+  const maxXLabelLayout = xTickLabels.reduce(
+    (max, { labelLayout }) => ({
+      width: Math.max(max.width, labelLayout.width),
+      height: Math.max(max.height, labelLayout.height),
+    }),
+    { width: 0, height: 0 },
+  );
+  const titleLayout = getAxisTitleLayout({ title, font });
+  const labelOutset =
+    labelPosition === "outset" &&
+    xTickLabels.length > 0 &&
+    maxXLabelLayout.width > 0
+      ? maxXLabelLayout.height + labelOffset * 2
+      : 0;
+
+  const titleX = (() => {
+    if (titleLayout.position === "start") {
+      return chartBounds.left;
+    }
+    if (titleLayout.position === "end") {
+      return chartBounds.right - titleLayout.width;
+    }
+    return (
+      chartBounds.left +
+      (chartBounds.right - chartBounds.left) / 2 -
+      titleLayout.width / 2
+    );
+  })();
+  const titleY = (() => {
+    if (axisSide === "bottom") {
+      return (
+        chartBounds.bottom +
+        labelOutset +
+        titleLayout.offset +
+        titleLayout.fontSize
+      );
+    }
+    return (
+      chartBounds.top -
+      labelOutset -
+      titleLayout.offset -
+      Math.max(0, titleLayout.height - titleLayout.fontSize)
+    );
+  })();
+  const titleFont = titleLayout.font;
+  const titleNodes =
+    titleLayout.hasContent && titleFont
+      ? titleLayout.lines.map((line, index) => (
+          <Text
+            key={`x-axis-title-line-${index}`}
+            color={titleLayout.color ?? labelColor}
+            text={line}
+            font={titleFont}
+            y={titleY + index * titleLayout.lineHeight}
+            x={titleX}
+          />
+        ))
+      : null;
+
+  const xAxisNodes = xTickLabels.map(({ tick, tickPosition, labelLayout }) => {
     const p1 = vec(tickPosition, yScale(y2));
     const p2 = vec(tickPosition, yScale(y1));
 
-    const val = isNumericalData ? tick : ix[tick];
-
-    const contentX = String(formatXLabel(val as never));
-    const labelLayout = getTextLayout(contentX, font);
     const labelWidth = labelLayout.width;
     const { canRenderLabel, labelX, labelCenterX } = getXAxisLabelPosition({
       tickPosition,
@@ -85,6 +161,18 @@ export const XAxis = <
       }
       // top, inset
       return yScale(y1) + fontSize + labelOffset;
+    })();
+    const labelTopY = (() => {
+      if (axisSide === "bottom" && labelPosition === "outset") {
+        return chartBounds.bottom + labelOffset;
+      }
+      if (axisSide === "bottom" && labelPosition === "inset") {
+        return yScale(y2) - labelOffset - labelLayout.height;
+      }
+      if (axisSide === "top" && labelPosition === "outset") {
+        return yScale(y1) - labelOffset - labelLayout.height;
+      }
+      return yScale(y1) + labelOffset;
     })();
 
     // Calculate origin and translate for label rotation
@@ -126,6 +214,12 @@ export const XAxis = <
 
       return { origin, rotateOffset };
     })();
+    const customOrigin = vec(
+      labelX + labelLayout.width / 2,
+      labelTopY + labelLayout.height / 2,
+    );
+    const canRenderCustomLabel =
+      labelWidth > 0 && labelLayout.height > 0 && canRenderLabel;
 
     return (
       <React.Fragment key={`x-tick-${tick}`}>
@@ -136,7 +230,28 @@ export const XAxis = <
             </Line>
           </Group>
         ) : null}
-        {font && labelWidth && canRenderLabel ? (
+        {labelRenderer ? (
+          canRenderCustomLabel ? (
+            labelRenderer.render({
+              axis: "x",
+              orientation,
+              value: labelLayout.value,
+              text: labelLayout.text,
+              index: labelLayout.index,
+              x: labelX,
+              y: labelTopY,
+              width: labelLayout.width,
+              height: labelLayout.height,
+              fontSize: labelLayout.fontSize,
+              lineHeight: labelLayout.lineHeight,
+              color: labelColor,
+              canFitContent: canRenderLabel,
+              chartBounds,
+              rotation: labelRotate,
+              origin: customOrigin,
+            })
+          ) : null
+        ) : font && labelWidth && canRenderLabel ? (
           <Group transform={[{ translateY: rotateOffset }]}>
             {labelLayout.lines.map((line, index) => (
               <Text
@@ -161,5 +276,10 @@ export const XAxis = <
     );
   });
 
-  return xAxisNodes;
+  return (
+    <>
+      {xAxisNodes}
+      {titleNodes}
+    </>
+  );
 };

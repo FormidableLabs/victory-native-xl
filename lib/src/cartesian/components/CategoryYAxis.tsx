@@ -8,15 +8,18 @@ import {
   type SkFont,
 } from "@shopify/react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
-import { getTextLayout } from "../../utils/textLayout";
 import type {
   AxisLabelPosition,
+  AxisLabelRenderer,
+  AxisTitle,
   ChartBounds,
   InputFields,
   Scale,
   YAxisSide,
 } from "../../types";
 import { getCategoryYAxisLabelPosition } from "../utils/getCategoryYAxisLabelPosition";
+import { getAxisTitleLayout } from "../utils/getAxisTitleLayout";
+import { getAxisLabelLayout } from "../utils/getAxisLabelLayout";
 
 type CategoryYAxisProps<
   RawData extends Record<string, unknown>,
@@ -25,6 +28,8 @@ type CategoryYAxisProps<
   axisSide: YAxisSide;
   font?: SkFont | null;
   formatYLabel?: (label: InputFields<RawData>[XK]) => string;
+  labelRenderer?: AxisLabelRenderer<InputFields<RawData>[XK]>;
+  title?: AxisTitle;
   labelColor: string;
   labelOffset: number;
   labelPosition: AxisLabelPosition;
@@ -52,6 +57,8 @@ export const CategoryYAxis = <
   lineWidth,
   lineColor,
   font,
+  title,
+  labelRenderer,
   formatYLabel = (label: InputFields<RawData>[XK]) => String(label),
   linePathEffect,
   chartBounds,
@@ -60,13 +67,64 @@ export const CategoryYAxis = <
   const [x1 = 0, x2 = 0] = xScale.domain();
   const fontSize = font?.getSize() ?? 0;
 
-  return yTicksNormalized.map((tick) => {
-    const categoryValue = ix[tick];
+  const yTickLabels = yTicksNormalized.map((tick, index) => {
+    const categoryValue = ix[tick] as InputFields<RawData>[XK];
     const contentY =
       categoryValue === undefined
         ? String(tick)
         : String(formatYLabel(categoryValue));
-    const labelLayout = getTextLayout(contentY, font);
+    const labelLayout = getAxisLabelLayout({
+      axis: "y",
+      orientation: "horizontal",
+      value: categoryValue,
+      text: contentY,
+      index,
+      font,
+      labelRenderer,
+    });
+    return {
+      tick,
+      labelLayout,
+    };
+  });
+  const maxYLabelWidth = Math.max(
+    0,
+    ...yTickLabels.map(({ labelLayout }) => labelLayout.width),
+  );
+  const labelOutset =
+    labelPosition === "outset" && yTickLabels.length > 0 && maxYLabelWidth > 0
+      ? maxYLabelWidth + labelOffset
+      : 0;
+  const titleLayout = getAxisTitleLayout({ title, font });
+  const titleFont = titleLayout.font;
+  const titleX =
+    axisSide === "left"
+      ? chartBounds.left - labelOutset - titleLayout.offset
+      : chartBounds.right + labelOutset + titleLayout.offset;
+  const titleCenterY = (() => {
+    if (titleLayout.position === "start") {
+      return chartBounds.top + titleLayout.width / 2;
+    }
+    if (titleLayout.position === "end") {
+      return chartBounds.bottom - titleLayout.width / 2;
+    }
+    return chartBounds.top + (chartBounds.bottom - chartBounds.top) / 2;
+  })();
+  const titleNodes =
+    titleLayout.hasContent && titleFont
+      ? titleLayout.lines.map((line, index) => (
+          <Text
+            key={`category-y-axis-title-line-${index}`}
+            color={titleLayout.color ?? labelColor}
+            text={line}
+            font={titleFont}
+            y={index * titleLayout.lineHeight}
+            x={-titleLayout.width / 2}
+          />
+        ))
+      : null;
+
+  const yAxisNodes = yTickLabels.map(({ tick, labelLayout }) => {
     const labelWidth = labelLayout.width;
     const tickPosition = yScale(tick);
     const {
@@ -84,6 +142,10 @@ export const CategoryYAxis = <
       tickPosition,
       chartBounds,
     });
+    const customLabelTopY = tickPosition - labelLayout.height / 2;
+    const canFitCustomLabel =
+      customLabelTopY >= chartBounds.top &&
+      customLabelTopY + labelLayout.height <= chartBounds.bottom;
 
     return (
       <React.Fragment key={`category-y-tick-${tick}`}>
@@ -99,23 +161,59 @@ export const CategoryYAxis = <
             </Line>
           </Group>
         ) : null}
-        {font
-          ? canFitContent && (
-              <>
-                {labelLayout.lines.map((line, index) => (
-                  <Text
-                    key={`category-y-tick-${tick}-label-line-${index}`}
-                    color={labelColor}
-                    text={line}
-                    font={font}
-                    y={labelY + index * labelLayout.lineHeight}
-                    x={labelX}
-                  />
-                ))}
-              </>
-            )
-          : null}
+        {labelRenderer
+          ? labelWidth > 0 && labelLayout.height > 0
+            ? labelRenderer.render({
+                axis: "y",
+                orientation: "horizontal",
+                value: labelLayout.value,
+                text: labelLayout.text,
+                index: labelLayout.index,
+                x: labelX,
+                y: customLabelTopY,
+                width: labelLayout.width,
+                height: labelLayout.height,
+                fontSize: labelLayout.fontSize,
+                lineHeight: labelLayout.lineHeight,
+                color: labelColor,
+                canFitContent: canFitCustomLabel,
+                chartBounds,
+              })
+            : null
+          : font
+            ? canFitContent && (
+                <>
+                  {labelLayout.lines.map((line, index) => (
+                    <Text
+                      key={`category-y-tick-${tick}-label-line-${index}`}
+                      color={labelColor}
+                      text={line}
+                      font={font}
+                      y={labelY + index * labelLayout.lineHeight}
+                      x={labelX}
+                    />
+                  ))}
+                </>
+              )
+            : null}
       </React.Fragment>
     );
   });
+
+  return (
+    <>
+      {yAxisNodes}
+      {titleNodes ? (
+        <Group
+          transform={[
+            { translateX: titleX },
+            { translateY: titleCenterY },
+            { rotate: axisSide === "right" ? Math.PI / 2 : -Math.PI / 2 },
+          ]}
+        >
+          {titleNodes}
+        </Group>
+      ) : null}
+    </>
+  );
 };
