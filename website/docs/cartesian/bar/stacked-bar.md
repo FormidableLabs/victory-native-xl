@@ -1,6 +1,6 @@
 # `StackedBar` (Component)
 
-The `StackedBar` component takes an **array of `Points[]`** as `points`, a `ChartBounds` object, a `colors` array, a `barOptions` render prop to customize each bar/row/column, and some options for styling/animating, and returns a Skia `Path` element which draws the stacked bar chart.
+The `StackedBar` component takes an **array of `Points[]`** as `points`, a `ChartBounds` object, a `colors` array, a `barOptions` render prop to customize each stack segment, and some options for styling/animating, and returns a Skia `Path` element which draws the stacked bar chart.
 
 <div className="w-96 mx-auto rounded-md overflow-hidden">
 
@@ -17,7 +17,7 @@ The [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/
 ## Example
 
 ```tsx
-import { CartesianChart, Bar } from "victory-native";
+import { CartesianChart, StackedBar } from "victory-native";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -91,7 +91,7 @@ A `ChartBounds` object needed to appropriately draw the bars. This generally com
 
 ### `innerPadding`
 
-An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars should be "white space". Defaults to `0.2`. Use `0` for no gap between bars, and values closer to `1` to make bars increasingly narrow.
+An optional `number` between 0 and 1 that represents what fraction of the horizontal space between the first and last bars should be "white space". Defaults to `0.25`. Use `0` for no gap between bars, and values closer to `1` to make bars increasingly narrow.
 
 ### `animate`
 
@@ -122,12 +122,25 @@ barOptions?: ({
     rowIndex,
     isBottom,
     isTop,
+    seriesIndex,
+    datumIndex,
+    isStart,
+    isEnd,
   }: {
     isBottom: boolean;
     isTop: boolean;
     columnIndex: number;
     rowIndex: number;
-  }) => CustomizablePathProps & { roundedCorners?: RoundedCorners };
+    isStart: boolean;
+    isEnd: boolean;
+    seriesIndex: number;
+    datumIndex: number;
+  }) => CustomizablePathProps & {
+    roundedCorners?: RoundedCorners;
+    children?: React.ReactNode;
+  };
 ```
 
-This prop allows you to customize each individual bar in the stacked bar chart. You can use this to customize the `children` of each bar as well, allowing for things like `LinearGradients`, etc. See the example repo for more information.
+This prop allows you to customize each individual segment in the stacked bar chart. `seriesIndex` and `datumIndex` identify the rendered series and datum; `columnIndex` and `rowIndex` are kept as backwards-compatible aliases for the same values. `isStart` identifies the segment closest to the baseline for that positive or negative stack, and `isEnd` identifies the outer visible end of that stack. `isBottom` and `isTop` remain available for vertical stacked bars and are derived from `isStart`/`isEnd`, including negative values. You can also customize the `children` of each segment, allowing for things like `LinearGradients`, etc. See the example repo for more information.
+
+For stacked bars inside `CartesianChart orientation="horizontal"`, use [`HorizontalStackedBar`](./horizontal-stacked-bar.md).

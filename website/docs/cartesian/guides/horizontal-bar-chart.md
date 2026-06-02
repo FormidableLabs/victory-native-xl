@@ -1,6 +1,6 @@
 # Horizontal Bar Chart
 
-This guide shows how to create a single-series horizontal bar chart with `CartesianChart` and `HorizontalBar`.
+This guide shows how to create horizontal bar charts with `CartesianChart` and the horizontal bar components.
 
 Horizontal bars use the same data shape as vertical bars: `xKey` points at the category field and `yKeys` point at numeric value fields. The difference is `orientation="horizontal"`. In horizontal mode, categories render on the vertical axis and numeric values render on the horizontal axis.
 
@@ -127,10 +127,24 @@ For dense charts or label-position demos, increase the relevant `domainPadding` 
 
 ## Current Scope
 
-The initial horizontal bar support covers single-series `HorizontalBar` charts and grouped `HorizontalBarGroup` charts. Horizontal bar marks should be rendered inside `CartesianChart orientation="horizontal"`.
-
-Stacked horizontal bars are not part of these components yet; use `StackedBar` for vertical stacked charts.
+Horizontal bar support covers single-series `HorizontalBar` charts, grouped `HorizontalBarGroup` charts, and stacked `HorizontalStackedBar` charts. Horizontal bar marks should be rendered inside `CartesianChart orientation="horizontal"`.
 
 When using `chartPressState`, the state fields keep their data roles rather than their screen-axis roles. `state.x.value.value` is still the raw category from `xKey`, while `state.x.position.value` is that category's vertical screen position. `state.y[key].value.value` is still the numeric series value, while `state.y[key].position.value` is that value's horizontal screen position.
 
-For API details, see the [`HorizontalBar` component reference](../bar/horizontal-bar.md) and [`HorizontalBarGroup` component reference](../bar/horizontal-bar-group.md).
+Horizontal mode is currently a bar-mark feature. Line, area, stacked area, and scatter marks do not automatically transpose in a horizontal chart. The current horizontal bar components are designed around a linear value axis with a zero baseline; log value axes, custom non-zero baselines, multi-axis horizontal value charts, and category viewport/windowing are later parity work.
+
+## Migrating From Victory Web
+
+Victory web supports horizontal bars by setting `horizontal` on bar-oriented components. Victory Native XL uses chart-level `orientation="horizontal"` plus explicit horizontal mark components:
+
+```tsx
+<CartesianChart orientation="horizontal" {...chartProps}>
+  {({ points, chartBounds }) => (
+    <HorizontalBar points={points.revenue} chartBounds={chartBounds} />
+  )}
+</CartesianChart>
+```
+
+Use `domain={{ x: [...] }}` for the numeric value domain in horizontal mode. For stacked horizontal bars, set the value domain to cover the cumulative positive and negative stack totals, not only the largest individual series value.
+
+For API details, see the [bar overview](../bar/overview.md), [`HorizontalBar` component reference](../bar/horizontal-bar.md), [`HorizontalBarGroup` component reference](../bar/horizontal-bar-group.md), and [`HorizontalStackedBar` component reference](../bar/horizontal-stacked-bar.md).

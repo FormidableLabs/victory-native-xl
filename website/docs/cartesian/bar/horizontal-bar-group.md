@@ -117,4 +117,6 @@ The component passes the following paint props to the underlying Skia `Path`:
 - Bars within a category group are offset along the vertical screen axis.
 - Positive values extend right from zero.
 - Negative values extend left from zero.
-- Stacked horizontal bars are not part of this component.
+- For stacked horizontal bars, use [`HorizontalStackedBar`](./horizontal-stacked-bar.md).
+
+When using `chartPressState`, horizontal grouped bars use the same data-semantic press values documented in [`HorizontalBar`](./horizontal-bar.md). The example app's horizontal grouped route includes an active-row tooltip readout built from `state.x` and the grouped series values.
