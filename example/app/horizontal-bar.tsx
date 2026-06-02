@@ -119,6 +119,7 @@ export default function HorizontalBarPage(props: { segment: string }) {
               labelPosition={labelPosition}
               showLabels={showLabels}
               colors={["#14b8a6", "#6366f150"]}
+              showAxisTitles
             />
           </View>
           <View style={styles.row}>
@@ -326,6 +327,7 @@ function HorizontalBarExample({
   domainPadding = { top: 28, bottom: 28, right: 18 },
   hideXAxis,
   hideYAxis,
+  showAxisTitles,
 }: {
   data: HorizontalDatum[];
   font: SkFont | null;
@@ -345,6 +347,7 @@ function HorizontalBarExample({
   };
   hideXAxis?: boolean;
   hideYAxis?: boolean;
+  showAxisTitles?: boolean;
 }) {
   return (
     <CartesianChart
@@ -358,6 +361,14 @@ function HorizontalBarExample({
         font,
         tickCount: hideXAxis ? 0 : 5,
         labelColor: axisLabelColor,
+        title: showAxisTitles
+          ? {
+              text: "Value",
+              font,
+              color: axisLabelColor,
+              offset: 8,
+            }
+          : undefined,
         linePathEffect: <DashPathEffect intervals={[4, 4]} />,
         formatXLabel: (value) => `${value}`,
       }}
@@ -368,6 +379,14 @@ function HorizontalBarExample({
           tickCount: hideYAxis ? 0 : data.length,
           labelColor: axisLabelColor,
           lineWidth: 0,
+          title: showAxisTitles
+            ? {
+                text: "Category",
+                font,
+                color: axisLabelColor,
+                offset: 8,
+              }
+            : undefined,
           formatYLabel: (value) => String(value),
         },
       ]}
@@ -386,7 +405,13 @@ function HorizontalBarExample({
           }}
           labels={
             showLabels
-              ? { font, color: labelColor, position: labelPosition }
+              ? {
+                  font,
+                  color: labelColor,
+                  position: labelPosition,
+                  formatLabel: (value) => (value == null ? "" : `${value}%`),
+                  rotate: labelPosition === "top" ? -12 : 0,
+                }
               : undefined
           }
         >

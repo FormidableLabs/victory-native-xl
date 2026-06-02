@@ -128,7 +128,14 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  labels={{ font, color: labelColor, position: labelPosition }}
+                  labels={{
+                    font,
+                    color: labelColor,
+                    position: labelPosition,
+                    formatLabel: (value) =>
+                      value == null ? "" : `${value} plays`,
+                    rotate: labelPosition === "top" ? -25 : 0,
+                  }}
                 >
                   <LinearGradient
                     start={vec(0, 0)}

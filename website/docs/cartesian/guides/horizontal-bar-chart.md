@@ -112,6 +112,8 @@ Use a domain that includes zero when you want a stable baseline for positive and
     font,
     color: "#262626",
     position: "right",
+    formatLabel: (value) => (value == null ? "" : `${value}%`),
+    rotate: 0,
   }}
 />
 ```
