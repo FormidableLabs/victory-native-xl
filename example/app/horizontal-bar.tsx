@@ -324,7 +324,7 @@ function HorizontalBarExample({
   labelPosition,
   showLabels,
   colors,
-  domainPadding = { top: 28, bottom: 28, right: 18 },
+  domainPadding = { top: 28, bottom: 28, left: 44, right: 44 },
   hideXAxis,
   hideYAxis,
   showAxisTitles,

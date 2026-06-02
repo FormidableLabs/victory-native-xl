@@ -9,6 +9,7 @@ export const getBarLabelPosition = ({
   y,
   labelWidth,
   fontSize,
+  labelRotate = 0,
   barWidth,
   chartBounds,
   baselineX = 0,
@@ -19,10 +20,17 @@ export const getBarLabelPosition = ({
   y: number;
   labelWidth: number;
   fontSize: number;
+  labelRotate?: number;
   barWidth: number;
   chartBounds: ChartBounds;
   baselineX?: number;
 }) => {
+  const rotatedLabelOutwardOffset = getRotatedLabelOutwardOffset({
+    labelWidth,
+    fontSize,
+    labelRotate,
+  });
+
   if (orientation === "horizontal") {
     const barInnerLeftEdge = Math.min(baselineX, x);
     const barOuterRightEdge = Math.max(baselineX, x);
@@ -36,12 +44,19 @@ export const getBarLabelPosition = ({
       case "top":
         return {
           x: barHorizontalMidpoint - labelWidth / 2,
-          y: barInnerTopEdge - LABEL_OFFSET_FROM_POSITION,
+          y:
+            barInnerTopEdge -
+            LABEL_OFFSET_FROM_POSITION -
+            rotatedLabelOutwardOffset,
         };
       case "bottom":
         return {
           x: barHorizontalMidpoint - labelWidth / 2,
-          y: barOuterBottomEdge + fontSize + LABEL_OFFSET_FROM_POSITION,
+          y:
+            barOuterBottomEdge +
+            fontSize +
+            LABEL_OFFSET_FROM_POSITION +
+            rotatedLabelOutwardOffset,
         };
       case "left":
         return {
@@ -65,12 +80,15 @@ export const getBarLabelPosition = ({
     case "top":
       return {
         x: barHorizontalMidpoint,
-        y: y - LABEL_OFFSET_FROM_POSITION,
+        y: y - LABEL_OFFSET_FROM_POSITION - rotatedLabelOutwardOffset,
       };
     case "bottom":
       return {
         x: barHorizontalMidpoint,
-        y: chartBounds.bottom - LABEL_OFFSET_FROM_POSITION,
+        y:
+          chartBounds.bottom -
+          LABEL_OFFSET_FROM_POSITION -
+          rotatedLabelOutwardOffset,
       };
     case "left":
       return {
@@ -83,6 +101,27 @@ export const getBarLabelPosition = ({
         y: barVerticalMidpoint,
       };
   }
+};
+
+const getRotatedLabelOutwardOffset = ({
+  labelWidth,
+  fontSize,
+  labelRotate,
+}: {
+  labelWidth: number;
+  fontSize: number;
+  labelRotate: number;
+}) => {
+  if (!labelRotate || !labelWidth || !fontSize) return 0;
+
+  const radians = Math.abs((Math.PI / 180) * labelRotate);
+  const rotatedHalfHeight =
+    (Math.abs(labelWidth * Math.sin(radians)) +
+      Math.abs(fontSize * Math.cos(radians))) /
+    2;
+  const unrotatedHalfHeight = fontSize / 2;
+
+  return Math.max(0, rotatedHalfHeight - unrotatedHalfHeight);
 };
 
 // Arbitrary offset so that the label is not touching the bar.

@@ -35,6 +35,7 @@ export const BarGraphLabels = ({
     const yText = getBarLabelText(yValue, formatLabel);
     const labelWidth = getFontGlyphWidth(yText, font);
     const fontSize = font?.getSize() ?? 0;
+    const labelRotate = rotate ?? 0;
     const labelPosition = getBarLabelPosition({
       orientation,
       position,
@@ -42,11 +43,11 @@ export const BarGraphLabels = ({
       y: Number(y),
       labelWidth,
       fontSize,
+      labelRotate,
       barWidth,
       chartBounds,
       baselineX: xScale(0),
     });
-    const labelRotate = rotate ?? 0;
     const labelOrigin = labelRotate
       ? vec(labelPosition.x + labelWidth / 2, labelPosition.y - fontSize / 2)
       : undefined;
