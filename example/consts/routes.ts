@@ -113,6 +113,12 @@ export const ChartRoutes: {
     path: "/axis-configuration",
   },
   {
+    title: "Axis Label Renderers",
+    description:
+      "Examples for paragraph, multilingual, multiline, and custom measured axis labels.",
+    path: "/axis-label-renderers",
+  },
+  {
     title: "Multiple Y Axes",
     description: "This shows how to use multiple y axes in a single chart",
     path: "/multiple-y-axes",

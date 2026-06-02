@@ -21,6 +21,7 @@ const paragraphMock = vi.hoisted(() => {
   const builders: MockBuilder[] = [];
   const paragraphs: MockParagraph[] = [];
   const color = vi.fn((value: string) => ["sk-color", value]);
+  const makeTypefaceFontProvider = vi.fn(() => ["font-provider"]);
   const make = vi.fn(() => {
     const builder = {
       text: "",
@@ -56,6 +57,7 @@ const paragraphMock = vi.hoisted(() => {
     builders,
     paragraphs,
     color,
+    makeTypefaceFontProvider,
     make,
   };
 });
@@ -64,6 +66,9 @@ vi.mock("@shopify/react-native-skia", () => ({
   Paragraph: () => null,
   Skia: {
     Color: paragraphMock.color,
+    TypefaceFontProvider: {
+      Make: paragraphMock.makeTypefaceFontProvider,
+    },
     ParagraphBuilder: {
       Make: paragraphMock.make,
     },
@@ -77,6 +82,7 @@ describe("createParagraphLabelRenderer", () => {
     paragraphMock.builders.length = 0;
     paragraphMock.paragraphs.length = 0;
     paragraphMock.color.mockClear();
+    paragraphMock.makeTypefaceFontProvider.mockClear();
     paragraphMock.make.mockClear();
   });
 
@@ -115,6 +121,24 @@ describe("createParagraphLabelRenderer", () => {
     ]);
     expect(paragraphMock.builders[0]!.text).toBe("東京");
     expect(paragraphMock.paragraphs[0]!.layoutWidth).toBe(20);
+    expect(paragraphMock.makeTypefaceFontProvider).toHaveBeenCalledOnce();
+    expect(paragraphMock.make).toHaveBeenCalledWith({}, ["font-provider"]);
+  });
+
+  it("uses intrinsic width when it is wider than the laid out longest line", () => {
+    const renderer = createParagraphLabelRenderer<string>({
+      textStyle: { fontSize: 12 },
+    });
+
+    const measurement = renderer.measure({
+      axis: "x",
+      orientation: "vertical",
+      value: "Tokyo",
+      text: "Tokyo",
+      index: 0,
+    });
+
+    expect(measurement.width).toBe(40);
   });
 
   it("renders a Skia Paragraph with axis label color", () => {

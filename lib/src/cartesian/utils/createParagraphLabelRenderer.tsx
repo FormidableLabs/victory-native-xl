@@ -30,6 +30,9 @@ export const createParagraphLabelRenderer = <Label = unknown,>({
   typefaceFontProvider,
   maxWidth,
 }: CreateParagraphLabelRendererOptions<Label> = {}): AxisLabelRenderer<Label> => {
+  const resolvedTypefaceFontProvider =
+    typefaceFontProvider ?? Skia.TypefaceFontProvider.Make();
+
   const getLayoutWidth = (args: AxisLabelMeasureArgs<Label>) => {
     const width = typeof maxWidth === "function" ? maxWidth(args) : maxWidth;
     return normalizeDimension(width ?? DEFAULT_PARAGRAPH_LAYOUT_WIDTH);
@@ -40,8 +43,8 @@ export const createParagraphLabelRenderer = <Label = unknown,>({
     color?: string,
   ) => {
     const builder = Skia.ParagraphBuilder.Make(
-      paragraphStyle,
-      typefaceFontProvider ?? undefined,
+      paragraphStyle ?? {},
+      resolvedTypefaceFontProvider,
     );
     const resolvedTextStyle =
       color && !textStyle?.color
@@ -68,11 +71,11 @@ export const createParagraphLabelRenderer = <Label = unknown,>({
     const maxIntrinsicWidth = normalizeDimension(
       paragraph.getMaxIntrinsicWidth(),
     );
-    const measuredWidth = longestLine || maxIntrinsicWidth;
+    const measuredWidth = Math.max(longestLine, maxIntrinsicWidth);
     const height = normalizeDimension(paragraph.getHeight());
 
     return {
-      width: Math.min(layoutWidth, measuredWidth),
+      width: maxWidth === undefined ? measuredWidth : layoutWidth,
       height,
       fontSize: normalizeDimension(textStyle?.fontSize),
       lineHeight: height,
