@@ -55,8 +55,9 @@ export function HorizontalBarGroup({
 
   const onBarSizeChangeRef = useFunctionRef(onBarSizeChange);
   React.useEffect(() => {
+    if (orientation !== "horizontal") return;
     onBarSizeChangeRef.current?.({ barWidth, groupWidth, gapWidth });
-  }, [barWidth, gapWidth, groupWidth, onBarSizeChangeRef]);
+  }, [orientation, barWidth, gapWidth, groupWidth, onBarSizeChangeRef]);
 
   if (orientation !== "horizontal") {
     if (process.env.NODE_ENV !== "production") {
