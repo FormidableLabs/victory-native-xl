@@ -67,6 +67,7 @@ import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 import { resetChartPressState } from "./utils/resetChartPressState";
 import { getClosestDatumIndex } from "./utils/getClosestDatumIndex";
+import { getStackedBarTouchSegmentIndex } from "./utils/getStackedBarTouchSegmentIndex";
 import {
   type ChartPressBootstrapEntry,
   pruneChartPressBootstrap,
@@ -463,6 +464,9 @@ function CartesianChartContent<
   const chartHeight = chartBounds.bottom;
   const yScaleTop = primaryYAxis.yScale.domain().at(0);
   const yScaleBottom = primaryYAxis.yScale.domain().at(-1);
+  const chartWidth = chartBounds.right - chartBounds.left;
+  const xScaleLeft = xScale.domain().at(0);
+  const xScaleRight = xScale.domain().at(-1);
   // end stacked bar values
 
   /**
@@ -504,7 +508,19 @@ function CartesianChartContent<
       }
 
       if (orientation === "horizontal") {
-        v.yIndex.value = -1;
+        const chartXPressed = x - chartBounds.left;
+        const xDomainValue =
+          chartWidth > 0 &&
+          xScaleLeft !== undefined &&
+          xScaleRight !== undefined
+            ? (chartXPressed / chartWidth) * (xScaleRight - xScaleLeft) +
+              xScaleLeft
+            : NaN;
+
+        v.yIndex.value = getStackedBarTouchSegmentIndex({
+          values: barHeights,
+          touchValue: xDomainValue,
+        });
       } else {
         const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
         // Calculate the actual yValue of the touch within the domain of the yScale
@@ -550,7 +566,19 @@ function CartesianChartContent<
 
       lastIdx.value = idx;
     },
-    [chartHeight, lastIdx, orientation, tData, yKeys, yScaleBottom, yScaleTop],
+    [
+      chartBounds.left,
+      chartHeight,
+      chartWidth,
+      lastIdx,
+      orientation,
+      tData,
+      xScaleLeft,
+      xScaleRight,
+      yKeys,
+      yScaleBottom,
+      yScaleTop,
+    ],
   );
 
   React.useImperativeHandle(

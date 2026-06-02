@@ -39,6 +39,12 @@ export const ChartRoutes: {
     path: "/horizontal-bar-group",
   },
   {
+    title: "Horizontal Stacked Bar",
+    description:
+      "This chart renders stacked horizontal bars with positive and negative value segments.",
+    path: "/horizontal-stacked-bar",
+  },
+  {
     title: "Bar Group",
     description:
       "This chart demonstrates grouping and displaying multiple sets of data in a Bar chart. Victory supports customizing the spacing between each bar inside the group and spacing around the groups.",

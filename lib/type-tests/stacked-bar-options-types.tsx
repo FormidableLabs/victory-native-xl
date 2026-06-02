@@ -1,8 +1,11 @@
 import * as React from "react";
 import {
+  HorizontalStackedBar,
   StackedBar,
+  useHorizontalStackedBarPaths,
   useStackedBarPaths,
   type ChartBounds,
+  type HorizontalStackedBarOptionsContext,
   type PointsArray,
   type StackedBarOptionsContext,
 } from "victory-native";
@@ -51,6 +54,51 @@ export function UseStackedBarPathsOptionsFields() {
     chartBounds: CHART_BOUNDS,
     barOptions: (context) => ({
       opacity: getOpacity(context),
+      children: context.seriesIndex === 0 ? null : undefined,
+    }),
+  });
+
+  return null;
+}
+
+const getHorizontalOpacity = ({
+  columnIndex,
+  rowIndex,
+  isLeft,
+  isRight,
+  isStart,
+  isEnd,
+  seriesIndex,
+  datumIndex,
+}: HorizontalStackedBarOptionsContext) => {
+  const legacyIndexesMatch =
+    columnIndex === seriesIndex && rowIndex === datumIndex;
+  const hasVisibleEdge = isLeft || isRight || isStart || isEnd;
+
+  return legacyIndexesMatch && hasVisibleEdge ? 1 : 0.5;
+};
+
+export function HorizontalStackedBarOptionsFields() {
+  return (
+    <HorizontalStackedBar
+      points={POINTS}
+      chartBounds={CHART_BOUNDS}
+      barOptions={(context) => ({
+        opacity: getHorizontalOpacity(context),
+        roundedCorners: context.isEnd
+          ? { topRight: 4, bottomRight: 4 }
+          : undefined,
+      })}
+    />
+  );
+}
+
+export function UseHorizontalStackedBarPathsOptionsFields() {
+  useHorizontalStackedBarPaths({
+    points: POINTS,
+    chartBounds: CHART_BOUNDS,
+    barOptions: (context) => ({
+      opacity: getHorizontalOpacity(context),
       children: context.seriesIndex === 0 ? null : undefined,
     }),
   });
