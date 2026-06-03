@@ -2,11 +2,11 @@ import * as React from "react";
 import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { Link } from "expo-router";
 import { appColors } from "../consts/colors";
-import { ChartRoutes } from "../consts/routes";
+import type { ChartRoute } from "../consts/routes";
 import { Text } from "./Text";
 
 type Props = {
-  item: (typeof ChartRoutes)[number];
+  item: ChartRoute;
 };
 
 export const ChartCard = ({ item }: Props) => {
