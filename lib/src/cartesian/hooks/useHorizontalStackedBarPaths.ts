@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   Skia,
   type Color,
@@ -12,39 +12,39 @@ import {
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 import {
+  getHorizontalStackedBarOptionsContext,
   getStackedBarSegments,
-  getVerticalStackedBarOptionsContext,
-  type VerticalStackedBarOptionsContext,
+  type HorizontalStackedBarOptionsContext,
 } from "../utils/getStackedBarSegments";
-import { getVerticalStackedBarRect } from "../utils/getVerticalStackedBarRect";
-import { useBarWidth } from "./useBarWidth";
+import { getBarThickness } from "../utils/getBarThickness";
+import { getHorizontalStackedBarRect } from "../utils/getHorizontalStackedBarRect";
 
-export type CustomizablePathProps = Partial<
+type HorizontalStackedBarPathProps = Partial<
   Pick<PathProps, "color" | "blendMode" | "opacity" | "antiAlias">
 >;
 
 const DEFAULT_COLORS = ["red", "orange", "blue", "green", "blue", "purple"];
 
-export type StackedBarOptionsContext = VerticalStackedBarOptionsContext;
-
-export type StackedBarOptions = CustomizablePathProps & {
+export type HorizontalStackedBarOptions = HorizontalStackedBarPathProps & {
   roundedCorners?: RoundedCorners;
   children?: React.ReactNode;
 };
 
-export type StackedBarOptionsFn = (
-  options: StackedBarOptionsContext,
-) => StackedBarOptions;
+export type { HorizontalStackedBarOptionsContext };
 
-const DEFAULT_BAR_OPTIONS: StackedBarOptionsFn = () => ({});
+export type HorizontalStackedBarOptionsFn = (
+  options: HorizontalStackedBarOptionsContext,
+) => HorizontalStackedBarOptions;
 
-export type StackedBarPath = {
+export type HorizontalStackedBarPath = {
   path: SkPath;
   key: string;
   color?: Color;
-} & CustomizablePathProps & {
+} & HorizontalStackedBarPathProps & {
     children?: React.ReactNode;
   };
+
+const DEFAULT_BAR_OPTIONS: HorizontalStackedBarOptionsFn = () => ({});
 
 type Props = {
   points: PointsArray[];
@@ -53,10 +53,10 @@ type Props = {
   barWidth?: number;
   barCount?: number;
   colors?: Color[];
-  barOptions?: StackedBarOptionsFn;
+  barOptions?: HorizontalStackedBarOptionsFn;
 };
 
-export const useStackedBarPaths = ({
+export const useHorizontalStackedBarPaths = ({
   points,
   chartBounds,
   innerPadding = 0.25,
@@ -65,28 +65,31 @@ export const useStackedBarPaths = ({
   barOptions = DEFAULT_BAR_OPTIONS,
   colors = DEFAULT_COLORS,
 }: Props) => {
-  const { yScale } = useCartesianChartContext();
-  const barWidth = useBarWidth({
+  const { xScale } = useCartesianChartContext();
+  const barWidth = getBarThickness({
     points,
-    chartBounds,
+    axisStart: chartBounds.top,
+    axisEnd: chartBounds.bottom,
     innerPadding,
-    customBarWidth,
+    customBarThickness: customBarWidth,
     barCount,
   });
 
   const paths = React.useMemo(() => {
-    const bars: StackedBarPath[] = [];
+    const bars: HorizontalStackedBarPath[] = [];
     const segments = getStackedBarSegments(points);
 
     segments.forEach((segment) => {
-      const rect = getVerticalStackedBarRect({
+      const rect = getHorizontalStackedBarRect({
         segment,
-        yScale,
+        xScale,
         barWidth,
       });
       if (!rect) return;
 
-      const options = barOptions(getVerticalStackedBarOptionsContext(segment));
+      const options = barOptions(
+        getHorizontalStackedBarOptionsContext(segment),
+      );
       const { roundedCorners, color, ...ops } = options;
 
       const path = Skia.Path.Make();
@@ -98,6 +101,7 @@ export const useStackedBarPaths = ({
           rect.height,
           roundedCorners,
           segment.value,
+          "horizontal",
         );
         path.addRRect(nonUniformRoundedRect);
       } else {
@@ -113,7 +117,7 @@ export const useStackedBarPaths = ({
     });
 
     return bars;
-  }, [barOptions, barWidth, colors, points, yScale]);
+  }, [barOptions, barWidth, colors, points, xScale]);
 
   return paths;
 };

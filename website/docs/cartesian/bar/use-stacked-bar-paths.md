@@ -19,12 +19,23 @@ useStackedBarPaths({
     rowIndex,
     isBottom,
     isTop,
+    seriesIndex,
+    datumIndex,
+    isStart,
+    isEnd,
   }: {
     isBottom: boolean;
     isTop: boolean;
     columnIndex: number;
     rowIndex: number;
-  }) => CustomizablePathProps & { roundedCorners?: RoundedCorners };
+    isStart: boolean;
+    isEnd: boolean;
+    seriesIndex: number;
+    datumIndex: number;
+  }) => CustomizablePathProps & {
+    roundedCorners?: RoundedCorners;
+    children?: React.ReactNode;
+  };
 }): StackedBarPath[];
 ```
 
@@ -65,15 +76,26 @@ barOptions?: ({
     rowIndex,
     isBottom,
     isTop,
+    seriesIndex,
+    datumIndex,
+    isStart,
+    isEnd,
   }: {
     isBottom: boolean;
     isTop: boolean;
     columnIndex: number;
     rowIndex: number;
-  }) => CustomizablePathProps & { roundedCorners?: RoundedCorners };
+    isStart: boolean;
+    isEnd: boolean;
+    seriesIndex: number;
+    datumIndex: number;
+  }) => CustomizablePathProps & {
+    roundedCorners?: RoundedCorners;
+    children?: React.ReactNode;
+  };
 ```
 
-This prop allows you to customize each individual bar in the stacked bar chart. You can use this to customize the children of each bar as well, allowing for things like `LinearGradients`, etc. See the example repo for more information.
+This prop allows you to customize each individual segment in the stacked bar chart. `seriesIndex` and `datumIndex` identify the rendered series and datum; `columnIndex` and `rowIndex` are kept as backwards-compatible aliases for the same values. `isStart` identifies the segment closest to the baseline for that positive or negative stack, and `isEnd` identifies the outer visible end of that stack. `isBottom` and `isTop` remain available for vertical stacked bars and are derived from `isStart`/`isEnd`, including negative values. You can also customize the children of each segment, allowing for things like `LinearGradients`, etc. See the example repo for more information.
 
 ## Returns
 
@@ -90,3 +112,5 @@ type StackedBarPath = {
 ```
 
 This can then be used to draw the stacked bar chart.
+
+For horizontal stacked paths, use `useHorizontalStackedBarPaths` with `CartesianChart orientation="horizontal"`. Its arguments mirror this hook and its `barOptions` callback receives the horizontal `isLeft` and `isRight` screen-side fields instead of vertical `isBottom` and `isTop` fields.

@@ -72,8 +72,22 @@ export { Bar } from "./cartesian/components/Bar";
 export { HorizontalBar } from "./cartesian/components/HorizontalBar";
 
 // StackedBar
-export { useStackedBarPaths } from "./cartesian/hooks/useStackedBarPaths";
+export {
+  useStackedBarPaths,
+  type StackedBarOptions,
+  type StackedBarOptionsContext,
+  type StackedBarOptionsFn,
+  type StackedBarPath,
+} from "./cartesian/hooks/useStackedBarPaths";
 export { StackedBar } from "./cartesian/components/StackedBar";
+export {
+  useHorizontalStackedBarPaths,
+  type HorizontalStackedBarOptions,
+  type HorizontalStackedBarOptionsContext,
+  type HorizontalStackedBarOptionsFn,
+  type HorizontalStackedBarPath,
+} from "./cartesian/hooks/useHorizontalStackedBarPaths";
+export { HorizontalStackedBar } from "./cartesian/components/HorizontalStackedBar";
 
 // Bar group
 export { useBarGroupPaths } from "./cartesian/hooks/useBarGroupPaths";
