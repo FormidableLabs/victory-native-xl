@@ -465,8 +465,8 @@ function CartesianChartContent<
   const yScaleTop = primaryYAxis.yScale.domain().at(0);
   const yScaleBottom = primaryYAxis.yScale.domain().at(-1);
   const chartWidth = chartBounds.right - chartBounds.left;
-  const xScaleLeft = xScale.domain().at(0);
-  const xScaleRight = xScale.domain().at(-1);
+  const xScaleLeft = xScale.invert(chartBounds.left);
+  const xScaleRight = xScale.invert(chartBounds.right);
   // end stacked bar values
 
   /**
