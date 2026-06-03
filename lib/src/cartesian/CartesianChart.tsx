@@ -20,13 +20,16 @@ import type {
   ChartBounds,
   YAxisInputProps,
   XAxisInputProps,
+  XAxisPropsWithDefaults,
+  YAxisPropsWithDefaults,
   FrameInputProps,
   ChartPressPanConfig,
   Viewport,
   GestureHandlerConfig,
+  CartesianChartOrientation,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
-import { findClosestPoint } from "../utils/findClosestPoint";
+import { transformHorizontalInputData } from "./utils/transformHorizontalInputData";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
 import type {
@@ -37,6 +40,7 @@ import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
+import { CategoryYAxis } from "./components/CategoryYAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
 import { type ChartTransformState } from "./hooks/useChartTransformState";
@@ -62,6 +66,7 @@ import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
 import { resetChartPressState } from "./utils/resetChartPressState";
+import { getClosestDatumIndex } from "./utils/getClosestDatumIndex";
 import {
   type ChartPressBootstrapEntry,
   pruneChartPressBootstrap,
@@ -91,7 +96,21 @@ export type CartesianChartRef<T = undefined> = {
   actions: CartesianActionsHandle<T>;
 };
 
-type CartesianChartProps<
+type CartesianChartAxisProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+  XLabel,
+  YLabel,
+> = {
+  axisOptions?: Partial<
+    Omit<AxisProps<RawData, XK, YK, XLabel, YLabel>, "xScale" | "yScale">
+  >;
+  xAxis?: XAxisInputProps<RawData, XK, XLabel>;
+  yAxis?: YAxisInputProps<RawData, YK, YLabel>[];
+};
+
+type CartesianChartBaseProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
@@ -114,7 +133,6 @@ type CartesianChartProps<
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
-  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   onScaleChange?: (
     xScale: ScaleLinear<number, number>,
@@ -124,8 +142,6 @@ type CartesianChartProps<
    * @deprecated This prop will eventually be replaced by the new `chartPressConfig`. For now it's being kept around for backwards compatibility sake.
    */
   gestureLongPressDelay?: number;
-  xAxis?: XAxisInputProps<RawData, XK>;
-  yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
   transformState?: ChartTransformState;
   transformConfig?: {
@@ -151,6 +167,71 @@ type CartesianChartProps<
   >;
 } & ChartLayoutModeProps;
 
+type CartesianChartVerticalProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<
+    RawData,
+    XK,
+    YK,
+    InputFields<RawData>[XK],
+    RawData[YK]
+  > & {
+    orientation?: "vertical";
+  };
+
+type CartesianChartHorizontalProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<RawData, XK, YK, number, InputFields<RawData>[XK]> & {
+    orientation: "horizontal";
+  };
+
+type CartesianChartDynamicOrientationProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<
+    RawData,
+    XK,
+    YK,
+    InputFields<RawData>[XK] | number,
+    RawData[YK] | InputFields<RawData>[XK]
+  > & {
+    orientation: CartesianChartOrientation;
+  };
+
+type CartesianChartProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> =
+  | CartesianChartVerticalProps<RawData, XK, YK>
+  | CartesianChartHorizontalProps<RawData, XK, YK>
+  | CartesianChartDynamicOrientationProps<RawData, XK, YK>;
+
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(props: CartesianChartHorizontalProps<RawData, XK, YK>): React.ReactElement;
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(props: CartesianChartVerticalProps<RawData, XK, YK>): React.ReactElement;
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(
+  props: CartesianChartDynamicOrientationProps<RawData, XK, YK>,
+): React.ReactElement;
 export function CartesianChart<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -206,6 +287,7 @@ function CartesianChartContent<
   data,
   xKey,
   yKeys,
+  orientation = "vertical",
   padding,
   domainPadding,
   children,
@@ -244,12 +326,16 @@ function CartesianChartContent<
   const chartPressStateRef = React.useRef(chartPressState);
   chartPressStateRef.current = chartPressState;
   const yKeysKey = yKeys.join("\u0000");
-  const normalizedAxisProps = useBuildChartAxis({
-    xAxis,
-    yAxis,
+  const normalizedAxisProps = useBuildChartAxis<RawData, XK, YK, never, never>({
+    xAxis: xAxis as XAxisInputProps<RawData, XK, never> | undefined,
+    yAxis: yAxis as YAxisInputProps<RawData, YK, never>[] | undefined,
     frame,
     yKeys,
-    axisOptions,
+    axisOptions: axisOptions as
+      | Partial<
+          Omit<AxisProps<RawData, XK, YK, never, never>, "xScale" | "yScale">
+        >
+      | undefined,
   });
   const axisScales = axisOptions?.axisScales;
 
@@ -288,25 +374,51 @@ function CartesianChartContent<
     if (!data.length) {
       return createFallbackChartState<RawData, XK, YK>(yKeys);
     }
+    const transformArgs = {
+      data,
+      xKey,
+      yKeys,
+      outputWindow: {
+        xMin: valueFromSidedNumber(padding, "left"),
+        xMax: size.width - valueFromSidedNumber(padding, "right"),
+        yMin: valueFromSidedNumber(padding, "top"),
+        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+      },
+      domain,
+      domainPadding,
+      viewport,
+      labelRotate: normalizedAxisProps.xAxis.labelRotate,
+      axisScales,
+    };
+
+    const transformed =
+      orientation === "horizontal"
+        ? transformHorizontalInputData({
+            ...transformArgs,
+            xAxis: normalizedAxisProps.xAxis as XAxisPropsWithDefaults<
+              RawData,
+              XK,
+              number
+            >,
+            yAxes: normalizedAxisProps.yAxes as YAxisPropsWithDefaults<
+              RawData,
+              YK,
+              InputFields<RawData>[XK]
+            >[],
+          })
+        : transformInputData({
+            ...transformArgs,
+            xAxis: normalizedAxisProps.xAxis as XAxisPropsWithDefaults<
+              RawData,
+              XK
+            >,
+            yAxes: normalizedAxisProps.yAxes as YAxisPropsWithDefaults<
+              RawData,
+              YK
+            >[],
+          });
     const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
-      transformInputData({
-        data,
-        xKey,
-        yKeys,
-        outputWindow: {
-          xMin: valueFromSidedNumber(padding, "left"),
-          xMax: size.width - valueFromSidedNumber(padding, "right"),
-          yMin: valueFromSidedNumber(padding, "top"),
-          yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-        },
-        domain,
-        domainPadding,
-        xAxis: normalizedAxisProps.xAxis,
-        yAxes: normalizedAxisProps.yAxes,
-        viewport,
-        labelRotate: normalizedAxisProps.xAxis.labelRotate,
-        axisScales,
-      });
+      transformed;
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
@@ -315,6 +427,7 @@ function CartesianChartContent<
       yScale: primaryYScale,
       viewport,
       domainPadding,
+      orientation,
     });
 
     return {
@@ -337,6 +450,7 @@ function CartesianChartContent<
     normalizedAxisProps,
     axisScales,
     viewport,
+    orientation,
   ]);
 
   React.useEffect(() => {
@@ -368,7 +482,12 @@ function CartesianChartContent<
       y: number,
     ) => {
       "worklet";
-      const idx = findClosestPoint(tData.value.ox, x);
+      const idx = getClosestDatumIndex({
+        orientation,
+        categoryPositions: tData.value.ox,
+        touchX: x,
+        touchY: y,
+      });
 
       if (typeof idx !== "number") return;
 
@@ -384,29 +503,33 @@ function CartesianChartContent<
         }
       }
 
-      const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
-      // Calculate the actual yValue of the touch within the domain of the yScale
-      const yDomainValue =
-        (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
+      if (orientation === "horizontal") {
+        v.yIndex.value = -1;
+      } else {
+        const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
+        // Calculate the actual yValue of the touch within the domain of the yScale
+        const yDomainValue =
+          (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
 
-      // track the cumulative height and the y-index of the touched segment
-      let cumulativeHeight = 0;
-      let yIndex = -1;
+        // track the cumulative height and the y-index of the touched segment
+        let cumulativeHeight = 0;
+        let yIndex = -1;
 
-      // loop through the bar heights to find which bar was touched
-      for (let i = 0; i < barHeights.length; i++) {
-        // Accumulate the height as we go along
-        cumulativeHeight += barHeights[i]!;
-        // Check if the y-value touched falls within the current segment
-        if (yDomainValue <= cumulativeHeight) {
-          // If it does, set yIndex to the current segment index and break
-          yIndex = i;
-          break;
+        // loop through the bar heights to find which bar was touched
+        for (let i = 0; i < barHeights.length; i++) {
+          // Accumulate the height as we go along
+          cumulativeHeight += barHeights[i]!;
+          // Check if the y-value touched falls within the current segment
+          if (yDomainValue <= cumulativeHeight) {
+            // If it does, set yIndex to the current segment index and break
+            yIndex = i;
+            break;
+          }
         }
-      }
 
-      // Update the yIndex value in the state or context
-      v.yIndex.value = yIndex;
+        // Update the yIndex value in the state or context
+        v.yIndex.value = yIndex;
+      }
       // end stacked bar handling
 
       if (v) {
@@ -427,7 +550,7 @@ function CartesianChartContent<
 
       lastIdx.value = idx;
     },
-    [chartHeight, lastIdx, tData, yKeys, yScaleBottom, yScaleTop],
+    [chartHeight, lastIdx, orientation, tData, yKeys, yScaleBottom, yScaleTop],
   );
 
   React.useImperativeHandle(
@@ -668,9 +791,15 @@ function CartesianChartContent<
           if (cache[key]) return cache[key];
 
           cache[key] = _tData.ix.map((x, i) => ({
-            x: asNumber(_tData.ox[i]),
+            x:
+              orientation === "horizontal"
+                ? asNumber(_tData.y[key].o[i])
+                : asNumber(_tData.ox[i]),
             xValue: x,
-            y: _tData.y[key].o[i],
+            y:
+              orientation === "horizontal"
+                ? asNumber(_tData.ox[i])
+                : _tData.y[key].o[i],
             yValue: _tData.y[key].i[i],
           }));
 
@@ -678,7 +807,7 @@ function CartesianChartContent<
         },
       },
     ) as PointsArg;
-  }, [_tData, yKeys]);
+  }, [_tData, orientation, yKeys]);
 
   // On bounds change, emit
   const onChartBoundsRef = useFunctionRef(onChartBoundsChange);
@@ -723,6 +852,25 @@ function CartesianChartContent<
 
           if (!yAxis) return null;
 
+          if (orientation === "horizontal") {
+            return (
+              <CategoryYAxis<RawData, XK>
+                key={index}
+                {...axis}
+                formatYLabel={
+                  axis.formatYLabel as
+                    | ((label: InputFields<RawData>[XK]) => string)
+                    | undefined
+                }
+                xScale={zoomX.rescaleX(xScale)}
+                yScale={zoomY.rescaleY(yAxis.yScale)}
+                yTicksNormalized={yAxis.yTicksNormalized}
+                ix={_tData.ix}
+                chartBounds={chartBounds}
+              />
+            );
+          }
+
           const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
           const primaryRescaled = zoomY.rescaleY(primaryYScale);
           const rescaled = zoomY.rescaleY(yAxis.yScale);
@@ -743,7 +891,7 @@ function CartesianChartContent<
               : primaryYScale.ticks(primaryAxisProps.tickCount);
 
           return (
-            <YAxis
+            <YAxis<RawData, YK, never>
               key={index}
               {...axis}
               xScale={zoomX.rescaleX(xScale)}
@@ -765,12 +913,12 @@ function CartesianChartContent<
 
   const XAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
-      <XAxis
+      <XAxis<RawData, XK, never>
         {...normalizedAxisProps.xAxis}
         xScale={xScale}
         yScale={zoomY.rescaleY(primaryYScale)}
         ix={_tData.ix}
-        isNumericalData={isNumericalData}
+        isNumericalData={orientation === "horizontal" ? true : isNumericalData}
         chartBounds={chartBounds}
         zoom={zoomX}
       />
@@ -832,7 +980,11 @@ function CartesianChartContent<
 
   return (
     <CartesianTransformValueProvider value={transform}>
-      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
+      <CartesianChartProvider
+        yScale={primaryYScale}
+        xScale={xScale}
+        orientation={orientation}
+      >
         <CartesianCanvas
           isHeadless={isHeadless}
           explicitSize={explicitSize}

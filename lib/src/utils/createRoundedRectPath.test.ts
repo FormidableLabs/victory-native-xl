@@ -47,4 +47,28 @@ describe("createRoundedRectPath", () => {
       bottomLeft: { x: 1, y: 1 },
     });
   });
+
+  it("swaps left and right corner radii for negative horizontal bars", () => {
+    expect(
+      createRoundedRectPath(
+        10,
+        20,
+        40,
+        8,
+        {
+          topLeft: 1,
+          topRight: 8,
+          bottomRight: 7,
+          bottomLeft: 2,
+        },
+        -12,
+        "horizontal",
+      ),
+    ).toMatchObject({
+      topLeft: { x: 4, y: 4 },
+      topRight: { x: 1, y: 1 },
+      bottomRight: { x: 2, y: 2 },
+      bottomLeft: { x: 4, y: 4 },
+    });
+  });
 });

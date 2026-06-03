@@ -6,10 +6,10 @@ import {
 } from "../../utils/createRoundedRectPath";
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
-import { useBarWidth } from "./useBarWidth";
-import { getVerticalBarRect } from "../utils/getVerticalBarRect";
+import { getBarThickness } from "../utils/getBarThickness";
+import { getHorizontalBarRect } from "../utils/getHorizontalBarRect";
 
-export const useBarPath = (
+export const useHorizontalBarPath = (
   points: PointsArray,
   chartBounds: ChartBounds,
   innerPadding = 0.2,
@@ -17,25 +17,24 @@ export const useBarPath = (
   customBarWidth?: number,
   barCount?: number,
 ) => {
-  const { yScale } = useCartesianChartContext();
-  const barWidth = useBarWidth({
+  const { xScale } = useCartesianChartContext();
+  const barWidth = getBarThickness({
     points,
-    chartBounds,
+    axisStart: chartBounds.top,
+    axisEnd: chartBounds.bottom,
     innerPadding,
-    customBarWidth,
+    customBarThickness: customBarWidth,
     barCount,
   });
 
   const path = React.useMemo(() => {
     const path = Skia.Path.Make();
-
-    const baselineY = yScale(0);
+    const baselineX = xScale(0);
 
     points.forEach((point) => {
-      const rect = getVerticalBarRect(point, baselineY, barWidth);
+      const rect = getHorizontalBarRect(point, baselineX, barWidth);
       if (!rect) return;
 
-      const yValue = point.yValue;
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
           rect.x,
@@ -43,7 +42,8 @@ export const useBarPath = (
           rect.width,
           rect.height,
           roundedCorners,
-          Number(yValue),
+          Number(point.yValue),
+          "horizontal",
         );
         path.addRRect(nonUniformRoundedRect);
       } else {
@@ -52,7 +52,7 @@ export const useBarPath = (
     });
 
     return path;
-  }, [barWidth, points, roundedCorners, yScale]);
+  }, [barWidth, points, roundedCorners, xScale]);
 
   return { path, barWidth };
 };

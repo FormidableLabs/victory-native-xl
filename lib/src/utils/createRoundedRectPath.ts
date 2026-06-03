@@ -1,4 +1,5 @@
 import type { NonUniformRRect } from "@shopify/react-native-skia";
+import type { CartesianChartOrientation } from "../types";
 
 export type RoundedCorners = {
   topLeft?: number;
@@ -14,11 +15,12 @@ export const createRoundedRectPath = (
   barHeight: number,
   roundedCorners: RoundedCorners,
   yValue: number,
+  orientation: CartesianChartOrientation = "vertical",
 ): NonUniformRRect => {
   "worklet";
 
   const corners = { ...roundedCorners };
-  if (Number(yValue) < 0) {
+  if (Number(yValue) < 0 && orientation === "vertical") {
     [
       corners.topLeft,
       corners.topRight,
@@ -30,9 +32,22 @@ export const createRoundedRectPath = (
       corners.topLeft,
       corners.topRight,
     ];
+  } else if (Number(yValue) < 0) {
+    [
+      corners.topLeft,
+      corners.topRight,
+      corners.bottomLeft,
+      corners.bottomRight,
+    ] = [
+      corners.topRight,
+      corners.topLeft,
+      corners.bottomRight,
+      corners.bottomLeft,
+    ];
   }
 
-  const maxCornerRadius = Math.ceil(barWidth) / 2;
+  const maxCornerRadius =
+    Math.ceil(Math.min(Math.abs(barWidth), Math.abs(barHeight))) / 2;
   const topLeft = Math.min(maxCornerRadius, corners.topLeft || 0);
   const topRight = Math.min(maxCornerRadius, corners.topRight || 0);
   const bottomLeft = Math.min(maxCornerRadius, corners.bottomLeft || 0);

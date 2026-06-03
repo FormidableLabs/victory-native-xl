@@ -6,10 +6,10 @@ import {
   type RoundedCorners,
 } from "../../utils/createRoundedRectPath";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
-import { getBarGroupDimensions } from "../utils/getBarGroupDimensions";
-import { getVerticalBarGroupRect } from "../utils/getVerticalBarGroupRect";
+import { getBarGroupDimensionsForAxis } from "../utils/getBarGroupDimensionsForAxis";
+import { getHorizontalBarGroupRect } from "../utils/getHorizontalBarGroupRect";
 
-export const useBarGroupPaths = (
+export const useHorizontalBarGroupPaths = (
   points: PointsArray[],
   chartBounds: ChartBounds,
   betweenGroupPadding = 0,
@@ -20,10 +20,11 @@ export const useBarGroupPaths = (
 ) => {
   const numGroups = points[0]?.length || 0;
 
-  const { yScale } = useCartesianChartContext();
+  const { xScale } = useCartesianChartContext();
 
-  const { barWidth, groupWidth, gapWidth } = getBarGroupDimensions({
-    chartBounds,
+  const { barWidth, groupWidth, gapWidth } = getBarGroupDimensionsForAxis({
+    axisStart: chartBounds.top,
+    axisEnd: chartBounds.bottom,
     betweenGroupPadding,
     withinGroupPadding,
     groupCount: numGroups,
@@ -33,14 +34,14 @@ export const useBarGroupPaths = (
   });
 
   const paths = React.useMemo(() => {
-    const baselineY = yScale(0);
+    const baselineX = xScale(0);
 
     return points.map((pointSet, i) => {
       const p = Skia.Path.Make();
       pointSet.forEach((point) => {
-        const rect = getVerticalBarGroupRect({
+        const rect = getHorizontalBarGroupRect({
           point,
-          baselineY,
+          baselineX,
           barWidth,
           groupWidth,
           gapWidth,
@@ -56,6 +57,7 @@ export const useBarGroupPaths = (
             rect.height,
             roundedCorners,
             Number(point.yValue),
+            "horizontal",
           );
           p.addRRect(nonUniformRoundedRect);
         } else {
@@ -64,7 +66,7 @@ export const useBarGroupPaths = (
       });
       return p;
     });
-  }, [barWidth, gapWidth, groupWidth, points, roundedCorners, yScale]);
+  }, [barWidth, gapWidth, groupWidth, points, roundedCorners, xScale]);
 
   return { barWidth, groupWidth, gapWidth, paths };
 };

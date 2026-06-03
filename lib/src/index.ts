@@ -16,6 +16,7 @@ export {
   type Viewport,
   type ChartBounds,
   type ChartPressPanConfig,
+  type CartesianChartOrientation,
   type YAxisSide,
   type XAxisSide,
   type PointsArray,
@@ -58,6 +59,7 @@ export { Line } from "./cartesian/components/Line";
 
 // Bar
 export { useBarPath } from "./cartesian/hooks/useBarPath";
+export { useHorizontalBarPath } from "./cartesian/hooks/useHorizontalBarPath";
 export {
   useBarWidth,
   type UseBarWidthOptions,
@@ -67,6 +69,7 @@ export {
   type GetBarWidthArgs,
 } from "./cartesian/utils/getBarWidth";
 export { Bar } from "./cartesian/components/Bar";
+export { HorizontalBar } from "./cartesian/components/HorizontalBar";
 
 // StackedBar
 export { useStackedBarPaths } from "./cartesian/hooks/useStackedBarPaths";
@@ -74,7 +77,9 @@ export { StackedBar } from "./cartesian/components/StackedBar";
 
 // Bar group
 export { useBarGroupPaths } from "./cartesian/hooks/useBarGroupPaths";
+export { useHorizontalBarGroupPaths } from "./cartesian/hooks/useHorizontalBarGroupPaths";
 export { BarGroup } from "./cartesian/components/BarGroup";
+export { HorizontalBarGroup } from "./cartesian/components/HorizontalBarGroup";
 
 // Area
 export { useAreaPath } from "./cartesian/hooks/useAreaPath";

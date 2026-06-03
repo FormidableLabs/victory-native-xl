@@ -19,6 +19,7 @@ export { XAxisDefaults } from "../utils/axisDefaults";
 export const XAxis = <
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
+  Label = InputFields<RawData>[XK],
 >({
   xScale: xScaleProp,
   yScale,
@@ -39,7 +40,7 @@ export const XAxis = <
   chartBounds,
   enableRescaling,
   zoom,
-}: XAxisProps<RawData, XK>) => {
+}: XAxisProps<RawData, XK, Label>) => {
   const xScale = zoom ? zoom.rescaleX(xScaleProp) : xScaleProp;
   const [y1 = 0, y2 = 0] = yScale.domain();
   const fontSize = font?.getSize() ?? 0;

@@ -1,4 +1,5 @@
 import type { ChartBounds } from "../../types";
+import { getBarGroupDimensionsForAxis } from "./getBarGroupDimensionsForAxis";
 
 export type GetBarGroupDimensionsArgs = {
   chartBounds: Pick<ChartBounds, "left" | "right">;
@@ -19,17 +20,14 @@ export const getBarGroupDimensions = ({
   customBarWidth,
   barCount,
 }: GetBarGroupDimensionsArgs) => {
-  const groupWidth =
-    ((1 - betweenGroupPadding) * (chartBounds.right - chartBounds.left)) /
-    Math.max(1, groupCount);
-  const denominator =
-    barCount && barCount > 0 ? barCount : Math.max(1, barsPerGroup);
-  const barWidth =
-    customBarWidth !== undefined
-      ? customBarWidth
-      : ((1 - withinGroupPadding) * groupWidth) / denominator;
-  const gapWidth =
-    (groupWidth - barWidth * barsPerGroup) / Math.max(1, barsPerGroup - 1);
-
-  return { barWidth, groupWidth, gapWidth };
+  return getBarGroupDimensionsForAxis({
+    axisStart: chartBounds.left,
+    axisEnd: chartBounds.right,
+    betweenGroupPadding,
+    withinGroupPadding,
+    groupCount,
+    barsPerGroup,
+    customBarWidth,
+    barCount,
+  });
 };

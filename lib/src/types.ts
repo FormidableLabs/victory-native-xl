@@ -37,6 +37,8 @@ export type AxisLabelPosition = "inset" | "outset";
 
 export type AxisScaleType = "linear" | "log";
 
+export type CartesianChartOrientation = "vertical" | "horizontal";
+
 export type AxisScales = {
   xAxisScale?: AxisScaleType;
   yAxisScale?: AxisScaleType;
@@ -127,6 +129,8 @@ export type AxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = {
   xTicksNormalized: number[];
   yTicksNormalized: number[];
@@ -146,8 +150,8 @@ export type AxisProps<
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
   axisSide?: { x: XAxisSide; y: YAxisSide };
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: XLabel) => string;
+  formatYLabel?: (label: YLabel) => string;
   domain?: YAxisDomain;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
@@ -158,8 +162,10 @@ export type AxisPropWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = Omit<
-  Required<AxisProps<RawData, XK, YK>>,
+  Required<AxisProps<RawData, XK, YK, XLabel, YLabel>>,
   | "xScale"
   | "yScale"
   | "yTicksNormalized"
@@ -173,11 +179,13 @@ export type OptionalAxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = {
   tickValues?: number[] | { x: number[]; y: number[] };
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: XLabel) => string;
+  formatYLabel?: (label: YLabel) => string;
 };
 
 type DashPathEffectProps = React.ComponentProps<typeof DashPathEffect>;
@@ -186,10 +194,11 @@ type DashPathEffectComponent = React.ReactElement<DashPathEffectProps>;
 export type XAxisInputProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
+  Label = InputFields<RawData>[XK],
 > = {
   axisSide?: XAxisSide;
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  formatXLabel?: (label: Label) => string;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -206,15 +215,16 @@ export type XAxisInputProps<
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
+  Label = InputFields<RawData>[XK],
 > = Required<
   Omit<
-    XAxisInputProps<RawData, XK>,
+    XAxisInputProps<RawData, XK, Label>,
     "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
   >
 > &
   Partial<
     Pick<
-      XAxisInputProps<RawData, XK>,
+      XAxisInputProps<RawData, XK, Label>,
       | "font"
       | "tickValues"
       | "linePathEffect"
@@ -226,7 +236,8 @@ export type XAxisPropsWithDefaults<
 export type XAxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
-> = XAxisPropsWithDefaults<RawData, XK> & {
+  Label = InputFields<RawData>[XK],
+> = XAxisPropsWithDefaults<RawData, XK, Label> & {
   xScale: Scale;
   yScale: Scale;
   isNumericalData: boolean;
@@ -238,10 +249,11 @@ export type XAxisProps<
 export type YAxisInputProps<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
+  Label = RawData[YK],
 > = {
   axisSide?: YAxisSide;
   font?: SkFont | null;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatYLabel?: (label: Label) => string;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -258,15 +270,16 @@ export type YAxisInputProps<
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
+  Label = RawData[YK],
 > = Required<
   Omit<
-    YAxisInputProps<RawData, YK>,
+    YAxisInputProps<RawData, YK, Label>,
     "font" | "tickValues" | "linePathEffect" | "enableRescaling"
   >
 > &
   Partial<
     Pick<
-      YAxisInputProps<RawData, YK>,
+      YAxisInputProps<RawData, YK, Label>,
       "font" | "tickValues" | "linePathEffect" | "enableRescaling"
     >
   >;
@@ -274,7 +287,8 @@ export type YAxisPropsWithDefaults<
 export type YAxisProps<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
-> = YAxisPropsWithDefaults<RawData, YK> & {
+  Label = RawData[YK],
+> = YAxisPropsWithDefaults<RawData, YK, Label> & {
   xScale: Scale;
   yScale: Scale;
   yTicksNormalized: number[];
