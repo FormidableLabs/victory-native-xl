@@ -1,5 +1,15 @@
 # victory-native
 
+## 41.24.0
+
+### Minor Changes
+
+- Add `HorizontalStackedBar` and `useHorizontalStackedBarPaths` for stacked bar charts inside `CartesianChart orientation="horizontal"`. ([#670](https://github.com/FormidableLabs/victory-native-xl/pull/670))
+
+### Patch Changes
+
+- Add orientation-neutral `isStart`, `isEnd`, `seriesIndex`, and `datumIndex` fields to stacked bar `barOptions` while preserving existing vertical field aliases. ([#670](https://github.com/FormidableLabs/victory-native-xl/pull/670))
+
 ## 41.23.0
 
 ### Minor Changes
