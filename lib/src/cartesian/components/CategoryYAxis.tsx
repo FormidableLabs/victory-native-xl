@@ -18,7 +18,10 @@ import type {
   YAxisSide,
 } from "../../types";
 import { getCategoryYAxisLabelPosition } from "../utils/getCategoryYAxisLabelPosition";
-import { getAxisTitleLayout } from "../utils/getAxisTitleLayout";
+import {
+  getAxisTitleLayout,
+  getRotatedYAxisTitleBaselineY,
+} from "../utils/getAxisTitleLayout";
 import { getAxisLabelLayout } from "../utils/getAxisLabelLayout";
 
 type CategoryYAxisProps<
@@ -97,6 +100,7 @@ export const CategoryYAxis = <
       : 0;
   const titleLayout = getAxisTitleLayout({ title, font });
   const titleFont = titleLayout.font;
+  const titleBaselineY = getRotatedYAxisTitleBaselineY(titleLayout);
   const titleX =
     axisSide === "left"
       ? chartBounds.left - labelOutset - titleLayout.offset
@@ -118,7 +122,7 @@ export const CategoryYAxis = <
             color={titleLayout.color ?? labelColor}
             text={line}
             font={titleFont}
-            y={index * titleLayout.lineHeight}
+            y={titleBaselineY + index * titleLayout.lineHeight}
             x={-titleLayout.width / 2}
           />
         ))

@@ -7,7 +7,10 @@ import type {
   ValueOf,
   YAxisProps,
 } from "../../types";
-import { getAxisTitleLayout } from "../utils/getAxisTitleLayout";
+import {
+  getAxisTitleLayout,
+  getRotatedYAxisTitleBaselineY,
+} from "../utils/getAxisTitleLayout";
 import { getAxisLabelLayout } from "../utils/getAxisLabelLayout";
 export { YAxisDefaults } from "../utils/axisDefaults";
 
@@ -62,6 +65,7 @@ export const YAxis = <
       : 0;
   const titleLayout = getAxisTitleLayout({ title, font });
   const titleFont = titleLayout.font;
+  const titleBaselineY = getRotatedYAxisTitleBaselineY(titleLayout);
   const titleX =
     axisSide === "left"
       ? chartBounds.left - labelOutset - titleLayout.offset
@@ -83,7 +87,7 @@ export const YAxis = <
             color={titleLayout.color ?? labelColor}
             text={line}
             font={titleFont}
-            y={index * titleLayout.lineHeight}
+            y={titleBaselineY + index * titleLayout.lineHeight}
             x={-titleLayout.width / 2}
           />
         ))

@@ -21,7 +21,7 @@ export const getAxisTitleLayout = ({
   title?: AxisTitle;
   font?: SkFont | null;
 }): AxisTitleLayout => {
-  const titleFont = title?.font ?? font;
+  const titleFont = title?.font !== undefined ? title.font : font;
   const text = title?.text ?? "";
   const layout = getTextLayout(text, titleFont);
 
@@ -34,4 +34,12 @@ export const getAxisTitleLayout = ({
     position: title?.position ?? DEFAULT_AXIS_TITLE_POSITION,
     hasContent: Boolean(titleFont && text && layout.width > 0),
   };
+};
+
+export const getRotatedYAxisTitleBaselineY = ({
+  height,
+  fontSize,
+}: Pick<AxisTitleLayout, "height" | "fontSize">) => {
+  const multilineOffset = height - fontSize;
+  return multilineOffset > 0 ? -multilineOffset : 0;
 };

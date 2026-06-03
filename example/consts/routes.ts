@@ -127,6 +127,12 @@ export const ChartRoutes: ChartRoute[] = [
     path: "/axis-label-renderers",
   },
   {
+    title: "Axis Title Layout",
+    description:
+      "Examples for single-line and multiline Y-axis title placement on numeric and category axes.",
+    path: "/axis-title-layout",
+  },
+  {
     title: "Multiple Y Axes",
     description: "This shows how to use multiple y axes in a single chart",
     path: "/multiple-y-axes",
