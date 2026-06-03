@@ -47,6 +47,12 @@ export const ChartRoutes: ChartRoute[] = [
     path: "/horizontal-stacked-bar",
   },
   {
+    title: "Horizontal Stacked Row Headers",
+    description:
+      "This chart uses custom axis label rendering to place row headers above horizontal stacked bars.",
+    path: "/horizontal-stacked-row-headers",
+  },
+  {
     title: "Bar Group",
     description:
       "This chart demonstrates grouping and displaying multiple sets of data in a Bar chart. Victory supports customizing the spacing between each bar inside the group and spacing around the groups.",
@@ -334,7 +340,10 @@ const getChartRouteSection = ({
 
   if (path.startsWith("/guides")) return "Guides";
 
-  if (path.includes("bar") && path !== "/horizontal-bands-line") {
+  if (
+    path === "/horizontal-stacked-row-headers" ||
+    (path.includes("bar") && path !== "/horizontal-bands-line")
+  ) {
     return "Bar Charts";
   }
 
