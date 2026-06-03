@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.23.0
+
+### Minor Changes
+
+- Add horizontal Cartesian bar chart support through `CartesianChart orientation="horizontal"` and the new `HorizontalBar` and `HorizontalBarGroup` components. ([#668](https://github.com/FormidableLabs/victory-native-xl/pull/668))
+
+  Horizontal chart axis formatter types now match the runtime axis roles: `xAxis.formatXLabel` receives numeric value ticks, while `yAxis.formatYLabel` receives `xKey` category values.
+
 ## 41.22.0
 
 ### Minor Changes
