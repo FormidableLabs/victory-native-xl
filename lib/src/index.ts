@@ -111,6 +111,33 @@ export { useStackedAreaPaths } from "./cartesian/hooks/useStackedAreaPaths";
 // Scatter
 export { Scatter, type ScatterShape } from "./cartesian/components/Scatter";
 
+// Candlestick
+export {
+  Candlestick,
+  type CandlestickProps,
+} from "./cartesian/components/Candlestick";
+export {
+  useCandlestickPaths,
+  type CandlestickBodyPathOptions,
+  type CandlestickColors,
+  type CandlestickOptions,
+  type CandlestickOptionsContext,
+  type CandlestickOptionsFn,
+  type CandlestickPathGroup,
+  type CandlestickWickPathOptions,
+  type CustomCandlestickPath,
+  type UseCandlestickPathsArgs,
+  type UseCandlestickPathsResult,
+} from "./cartesian/hooks/useCandlestickPaths";
+export {
+  getCandlestickGeometry,
+  type CandlestickGeometry,
+  type CandlestickLine,
+  type CandlestickRect,
+  type CandlestickStatus,
+  type GetCandlestickGeometryArgs,
+} from "./cartesian/utils/getCandlestickGeometry";
+
 // Grid and Axis
 export { CartesianAxis } from "./cartesian/components/CartesianAxis";
 export {

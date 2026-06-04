@@ -104,6 +104,12 @@ export const ChartRoutes: ChartRoute[] = [
     path: "/stock-price",
   },
   {
+    title: "Candlestick Chart",
+    description:
+      "This chart renders open, high, low, and close values as candlesticks with scrub interaction, custom styling, and doji/missing-value examples.",
+    path: "/candlestick",
+  },
+  {
     title: "Ordinal Data",
     description:
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
