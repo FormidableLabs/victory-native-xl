@@ -53,7 +53,7 @@ export function MyChart() {
 - `roundedCorners`: corner radii for each bar.
 - `barWidth`: fixed visual bar thickness.
 - `barCount`: computes thickness as if there were a fixed number of bars.
-- `labels`: value labels using the same `{ position, font, color }` shape as `Bar`.
+- `labels`: value labels using the same `{ position, font, color, formatLabel, rotate }` shape as `Bar`.
 
 ## Horizontal Mode Notes
 

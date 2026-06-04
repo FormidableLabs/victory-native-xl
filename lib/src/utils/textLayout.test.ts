@@ -1,6 +1,6 @@
 import type { SkFont } from "@shopify/react-native-skia";
 import { describe, expect, it } from "vitest";
-import { getTextLayout, getTextLines } from "./textLayout";
+import { getMaxTextLayout, getTextLayout, getTextLines } from "./textLayout";
 
 const font = {
   getSize: () => 10,
@@ -30,6 +30,24 @@ describe("textLayout", () => {
       height: 0,
       fontSize: 0,
       lineHeight: 0,
+    });
+  });
+
+  it("measures max text layout by widest label and tallest label", () => {
+    expect(getMaxTextLayout(["A\nLong", "WiderLine"], font)).toEqual({
+      width: 36,
+      height: 20,
+      fontSize: 10,
+      lineHeight: 10,
+    });
+  });
+
+  it("returns zero max layout for no labels", () => {
+    expect(getMaxTextLayout([], font)).toEqual({
+      width: 0,
+      height: 0,
+      fontSize: 10,
+      lineHeight: 10,
     });
   });
 });

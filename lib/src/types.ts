@@ -4,6 +4,7 @@ import {
   type Color,
   type DashPathEffect,
   type SkFont,
+  type SkPoint,
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
@@ -34,6 +35,46 @@ export type InputDatum = Record<string, unknown>;
 export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
+export type AxisTitlePosition = "start" | "center" | "end";
+
+export type AxisLabelMeasurement = {
+  width: number;
+  height: number;
+  fontSize?: number;
+  lineHeight?: number;
+};
+
+export type AxisLabelMeasureArgs<Label = unknown> = {
+  axis: "x" | "y";
+  orientation: CartesianChartOrientation;
+  value: Label;
+  text: string;
+  index: number;
+};
+
+export type AxisLabelRenderArgs<Label = unknown> = AxisLabelMeasureArgs<Label> &
+  Required<AxisLabelMeasurement> & {
+    x: number;
+    y: number;
+    color: string;
+    canFitContent: boolean;
+    chartBounds: ChartBounds;
+    rotation?: number;
+    origin?: SkPoint;
+  };
+
+export type AxisLabelRenderer<Label = unknown> = {
+  measure: (args: AxisLabelMeasureArgs<Label>) => AxisLabelMeasurement;
+  render: (args: AxisLabelRenderArgs<Label>) => React.ReactNode;
+};
+
+export type AxisTitle = {
+  text: string;
+  font?: SkFont | null;
+  color?: string;
+  position?: AxisTitlePosition;
+  offset?: number;
+};
 
 export type AxisScaleType = "linear" | "log";
 
@@ -199,6 +240,8 @@ export type XAxisInputProps<
   axisSide?: XAxisSide;
   font?: SkFont | null;
   formatXLabel?: (label: Label) => string;
+  labelRenderer?: AxisLabelRenderer<Label>;
+  title?: AxisTitle;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -219,7 +262,13 @@ export type XAxisPropsWithDefaults<
 > = Required<
   Omit<
     XAxisInputProps<RawData, XK, Label>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
+    | "labelRenderer"
+    | "title"
   >
 > &
   Partial<
@@ -230,6 +279,8 @@ export type XAxisPropsWithDefaults<
       | "linePathEffect"
       | "enableRescaling"
       | "labelRotate"
+      | "labelRenderer"
+      | "title"
     >
   >;
 
@@ -243,6 +294,7 @@ export type XAxisProps<
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
   chartBounds: ChartBounds;
+  orientation: CartesianChartOrientation;
   zoom?: ZoomTransform;
 };
 
@@ -254,6 +306,8 @@ export type YAxisInputProps<
   axisSide?: YAxisSide;
   font?: SkFont | null;
   formatYLabel?: (label: Label) => string;
+  labelRenderer?: AxisLabelRenderer<Label>;
+  title?: AxisTitle;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -274,13 +328,23 @@ export type YAxisPropsWithDefaults<
 > = Required<
   Omit<
     YAxisInputProps<RawData, YK, Label>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRenderer"
+    | "title"
   >
 > &
   Partial<
     Pick<
       YAxisInputProps<RawData, YK, Label>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "labelRenderer"
+      | "title"
     >
   >;
 
@@ -294,6 +358,7 @@ export type YAxisProps<
   yTicksNormalized: number[];
   yKeys: YK[];
   chartBounds: ChartBounds;
+  orientation: CartesianChartOrientation;
 };
 
 export type FrameInputProps = {

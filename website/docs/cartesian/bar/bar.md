@@ -75,6 +75,8 @@ The `labels` prop allows you to enable and customize the data label of the Bar c
 - `position: "top" | "bottom" | "left" | "right"`: Defines where the Bar component data label should be rendered in relationship to the rendered Bar component.
 - `font: SkFont | null`: Defines the font to use with the Skia `Text` component.
 - `color?: Color`: Defines the color the data label should be.
+- `formatLabel?: (value: MaybeNumber) => string`: Formats the data label text. `0` is passed through as a real value; `null` and `undefined` are passed to the formatter when present.
+- `rotate?: number`: Rotates the data label in degrees around the label center. Omit it or pass `0` to keep the existing unrotated placement.
 
 ### `children`
 

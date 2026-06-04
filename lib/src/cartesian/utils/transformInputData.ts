@@ -14,7 +14,11 @@ import type {
   XAxisPropsWithDefaults,
   AxisScales,
 } from "../../types";
-import { getTextLayout } from "../../utils/textLayout";
+import {
+  getAxisLabelLayout,
+  getMaxAxisLabelLayout,
+} from "./getAxisLabelLayout";
+import { getAxisTitleLayout } from "./getAxisTitleLayout";
 import { getXScaleInputBounds } from "./getXScaleInputBounds";
 import { getXAxisTicks } from "./getXAxisTicks";
 import { getYScaleInputBounds } from "./getYScaleInputBounds";
@@ -139,22 +143,33 @@ export const transformInputData = <
     tickValues: xTickValues,
     xScale: xTempScale,
   });
-  const maxXLabelLayout = xTicksForLabelLayout.reduce(
-    (max, xTick) => {
-      const labelInput = isNumericalData ? xTick : ix[xTick];
-      const labelValue = xAxis.formatXLabel
-        ? xAxis.formatXLabel(
-            labelInput as unknown as Parameters<typeof xAxis.formatXLabel>[0],
-          )
-        : String(labelInput ?? xTick);
-      const layout = getTextLayout(String(labelValue), xAxis.font);
-      return {
-        width: Math.max(max.width, layout.width),
-        height: Math.max(max.height, layout.height),
-      };
-    },
-    { width: 0, height: 0 },
-  );
+  const xAxisLabelLayouts = xTicksForLabelLayout.map((xTick, index) => {
+    const labelInput = (
+      isNumericalData ? xTick : ix[xTick]
+    ) as InputFields<RawData>[XK];
+    const labelValue = xAxis.formatXLabel
+      ? xAxis.formatXLabel(
+          labelInput as unknown as Parameters<typeof xAxis.formatXLabel>[0],
+        )
+      : String(labelInput ?? xTick);
+    return getAxisLabelLayout({
+      axis: "x",
+      orientation: "vertical",
+      value: labelInput,
+      text: String(labelValue),
+      index,
+      font: xAxis.font,
+      labelRenderer: xAxis.labelRenderer,
+    });
+  });
+  const maxXLabelLayout = getMaxAxisLabelLayout(xAxisLabelLayouts);
+  const xAxisTitleLayout = getAxisTitleLayout({
+    title: xAxis.title,
+    font: xAxis.font,
+  });
+  const xAxisTitleOutset = xAxisTitleLayout.hasContent
+    ? xAxisTitleLayout.height + xAxisTitleLayout.offset
+    : 0;
 
   // workt with adjustedoutputwindow isntead of directly
   // working with outpuwidnow
@@ -197,16 +212,18 @@ export const transformInputData = <
         xTickCount > 0 && maxXLabelLayout.width > 0
           ? maxXLabelLayout.height + xLabelOffset * 2
           : 0;
+      const xAxisOutset =
+        xAxisTitleOutset + (xLabelPosition === "outset" ? xLabelOutset : 0);
 
-      if (xAxisSide === "bottom" && xLabelPosition === "outset") {
+      if (xAxisSide === "bottom") {
         return [
           adjustedOutputWindow.yMin,
-          adjustedOutputWindow.yMax - xLabelOutset,
+          adjustedOutputWindow.yMax - xAxisOutset,
         ];
       }
-      if (xAxisSide === "top" && xLabelPosition === "outset") {
+      if (xAxisSide === "top") {
         return [
-          adjustedOutputWindow.yMin + xLabelOutset,
+          adjustedOutputWindow.yMin + xAxisOutset,
           adjustedOutputWindow.yMax,
         ];
       }
@@ -255,20 +272,34 @@ export const transformInputData = <
       }
     });
 
-    const maxYLabel = Math.max(
-      0,
-      ...yTicksNormalized.map((yTick) => {
-        const label =
-          yAxis?.formatYLabel?.(yTick as RawData[YK]) ?? String(yTick);
-        return getTextLayout(String(label), yAxis.font).width;
-      }),
-    );
+    const yAxisLabelLayouts = yTicksNormalized.map((yTick, index) => {
+      const labelInput = yTick as RawData[YK];
+      const label = yAxis?.formatYLabel?.(labelInput) ?? String(yTick);
+      return getAxisLabelLayout({
+        axis: "y",
+        orientation: "vertical",
+        value: labelInput,
+        text: String(label),
+        index,
+        font: yAxis.font,
+        labelRenderer: yAxis.labelRenderer,
+      });
+    });
+    const maxYLabel = getMaxAxisLabelLayout(yAxisLabelLayouts).width;
+    const yAxisTitleLayout = getAxisTitleLayout({
+      title: yAxis.title,
+      font: yAxis.font,
+    });
+    const yAxisTitleOutset = yAxisTitleLayout.hasContent
+      ? yAxisTitleLayout.height + yAxisTitleLayout.offset
+      : 0;
 
     return {
       yScale,
       yTicksNormalized,
       yData,
       maxYLabel,
+      yAxisTitleOutset,
     };
   });
 
@@ -287,15 +318,22 @@ export const transformInputData = <
 
       // Calculate label width for this axis
       const labelWidth = yAxesTransformed[index]?.maxYLabel ?? 0;
+      const yAxisTitleOutset = yAxesTransformed[index]?.yAxisTitleOutset ?? 0;
 
       // Adjust xMin or xMax based on the axis side and label position
       // make ajdustments  for label rotation here
-      if (yAxisSide === "left" && yLabelPosition === "outset") {
-        xMinAdjustment +=
-          yTickCount > 0 && labelWidth > 0 ? labelWidth + yLabelOffset : 0;
-      } else if (yAxisSide === "right" && yLabelPosition === "outset") {
-        xMaxAdjustment +=
-          yTickCount > 0 && labelWidth > 0 ? -labelWidth - yLabelOffset : 0;
+      if (yAxisSide === "left") {
+        xMinAdjustment += yAxisTitleOutset;
+        if (yLabelPosition === "outset") {
+          xMinAdjustment +=
+            yTickCount > 0 && labelWidth > 0 ? labelWidth + yLabelOffset : 0;
+        }
+      } else if (yAxisSide === "right") {
+        xMaxAdjustment -= yAxisTitleOutset;
+        if (yLabelPosition === "outset") {
+          xMaxAdjustment +=
+            yTickCount > 0 && labelWidth > 0 ? -labelWidth - yLabelOffset : 0;
+        }
       }
     });
 

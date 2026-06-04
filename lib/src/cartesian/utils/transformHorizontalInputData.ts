@@ -13,7 +13,11 @@ import type {
   XAxisPropsWithDefaults,
   YAxisPropsWithDefaults,
 } from "../../types";
-import { getTextLayout } from "../../utils/textLayout";
+import {
+  getAxisLabelLayout,
+  getMaxAxisLabelLayout,
+} from "./getAxisLabelLayout";
+import { getAxisTitleLayout } from "./getAxisTitleLayout";
 import { getXAxisTicks } from "./getXAxisTicks";
 import { getYScaleInputBounds } from "./getYScaleInputBounds";
 import { makeScale } from "./makeScale";
@@ -81,27 +85,41 @@ export const transformHorizontalInputData = <
 
   const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
   const categoryIndexes = ix.map((_, index) => index);
-  const primaryYAxis = yAxes[0]!;
-  const yTickValues = primaryYAxis.tickValues;
-  const yTickCount = primaryYAxis.tickCount;
-  const yTicksNormalized = yTickValues
-    ? downsampleTicks(yTickValues, yTickCount)
-    : downsampleTicks(categoryIndexes, yTickCount);
+  const categoryAxisLayouts = yAxes.map((yAxis) => {
+    const ticks = yAxis.tickValues
+      ? downsampleTicks(yAxis.tickValues, yAxis.tickCount)
+      : downsampleTicks(categoryIndexes, yAxis.tickCount);
 
-  const maxCategoryLabelLayout = yTicksNormalized.reduce(
-    (max, tick) => {
-      const categoryValue = ix[tick];
-      const labelValue = primaryYAxis.formatYLabel
-        ? primaryYAxis.formatYLabel(categoryValue as never)
+    const labelLayouts = ticks.map((tick, index) => {
+      const categoryValue = ix[tick] as InputFields<RawData>[XK];
+      const labelValue = yAxis.formatYLabel
+        ? yAxis.formatYLabel(categoryValue as never)
         : String(categoryValue ?? tick);
-      const layout = getTextLayout(String(labelValue), primaryYAxis.font);
-      return {
-        width: Math.max(max.width, layout.width),
-        height: Math.max(max.height, layout.height),
-      };
-    },
-    { width: 0, height: 0 },
-  );
+      return getAxisLabelLayout({
+        axis: "y",
+        orientation: "horizontal",
+        value: categoryValue,
+        text: String(labelValue),
+        index,
+        font: yAxis.font,
+        labelRenderer: yAxis.labelRenderer,
+      });
+    });
+    const maxLabelLayout = getMaxAxisLabelLayout(labelLayouts);
+    const titleLayout = getAxisTitleLayout({
+      title: yAxis.title,
+      font: yAxis.font,
+    });
+    const titleOutset = titleLayout.hasContent
+      ? titleLayout.height + titleLayout.offset
+      : 0;
+
+    return {
+      ticks,
+      maxLabelLayout,
+      titleOutset,
+    };
+  });
 
   const valueTickValues = xAxis.tickValues;
   const valueTickCount = xAxis.tickCount;
@@ -128,19 +146,28 @@ export const transformHorizontalInputData = <
     tickValues: valueTickValues,
     xScale: xTempScale,
   });
-  const maxXLabelLayout = xTicksForLabelLayout.reduce(
-    (max, xTick) => {
-      const labelValue = xAxis.formatXLabel
-        ? xAxis.formatXLabel(xTick as never)
-        : String(xTick);
-      const layout = getTextLayout(String(labelValue), xAxis.font);
-      return {
-        width: Math.max(max.width, layout.width),
-        height: Math.max(max.height, layout.height),
-      };
-    },
-    { width: 0, height: 0 },
-  );
+  const xAxisLabelLayouts = xTicksForLabelLayout.map((xTick, index) => {
+    const labelValue = xAxis.formatXLabel
+      ? xAxis.formatXLabel(xTick as never)
+      : String(xTick);
+    return getAxisLabelLayout({
+      axis: "x",
+      orientation: "horizontal",
+      value: xTick,
+      text: String(labelValue),
+      index,
+      font: xAxis.font,
+      labelRenderer: xAxis.labelRenderer,
+    });
+  });
+  const maxXLabelLayout = getMaxAxisLabelLayout(xAxisLabelLayouts);
+  const xAxisTitleLayout = getAxisTitleLayout({
+    title: xAxis.title,
+    font: xAxis.font,
+  });
+  const xAxisTitleOutset = xAxisTitleLayout.hasContent
+    ? xAxisTitleLayout.height + xAxisTitleLayout.offset
+    : 0;
 
   const adjustedOutputWindow = { ...outputWindow };
 
@@ -159,23 +186,29 @@ export const transformHorizontalInputData = <
     let xMinAdjustment = 0;
     let xMaxAdjustment = 0;
 
-    yAxes.forEach((axis) => {
-      const labelWidth = maxCategoryLabelLayout.width;
-      if (
-        axis.axisSide === "left" &&
-        axis.labelPosition === "outset" &&
-        axis.tickCount > 0 &&
-        labelWidth > 0
-      ) {
-        xMinAdjustment += labelWidth + axis.labelOffset;
+    yAxes.forEach((axis, index) => {
+      const labelWidth = categoryAxisLayouts[index]?.maxLabelLayout.width ?? 0;
+      const titleOutset = categoryAxisLayouts[index]?.titleOutset ?? 0;
+
+      if (axis.axisSide === "left") {
+        xMinAdjustment += titleOutset;
+        if (
+          axis.labelPosition === "outset" &&
+          axis.tickCount > 0 &&
+          labelWidth > 0
+        ) {
+          xMinAdjustment += labelWidth + axis.labelOffset;
+        }
       }
-      if (
-        axis.axisSide === "right" &&
-        axis.labelPosition === "outset" &&
-        axis.tickCount > 0 &&
-        labelWidth > 0
-      ) {
-        xMaxAdjustment -= labelWidth + axis.labelOffset;
+      if (axis.axisSide === "right") {
+        xMaxAdjustment -= titleOutset;
+        if (
+          axis.labelPosition === "outset" &&
+          axis.tickCount > 0 &&
+          labelWidth > 0
+        ) {
+          xMaxAdjustment -= labelWidth + axis.labelOffset;
+        }
       }
     });
 
@@ -191,16 +224,18 @@ export const transformHorizontalInputData = <
       valueTickCount > 0 && maxXLabelLayout.width > 0
         ? maxXLabelLayout.height + xLabelOffset * 2
         : 0;
+    const xAxisOutset =
+      xAxisTitleOutset + (xAxis.labelPosition === "outset" ? xLabelOutset : 0);
 
-    if (xAxis.axisSide === "bottom" && xAxis.labelPosition === "outset") {
+    if (xAxis.axisSide === "bottom") {
       return [
         adjustedOutputWindow.yMin,
-        adjustedOutputWindow.yMax - xLabelOutset,
+        adjustedOutputWindow.yMax - xAxisOutset,
       ];
     }
-    if (xAxis.axisSide === "top" && xAxis.labelPosition === "outset") {
+    if (xAxis.axisSide === "top") {
       return [
-        adjustedOutputWindow.yMin + xLabelOutset,
+        adjustedOutputWindow.yMin + xAxisOutset,
         adjustedOutputWindow.yMax,
       ];
     }
@@ -264,11 +299,11 @@ export const transformHorizontalInputData = <
     xScale,
   });
 
-  const yAxesTransformed = yAxes.map(() => ({
+  const yAxesTransformed = yAxes.map((_, index) => ({
     yScale,
-    yTicksNormalized,
+    yTicksNormalized: categoryAxisLayouts[index]?.ticks ?? [],
     yData,
-    maxYLabel: maxCategoryLabelLayout.width,
+    maxYLabel: categoryAxisLayouts[index]?.maxLabelLayout.width ?? 0,
   }));
 
   return {

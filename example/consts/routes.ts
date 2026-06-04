@@ -1,9 +1,11 @@
-export const ChartRoutes: {
+export type ChartRoute = {
   title: string;
   description: string;
   path: string;
   url?: string;
-}[] = [
+};
+
+export const ChartRoutes: ChartRoute[] = [
   {
     title: "Line Chart",
     description:
@@ -43,6 +45,12 @@ export const ChartRoutes: {
     description:
       "This chart renders stacked horizontal bars with positive and negative value segments.",
     path: "/horizontal-stacked-bar",
+  },
+  {
+    title: "Horizontal Stacked Row Headers",
+    description:
+      "This chart uses custom axis label rendering to place row headers above horizontal stacked bars.",
+    path: "/horizontal-stacked-row-headers",
   },
   {
     title: "Bar Group",
@@ -111,6 +119,18 @@ export const ChartRoutes: {
     description:
       "This shows off the various ways to configure custom axis rendering.",
     path: "/axis-configuration",
+  },
+  {
+    title: "Axis Label Renderers",
+    description:
+      "Examples for paragraph, multilingual, multiline, and custom measured axis labels.",
+    path: "/axis-label-renderers",
+  },
+  {
+    title: "Axis Title Layout",
+    description:
+      "Examples for single-line and multiline Y-axis title placement on numeric and category axes.",
+    path: "/axis-title-layout",
   },
   {
     title: "Multiple Y Axes",
@@ -286,3 +306,88 @@ export const descriptionForRoute = (path: string) =>
 
 export const urlForRoute = (path: string) =>
   ChartRoutes.find((r) => r.path.includes(path))?.url;
+
+const ChartRouteSectionOrder = [
+  "Bar Charts",
+  "Line, Area & Point Charts",
+  "Pie & Donut Charts",
+  "Axes & Labels",
+  "Interaction & Gestures",
+  "Custom Rendering",
+  "Guides",
+  "Debug Fixtures",
+  "Other Examples",
+] as const;
+
+export type ChartRouteSectionTitle = (typeof ChartRouteSectionOrder)[number];
+
+export type ChartRouteSection = {
+  title: ChartRouteSectionTitle;
+  data: ChartRoute[];
+};
+
+export const getChartRouteSections = (
+  routes: ChartRoute[] = ChartRoutes,
+): ChartRouteSection[] =>
+  ChartRouteSectionOrder.map((title) => ({
+    title,
+    data: routes
+      .filter((route) => getChartRouteSection(route) === title)
+      .sort((a, b) => a.title.localeCompare(b.title)),
+  })).filter((section) => section.data.length > 0);
+
+const getChartRouteSection = ({
+  path,
+  title,
+}: ChartRoute): ChartRouteSectionTitle => {
+  if (path.endsWith("-debug") || title.includes("Debug")) {
+    return "Debug Fixtures";
+  }
+
+  if (path.startsWith("/guides")) return "Guides";
+
+  if (
+    path === "/horizontal-stacked-row-headers" ||
+    (path.includes("bar") && path !== "/horizontal-bands-line")
+  ) {
+    return "Bar Charts";
+  }
+
+  if (path.includes("pie") || path.includes("donut")) {
+    return "Pie & Donut Charts";
+  }
+
+  if (
+    path.includes("axis") ||
+    path === "/dashed-axes" ||
+    path === "/multiple-y-axes"
+  ) {
+    return "Axes & Labels";
+  }
+
+  if (
+    path.includes("gesture") ||
+    path.includes("pan") ||
+    path.includes("scroll") ||
+    path === "/chart-refs"
+  ) {
+    return "Interaction & Gestures";
+  }
+
+  if (path.includes("custom") || path === "/horizontal-bands-line") {
+    return "Custom Rendering";
+  }
+
+  if (
+    path.includes("area") ||
+    path.includes("line") ||
+    path.includes("scatter") ||
+    path === "/missing-data" ||
+    path === "/ordinal-data" ||
+    path === "/stock-price"
+  ) {
+    return "Line, Area & Point Charts";
+  }
+
+  return "Other Examples";
+};

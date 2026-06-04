@@ -83,4 +83,25 @@ describe("getBarLabelPosition", () => {
       }),
     ).toEqual({ x: 35, y: 195 });
   });
+
+  it("adds clearance for rotated labels above vertical bars", () => {
+    const labelPosition = getBarLabelPosition({
+      orientation: "vertical",
+      position: "top",
+      x: 80,
+      y: 100,
+      labelWidth: 48,
+      fontSize: 12,
+      labelRotate: -25,
+      barWidth: 18,
+      chartBounds,
+    });
+
+    const angle = (Math.PI / 180) * 25;
+    const rotatedClearance =
+      (48 * Math.sin(angle) + 12 * Math.cos(angle)) / 2 - 12 / 2;
+
+    expect(labelPosition.x).toBe(56);
+    expect(labelPosition.y).toBeCloseTo(100 - 5 - rotatedClearance);
+  });
 });

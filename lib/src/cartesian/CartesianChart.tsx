@@ -27,6 +27,7 @@ import type {
   Viewport,
   GestureHandlerConfig,
   CartesianChartOrientation,
+  AxisLabelRenderer,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
 import { transformHorizontalInputData } from "./utils/transformHorizontalInputData";
@@ -890,6 +891,11 @@ function CartesianChartContent<
                     | ((label: InputFields<RawData>[XK]) => string)
                     | undefined
                 }
+                labelRenderer={
+                  axis.labelRenderer as
+                    | AxisLabelRenderer<InputFields<RawData>[XK]>
+                    | undefined
+                }
                 xScale={zoomX.rescaleX(xScale)}
                 yScale={zoomY.rescaleY(yAxis.yScale)}
                 yTicksNormalized={yAxis.yTicksNormalized}
@@ -934,6 +940,7 @@ function CartesianChartContent<
                   : rescaledTicks
               }
               chartBounds={chartBounds}
+              orientation={orientation}
             />
           );
         })
@@ -948,6 +955,7 @@ function CartesianChartContent<
         ix={_tData.ix}
         isNumericalData={orientation === "horizontal" ? true : isNumericalData}
         chartBounds={chartBounds}
+        orientation={orientation}
         zoom={zoomX}
       />
     ) : null;
