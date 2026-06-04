@@ -219,7 +219,7 @@ export const useCandlestickPaths = ({
           addGeometryToPaths(candle, bodyPath, wickPath);
 
           return {
-            key: `${candle.status}-${candle.datumIndex}`,
+            key: `candlestick-${candle.datumIndex}`,
             geometry: candle,
             bodyPath,
             wickPath,

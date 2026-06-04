@@ -15,6 +15,7 @@ import {
 } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { AnimatedText } from "../components/AnimatedText";
+import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";
 import { Text } from "../components/Text";
 import { appColors } from "../consts/colors";
@@ -32,6 +33,9 @@ const STOCK_DATA = stockData.map((datum) => ({
 }));
 const MAIN_DATA = STOCK_DATA.slice(20, 90);
 const MAIN_TICK_VALUES = getMonthTickValues(MAIN_DATA);
+const WINDOW_SIZE = 18;
+const WINDOW_STEP = 12;
+const INITIAL_WINDOW_START = 70;
 
 type CandlestickExampleDatum = {
   session: string;
@@ -75,8 +79,11 @@ export default function CandlestickPage(props: { segment: string }) {
   const isDark = useDarkMode();
   const textColor = isDark ? appColors.text.dark : appColors.text.light;
   const axisColor = isDark ? "#71717a" : "#d4d4d8";
+  const [windowStart, setWindowStart] = React.useState(INITIAL_WINDOW_START);
   const { state: pressState, isActive } =
     useChartPressState(initChartPressState);
+  const windowData = STOCK_DATA.slice(windowStart, windowStart + WINDOW_SIZE);
+  const windowTickValues = getEndpointTickValues(windowData);
 
   const activeDate = useDerivedValue(() =>
     isActive ? formatDate(pressState.x.value.value) : "TSLA",
@@ -168,6 +175,78 @@ export default function CandlestickPage(props: { segment: string }) {
 
         <View style={styles.infoCardContainer}>
           <InfoCard>{description}</InfoCard>
+        </View>
+
+        <Text style={styles.sectionTitle}>Windowed updates</Text>
+        <View style={styles.smallChart}>
+          <CartesianChart
+            data={windowData}
+            xKey="date"
+            yKeys={["open", "high", "low", "close"]}
+            padding={{ left: 8, right: 8, top: 12, bottom: 4 }}
+            domainPadding={{ left: 22, right: 22, top: 10, bottom: 6 }}
+            xAxis={{
+              font,
+              tickValues: windowTickValues,
+              lineColor: axisColor,
+              labelColor: textColor,
+              formatXLabel: formatDayLabel,
+            }}
+            yAxis={[
+              {
+                yKeys: ["open", "high", "low", "close"],
+                font,
+                tickCount: 4,
+                lineColor: axisColor,
+                labelColor: textColor,
+                formatYLabel: (value) => `$${Math.round(Number(value))}`,
+              },
+            ]}
+          >
+            {({ points, chartBounds }) => (
+              <Candlestick
+                openPoints={points.open}
+                highPoints={points.high}
+                lowPoints={points.low}
+                closePoints={points.close}
+                chartBounds={chartBounds}
+                candleCount={WINDOW_SIZE}
+                candleRatio={0.7}
+                wickStrokeWidth={1.25}
+                // Per-candle paths animate more smoothly across changing windows.
+                candleOptions={() => ({})}
+                animate={{ type: "timing", duration: 250 }}
+              />
+            )}
+          </CartesianChart>
+        </View>
+        <View style={styles.windowControls}>
+          <Button
+            title="Earlier"
+            disabled={windowStart === 0}
+            style={[
+              styles.windowButton,
+              windowStart === 0 ? styles.disabledButton : null,
+            ]}
+            onPress={() =>
+              setWindowStart((start) => Math.max(0, start - WINDOW_STEP))
+            }
+          />
+          <Button
+            title="Later"
+            disabled={windowStart >= STOCK_DATA.length - WINDOW_SIZE}
+            style={[
+              styles.windowButton,
+              windowStart >= STOCK_DATA.length - WINDOW_SIZE
+                ? styles.disabledButton
+                : null,
+            ]}
+            onPress={() =>
+              setWindowStart((start) =>
+                Math.min(STOCK_DATA.length - WINDOW_SIZE, start + WINDOW_STEP),
+              )
+            }
+          />
         </View>
 
         <Text style={styles.sectionTitle}>Custom styling</Text>
@@ -323,6 +402,12 @@ const formatMonthLabel = (ms: number) => {
   return `${month} '${String(date.getFullYear()).slice(2)}`;
 };
 
+const formatDayLabel = (ms: number) => {
+  const date = new Date(ms);
+  const month = MONTHS[date.getMonth()];
+  return `${month} ${date.getDate()}`;
+};
+
 function getMonthTickValues(data: typeof STOCK_DATA) {
   const min = data[0]?.date;
   const max = data[data.length - 1]?.date;
@@ -340,6 +425,17 @@ function getMonthTickValues(data: typeof STOCK_DATA) {
   }
 
   return ticks;
+}
+
+function getEndpointTickValues(data: typeof STOCK_DATA) {
+  if (data.length === 0) return [];
+
+  const middleIndex = Math.floor(data.length / 2);
+  return [
+    data[0]?.date,
+    data[middleIndex]?.date,
+    data[data.length - 1]?.date,
+  ].filter((value): value is number => value != null);
 }
 
 const styles = StyleSheet.create({
@@ -387,5 +483,17 @@ const styles = StyleSheet.create({
   smallChart: {
     height: 260,
     paddingHorizontal: 12,
+  },
+  windowControls: {
+    flexDirection: "row",
+    gap: 12,
+    paddingHorizontal: 20,
+    marginTop: 8,
+  },
+  windowButton: {
+    flex: 1,
+  },
+  disabledButton: {
+    opacity: 0.45,
   },
 });
