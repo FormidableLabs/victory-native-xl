@@ -1,5 +1,17 @@
 # victory-native
 
+## 41.25.0
+
+### Minor Changes
+
+- Add optional Cartesian axis titles with automatic chart-space reservation. ([#672](https://github.com/FormidableLabs/victory-native-xl/pull/672))
+
+- Add data label formatting and rotation options for Cartesian bars. ([#672](https://github.com/FormidableLabs/victory-native-xl/pull/672))
+
+- Add measurement-aware custom Cartesian axis label renderers. ([#672](https://github.com/FormidableLabs/victory-native-xl/pull/672))
+
+- Add an opt-in Skia Paragraph axis label renderer helper for multilingual labels. ([#672](https://github.com/FormidableLabs/victory-native-xl/pull/672))
+
 ## 41.24.0
 
 ### Minor Changes
