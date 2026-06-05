@@ -9,12 +9,12 @@ each x value represents a time period.
 ```tsx
 import { Candlestick, CartesianChart, useChartPressState } from "victory-native";
 
-const press = useChartPressState({
-  x: DATA[0].date,
-  y: { open: 0, high: 0, low: 0, close: 0 },
-});
-
 export function MyChart() {
+  const press = useChartPressState({
+    x: DATA[0].date,
+    y: { open: 0, high: 0, low: 0, close: 0 },
+  });
+
   return (
     <CartesianChart
       data={DATA}
