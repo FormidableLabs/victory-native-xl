@@ -12,6 +12,7 @@ import {
   type CandlestickGeometry,
   type CandlestickStatus,
 } from "../utils/getCandlestickGeometry";
+import { resolveCandlestickPathOptions } from "../utils/resolveCandlestickPathOptions";
 
 export type CandlestickColors = {
   positive?: Color;
@@ -217,21 +218,19 @@ export const useCandlestickPaths = ({
           const bodyPath = Skia.Path.Make();
           const wickPath = Skia.Path.Make();
           addGeometryToPaths(candle, bodyPath, wickPath);
+          const { bodyOptions, wickOptions } = resolveCandlestickPathOptions({
+            color,
+            wickStrokeWidth,
+            options,
+          });
 
           return {
             key: `candlestick-${candle.datumIndex}`,
             geometry: candle,
             bodyPath,
             wickPath,
-            bodyOptions: {
-              color,
-              ...options.body,
-            },
-            wickOptions: {
-              color,
-              strokeWidth: wickStrokeWidth,
-              ...options.wick,
-            },
+            bodyOptions,
+            wickOptions,
           };
         }),
       };
