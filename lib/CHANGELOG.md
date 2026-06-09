@@ -1,5 +1,13 @@
 # victory-native
 
+## 41.26.0
+
+### Minor Changes
+
+- Add Cartesian candlestick chart rendering with `Candlestick`, `useCandlestickPaths`, and OHLC geometry utilities. ([#676](https://github.com/FormidableLabs/victory-native-xl/pull/676))
+
+  Includes examples for scrub interaction, windowed OHLC updates, custom candle styling, and doji or missing-value cases.
+
 ## 41.25.0
 
 ### Minor Changes
