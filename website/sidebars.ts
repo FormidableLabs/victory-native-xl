@@ -60,6 +60,14 @@ const sidebars = {
           label: "Scatter Paths",
           items: ["cartesian/scatter/scatter"],
         },
+        {
+          type: "category",
+          label: "Candlestick Paths",
+          items: [
+            "cartesian/candlestick/candlestick",
+            "cartesian/candlestick/use-candlestick-paths",
+          ],
+        },
       ],
     },
     {

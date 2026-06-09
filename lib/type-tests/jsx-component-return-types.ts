@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { BarGroup, Pie, StackedBar } from "victory-native";
+import { BarGroup, Candlestick, Pie, StackedBar } from "victory-native";
 
 type ComponentReturn = React.ReactElement | null;
 
@@ -10,6 +10,9 @@ export type BarGroupReturnIsComponentReturn = AssertComponentReturn<
 >;
 export type StackedBarReturnIsComponentReturn = AssertComponentReturn<
   ReturnType<typeof StackedBar>
+>;
+export type CandlestickReturnIsComponentReturn = AssertComponentReturn<
+  ReturnType<typeof Candlestick>
 >;
 export type PieChartReturnIsComponentReturn = AssertComponentReturn<
   ReturnType<typeof Pie.Chart>
