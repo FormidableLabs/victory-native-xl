@@ -80,16 +80,13 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
   const p2High = useDerivedValue(() => vec(chartLeft + w2.value, high$.value));
 
   const tooltipClip = useDerivedValue(() => {
-    const p = Skia.Path.Make();
-    p.addRRect(
+    return Skia.Path.RRect(
       Skia.RRectXY(
         Skia.XYWHRect(ttX.value, ttY.value, groupWidth + barGap * 2, ttH.value),
         3,
         3,
       ),
     );
-
-    return p;
   });
 
   return (

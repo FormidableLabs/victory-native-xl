@@ -9,10 +9,10 @@ export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
   const path = useMemo(() => {
     const { radius, center, startAngle, endAngle, innerRadius } = slice;
 
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     // Draw the outer arc
-    path.arcToOval(
+    builder.arcToOval(
       Skia.XYWHRect(
         center.x - radius,
         center.y - radius,
@@ -25,7 +25,7 @@ export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
     );
     if (slice.sliceIsEntireCircle) {
       // If there's only one data point, draw the entire circle
-      path.addOval(
+      builder.addOval(
         Skia.XYWHRect(
           center.x - radius,
           center.y - radius,
@@ -37,7 +37,7 @@ export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
 
     if (innerRadius > 0) {
       if (slice.sliceIsEntireCircle) {
-        path.addOval(
+        builder.addOval(
           Skia.XYWHRect(
             center.x - innerRadius,
             center.y - innerRadius,
@@ -45,10 +45,10 @@ export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
             innerRadius * 2,
           ),
         );
-        path.setFillType(FillType.EvenOdd);
+        builder.setFillType(FillType.EvenOdd);
       } else {
         // Draw the inner arc in reverse
-        path.arcToOval(
+        builder.arcToOval(
           Skia.XYWHRect(
             center.x - innerRadius,
             center.y - innerRadius,
@@ -62,10 +62,10 @@ export const useSlicePath = ({ slice }: SlicePathArgs): SkPath => {
       }
     } else {
       // If no inner radius, just draw a line back to the center (traditional pie slice)
-      path.lineTo(center.x, center.y);
+      builder.lineTo(center.x, center.y);
     }
 
-    return path;
+    return builder.build();
   }, [slice]);
 
   return path;

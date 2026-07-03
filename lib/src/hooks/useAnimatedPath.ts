@@ -81,7 +81,7 @@ export const useAnimatedPath = (
 
     // 1. Try direct Skia interpolation first (most performant and reliable)
     if (to && from && to.isInterpolatable(from)) {
-      const interpolated = to.interpolate(from, t);
+      const interpolated = Skia.Path.Interpolate(from, to, t);
       if (interpolated) {
         return interpolated;
       }
@@ -110,8 +110,9 @@ export const useAnimatedPath = (
         fromNormalized &&
         toNormalized.isInterpolatable(fromNormalized)
       ) {
-        const interpolatedNormalized = toNormalized.interpolate(
+        const interpolatedNormalized = Skia.Path.Interpolate(
           fromNormalized,
+          toNormalized,
           t,
         );
         if (interpolatedNormalized) {

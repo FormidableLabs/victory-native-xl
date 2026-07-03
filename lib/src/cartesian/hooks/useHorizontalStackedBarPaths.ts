@@ -92,7 +92,7 @@ export const useHorizontalStackedBarPaths = ({
       );
       const { roundedCorners, color, ...ops } = options;
 
-      const path = Skia.Path.Make();
+      const builder = Skia.PathBuilder.Make();
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
           rect.x,
@@ -103,13 +103,13 @@ export const useHorizontalStackedBarPaths = ({
           segment.value,
           "horizontal",
         );
-        path.addRRect(nonUniformRoundedRect);
+        builder.addRRect(nonUniformRoundedRect);
       } else {
-        path.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
+        builder.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
       }
 
       bars.push({
-        path,
+        path: builder.build(),
         key: `${segment.seriesIndex}-${segment.datumIndex}`,
         color: color ?? colors[segment.seriesIndex],
         ...ops,

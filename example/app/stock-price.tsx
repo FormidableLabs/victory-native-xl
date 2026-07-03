@@ -257,28 +257,28 @@ const StockArea = ({
   const { path: linePath } = useLinePath(points);
 
   const backgroundClip = useDerivedValue(() => {
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     if (isWindowActive) {
-      path.addRect(Skia.XYWHRect(left, top, startX.value - left, bottom - top));
-      path.addRect(
+      builder.addRect(
+        Skia.XYWHRect(left, top, startX.value - left, bottom - top),
+      );
+      builder.addRect(
         Skia.XYWHRect(endX.value, top, right - endX.value, bottom - top),
       );
     } else {
-      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
+      builder.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
     }
 
-    return path;
+    return builder.build();
   });
 
   const windowClip = useDerivedValue(() => {
-    if (!isWindowActive) return Skia.Path.Make();
+    if (!isWindowActive) return Skia.PathBuilder.Make().build();
 
-    const path = Skia.Path.Make();
-    path.addRect(
+    return Skia.Path.Rect(
       Skia.XYWHRect(startX.value, top, endX.value - startX.value, bottom - top),
     );
-    return path;
   });
 
   const windowLineColor = useDerivedValue(() => {

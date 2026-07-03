@@ -90,7 +90,7 @@ export const useStackedAreaPaths = ({
     const offsets = calculateOffsets(pointsArray, y0);
 
     return pointsArray.map((points, layerIndex) => {
-      const path = Skia.Path.Make();
+      const builder = Skia.PathBuilder.Make();
       const groups = groupPointsArray(points);
 
       let lowestPointOfLayer: number = y0;
@@ -123,9 +123,10 @@ export const useStackedAreaPaths = ({
           .curve(CURVES[curveType])(stitchedData);
 
         if (svgPath) {
-          path.addPath(
-            Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make(),
-          );
+          const subPath = Skia.Path.MakeFromSVGString(svgPath);
+          if (subPath) {
+            builder.addPath(subPath);
+          }
         }
       });
 
@@ -136,7 +137,7 @@ export const useStackedAreaPaths = ({
       });
 
       return {
-        path,
+        path: builder.build(),
         key: `area-${layerIndex}`,
         color: colors[layerIndex],
         ...options,

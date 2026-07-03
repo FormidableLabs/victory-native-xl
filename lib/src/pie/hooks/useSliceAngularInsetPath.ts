@@ -18,7 +18,7 @@ export const useSliceAngularInsetPath = ({
   const [path, paint] = useMemo(() => {
     const { radius, center, innerRadius } = slice;
 
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     // Convert angles to radians for calculations
     const startRadians = degreesToRadians(slice.startAngle);
@@ -49,10 +49,10 @@ export const useSliceAngularInsetPath = ({
       );
 
       // Move to center, draw line to start point, move to center, draw line to end point
-      path.moveTo(startPointInnerRadius.x, startPointInnerRadius.y);
-      path.lineTo(startPointOuterRadius.x, startPointOuterRadius.y);
-      path.moveTo(endPointInnerRadius.x, endPointInnerRadius.y);
-      path.lineTo(endPointOuterRadius.x, endPointOuterRadius.y);
+      builder.moveTo(startPointInnerRadius.x, startPointInnerRadius.y);
+      builder.lineTo(startPointOuterRadius.x, startPointOuterRadius.y);
+      builder.moveTo(endPointInnerRadius.x, endPointInnerRadius.y);
+      builder.lineTo(endPointOuterRadius.x, endPointOuterRadius.y);
     } else {
       // Calculate start and end points on the circumference
       const startPoint = calculatePointOnCircumference(
@@ -67,10 +67,10 @@ export const useSliceAngularInsetPath = ({
       );
 
       // Move to center, draw line to start point, move to center, draw line to end point
-      path.moveTo(center.x, center.y);
-      path.lineTo(startPoint.x, startPoint.y);
-      path.moveTo(center.x, center.y);
-      path.lineTo(endPoint.x, endPoint.y);
+      builder.moveTo(center.x, center.y);
+      builder.lineTo(startPoint.x, startPoint.y);
+      builder.moveTo(center.x, center.y);
+      builder.lineTo(endPoint.x, endPoint.y);
     }
 
     // Create Paint for inset
@@ -78,7 +78,7 @@ export const useSliceAngularInsetPath = ({
     insetPaint.setColor(Skia.Color(angularInset.angularStrokeColor));
     insetPaint.setStyle(PaintStyle.Stroke);
     insetPaint.setStrokeWidth(angularInset.angularStrokeWidth);
-    return [path, insetPaint] as const;
+    return [builder.build(), insetPaint] as const;
   }, [slice, angularInset]);
 
   return [path, paint] as const;

@@ -27,7 +27,7 @@ export const useBarPath = (
   });
 
   const path = React.useMemo(() => {
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     const baselineY = yScale(0);
 
@@ -45,13 +45,13 @@ export const useBarPath = (
           roundedCorners,
           Number(yValue),
         );
-        path.addRRect(nonUniformRoundedRect);
+        builder.addRRect(nonUniformRoundedRect);
       } else {
-        path.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
+        builder.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
       }
     });
 
-    return path;
+    return builder.build();
   }, [barWidth, points, roundedCorners, yScale]);
 
   return { path, barWidth };
