@@ -50,7 +50,7 @@ $ yarn test
 
 ### Headless golden tests
 
-Headless rendering is covered by golden PNG tests under `lib/test/headless/`. They render smoke fixtures with Skia’s Node headless API and compare output to committed reference images via `pixelmatch`. These tests run as part of `yarn test` and `yarn check:code`.
+Headless rendering is covered by golden PNG tests under `lib/test/headless/`. They render smoke fixtures with Skia’s Node headless API and compare output to committed reference images via `@blazediff/core`. These tests run as part of `yarn test` and `yarn check:code`.
 
 From the repo root:
 

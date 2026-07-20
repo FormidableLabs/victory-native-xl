@@ -1770,6 +1770,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@blazediff/core@npm:^1.9.3":
+  version: 1.9.3
+  resolution: "@blazediff/core@npm:1.9.3"
+  checksum: 10c0/5c53fc0d993f8a6f63956a7e1c72e0117f23191354e8215ca9f32aa577ae9a7cabb61c73b7fe9fb50b1d5aeb642014d73e653a038716c2586b9faa318fd48283
+  languageName: node
+  linkType: hard
+
 "@changesets/apply-release-plan@npm:^7.1.1":
   version: 7.1.1
   resolution: "@changesets/apply-release-plan@npm:7.1.1"
@@ -9659,17 +9666,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pixelmatch@npm:^7.1.0":
-  version: 7.2.0
-  resolution: "pixelmatch@npm:7.2.0"
-  dependencies:
-    pngjs: "npm:^7.0.0"
-  bin:
-    pixelmatch: bin/pixelmatch
-  checksum: 10c0/d8a2454ecf3a977738d6050ed087effa0a9f1b53a0da92d37381a74bb04db5c21e14cfcd41965fbdac4a5967aa5ff2525e2afe9826a77eae043b8339dafc53b6
-  languageName: node
-  linkType: hard
-
 "pkg-up@npm:^3.1.0":
   version: 3.1.0
   resolution: "pkg-up@npm:3.1.0"
@@ -11921,6 +11917,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "victory-native@workspace:lib"
   dependencies:
+    "@blazediff/core": "npm:^1.9.3"
     "@shopify/react-native-skia": "npm:2.0.2"
     "@types/d3-scale": "npm:^4.0.3"
     "@types/d3-shape": "npm:^3.1.1"
@@ -11933,7 +11930,6 @@ __metadata:
     d3-shape: "npm:^3.2.0"
     d3-zoom: "npm:^3.0.0"
     its-fine: "npm:^1.2.5"
-    pixelmatch: "npm:^7.1.0"
     pngjs: "npm:^7.0.0"
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"

@@ -49,6 +49,7 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "devDependencies": {
+    "@blazediff/core": "^1.9.3",
     "@shopify/react-native-skia": "2.0.2",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
@@ -57,7 +58,6 @@
     "@types/react": "~18.2.14",
     "@vitejs/plugin-react": "^4.3.4",
     "canvaskit-wasm": "^0.40.0",
-    "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
