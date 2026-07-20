@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import pixelmatch from "pixelmatch";
+import blazediff from "@blazediff/core";
 import { PNG } from "pngjs";
 
 const PIXEL_TOLERANCE_FRACTION = 0.001;
-const PIXELMATCH_THRESHOLD = 0.1;
+const DIFF_THRESHOLD = 0.1;
 
 export function compareGoldenPng(
   actual: Buffer,
@@ -36,13 +36,13 @@ export function compareGoldenPng(
   }
 
   const diff = new PNG({ width: expected.width, height: expected.height });
-  const diffPixels = pixelmatch(
+  const diffPixels = blazediff(
     Uint8Array.from(expected.data),
     Uint8Array.from(received.data),
     Uint8Array.from(diff.data),
     expected.width,
     expected.height,
-    { threshold: PIXELMATCH_THRESHOLD },
+    { threshold: DIFF_THRESHOLD },
   );
 
   const maxDiffPixels = Math.ceil(
