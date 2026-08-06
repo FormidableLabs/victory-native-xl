@@ -13,6 +13,12 @@ export const ChartRoutes: ChartRoute[] = [
     path: "/line-chart",
   },
   {
+    title: "Date Axis",
+    description:
+      "This chart uses Date objects for the x values. When every x value is a Date, the axis becomes a time scale: points are spaced by elapsed time and ticks fall on calendar boundaries.",
+    path: "/date-axis",
+  },
+  {
     title: "AreaRange Chart",
     description: "This chart demonstrates the AreaRange",
     path: "/area-range",

@@ -29,6 +29,7 @@ export function createFallbackChartState<
     xScale: fallbackScale,
     chartBounds: { left: 0, right: 0, top: 0, bottom: 0 },
     isNumericalData: false,
+    isDateData: false,
     xTicksNormalized: [] as number[],
     _tData: {
       ix: [],
