@@ -10,6 +10,7 @@ import {
   type WithSpringConfig,
   type WithTimingConfig,
 } from "react-native-reanimated";
+import { interpolatePath } from "./interpolatePath";
 
 export type PathAnimationConfig =
   | ({ type: "timing" } & WithTimingConfig)
@@ -81,7 +82,7 @@ export const useAnimatedPath = (
 
     // 1. Try direct Skia interpolation first (most performant and reliable)
     if (to && from && to.isInterpolatable(from)) {
-      const interpolated = Skia.Path.Interpolate(from, to, t);
+      const interpolated = interpolatePath(from, to, t);
       if (interpolated) {
         return interpolated;
       }
@@ -110,7 +111,7 @@ export const useAnimatedPath = (
         fromNormalized &&
         toNormalized.isInterpolatable(fromNormalized)
       ) {
-        const interpolatedNormalized = Skia.Path.Interpolate(
+        const interpolatedNormalized = interpolatePath(
           fromNormalized,
           toNormalized,
           t,
