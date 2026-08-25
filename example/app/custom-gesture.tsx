@@ -1,5 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   type CartesianActionsHandle,
   CartesianChart,

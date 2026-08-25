@@ -1,5 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, Linking } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";

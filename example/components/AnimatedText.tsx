@@ -23,7 +23,6 @@ export function AnimatedText({ text, ...rest }: AnimatedTextProps) {
   return (
     <AnimText
       {...rest}
-      value={text.value}
       // @ts-ignore
       animatedProps={animProps}
       editable={false}

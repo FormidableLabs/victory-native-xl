@@ -1,5 +1,6 @@
 import * as React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { BarGroup, CartesianChart } from "victory-native";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import { useDarkMode } from "react-native-dark";

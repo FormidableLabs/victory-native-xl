@@ -6,7 +6,8 @@ import {
 
 export const PanZoom = () => {};
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   CartesianChart,
   getTransformComponents,

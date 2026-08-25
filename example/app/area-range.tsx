@@ -1,7 +1,8 @@
 import { useFont } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
-import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { AreaRange, CartesianChart, Line } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { Button } from "../components/Button";

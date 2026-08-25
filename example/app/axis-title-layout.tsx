@@ -5,7 +5,8 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import * as React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Bar, CartesianChart, HorizontalBar, Line } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Text } from "example/components/Text";

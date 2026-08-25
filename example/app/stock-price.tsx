@@ -18,13 +18,8 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  type TextStyle,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, type TextStyle, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { format } from "date-fns";
 import {
   type SharedValue,
@@ -217,12 +212,17 @@ export default function StockPriceScreen(props: { segment: string }) {
           <>
             <AnimatedText
               text={activeDate}
+              defaultValue="Single or multi-touch the chart"
               style={{
                 fontSize: 16,
                 color: textColor,
               }}
             />
-            <AnimatedText text={activeHigh} style={activeHighStyle} />
+            <AnimatedText
+              text={activeHigh}
+              defaultValue="—"
+              style={activeHighStyle}
+            />
           </>
         </View>
         <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
