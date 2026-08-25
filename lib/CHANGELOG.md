@@ -1,5 +1,11 @@
 # victory-native
 
+## 42.0.0
+
+### Major Changes
+
+- Raise minimum `@shopify/react-native-skia` to `>=2.6.0` and migrate chart path construction to the immutable `PathBuilder` API. Raise minimum `react-native-reanimated` to `>=3.19.1` to align with Skia 2.6. ([#680](https://github.com/FormidableLabs/victory-native-xl/pull/680))
+
 ## 41.26.0
 
 ### Minor Changes
