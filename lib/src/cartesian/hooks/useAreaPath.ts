@@ -23,7 +23,7 @@ export const useAreaPath = (
       ? [cleanPointsArray(points)]
       : groupPointsArray(points);
 
-    const p = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     groups.forEach((group) => {
       const svgPath = area().y0(y0)?.curve(CURVES[curveType])(
@@ -31,10 +31,13 @@ export const useAreaPath = (
       );
       if (!svgPath) return;
 
-      p.addPath(Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make());
+      const subPath = Skia.Path.MakeFromSVGString(svgPath);
+      if (subPath) {
+        builder.addPath(subPath);
+      }
     });
 
-    return p;
+    return builder.build();
   }, [connectMissingData, points, y0, curveType]);
 
   return { path };

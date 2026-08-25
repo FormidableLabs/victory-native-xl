@@ -1,6 +1,7 @@
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StackedBar, CartesianChart, useChartPressState } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import { Text } from "example/components/Text";

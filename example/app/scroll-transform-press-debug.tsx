@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Stack } from "expo-router";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import {

@@ -15,10 +15,8 @@ export const Frame = ({
   const [y1 = 0, y2 = 0] = yScale.domain();
 
   const boundingFrame = React.useMemo(() => {
-    const framePath = Skia.Path.Make();
-
     if (typeof lineWidth === "number") {
-      framePath.addRect(
+      const framePath = Skia.Path.Rect(
         Skia.XYWHRect(
           xScale(x1),
           yScale(y1),

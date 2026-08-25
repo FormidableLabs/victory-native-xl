@@ -26,6 +26,15 @@ export default function Layout() {
           screenOptions={{
             headerTransparent: Boolean(Platform.OS === "ios"),
             headerBlurEffect: isDark ? "dark" : "light",
+            scrollEdgeEffects:
+              Platform.OS === "ios"
+                ? {
+                    top: "hidden",
+                    bottom: "hidden",
+                    left: "hidden",
+                    right: "hidden",
+                  }
+                : undefined,
             headerStyle: {
               backgroundColor:
                 Platform.OS === "android"

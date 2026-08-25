@@ -5,7 +5,8 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useDarkMode } from "react-native-dark";
 import { type SharedValue, useDerivedValue } from "react-native-reanimated";
 import {
@@ -104,10 +105,12 @@ export default function CandlestickPage(props: { segment: string }) {
         <View style={styles.readout}>
           <AnimatedText
             text={activeDate}
+            defaultValue="TSLA"
             style={[styles.activeDate, { color: textColor }]}
           />
           <AnimatedText
             text={activeValues}
+            defaultValue="O -  H -  L -  C -"
             style={[styles.activeValues, { color: textColor }]}
           />
         </View>

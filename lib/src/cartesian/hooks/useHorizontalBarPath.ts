@@ -28,7 +28,7 @@ export const useHorizontalBarPath = (
   });
 
   const path = React.useMemo(() => {
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
     const baselineX = xScale(0);
 
     points.forEach((point) => {
@@ -45,13 +45,13 @@ export const useHorizontalBarPath = (
           Number(point.yValue),
           "horizontal",
         );
-        path.addRRect(nonUniformRoundedRect);
+        builder.addRRect(nonUniformRoundedRect);
       } else {
-        path.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
+        builder.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
       }
     });
 
-    return path;
+    return builder.build();
   }, [barWidth, points, roundedCorners, xScale]);
 
   return { path, barWidth };

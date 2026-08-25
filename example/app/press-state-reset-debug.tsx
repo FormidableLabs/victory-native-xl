@@ -1,11 +1,6 @@
 import * as React from "react";
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import {

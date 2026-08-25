@@ -36,7 +36,7 @@ export const useBarGroupPaths = (
     const baselineY = yScale(0);
 
     return points.map((pointSet, i) => {
-      const p = Skia.Path.Make();
+      const builder = Skia.PathBuilder.Make();
       pointSet.forEach((point) => {
         const rect = getVerticalBarGroupRect({
           point,
@@ -57,12 +57,14 @@ export const useBarGroupPaths = (
             roundedCorners,
             Number(point.yValue),
           );
-          p.addRRect(nonUniformRoundedRect);
+          builder.addRRect(nonUniformRoundedRect);
         } else {
-          p.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
+          builder.addRect(
+            Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height),
+          );
         }
       });
-      return p;
+      return builder.build();
     });
   }, [barWidth, gapWidth, groupWidth, points, roundedCorners, yScale]);
 

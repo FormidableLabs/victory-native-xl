@@ -20,16 +20,19 @@ export const useLinePath = (
     const groups = connectMissingData
       ? [cleanPointsArray(points)]
       : groupPointsArray(points);
-    const p = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     groups.forEach((group) => {
       const svgPath = line().curve(CURVES[curveType])(stitchDataArray(group));
       if (!svgPath) return;
 
-      p.addPath(Skia.Path.MakeFromSVGString(svgPath) ?? Skia.Path.Make());
+      const subPath = Skia.Path.MakeFromSVGString(svgPath);
+      if (subPath) {
+        builder.addPath(subPath);
+      }
     });
 
-    return p;
+    return builder.build();
   }, [connectMissingData, points, curveType]);
 
   return { path };

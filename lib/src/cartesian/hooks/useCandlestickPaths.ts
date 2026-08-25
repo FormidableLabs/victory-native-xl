@@ -4,6 +4,7 @@ import {
   type Color,
   type PathProps,
   type SkPath,
+  type SkPathBuilder,
 } from "@shopify/react-native-skia";
 import type { ChartBounds, PointsArray } from "../../types";
 import { getBarWidth } from "../utils/getBarWidth";
@@ -129,15 +130,15 @@ const getStatusColor = (
 
 const addGeometryToPaths = (
   geometry: CandlestickGeometry,
-  bodyPath: SkPath,
-  wickPath: SkPath,
+  bodyBuilder: SkPathBuilder,
+  wickBuilder: SkPathBuilder,
 ) => {
-  wickPath.moveTo(geometry.wick.x, geometry.wick.y1);
-  wickPath.lineTo(geometry.wick.x, geometry.wick.y2);
+  wickBuilder.moveTo(geometry.wick.x, geometry.wick.y1);
+  wickBuilder.lineTo(geometry.wick.x, geometry.wick.y2);
 
   if (geometry.body.width <= 0 || geometry.body.height <= 0) return;
 
-  bodyPath.addRect(
+  bodyBuilder.addRect(
     Skia.XYWHRect(
       geometry.body.x,
       geometry.body.y,
@@ -147,17 +148,28 @@ const addGeometryToPaths = (
   );
 };
 
+type CandlestickPathBuilders = {
+  key: string;
+  status: CandlestickStatus;
+  bodyBuilder: SkPathBuilder;
+  wickBuilder: SkPathBuilder;
+  bodyOptions: Required<Pick<CandlestickBodyPathOptions, "color">>;
+  wickOptions: Required<
+    Pick<CandlestickWickPathOptions, "color" | "strokeWidth">
+  >;
+};
+
 const makeEmptyGroups = (
   candleColors?: CandlestickColors,
   wickStrokeWidth = 1,
-) =>
+): CandlestickPathBuilders[] =>
   (["positive", "negative", "neutral"] as const).map((status) => {
     const color = getStatusColor(status, candleColors);
     return {
       key: status,
       status,
-      bodyPath: Skia.Path.Make(),
-      wickPath: Skia.Path.Make(),
+      bodyBuilder: Skia.PathBuilder.Make(),
+      wickBuilder: Skia.PathBuilder.Make(),
       bodyOptions: { color },
       wickOptions: { color, strokeWidth: wickStrokeWidth },
     };
@@ -215,9 +227,9 @@ export const useCandlestickPaths = ({
         candles: geometry.map((candle) => {
           const color = getStatusColor(candle.status, candleColors);
           const options = candleOptions(getOptionsContext(candle));
-          const bodyPath = Skia.Path.Make();
-          const wickPath = Skia.Path.Make();
-          addGeometryToPaths(candle, bodyPath, wickPath);
+          const bodyBuilder = Skia.PathBuilder.Make();
+          const wickBuilder = Skia.PathBuilder.Make();
+          addGeometryToPaths(candle, bodyBuilder, wickBuilder);
           const { bodyOptions, wickOptions } = resolveCandlestickPathOptions({
             color,
             wickStrokeWidth,
@@ -227,8 +239,8 @@ export const useCandlestickPaths = ({
           return {
             key: `candlestick-${candle.datumIndex}`,
             geometry: candle,
-            bodyPath,
-            wickPath,
+            bodyPath: bodyBuilder.build(),
+            wickPath: wickBuilder.build(),
             bodyOptions,
             wickOptions,
           };
@@ -242,19 +254,29 @@ export const useCandlestickPaths = ({
         acc[group.status] = group;
         return acc;
       },
-      {} as Record<CandlestickStatus, CandlestickPathGroup>,
+      {} as Record<CandlestickStatus, CandlestickPathBuilders>,
     );
 
     geometry.forEach((candle) => {
       const group = groupByStatus[candle.status];
-      addGeometryToPaths(candle, group.bodyPath, group.wickPath);
+      addGeometryToPaths(candle, group.bodyBuilder, group.wickBuilder);
     });
 
     return {
       mode: "grouped",
       candleWidth,
       geometry,
-      groups,
+      groups: groups.map(
+        ({ bodyBuilder, wickBuilder, bodyOptions, wickOptions, key, status }) =>
+          ({
+            key,
+            status,
+            bodyPath: bodyBuilder.build(),
+            wickPath: wickBuilder.build(),
+            bodyOptions,
+            wickOptions,
+          }) satisfies CandlestickPathGroup,
+      ),
     };
   }, [candleColors, candleOptions, candleWidth, geometry, wickStrokeWidth]);
 };

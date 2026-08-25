@@ -7,7 +7,8 @@ import {
 } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CartesianChart, Line, Scatter } from "victory-native";
 import type { PointsArray, Scale } from "lib/src/types";
 import { useDarkMode } from "react-native-dark";
@@ -148,13 +149,23 @@ type FixedLine = {
   data: PointsArray;
 };
 const DashedFixedLine = ({ data, xScale, yScale }: FixedLine) => {
-  const dottedLinePath = Skia.Path.Make();
-  dottedLinePath.moveTo(xScale(0), yScale(46));
-  dottedLinePath.lineTo(
-    xScale((data[data.length - 1]!.xValue as number) + 1),
-    yScale(46),
-  );
-  dottedLinePath.dash(8, 4, 0);
+  const dottedLinePath =
+    Skia.Path.Dash(
+      Skia.PathBuilder.Make()
+        .moveTo(xScale(0), yScale(46))
+        .lineTo(
+          xScale((data[data.length - 1]!.xValue as number) + 1),
+          yScale(46),
+        )
+        .build(),
+      8,
+      4,
+      0,
+    ) ??
+    Skia.PathBuilder.Make()
+      .moveTo(xScale(0), yScale(46))
+      .lineTo(xScale((data[data.length - 1]!.xValue as number) + 1), yScale(46))
+      .build();
 
   return (
     <Path
