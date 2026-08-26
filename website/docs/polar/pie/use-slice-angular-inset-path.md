@@ -1,6 +1,6 @@
-# `useSliceAngularPath`
+# `useSliceAngularInsetPath`
 
-The `useSliceAngularPath` hook takes a `PieSliceData` as input, and returns an array of Skia `[SkPath, SkPaint]` objects that represent the path and the paint for that pie slice.
+The `useSliceAngularInsetPath` hook takes `PieSliceData` and angular inset styling as input, and returns an array of Skia `[SkPath, SkPaint]` objects that represent the path and paint for that pie slice.
 
 :::info
 
@@ -11,15 +11,30 @@ The `useSliceAngularPath` hook takes a `PieSliceData` as input, and returns an a
 ## Example
 
 ```tsx
-import { Pie, useSliceAngularPath, type PieSliceData } from "victory-native";
+import {
+  Pie,
+  useSliceAngularInsetPath,
+  type PieSliceData,
+} from "victory-native";
 import { Path } from "@shopify/react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomSliceAngularInset({ slice }: { slice: PieSliceData }) {
-  // 👇 use the hook to generate a path and paint object.
-  const [path, insetPaint] = useSliceAngularInsetPath({ slice, angularInset });
+  const angularInset = {
+    angularStrokeColor: "white",
+    angularStrokeWidth: 4,
+  };
+  // 👇 The paint remains available as the second tuple item for compatibility.
+  const [path] = useSliceAngularInsetPath({ slice, angularInset });
   /* 👇 experiment with any other customizations you want */
-  return <Path path={path} paint={insetPaint} {...rest} />;
+  return (
+    <Path
+      path={path}
+      style="stroke"
+      color={angularInset.angularStrokeColor}
+      strokeWidth={angularInset.angularStrokeWidth}
+    />
+  );
 }
 
 export function MyChart() {
@@ -34,10 +49,13 @@ export function MyChart() {
 
 ## Arguments
 
-`useSliceAngularPath` has a function signature as follows:
+`useSliceAngularInsetPath` has a function signature as follows:
 
 ```ts
-useSliceAngularPath(slice: PieSliceData): [SkPath, SkPaint]
+useSliceAngularInsetPath({
+  slice: PieSliceData,
+  angularInset: PieSliceAngularInsetData,
+}): readonly [SkPath, SkPaint]
 ```
 
 ### `slice`
@@ -49,3 +67,5 @@ The `slice` argument is a `PieSliceData` object used to generate the slices's pa
 ### [SkPath, SkPaint]
 
 The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element. The `SkPaint` path object to be used as the `paint` argument of a Skia `<Path />` element.
+
+For consistent rendering across native and web, prefer styling the path with explicit `style`, `color`, and `strokeWidth` props as shown above. The `SkPaint` tuple item remains available for backward compatibility.
