@@ -41,7 +41,7 @@ export function Scatter({
   ...rest
 }: React.PropsWithChildren<ScatterProps>) {
   const path = React.useMemo(() => {
-    const p = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     points.forEach((pt) => {
       const { x, y } = pt;
@@ -49,13 +49,13 @@ export function Scatter({
 
       const r = typeof radius === "function" ? radius(pt) : radius;
 
-      if (shape === "circle") p.addCircle(x, y, r);
+      if (shape === "circle") builder.addCircle(x, y, r);
       else if (shape === "square")
-        p.addRect(Skia.XYWHRect(x - r, y - r, r * 2, r * 2));
-      else if (shape === "star") p.addPath(calculateStarPath(x, y, r, 5));
+        builder.addRect(Skia.XYWHRect(x - r, y - r, r * 2, r * 2));
+      else if (shape === "star") builder.addPath(calculateStarPath(x, y, r, 5));
     });
 
-    return p;
+    return builder.build();
   }, [points, radius, shape]);
 
   return React.createElement(animate ? AnimatedPath : Path, {
@@ -79,12 +79,12 @@ const calculateStarPath = (
     vectors.unshift([x, y]);
   }
 
-  const path = Skia.Path.Make();
+  const builder = Skia.PathBuilder.Make();
   const firstVec = vectors[0];
-  firstVec && path.moveTo(firstVec[0], firstVec[1]);
+  firstVec && builder.moveTo(firstVec[0], firstVec[1]);
   for (const vec of vectors.slice(1)) {
-    path.lineTo(vec[0], vec[1]);
+    builder.lineTo(vec[0], vec[1]);
   }
-  path.close();
-  return path;
+  builder.close();
+  return builder.build();
 };

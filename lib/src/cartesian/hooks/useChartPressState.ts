@@ -61,9 +61,7 @@ export type ChartPressState<Init extends ChartPressStateInit> = {
 const useIsPressActive = <Init extends ChartPressStateInit>(
   value: ChartPressState<Init>,
 ) => {
-  const [isPressActive, setIsPressActive] = React.useState(
-    () => value.isActive.value,
-  );
+  const [isPressActive, setIsPressActive] = React.useState(false);
 
   useAnimatedReaction(
     () => value.isActive.value,

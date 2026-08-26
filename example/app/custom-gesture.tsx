@@ -1,5 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   type CartesianActionsHandle,
   CartesianChart,
@@ -7,9 +8,8 @@ import {
   useChartPressState,
 } from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
-import type { SharedValue } from "react-native-reanimated";
+import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
-import { useRef } from "react";
 import { InfoCard } from "example/components/InfoCard";
 import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";
@@ -17,11 +17,13 @@ import inter from "../assets/inter-medium.ttf";
 export default function CustomGestureScreen() {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
-  const ref = useRef<CartesianActionsHandle<typeof state>>(null);
+  const actions = useSharedValue<CartesianActionsHandle<typeof state> | null>(
+    null,
+  );
 
   const tapGesture = Gesture.Tap().onStart((e) => {
     state.isActive.value = true;
-    ref.current?.handleTouch(state, e.x, e.y);
+    actions.value?.handleTouch(state, e.x, e.y);
   });
   const composed = Gesture.Race(tapGesture);
 
@@ -36,7 +38,7 @@ export default function CustomGestureScreen() {
             font,
           }}
           customGestures={composed}
-          actionsRef={ref}
+          actionsRef={actions}
         >
           {({ points }) => (
             <>

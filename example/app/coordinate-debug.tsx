@@ -1,5 +1,6 @@
 import * as React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import {
   CartesianChart,
@@ -55,6 +56,7 @@ const initialReadout: Readout = {
 export default function CoordinateDebugScreen() {
   const font = useFont(inter, 12);
   const nestedPress = useChartPressState({ x: 0, y: { highTmp: 0 } });
+  const negativeRangePress = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const transformedPress = useChartPressState({ x: 0, y: { highTmp: 0 } });
   const { state: transformState } = useChartTransformState();
 
@@ -94,6 +96,32 @@ export default function CoordinateDebugScreen() {
           </View>
         </View>
         <ReadoutPanel state={nestedPress.state} />
+
+        <Text style={styles.heading}>Negative X Range Viewport</Text>
+        <View style={styles.chartFrame}>
+          <CartesianChart
+            data={DATA}
+            xKey="day"
+            yKeys={["highTmp"]}
+            viewport={{ x: [8, 18] }}
+            chartPressState={negativeRangePress.state}
+            axisOptions={{ font }}
+          >
+            {({ points }) => (
+              <>
+                <Line points={points.highTmp} color="red" strokeWidth={3} />
+                <Scatter points={points.highTmp} color="#a78bfa" radius={4} />
+                {negativeRangePress.isActive && (
+                  <ToolTip
+                    x={negativeRangePress.state.x.position}
+                    y={negativeRangePress.state.y.highTmp.position}
+                  />
+                )}
+              </>
+            )}
+          </CartesianChart>
+        </View>
+        <ReadoutPanel state={negativeRangePress.state} />
 
         <Text style={styles.heading}>Transform + Press Chart</Text>
         <View style={styles.chartFrame}>

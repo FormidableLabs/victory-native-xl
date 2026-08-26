@@ -1,6 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { CartesianChart, Line, useChartPressState } from "victory-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView } from "react-native-gesture-handler";
+import {
+  CartesianChart,
+  Line,
+  type ChartPressPanConfig,
+  useChartPressState,
+} from "victory-native";
 import { Circle, useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
@@ -12,7 +19,15 @@ const DATA = Array.from({ length: 31 }, (_, i) => ({
   highTmp: 40 + 30 * Math.random(),
 }));
 
-const LineChart = () => {
+type ExternalGesture = NonNullable<
+  ChartPressPanConfig["simultaneousWithExternalGesture"]
+>;
+
+const LineChart = ({
+  simultaneousWithExternalGesture,
+}: {
+  simultaneousWithExternalGesture: ExternalGesture;
+}) => {
   const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
   return (
@@ -25,6 +40,12 @@ const LineChart = () => {
         font,
       }}
       chartPressState={state}
+      chartPressConfig={{
+        pan: {
+          activateAfterLongPress: 100,
+          simultaneousWithExternalGesture,
+        },
+      }}
     >
       {({ points }) => (
         <>
@@ -39,13 +60,23 @@ const LineChart = () => {
 };
 
 export default function GettingStartedScreen() {
+  const scrollViewRef = React.useRef(null);
+  const simultaneousWithExternalGesture = scrollViewRef as ExternalGesture;
+
   return (
     <SafeAreaView style={styles.safeView}>
-      <ScrollView contentContainerStyle={styles.optionsScrollView}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.optionsScrollView}
+      >
         {Array.from({ length: 5 }, (_, i) => (
           <React.Fragment key={i}>
             <View style={styles.chart}>
-              <LineChart />
+              <LineChart
+                simultaneousWithExternalGesture={
+                  simultaneousWithExternalGesture
+                }
+              />
             </View>
             <InfoCard style={styles.card}>
               Just a page with a number of charts nested within a ScrollView

@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Image, ScrollView, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   type CartesianActionsHandle,
   CartesianChart,
@@ -14,13 +9,18 @@ import {
   type CartesianChartRef,
 } from "victory-native";
 import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
-import { type SharedValue } from "react-native-reanimated";
+import {
+  runOnJS,
+  type SharedValue,
+  useAnimatedReaction,
+} from "react-native-reanimated";
 import { useDarkMode } from "react-native-dark";
 import { Button } from "../components/Button";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
 
 const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+const PROGRAMMATIC_TOUCH = { x: 180, y: 180 };
 
 const DATA = (numberPoints = 13) =>
   Array.from({ length: numberPoints }, (_, index) => ({
@@ -63,15 +63,54 @@ export default function ChartRefsExample() {
   });
   const chartRef =
     React.useRef<CartesianChartRef<typeof state | undefined>>(null);
-  const actionRef = React.useRef<CartesianActionsHandle>(null);
+  const actionRef = React.useRef<CartesianActionsHandle<typeof state> | null>(
+    null,
+  );
   const [snapshotUri, setSnapshotUri] = React.useState<string | null>(null);
+  const [lastAction, setLastAction] = React.useState("none");
+  const [matchedIndex, setMatchedIndex] = React.useState(-1);
+
+  useAnimatedReaction(
+    () => state.matchedIndex.value,
+    (value, previousValue) => {
+      if (value !== previousValue) {
+        runOnJS(setMatchedIndex)(value);
+      }
+    },
+  );
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLastAction("actions ref auto");
+      state.isActive.value = true;
+      actionRef.current?.handleTouch(
+        state,
+        PROGRAMMATIC_TOUCH.x,
+        PROGRAMMATIC_TOUCH.y,
+      );
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [state]);
 
   const handleProgrammaticTouch = () => {
-    if (chartRef.current) {
-      const x = Math.floor(Math.random() * data.length);
-      const y = randomNumber();
-      chartRef.current.actions.handleTouch(state, x, y);
-    }
+    setLastAction("chart ref");
+    state.isActive.value = true;
+    chartRef.current?.actions.handleTouch(
+      state,
+      PROGRAMMATIC_TOUCH.x,
+      PROGRAMMATIC_TOUCH.y,
+    );
+  };
+
+  const handleActionsRefTouch = () => {
+    setLastAction("actions ref");
+    state.isActive.value = true;
+    actionRef.current?.handleTouch(
+      state,
+      PROGRAMMATIC_TOUCH.x,
+      PROGRAMMATIC_TOUCH.y,
+    );
   };
 
   const handleRedraw = () => {
@@ -178,10 +217,14 @@ export default function ChartRefsExample() {
         </View>
         <View style={styles.buttonContainer}>
           <Button onPress={handleProgrammaticTouch} title="Trigger Touch" />
+          <Button onPress={handleActionsRefTouch} title="Actions Ref Touch" />
           <Button onPress={handleRedraw} title="Redraw" />
           <Button onPress={handleSnapshot} title="Take Snapshot" />
           <Button onPress={handleAsyncSnapshot} title="Async Snapshot" />
         </View>
+        <Text style={styles.debugLabel}>
+          Last action: {lastAction} | matchedIndex: {matchedIndex}
+        </Text>
 
         {snapshotUri && (
           <View style={styles.snapshotContainer}>
@@ -215,6 +258,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginTop: 16,
     gap: 8,
+  },
+  debugLabel: {
+    marginTop: 16,
+    color: appColors.text.light,
+    fontSize: 14,
+    $dark: {
+      color: appColors.text.dark,
+    },
   },
   snapshotContainer: {
     marginTop: 20,

@@ -15,6 +15,9 @@
     "dev:example": "yarn workspace example start",
     "dev": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example\"",
     "dev:ios": "concurrently -n lib,example -c blue,green \"yarn dev:lib\" \"yarn dev:example --ios\"",
+    "docs:install": "cd website && yarn install --frozen-lockfile",
+    "docs:dev": "cd website && yarn start",
+    "docs:build": "cd website && yarn build",
     "test": "yarn workspace victory-native test",
     "test:watch": "yarn workspace victory-native test:watch",
     "changeset": "changeset",
@@ -22,7 +25,7 @@
     "version": "yarn changeset version && yarn install --no-immutable"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
+    "@changesets/cli": "^2.31.0",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^6.3.0",

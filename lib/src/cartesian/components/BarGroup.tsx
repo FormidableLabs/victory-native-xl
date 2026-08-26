@@ -61,13 +61,17 @@ export function BarGroup({
   const firstBar = bars[0];
   if (!firstBar) return null;
 
-  return bars.map((props, i) =>
-    React.createElement(BarGroupBar, {
-      ...props,
-      // @ts-ignore
-      __path: paths[i],
-      key: i,
-    }),
+  return (
+    <>
+      {bars.map((props, i) =>
+        React.createElement(BarGroupBar, {
+          ...props,
+          // @ts-ignore
+          __path: paths[i],
+          key: i,
+        }),
+      )}
+    </>
   );
 }
 BarGroup.Bar = BarGroupBar;

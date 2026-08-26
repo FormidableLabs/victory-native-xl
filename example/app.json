@@ -1,18 +1,12 @@
 {
   "expo": {
     "name": "Victory",
-    "newArchEnabled": true,
     "slug": "victory-native-xl-demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "foobar",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#000000"
-    },
     "assetBundlePatterns": ["**/*"],
     "platforms": ["android", "ios", "web"],
     "ios": {
@@ -24,7 +18,22 @@
       "userInterfaceStyle": "automatic",
       "package": "com.formidable.victorynativexldemo"
     },
-    "plugins": ["expo-router", "expo-asset", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#000000"
+        }
+      ]
+    ],
+    "experiments": {
+      "reactCompiler": true
+    },
     "extra": {
       "router": {
         "origin": false

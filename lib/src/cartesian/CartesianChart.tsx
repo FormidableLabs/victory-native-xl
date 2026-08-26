@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Group, type CanvasRef } from "@shopify/react-native-skia";
-import { useSharedValue } from "react-native-reanimated";
+import { type SharedValue, useSharedValue } from "react-native-reanimated";
+import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import {
   type ComposedGesture,
   Gesture,
   type TouchData,
 } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
-import { ZoomTransform } from "d3-zoom";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
 import type {
@@ -20,13 +20,17 @@ import type {
   ChartBounds,
   YAxisInputProps,
   XAxisInputProps,
+  XAxisPropsWithDefaults,
+  YAxisPropsWithDefaults,
   FrameInputProps,
   ChartPressPanConfig,
   Viewport,
   GestureHandlerConfig,
+  CartesianChartOrientation,
+  AxisLabelRenderer,
 } from "../types";
 import { transformInputData } from "./utils/transformInputData";
-import { findClosestPoint } from "../utils/findClosestPoint";
+import { transformHorizontalInputData } from "./utils/transformHorizontalInputData";
 import { valueFromSidedNumber } from "../utils/valueFromSidedNumber";
 import { asNumber } from "../utils/asNumber";
 import type {
@@ -37,6 +41,7 @@ import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { XAxis } from "./components/XAxis";
 import { YAxis } from "./components/YAxis";
+import { CategoryYAxis } from "./components/CategoryYAxis";
 import { Frame } from "./components/Frame";
 import { useBuildChartAxis } from "./hooks/useBuildChartAxis";
 import { type ChartTransformState } from "./hooks/useChartTransformState";
@@ -48,6 +53,7 @@ import {
 } from "./utils/transformGestures";
 import {
   CartesianTransformProvider,
+  CartesianTransformValueProvider,
   useCartesianTransformContext,
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
@@ -60,6 +66,15 @@ import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
 import { createFallbackChartState } from "./utils/createFallbackChartState";
 import { getCartesianTouchCoordinates } from "./utils/getCartesianTouchCoordinates";
+import { resetChartPressState } from "./utils/resetChartPressState";
+import { getClosestDatumIndex } from "./utils/getClosestDatumIndex";
+import { getStackedBarTouchSegmentIndex } from "./utils/getStackedBarTouchSegmentIndex";
+import {
+  type ChartPressBootstrapEntry,
+  pruneChartPressBootstrap,
+} from "./utils/chartPressBootstrap";
+import { createSafeZoomTransform } from "./utils/createSafeZoomTransform";
+import { getCartesianChartBounds } from "./utils/getCartesianChartBounds";
 
 export type CartesianActionsHandle<T = undefined> =
   T extends ChartPressState<infer S>
@@ -70,6 +85,10 @@ export type CartesianActionsHandle<T = undefined> =
       : never
     : never;
 
+export type CartesianActionsRef<T = undefined> =
+  | MutableRefObject<CartesianActionsHandle<T> | null>
+  | SharedValue<CartesianActionsHandle<T> | null>;
+
 export type CartesianChartRef<T = undefined> = {
   /**
    * The Skia canvas ref for imperative drawing. This is `null` in headless mode
@@ -79,7 +98,21 @@ export type CartesianChartRef<T = undefined> = {
   actions: CartesianActionsHandle<T>;
 };
 
-type CartesianChartProps<
+type CartesianChartAxisProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+  XLabel,
+  YLabel,
+> = {
+  axisOptions?: Partial<
+    Omit<AxisProps<RawData, XK, YK, XLabel, YLabel>, "xScale" | "yScale">
+  >;
+  xAxis?: XAxisInputProps<RawData, XK, XLabel>;
+  yAxis?: YAxisInputProps<RawData, YK, YLabel>[];
+};
+
+type CartesianChartBaseProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
@@ -102,7 +135,6 @@ type CartesianChartProps<
   renderOutside?: (
     args: CartesianChartRenderArg<RawData, YK>,
   ) => React.ReactNode;
-  axisOptions?: Partial<Omit<AxisProps<RawData, XK, YK>, "xScale" | "yScale">>;
   onChartBoundsChange?: (bounds: ChartBounds) => void;
   onScaleChange?: (
     xScale: ScaleLinear<number, number>,
@@ -112,8 +144,6 @@ type CartesianChartProps<
    * @deprecated This prop will eventually be replaced by the new `chartPressConfig`. For now it's being kept around for backwards compatibility sake.
    */
   gestureLongPressDelay?: number;
-  xAxis?: XAxisInputProps<RawData, XK>;
-  yAxis?: YAxisInputProps<RawData, YK>[];
   frame?: FrameInputProps;
   transformState?: ChartTransformState;
   transformConfig?: {
@@ -121,13 +151,13 @@ type CartesianChartProps<
     pinch?: PinchTransformGestureConfig;
   };
   customGestures?: ComposedGesture;
-  actionsRef?: MutableRefObject<CartesianActionsHandle<
+  actionsRef?: CartesianActionsRef<
     | ChartPressState<{
         x: InputFields<RawData>[XK];
         y: Record<YK, number>;
       }>
     | undefined
-  > | null>;
+  >;
   ref?: React.Ref<
     CartesianChartRef<
       | ChartPressState<{
@@ -139,6 +169,71 @@ type CartesianChartProps<
   >;
 } & ChartLayoutModeProps;
 
+type CartesianChartVerticalProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<
+    RawData,
+    XK,
+    YK,
+    InputFields<RawData>[XK],
+    RawData[YK]
+  > & {
+    orientation?: "vertical";
+  };
+
+type CartesianChartHorizontalProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<RawData, XK, YK, number, InputFields<RawData>[XK]> & {
+    orientation: "horizontal";
+  };
+
+type CartesianChartDynamicOrientationProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> = CartesianChartBaseProps<RawData, XK, YK> &
+  CartesianChartAxisProps<
+    RawData,
+    XK,
+    YK,
+    InputFields<RawData>[XK] | number,
+    RawData[YK] | InputFields<RawData>[XK]
+  > & {
+    orientation: CartesianChartOrientation;
+  };
+
+type CartesianChartProps<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+> =
+  | CartesianChartVerticalProps<RawData, XK, YK>
+  | CartesianChartHorizontalProps<RawData, XK, YK>
+  | CartesianChartDynamicOrientationProps<RawData, XK, YK>;
+
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(props: CartesianChartHorizontalProps<RawData, XK, YK>): React.ReactElement;
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(props: CartesianChartVerticalProps<RawData, XK, YK>): React.ReactElement;
+export function CartesianChart<
+  RawData extends Record<string, unknown>,
+  XK extends keyof InputFields<RawData>,
+  YK extends keyof NumericalFields<RawData>,
+>(
+  props: CartesianChartDynamicOrientationProps<RawData, XK, YK>,
+): React.ReactElement;
 export function CartesianChart<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
@@ -150,11 +245,39 @@ export function CartesianChart<
   ...rest
 }: CartesianChartProps<RawData, XK, YK>) {
   return (
-    <CartesianTransformProvider transformState={transformState}>
-      <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
-        {children}
-      </CartesianChartContent>
-    </CartesianTransformProvider>
+    <FiberProvider>
+      <CartesianTransformProvider transformState={transformState}>
+        <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
+          {children}
+        </CartesianChartContent>
+      </CartesianTransformProvider>
+    </FiberProvider>
+  );
+}
+
+function CartesianCanvas({
+  children,
+  ...props
+}: React.PropsWithChildren<
+  Pick<
+    React.ComponentProps<typeof ChartWrapper>,
+    | "isHeadless"
+    | "explicitSize"
+    | "onLayout"
+    | "hasMeasuredLayoutSize"
+    | "canvasSize"
+    | "canvasRef"
+    | "gestureOverlay"
+  >
+>) {
+  const Bridge: ContextBridge = useContextBridge();
+
+  return (
+    <ChartWrapper
+      {...props}
+      chartContent={children}
+      wrapCanvasContent={(content) => <Bridge>{content}</Bridge>}
+    />
   );
 }
 
@@ -166,6 +289,7 @@ function CartesianChartContent<
   data,
   xKey,
   yKeys,
+  orientation = "vertical",
   padding,
   domainPadding,
   children,
@@ -201,23 +325,31 @@ function CartesianChartContent<
     undefined,
   );
   const canvasRef = React.useRef<CanvasRef | null>(null);
-  const normalizedAxisProps = useBuildChartAxis({
-    xAxis,
-    yAxis,
+  const chartPressStateRef = React.useRef(chartPressState);
+  chartPressStateRef.current = chartPressState;
+  const yKeysKey = yKeys.join("\u0000");
+  const normalizedAxisProps = useBuildChartAxis<RawData, XK, YK, never, never>({
+    xAxis: xAxis as XAxisInputProps<RawData, XK, never> | undefined,
+    yAxis: yAxis as YAxisInputProps<RawData, YK, never>[] | undefined,
     frame,
     yKeys,
-    axisOptions,
+    axisOptions: axisOptions as
+      | Partial<
+          Omit<AxisProps<RawData, XK, YK, never, never>, "xScale" | "yScale">
+        >
+      | undefined,
   });
+  const axisScales = axisOptions?.axisScales;
 
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
   const transform = useCartesianTransformContext();
   const zoomX = React.useMemo(
-    () => new ZoomTransform(transform.k, transform.tx, transform.ty),
+    () => createSafeZoomTransform(transform.k, transform.tx, transform.ty),
     [transform.k, transform.tx, transform.ty],
   );
   const zoomY = React.useMemo(
-    () => new ZoomTransform(transform.ky, transform.tx, transform.ty),
+    () => createSafeZoomTransform(transform.ky, transform.tx, transform.ty),
     [transform.ky, transform.tx, transform.ty],
   );
 
@@ -244,38 +376,61 @@ function CartesianChartContent<
     if (!data.length) {
       return createFallbackChartState<RawData, XK, YK>(yKeys);
     }
+    const transformArgs = {
+      data,
+      xKey,
+      yKeys,
+      outputWindow: {
+        xMin: valueFromSidedNumber(padding, "left"),
+        xMax: size.width - valueFromSidedNumber(padding, "right"),
+        yMin: valueFromSidedNumber(padding, "top"),
+        yMax: size.height - valueFromSidedNumber(padding, "bottom"),
+      },
+      domain,
+      domainPadding,
+      viewport,
+      labelRotate: normalizedAxisProps.xAxis.labelRotate,
+      axisScales,
+    };
+
+    const transformed =
+      orientation === "horizontal"
+        ? transformHorizontalInputData({
+            ...transformArgs,
+            xAxis: normalizedAxisProps.xAxis as XAxisPropsWithDefaults<
+              RawData,
+              XK,
+              number
+            >,
+            yAxes: normalizedAxisProps.yAxes as YAxisPropsWithDefaults<
+              RawData,
+              YK,
+              InputFields<RawData>[XK]
+            >[],
+          })
+        : transformInputData({
+            ...transformArgs,
+            xAxis: normalizedAxisProps.xAxis as XAxisPropsWithDefaults<
+              RawData,
+              XK
+            >,
+            yAxes: normalizedAxisProps.yAxes as YAxisPropsWithDefaults<
+              RawData,
+              YK
+            >[],
+          });
     const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
-      transformInputData({
-        data,
-        xKey,
-        yKeys,
-        outputWindow: {
-          xMin: valueFromSidedNumber(padding, "left"),
-          xMax: size.width - valueFromSidedNumber(padding, "right"),
-          yMin: valueFromSidedNumber(padding, "top"),
-          yMax: size.height - valueFromSidedNumber(padding, "bottom"),
-        },
-        domain,
-        domainPadding,
-        xAxis: normalizedAxisProps.xAxis,
-        yAxes: normalizedAxisProps.yAxes,
-        viewport,
-        labelRotate: normalizedAxisProps.xAxis.labelRotate,
-        axisScales: axisOptions?.axisScales,
-      });
+      transformed;
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
-    const chartBounds = {
-      left: xScale(viewport?.x?.[0] ?? xScale.domain().at(0) ?? 0),
-      right: xScale(viewport?.x?.[1] ?? xScale.domain().at(-1) ?? 0),
-      top: primaryYScale(
-        viewport?.y?.[1] ?? (primaryYScale.domain().at(0) || 0),
-      ),
-      bottom: primaryYScale(
-        viewport?.y?.[0] ?? (primaryYScale.domain().at(-1) || 0),
-      ),
-    };
+    const chartBounds = getCartesianChartBounds({
+      xScale,
+      yScale: primaryYScale,
+      viewport,
+      domainPadding,
+      orientation,
+    });
 
     return {
       xTicksNormalized,
@@ -295,8 +450,9 @@ function CartesianChartContent<
     domain,
     domainPadding,
     normalizedAxisProps,
+    axisScales,
     viewport,
-    axisOptions?.axisScales,
+    orientation,
   ]);
 
   React.useEffect(() => {
@@ -305,15 +461,13 @@ function CartesianChartContent<
 
   const primaryYAxis = yAxes[0];
   const primaryYScale = primaryYAxis.yScale;
-  const gestureBounds = {
-    x: Math.min(xScale.range()[0]!, 0),
-    y: Math.min(primaryYScale.range()[0]!, 0),
-  };
-
   // stacked bar values
   const chartHeight = chartBounds.bottom;
   const yScaleTop = primaryYAxis.yScale.domain().at(0);
   const yScaleBottom = primaryYAxis.yScale.domain().at(-1);
+  const chartWidth = chartBounds.right - chartBounds.left;
+  const xScaleLeft = xScale.invert(chartBounds.left);
+  const xScaleRight = xScale.invert(chartBounds.right);
   // end stacked bar values
 
   /**
@@ -323,73 +477,110 @@ function CartesianChartContent<
   /**
    * Take a "press value" and an x-value and update the shared values accordingly.
    */
-  const handleTouch = (
-    v: ChartPressState<{
-      x: InputFields<RawData>[XK];
-      y: Record<YK, number>;
-    }>,
-    x: number,
-    y: number,
-  ) => {
-    "worklet";
-    const idx = findClosestPoint(tData.value.ox, x);
+  const handleTouch = React.useCallback(
+    (
+      v: ChartPressState<{
+        x: InputFields<RawData>[XK];
+        y: Record<YK, number>;
+      }>,
+      x: number,
+      y: number,
+    ) => {
+      "worklet";
+      const idx = getClosestDatumIndex({
+        orientation,
+        categoryPositions: tData.value.ox,
+        touchX: x,
+        touchY: y,
+      });
 
-    if (typeof idx !== "number") return;
+      if (typeof idx !== "number") return;
 
-    const isInYs = (yk: string): yk is YK & string => yKeys.includes(yk as YK);
-    // begin stacked bar handling:
-    // store the heights of each bar segment
-    const barHeights: number[] = [];
-    for (const yk in v.y) {
-      if (isInYs(yk)) {
-        const height = asNumber(tData.value.y[yk].i[idx]);
-        barHeights.push(height);
+      const isInYs = (yk: string): yk is YK & string =>
+        yKeys.includes(yk as YK);
+      // begin stacked bar handling:
+      // store the heights of each bar segment
+      const barHeights: number[] = [];
+      for (const yk in v.y) {
+        if (isInYs(yk)) {
+          const height = asNumber(tData.value.y[yk].i[idx]);
+          barHeights.push(height);
+        }
       }
-    }
 
-    const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
-    // Calculate the actual yValue of the touch within the domain of the yScale
-    const yDomainValue =
-      (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
+      if (orientation === "horizontal") {
+        const chartXPressed = x - chartBounds.left;
+        const xDomainValue =
+          chartWidth > 0 &&
+          xScaleLeft !== undefined &&
+          xScaleRight !== undefined
+            ? (chartXPressed / chartWidth) * (xScaleRight - xScaleLeft) +
+              xScaleLeft
+            : NaN;
 
-    // track the cumulative height and the y-index of the touched segment
-    let cumulativeHeight = 0;
-    let yIndex = -1;
+        v.yIndex.value = getStackedBarTouchSegmentIndex({
+          values: barHeights,
+          touchValue: xDomainValue,
+        });
+      } else {
+        const chartYPressed = chartHeight - y; // Invert y-coordinate, since RNGH gives us the absolute Y, and we want to know where in the chart they clicked
+        // Calculate the actual yValue of the touch within the domain of the yScale
+        const yDomainValue =
+          (chartYPressed / chartHeight) * (yScaleTop! - yScaleBottom!);
 
-    // loop through the bar heights to find which bar was touched
-    for (let i = 0; i < barHeights.length; i++) {
-      // Accumulate the height as we go along
-      cumulativeHeight += barHeights[i]!;
-      // Check if the y-value touched falls within the current segment
-      if (yDomainValue <= cumulativeHeight) {
-        // If it does, set yIndex to the current segment index and break
-        yIndex = i;
-        break;
-      }
-    }
+        // track the cumulative height and the y-index of the touched segment
+        let cumulativeHeight = 0;
+        let yIndex = -1;
 
-    // Update the yIndex value in the state or context
-    v.yIndex.value = yIndex;
-    // end stacked bar handling
-
-    if (v) {
-      try {
-        v.matchedIndex.value = idx;
-        v.x.value.value = tData.value.ix[idx]!;
-        v.x.position.value = asNumber(tData.value.ox[idx]);
-        for (const yk in v.y) {
-          if (isInYs(yk)) {
-            v.y[yk].value.value = asNumber(tData.value.y[yk].i[idx]);
-            v.y[yk].position.value = asNumber(tData.value.y[yk].o[idx]);
+        // loop through the bar heights to find which bar was touched
+        for (let i = 0; i < barHeights.length; i++) {
+          // Accumulate the height as we go along
+          cumulativeHeight += barHeights[i]!;
+          // Check if the y-value touched falls within the current segment
+          if (yDomainValue <= cumulativeHeight) {
+            // If it does, set yIndex to the current segment index and break
+            yIndex = i;
+            break;
           }
         }
-      } catch (err) {
-        // no-op
-      }
-    }
 
-    lastIdx.value = idx;
-  };
+        // Update the yIndex value in the state or context
+        v.yIndex.value = yIndex;
+      }
+      // end stacked bar handling
+
+      if (v) {
+        try {
+          v.matchedIndex.value = idx;
+          v.x.value.value = tData.value.ix[idx]!;
+          v.x.position.value = asNumber(tData.value.ox[idx]);
+          for (const yk in v.y) {
+            if (isInYs(yk)) {
+              v.y[yk].value.value = asNumber(tData.value.y[yk].i[idx]);
+              v.y[yk].position.value = asNumber(tData.value.y[yk].o[idx]);
+            }
+          }
+        } catch (err) {
+          // no-op
+        }
+      }
+
+      lastIdx.value = idx;
+    },
+    [
+      chartBounds.left,
+      chartHeight,
+      chartWidth,
+      lastIdx,
+      orientation,
+      tData,
+      xScaleLeft,
+      xScaleRight,
+      yKeys,
+      yScaleBottom,
+      yScaleTop,
+    ],
+  );
 
   React.useImperativeHandle(
     ref,
@@ -403,11 +594,33 @@ function CartesianChartContent<
     [canvasRef],
   );
 
-  if (actionsRef) {
-    actionsRef.current = {
+  const handleTouchRef = useFunctionRef(handleTouch);
+  const mutableActionsRef =
+    actionsRef && "current" in actionsRef ? actionsRef : undefined;
+  const sharedActionsRef =
+    actionsRef && "value" in actionsRef ? actionsRef : undefined;
+
+  React.useImperativeHandle(
+    mutableActionsRef,
+    () => ({
+      handleTouch: (value, x, y) => {
+        handleTouchRef.current?.(value, x, y);
+      },
+    }),
+    [handleTouchRef],
+  );
+
+  React.useEffect(() => {
+    if (!sharedActionsRef) return;
+
+    sharedActionsRef.value = {
       handleTouch,
     };
-  }
+
+    return () => {
+      sharedActionsRef.value = null;
+    };
+  }, [handleTouch, sharedActionsRef]);
 
   /**
    * Touch gesture is a modified Pan gesture handler that allows for multiple presses:
@@ -425,11 +638,27 @@ function CartesianChartContent<
     : [chartPressState];
   const gestureState = useSharedValue({
     isGestureActive: false,
-    bootstrap: [] as [
+    bootstrap: [] as ChartPressBootstrapEntry<
       ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>,
-      TouchData,
-    ][],
+      TouchData
+    >[],
   });
+
+  React.useEffect(() => {
+    const vals = chartPressStateRef.current;
+    const states = Array.isArray(vals) ? vals : [vals];
+
+    for (const state of states) {
+      if (state) resetChartPressState(state);
+    }
+
+    touchMap.value = {};
+    gestureState.value = {
+      isGestureActive: false,
+      bootstrap: [],
+    };
+    lastIdx.value = null;
+  }, [data, gestureState, lastIdx, touchMap, xKey, yKeysKey]);
 
   const panGesture = Gesture.Pan()
     /**
@@ -453,12 +682,16 @@ function CartesianChartContent<
 
           const touchPoint = getCartesianTouchCoordinates({
             touch,
-            gestureBounds,
+            transform: transformState?.matrix.value,
           });
 
           handleTouch(v, touchPoint.x, touchPoint.y);
         } else {
-          gestureState.value.bootstrap.push([v, touch]);
+          gestureState.value.bootstrap.push({
+            pressIndex: i,
+            state: v,
+            touch,
+          });
         }
       }
     })
@@ -467,18 +700,20 @@ function CartesianChartContent<
      */
     .onStart(() => {
       gestureState.value.isGestureActive = true;
+      const bootstrap = gestureState.value.bootstrap.slice(0);
+      gestureState.value.bootstrap = [];
 
-      for (let i = 0; i < gestureState.value.bootstrap.length; i++) {
-        const [v, touch] = gestureState.value.bootstrap[i]!;
+      for (let i = 0; i < bootstrap.length; i++) {
+        const { pressIndex, state: v, touch } = bootstrap[i]!;
         // Update the mapping
         if (typeof touchMap.value[touch.id] !== "number")
-          touchMap.value[touch.id] = i;
+          touchMap.value[touch.id] = pressIndex;
 
         v.isActive.value = true;
 
         const touchPoint = getCartesianTouchCoordinates({
           touch,
-          gestureBounds,
+          transform: transformState?.matrix.value,
         });
 
         handleTouch(v, touchPoint.x, touchPoint.y);
@@ -488,8 +723,18 @@ function CartesianChartContent<
      * Clear gesture state on gesture end.
      */
     .onFinalize(() => {
-      gestureState.value.isGestureActive = false;
-      gestureState.value.bootstrap = [];
+      const vals = activePressSharedValues || [];
+      for (const val of vals) {
+        if (val) {
+          val.isActive.value = false;
+        }
+      }
+
+      touchMap.value = {};
+      gestureState.value = {
+        isGestureActive: false,
+        bootstrap: [],
+      };
     })
     /**
      * As fingers move, update the shared values accordingly.
@@ -509,7 +754,7 @@ function CartesianChartContent<
 
         const touchPoint = getCartesianTouchCoordinates({
           touch,
-          gestureBounds,
+          transform: transformState?.matrix.value,
         });
 
         handleTouch(v, touchPoint.x, touchPoint.y);
@@ -519,6 +764,12 @@ function CartesianChartContent<
      * On each finger up, start to update values and "free up" the touch map.
      */
     .onTouchesUp((e) => {
+      gestureState.value.bootstrap = pruneChartPressBootstrap({
+        bootstrap: gestureState.value.bootstrap,
+        changedTouches: e.changedTouches,
+        numberOfTouches: e.numberOfTouches,
+      });
+
       for (const touch of e.changedTouches) {
         const vals = activePressSharedValues || [];
 
@@ -569,9 +820,15 @@ function CartesianChartContent<
           if (cache[key]) return cache[key];
 
           cache[key] = _tData.ix.map((x, i) => ({
-            x: asNumber(_tData.ox[i]),
+            x:
+              orientation === "horizontal"
+                ? asNumber(_tData.y[key].o[i])
+                : asNumber(_tData.ox[i]),
             xValue: x,
-            y: _tData.y[key].o[i],
+            y:
+              orientation === "horizontal"
+                ? asNumber(_tData.ox[i])
+                : _tData.y[key].o[i],
             yValue: _tData.y[key].i[i],
           }));
 
@@ -579,7 +836,7 @@ function CartesianChartContent<
         },
       },
     ) as PointsArg;
-  }, [_tData, yKeys]);
+  }, [_tData, orientation, yKeys]);
 
   // On bounds change, emit
   const onChartBoundsRef = useFunctionRef(onChartBoundsChange);
@@ -624,6 +881,30 @@ function CartesianChartContent<
 
           if (!yAxis) return null;
 
+          if (orientation === "horizontal") {
+            return (
+              <CategoryYAxis<RawData, XK>
+                key={index}
+                {...axis}
+                formatYLabel={
+                  axis.formatYLabel as
+                    | ((label: InputFields<RawData>[XK]) => string)
+                    | undefined
+                }
+                labelRenderer={
+                  axis.labelRenderer as
+                    | AxisLabelRenderer<InputFields<RawData>[XK]>
+                    | undefined
+                }
+                xScale={zoomX.rescaleX(xScale)}
+                yScale={zoomY.rescaleY(yAxis.yScale)}
+                yTicksNormalized={yAxis.yTicksNormalized}
+                ix={_tData.ix}
+                chartBounds={chartBounds}
+              />
+            );
+          }
+
           const primaryAxisProps = normalizedAxisProps.yAxes[0]!;
           const primaryRescaled = zoomY.rescaleY(primaryYScale);
           const rescaled = zoomY.rescaleY(yAxis.yScale);
@@ -644,7 +925,7 @@ function CartesianChartContent<
               : primaryYScale.ticks(primaryAxisProps.tickCount);
 
           return (
-            <YAxis
+            <YAxis<RawData, YK, never>
               key={index}
               {...axis}
               xScale={zoomX.rescaleX(xScale)}
@@ -659,6 +940,7 @@ function CartesianChartContent<
                   : rescaledTicks
               }
               chartBounds={chartBounds}
+              orientation={orientation}
             />
           );
         })
@@ -666,13 +948,14 @@ function CartesianChartContent<
 
   const XAxisComponents =
     hasMeasuredLayoutSize && (axisOptions || xAxis) ? (
-      <XAxis
+      <XAxis<RawData, XK, never>
         {...normalizedAxisProps.xAxis}
         xScale={xScale}
         yScale={zoomY.rescaleY(primaryYScale)}
         ix={_tData.ix}
-        isNumericalData={isNumericalData}
+        isNumericalData={orientation === "horizontal" ? true : isNumericalData}
         chartBounds={chartBounds}
+        orientation={orientation}
         zoom={zoomX}
       />
     ) : null;
@@ -691,13 +974,11 @@ function CartesianChartContent<
       {YAxisComponents}
       {XAxisComponents}
       {FrameComponent}
-      <CartesianChartProvider yScale={primaryYScale} xScale={xScale}>
-        <Group clip={clipRect}>
-          <Group matrix={transformState?.matrix}>
-            {hasMeasuredLayoutSize && children(renderArg)}
-          </Group>
+      <Group clip={clipRect}>
+        <Group matrix={transformState?.matrix}>
+          {hasMeasuredLayoutSize && children(renderArg)}
         </Group>
-      </CartesianChartProvider>
+      </Group>
       {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
     </>
   );
@@ -729,31 +1010,29 @@ function CartesianChartContent<
     }
 
     gestureOverlay = (
-      <GestureHandler
-        config={gestureHandlerConfig}
-        gesture={composed}
-        transformState={transformState}
-        dimensions={{
-          x: Math.min(xScale.range()[0]!, 0),
-          y: Math.min(primaryYScale.range()[0]!, 0),
-          width: xScale.range()[1]! - Math.min(xScale.range()[0]!, 0),
-          height:
-            primaryYScale.range()[1]! - Math.min(primaryYScale.range()[0]!, 0),
-        }}
-      />
+      <GestureHandler config={gestureHandlerConfig} gesture={composed} />
     );
   }
 
   return (
-    <ChartWrapper
-      isHeadless={isHeadless}
-      explicitSize={explicitSize}
-      onLayout={onLayout}
-      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-      canvasSize={size}
-      canvasRef={canvasRef}
-      chartContent={chartContent}
-      gestureOverlay={gestureOverlay}
-    />
+    <CartesianTransformValueProvider value={transform}>
+      <CartesianChartProvider
+        yScale={primaryYScale}
+        xScale={xScale}
+        orientation={orientation}
+      >
+        <CartesianCanvas
+          isHeadless={isHeadless}
+          explicitSize={explicitSize}
+          onLayout={onLayout}
+          hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+          canvasSize={size}
+          canvasRef={canvasRef}
+          gestureOverlay={gestureOverlay}
+        >
+          {chartContent}
+        </CartesianCanvas>
+      </CartesianChartProvider>
+    </CartesianTransformValueProvider>
   );
 }

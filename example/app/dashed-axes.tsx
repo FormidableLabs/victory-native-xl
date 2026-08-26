@@ -1,11 +1,15 @@
 import {
   DashPathEffect,
+  Group,
   LinearGradient,
+  RoundedRect,
+  Text as SkiaText,
   useFont,
   vec,
 } from "@shopify/react-native-skia";
 import * as React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Area, CartesianChart, Line } from "victory-native";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
@@ -48,14 +52,51 @@ export default function DashedAxesPage(props: { segment: string }) {
             xAxis={{
               font,
               labelOffset: 4,
+              labelRenderer: {
+                measure: ({ text }) => ({
+                  width: Math.max(32, text.length * 8 + 12),
+                  height: 18,
+                }),
+                render: ({ text, x, y, width, height, color }) => (
+                  <Group>
+                    <RoundedRect
+                      x={x}
+                      y={y}
+                      width={width}
+                      height={height}
+                      r={4}
+                      color="#ffffff"
+                    />
+                    {font ? (
+                      <SkiaText
+                        text={text}
+                        font={font}
+                        color={color}
+                        x={x + 6}
+                        y={y + 13}
+                      />
+                    ) : null}
+                  </Group>
+                ),
+              },
+              title: {
+                text: "Month",
+                font,
+                color: appColors.text.light,
+                offset: 8,
+              },
               linePathEffect: <DashPathEffect intervals={[4, 4]} />,
             }}
             yAxis={[
               {
                 labelOffset: 8,
-
                 font,
-
+                title: {
+                  text: "Temperature",
+                  font,
+                  color: appColors.text.light,
+                  offset: 8,
+                },
                 linePathEffect: <DashPathEffect intervals={[4, 4]} />,
               },
             ]}

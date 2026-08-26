@@ -6,7 +6,8 @@ import {
   type Color,
 } from "@shopify/react-native-skia";
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Bar,
   CartesianChart,
@@ -128,7 +129,14 @@ export default function BarChartPage(props: { segment: string }) {
                     topLeft: roundedCorner,
                     topRight: roundedCorner,
                   }}
-                  labels={{ font, color: labelColor, position: labelPosition }}
+                  labels={{
+                    font,
+                    color: labelColor,
+                    position: labelPosition,
+                    formatLabel: (value) =>
+                      value == null ? "" : `${value} plays`,
+                    rotate: labelPosition === "top" ? -25 : 0,
+                  }}
                 >
                   <LinearGradient
                     start={vec(0, 0)}

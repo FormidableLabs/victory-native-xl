@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Group, Line, Path, Skia, vec } from "@shopify/react-native-skia";
 import type { FrameProps } from "../../types";
+export { FrameDefaults } from "../utils/axisDefaults";
 
 export const Frame = ({
   xScale,
@@ -14,10 +15,8 @@ export const Frame = ({
   const [y1 = 0, y2 = 0] = yScale.domain();
 
   const boundingFrame = React.useMemo(() => {
-    const framePath = Skia.Path.Make();
-
     if (typeof lineWidth === "number") {
-      framePath.addRect(
+      const framePath = Skia.Path.Rect(
         Skia.XYWHRect(
           xScale(x1),
           yScale(y1),
@@ -91,9 +90,4 @@ export const Frame = ({
       {boundingFrame}
     </Group>
   );
-};
-
-export const FrameDefaults = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
 };

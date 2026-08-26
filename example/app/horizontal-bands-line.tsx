@@ -6,7 +6,8 @@ import {
   type Scale,
 } from "victory-native";
 import { Circle, Shader, Skia, useFont } from "@shopify/react-native-skia";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useDerivedValue,
   useSharedValue,
@@ -133,7 +134,7 @@ export default function OrdinalDataScreen(props: { segment: string }) {
         </CartesianChart>
       </View>
       <View style={styles.selectionContainer}>
-        <AnimatedText style={styles.animatedText} text={day} />
+        <AnimatedText defaultValue="" style={styles.animatedText} text={day} />
         <Text style={{ fontSize: 18 }}> is selected.</Text>
       </View>
       <ScrollView

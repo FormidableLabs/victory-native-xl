@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Stack } from "expo-router";
 import {
-  FlatList,
+  SectionList,
   View,
   useWindowDimensions,
   StyleSheet,
@@ -9,14 +9,26 @@ import {
 } from "react-native";
 import { ChartCard } from "../components/ChartCard";
 import { appColors } from "../consts/colors";
-import { ChartRoutes } from "../consts/routes";
+import {
+  getChartRouteSections,
+  type ChartRoute,
+  type ChartRouteSectionTitle,
+} from "../consts/routes";
 import { InfoCard } from "../components/InfoCard";
 import { Button } from "../components/Button";
 import { VICTORY_OSS_URL } from "../consts/urls";
 import { Text } from "../components/Text";
 
+type ChartRouteRowSection = {
+  title: ChartRouteSectionTitle;
+  count: number;
+  data: ChartRoute[][];
+};
+
 export default function LandingPage() {
   const { width } = useWindowDimensions();
+  const columnCount = width < 500 ? 1 : 2;
+  const routeSections = getChartRouteRowSections(columnCount);
 
   const handleDocsButtonPress = React.useCallback(async () => {
     (await Linking.canOpenURL(VICTORY_OSS_URL)) &&
@@ -26,7 +38,7 @@ export default function LandingPage() {
   return (
     <View style={styles.view}>
       <Stack.Screen options={{ title: "Victory" }} />
-      <FlatList
+      <SectionList
         ListHeaderComponent={() => (
           <InfoCard style={{ margin: 5, width: "auto" }}>
             <View style={{ flex: 1, gap: 10 }}>
@@ -39,20 +51,85 @@ export default function LandingPage() {
             </View>
           </InfoCard>
         )}
-        contentContainerStyle={{ padding: 10 }}
-        numColumns={width < 500 ? 1 : 2}
+        contentContainerStyle={styles.content}
         contentInsetAdjustmentBehavior="automatic"
-        data={ChartRoutes}
-        renderItem={({ item }) => <ChartCard item={item} />}
+        sections={routeSections}
+        stickySectionHeadersEnabled={false}
+        keyExtractor={(item) => item.map((route) => route.path).join(":")}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.sectionHeader}>
+            <Text selectable style={styles.sectionTitle}>
+              {section.title}
+            </Text>
+            <Text style={styles.sectionCount}>{section.count} examples</Text>
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <View style={styles.cardRow}>
+            {item.map((route) => (
+              <View key={route.path} style={styles.cardCell}>
+                <ChartCard item={route} />
+              </View>
+            ))}
+            {item.length < columnCount ? (
+              <View style={styles.cardCell} />
+            ) : null}
+          </View>
+        )}
       />
     </View>
   );
 }
+
+const getChartRouteRowSections = (
+  columnCount: number,
+): ChartRouteRowSection[] =>
+  getChartRouteSections().map(({ title, data }) => ({
+    title,
+    count: data.length,
+    data: getChartRouteRows(data, columnCount),
+  }));
+
+const getChartRouteRows = (routes: ChartRoute[], columnCount: number) => {
+  const rows: ChartRoute[][] = [];
+
+  for (let index = 0; index < routes.length; index += columnCount) {
+    rows.push(routes.slice(index, index + columnCount));
+  }
+
+  return rows;
+};
 
 const styles = StyleSheet.create({
   view: {
     flex: 1,
     backgroundColor: appColors.viewBackground.light,
     $dark: { backgroundColor: appColors.viewBackground.dark },
+  },
+  content: {
+    padding: 10,
+  },
+  sectionHeader: {
+    paddingHorizontal: 6,
+    paddingTop: 18,
+    paddingBottom: 4,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  sectionCount: {
+    fontSize: 13,
+    opacity: 0.68,
+  },
+  cardRow: {
+    flexDirection: "row",
+  },
+  cardCell: {
+    flex: 1,
   },
 });

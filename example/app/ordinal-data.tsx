@@ -6,7 +6,8 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   interpolateColor,
   useDerivedValue,
@@ -87,7 +88,7 @@ export default function OrdinalDataScreen(props: { segment: string }) {
         </CartesianChart>
       </View>
       <View style={styles.selectionContainer}>
-        <AnimatedText style={styles.animatedText} text={day} />
+        <AnimatedText defaultValue="" style={styles.animatedText} text={day} />
         <Text style={{ fontSize: 18 }}> is selected.</Text>
       </View>
       <ScrollView

@@ -4,6 +4,7 @@ import {
   type Color,
   type DashPathEffect,
   type SkFont,
+  type SkPoint,
 } from "@shopify/react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
 import { type PanGesture } from "react-native-gesture-handler";
@@ -34,8 +35,50 @@ export type InputDatum = Record<string, unknown>;
 export type XAxisSide = "top" | "bottom";
 export type YAxisSide = "left" | "right";
 export type AxisLabelPosition = "inset" | "outset";
+export type AxisTitlePosition = "start" | "center" | "end";
+
+export type AxisLabelMeasurement = {
+  width: number;
+  height: number;
+  fontSize?: number;
+  lineHeight?: number;
+};
+
+export type AxisLabelMeasureArgs<Label = unknown> = {
+  axis: "x" | "y";
+  orientation: CartesianChartOrientation;
+  value: Label;
+  text: string;
+  index: number;
+};
+
+export type AxisLabelRenderArgs<Label = unknown> = AxisLabelMeasureArgs<Label> &
+  Required<AxisLabelMeasurement> & {
+    x: number;
+    y: number;
+    color: string;
+    canFitContent: boolean;
+    chartBounds: ChartBounds;
+    rotation?: number;
+    origin?: SkPoint;
+  };
+
+export type AxisLabelRenderer<Label = unknown> = {
+  measure: (args: AxisLabelMeasureArgs<Label>) => AxisLabelMeasurement;
+  render: (args: AxisLabelRenderArgs<Label>) => React.ReactNode;
+};
+
+export type AxisTitle = {
+  text: string;
+  font?: SkFont | null;
+  color?: string;
+  position?: AxisTitlePosition;
+  offset?: number;
+};
 
 export type AxisScaleType = "linear" | "log";
+
+export type CartesianChartOrientation = "vertical" | "horizontal";
 
 export type AxisScales = {
   xAxisScale?: AxisScaleType;
@@ -127,6 +170,8 @@ export type AxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = {
   xTicksNormalized: number[];
   yTicksNormalized: number[];
@@ -146,8 +191,8 @@ export type AxisProps<
     | AxisLabelPosition
     | { x: AxisLabelPosition; y: AxisLabelPosition };
   axisSide?: { x: XAxisSide; y: YAxisSide };
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: XLabel) => string;
+  formatYLabel?: (label: YLabel) => string;
   domain?: YAxisDomain;
   isNumericalData?: boolean;
   ix?: InputFields<RawData>[XK][];
@@ -158,8 +203,10 @@ export type AxisPropWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = Omit<
-  Required<AxisProps<RawData, XK, YK>>,
+  Required<AxisProps<RawData, XK, YK, XLabel, YLabel>>,
   | "xScale"
   | "yScale"
   | "yTicksNormalized"
@@ -173,11 +220,13 @@ export type OptionalAxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
+  XLabel = InputFields<RawData>[XK],
+  YLabel = RawData[YK],
 > = {
   tickValues?: number[] | { x: number[]; y: number[] };
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatXLabel?: (label: XLabel) => string;
+  formatYLabel?: (label: YLabel) => string;
 };
 
 type DashPathEffectProps = React.ComponentProps<typeof DashPathEffect>;
@@ -186,10 +235,13 @@ type DashPathEffectComponent = React.ReactElement<DashPathEffectProps>;
 export type XAxisInputProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
+  Label = InputFields<RawData>[XK],
 > = {
   axisSide?: XAxisSide;
   font?: SkFont | null;
-  formatXLabel?: (label: InputFields<RawData>[XK]) => string;
+  formatXLabel?: (label: Label) => string;
+  labelRenderer?: AxisLabelRenderer<Label>;
+  title?: AxisTitle;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -206,42 +258,56 @@ export type XAxisInputProps<
 export type XAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
+  Label = InputFields<RawData>[XK],
 > = Required<
   Omit<
-    XAxisInputProps<RawData, XK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling" | "labelRotate"
+    XAxisInputProps<RawData, XK, Label>,
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRotate"
+    | "labelRenderer"
+    | "title"
   >
 > &
   Partial<
     Pick<
-      XAxisInputProps<RawData, XK>,
+      XAxisInputProps<RawData, XK, Label>,
       | "font"
       | "tickValues"
       | "linePathEffect"
       | "enableRescaling"
       | "labelRotate"
+      | "labelRenderer"
+      | "title"
     >
   >;
 
 export type XAxisProps<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
-> = XAxisPropsWithDefaults<RawData, XK> & {
+  Label = InputFields<RawData>[XK],
+> = XAxisPropsWithDefaults<RawData, XK, Label> & {
   xScale: Scale;
   yScale: Scale;
   isNumericalData: boolean;
   ix: InputFields<RawData>[XK][];
   chartBounds: ChartBounds;
+  orientation: CartesianChartOrientation;
   zoom?: ZoomTransform;
 };
 
 export type YAxisInputProps<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
+  Label = RawData[YK],
 > = {
   axisSide?: YAxisSide;
   font?: SkFont | null;
-  formatYLabel?: (label: RawData[YK]) => string;
+  formatYLabel?: (label: Label) => string;
+  labelRenderer?: AxisLabelRenderer<Label>;
+  title?: AxisTitle;
   labelColor?: string;
   labelOffset?: number;
   labelPosition?: AxisLabelPosition;
@@ -258,28 +324,41 @@ export type YAxisInputProps<
 export type YAxisPropsWithDefaults<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
+  Label = RawData[YK],
 > = Required<
   Omit<
-    YAxisInputProps<RawData, YK>,
-    "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+    YAxisInputProps<RawData, YK, Label>,
+    | "font"
+    | "tickValues"
+    | "linePathEffect"
+    | "enableRescaling"
+    | "labelRenderer"
+    | "title"
   >
 > &
   Partial<
     Pick<
-      YAxisInputProps<RawData, YK>,
-      "font" | "tickValues" | "linePathEffect" | "enableRescaling"
+      YAxisInputProps<RawData, YK, Label>,
+      | "font"
+      | "tickValues"
+      | "linePathEffect"
+      | "enableRescaling"
+      | "labelRenderer"
+      | "title"
     >
   >;
 
 export type YAxisProps<
   RawData extends Record<string, unknown>,
   YK extends keyof NumericalFields<RawData>,
-> = YAxisPropsWithDefaults<RawData, YK> & {
+  Label = RawData[YK],
+> = YAxisPropsWithDefaults<RawData, YK, Label> & {
   xScale: Scale;
   yScale: Scale;
   yTicksNormalized: number[];
   yKeys: YK[];
   chartBounds: ChartBounds;
+  orientation: CartesianChartOrientation;
 };
 
 export type FrameInputProps = {
@@ -300,12 +379,17 @@ type ExtractParams<
   P extends Parameters<T> = Parameters<T>,
 > = P["length"] extends 1 ? P[0] : P;
 
+type ExternalGesture = Parameters<
+  PanGesture["simultaneousWithExternalGesture"]
+>[number];
+
 export type ChartPressPanConfig = {
   activateAfterLongPress?: ExtractParams<PanGesture["activateAfterLongPress"]>;
   activeOffsetX?: ExtractParams<PanGesture["activeOffsetX"]>;
   activeOffsetY?: ExtractParams<PanGesture["activeOffsetY"]>;
   failOffsetX?: ExtractParams<PanGesture["failOffsetX"]>;
   failOffsetY?: ExtractParams<PanGesture["failOffsetY"]>;
+  simultaneousWithExternalGesture?: ExternalGesture | ExternalGesture[];
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

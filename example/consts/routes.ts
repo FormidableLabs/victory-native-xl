@@ -1,9 +1,11 @@
-export const ChartRoutes: {
+export type ChartRoute = {
   title: string;
   description: string;
   path: string;
   url?: string;
-}[] = [
+};
+
+export const ChartRoutes: ChartRoute[] = [
   {
     title: "Line Chart",
     description:
@@ -25,6 +27,30 @@ export const ChartRoutes: {
     description:
       "This is a single Bar chart in Victory that supports customized spacing between each bar as well as pan/zoom.",
     path: "/bar-chart",
+  },
+  {
+    title: "Horizontal Bar Chart",
+    description:
+      "This chart renders categories on the vertical axis and numeric values on the horizontal axis.",
+    path: "/horizontal-bar",
+  },
+  {
+    title: "Horizontal Bar Group",
+    description:
+      "This chart renders grouped horizontal bars with multiple value series per category.",
+    path: "/horizontal-bar-group",
+  },
+  {
+    title: "Horizontal Stacked Bar",
+    description:
+      "This chart renders stacked horizontal bars with positive and negative value segments.",
+    path: "/horizontal-stacked-bar",
+  },
+  {
+    title: "Horizontal Stacked Row Headers",
+    description:
+      "This chart uses custom axis label rendering to place row headers above horizontal stacked bars.",
+    path: "/horizontal-stacked-row-headers",
   },
   {
     title: "Bar Group",
@@ -78,6 +104,12 @@ export const ChartRoutes: {
     path: "/stock-price",
   },
   {
+    title: "Candlestick Chart",
+    description:
+      "This chart renders open, high, low, and close values as candlesticks with scrub interaction, custom styling, and doji/missing-value examples.",
+    path: "/candlestick",
+  },
+  {
     title: "Ordinal Data",
     description:
       "This chart shows off ordinal data and touch events. Tap different x axis points to see the highlighted dot move. The color changes based on interpolating the color from the transformed and range data.",
@@ -93,6 +125,18 @@ export const ChartRoutes: {
     description:
       "This shows off the various ways to configure custom axis rendering.",
     path: "/axis-configuration",
+  },
+  {
+    title: "Axis Label Renderers",
+    description:
+      "Examples for paragraph, multilingual, multiline, and custom measured axis labels.",
+    path: "/axis-label-renderers",
+  },
+  {
+    title: "Axis Title Layout",
+    description:
+      "Examples for single-line and multiline Y-axis title placement on numeric and category axes.",
+    path: "/axis-title-layout",
   },
   {
     title: "Multiple Y Axes",
@@ -174,6 +218,70 @@ if (__DEV__) {
       path: "/coordinate-debug",
     },
     {
+      title: "Transform Stroke Debug",
+      description:
+        "Debug fixture for keeping stroke width stable while a chart is transformed.",
+      path: "/transform-stroke-debug",
+    },
+    {
+      title: "Context Bridge Debug",
+      description:
+        "Debug fixture for React context access from Cartesian chart children.",
+      path: "/context-bridge-debug",
+    },
+    {
+      title: "Memory Stress Debug",
+      description:
+        "Debug fixture for live Cartesian updates, animation, and mount cycling.",
+      path: "/memory-stress-debug",
+    },
+    {
+      title: "Pie Animation Stress Debug",
+      description:
+        "Debug fixture for comparing multiple animated and static pie updates.",
+      path: "/pie-animation-stress-debug",
+    },
+    {
+      title: "Axis Debug",
+      description: "Debug fixture for x-axis label positioning at chart edges.",
+      path: "/axis-debug",
+    },
+    {
+      title: "Axis Rescaling Debug",
+      description:
+        "Debug fixture for fixed versus rescaled x-axis ticks while panning.",
+      path: "/axis-rescaling-debug",
+    },
+    {
+      title: "Bar Edge Debug",
+      description:
+        "Debug fixture for dynamic bar counts and centered edge bar overflow.",
+      path: "/bar-edge-debug",
+    },
+    {
+      title: "Pan Config Debug",
+      description:
+        "Debug fixture for chart press pan configuration passthrough.",
+      path: "/pan-config-debug",
+    },
+    {
+      title: "Scroll Transform Press Debug",
+      description:
+        "Debug fixture for chart press and transform pan gestures inside a scroll view.",
+      path: "/scroll-transform-press-debug",
+    },
+    {
+      title: "Press State Reset Debug",
+      description:
+        "Debug fixture for resetting chart press state when chart data changes.",
+      path: "/press-state-reset-debug",
+    },
+    {
+      title: "Press Race Debug",
+      description: "Debug fixture for stale long-press bootstrap touch replay.",
+      path: "/press-race-debug",
+    },
+    {
       title: "Getting Started Guide",
       description: "Basic chart example with a line chart and a tooltip.",
       url: "https://formidable.com/open-source/victory-native/getting-started",
@@ -204,3 +312,88 @@ export const descriptionForRoute = (path: string) =>
 
 export const urlForRoute = (path: string) =>
   ChartRoutes.find((r) => r.path.includes(path))?.url;
+
+const ChartRouteSectionOrder = [
+  "Bar Charts",
+  "Line, Area & Point Charts",
+  "Pie & Donut Charts",
+  "Axes & Labels",
+  "Interaction & Gestures",
+  "Custom Rendering",
+  "Guides",
+  "Debug Fixtures",
+  "Other Examples",
+] as const;
+
+export type ChartRouteSectionTitle = (typeof ChartRouteSectionOrder)[number];
+
+export type ChartRouteSection = {
+  title: ChartRouteSectionTitle;
+  data: ChartRoute[];
+};
+
+export const getChartRouteSections = (
+  routes: ChartRoute[] = ChartRoutes,
+): ChartRouteSection[] =>
+  ChartRouteSectionOrder.map((title) => ({
+    title,
+    data: routes
+      .filter((route) => getChartRouteSection(route) === title)
+      .sort((a, b) => a.title.localeCompare(b.title)),
+  })).filter((section) => section.data.length > 0);
+
+const getChartRouteSection = ({
+  path,
+  title,
+}: ChartRoute): ChartRouteSectionTitle => {
+  if (path.endsWith("-debug") || title.includes("Debug")) {
+    return "Debug Fixtures";
+  }
+
+  if (path.startsWith("/guides")) return "Guides";
+
+  if (
+    path === "/horizontal-stacked-row-headers" ||
+    (path.includes("bar") && path !== "/horizontal-bands-line")
+  ) {
+    return "Bar Charts";
+  }
+
+  if (path.includes("pie") || path.includes("donut")) {
+    return "Pie & Donut Charts";
+  }
+
+  if (
+    path.includes("axis") ||
+    path === "/dashed-axes" ||
+    path === "/multiple-y-axes"
+  ) {
+    return "Axes & Labels";
+  }
+
+  if (
+    path.includes("gesture") ||
+    path.includes("pan") ||
+    path.includes("scroll") ||
+    path === "/chart-refs"
+  ) {
+    return "Interaction & Gestures";
+  }
+
+  if (path.includes("custom") || path === "/horizontal-bands-line") {
+    return "Custom Rendering";
+  }
+
+  if (
+    path.includes("area") ||
+    path.includes("line") ||
+    path.includes("scatter") ||
+    path === "/missing-data" ||
+    path === "/ordinal-data" ||
+    path === "/stock-price"
+  ) {
+    return "Line, Area & Point Charts";
+  }
+
+  return "Other Examples";
+};

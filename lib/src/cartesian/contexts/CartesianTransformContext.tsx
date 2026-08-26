@@ -9,21 +9,37 @@ import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import { getTransformComponents } from "../../utils/transform";
 import type { ChartTransformState } from "../hooks/useChartTransformState";
 
-interface CartesianTransformContext {
+export type CartesianTransformContextValue = {
   k: number;
   kx: number;
   ky: number;
   tx: number;
   ty: number;
-}
+};
 
 const CartesianTransformContext = createContext<
-  CartesianTransformContext | undefined
+  CartesianTransformContextValue | undefined
 >(undefined);
 
 type CartesianTransformProviderProps = PropsWithChildren<{
   transformState?: ChartTransformState;
 }>;
+
+type CartesianTransformValueProviderProps = PropsWithChildren<{
+  value: CartesianTransformContextValue;
+}>;
+
+export const CartesianTransformValueProvider = ({
+  value,
+  children,
+}: CartesianTransformValueProviderProps) => {
+  return (
+    <CartesianTransformContext.Provider value={value}>
+      {children}
+    </CartesianTransformContext.Provider>
+  );
+};
+
 export const CartesianTransformProvider = ({
   transformState,
   children,
@@ -85,9 +101,9 @@ export const CartesianTransformProvider = ({
   );
 
   return (
-    <CartesianTransformContext.Provider value={{ ...transform }}>
+    <CartesianTransformValueProvider value={transform}>
       {children}
-    </CartesianTransformContext.Provider>
+    </CartesianTransformValueProvider>
   );
 };
 

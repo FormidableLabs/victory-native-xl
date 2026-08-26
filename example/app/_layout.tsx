@@ -4,6 +4,7 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import { useAssets } from "expo-asset";
 import { Image, type ImageSource } from "expo-image";
 import { useDarkMode } from "react-native-dark";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { appColors } from "../consts/colors";
 
 const titleCaseName = (name: string) =>
@@ -19,49 +20,60 @@ export default function Layout() {
   ]) as ImageSource[][];
 
   return (
-    <View style={styles.layout}>
-      <Stack
-        screenOptions={{
-          headerTransparent: Boolean(Platform.OS === "ios"),
-          headerBlurEffect: isDark ? "dark" : "light",
-          headerStyle: {
-            backgroundColor:
-              Platform.OS === "android"
-                ? isDark
-                  ? appColors.androidHeader.dark
-                  : appColors.androidHeader.light
-                : undefined,
-          },
-          headerTitle: ({ children }) => {
-            return (
-              assets?.at(0) && (
-                <>
-                  <Image
-                    style={{ width: 24, height: 24 }}
-                    source={assets.at(0)}
-                  />
-                  {
-                    <Text
-                      style={{
-                        marginHorizontal: Platform.select({
-                          ios: 5,
-                          android: 8,
-                        }),
-                        fontSize: 16,
-                        color: appColors.tint,
-                      }}
-                    >
-                      {titleCaseName(children)}
-                    </Text>
+    <GestureHandlerRootView style={styles.layout}>
+      <View style={styles.layout}>
+        <Stack
+          screenOptions={{
+            headerTransparent: Boolean(Platform.OS === "ios"),
+            headerBlurEffect: isDark ? "dark" : "light",
+            scrollEdgeEffects:
+              Platform.OS === "ios"
+                ? {
+                    top: "hidden",
+                    bottom: "hidden",
+                    left: "hidden",
+                    right: "hidden",
                   }
-                </>
-              )
-            );
-          },
-          headerTintColor: appColors.tint,
-        }}
-      />
-    </View>
+                : undefined,
+            headerStyle: {
+              backgroundColor:
+                Platform.OS === "android"
+                  ? isDark
+                    ? appColors.androidHeader.dark
+                    : appColors.androidHeader.light
+                  : undefined,
+            },
+            headerTitle: ({ children }) => {
+              return (
+                assets?.at(0) && (
+                  <>
+                    <Image
+                      style={{ width: 24, height: 24 }}
+                      source={assets.at(0)}
+                    />
+                    {
+                      <Text
+                        style={{
+                          marginHorizontal: Platform.select({
+                            ios: 5,
+                            android: 8,
+                          }),
+                          fontSize: 16,
+                          color: appColors.tint,
+                        }}
+                      >
+                        {titleCaseName(children)}
+                      </Text>
+                    }
+                  </>
+                )
+              );
+            },
+            headerTintColor: appColors.tint,
+          }}
+        />
+      </View>
+    </GestureHandlerRootView>
   );
 }
 

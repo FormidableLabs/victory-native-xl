@@ -93,6 +93,27 @@ You can customize the pan gesture behavior using the `transformConfig` prop:
 </CartesianChart>
 ```
 
+When a chart is inside a vertical `ScrollView`, `dimensions: "x"` only controls
+how the chart moves after pan activation. Use pan activation/failure offsets to
+let vertical scroll gestures pass through while still allowing horizontal chart
+panning:
+
+```tsx
+<CartesianChart
+  transformState={state}
+  transformConfig={{
+    pan: {
+      dimensions: "x",
+      activeOffsetX: [-20, 20],
+      failOffsetY: [-12, 12],
+    },
+    pinch: { enabled: false },
+  }}
+>
+  {/* chart content */}
+</CartesianChart>
+```
+
 ## Utility Functions
 
 Several utility functions are available to help work with chart transformations:
@@ -126,3 +147,26 @@ const newMatrix = setTranslate(matrix, 100, 50); // moves 100 units in X, 50 in 
 ```
 
 These utility functions are particularly useful when you need to programmatically modify chart transformations or read the current transformation state.
+
+## Reading the current transform in chart children
+
+`useCartesianTransformContext` exposes the current Cartesian transform values to components rendered inside a `CartesianChart`. This is useful for opt-in drawing behavior that should compensate for zoom, such as keeping a stroke width visually stable while the chart content scales.
+
+```tsx
+import { Line, useCartesianTransformContext } from "victory-native";
+
+function TransformAwareLine({ points }) {
+  const { kx } = useCartesianTransformContext();
+  const strokeScale = Math.max(Math.abs(kx), 0.001);
+
+  return (
+    <Line
+      points={points}
+      color="blue"
+      strokeWidth={Math.max(1, 3 / strokeScale)}
+    />
+  );
+}
+```
+
+The hook returns `{ k, kx, ky, tx, ty }`, where `kx` and `ky` are the current x/y scale factors and `tx` / `ty` are the current translation values. It must be used from chart children or `renderOutside` content rendered inside a `CartesianChart`.

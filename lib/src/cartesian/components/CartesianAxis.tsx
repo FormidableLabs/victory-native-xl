@@ -8,7 +8,7 @@ import {
   type Color,
 } from "@shopify/react-native-skia";
 import { StyleSheet } from "react-native";
-import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
+import { getTextLayout } from "../../utils/textLayout";
 import type {
   ValueOf,
   NumericalFields,
@@ -17,6 +17,7 @@ import type {
   InputFields,
 } from "../../types";
 import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";
+export { CartesianAxisDefaultProps } from "../utils/axisDefaults";
 
 /**
  * @deprecated This component will eventually be replaced by the new, separate x/y/frame components.
@@ -120,9 +121,13 @@ export const CartesianAxis = <
   const fontSize = font?.getSize() ?? 0;
 
   const yAxisNodes = yTicksNormalized.map((tick) => {
-    const contentY = formatYLabel(tick as never);
-    const labelWidth = getFontGlyphWidth(contentY, font);
-    const labelY = yScale(tick) + fontSize / 3;
+    const contentY = String(formatYLabel(tick as never));
+    const labelLayout = getTextLayout(contentY, font);
+    const labelWidth = labelLayout.width;
+    const labelY =
+      yScale(tick) +
+      fontSize / 3 -
+      Math.max(0, labelLayout.height - fontSize) / 2;
     const labelX = (() => {
       // left, outset
       if (yAxisPosition === "left" && yLabelPosition === "outset") {
@@ -140,7 +145,9 @@ export const CartesianAxis = <
       return xScale(x2) - (labelWidth + yLabelOffset);
     })();
 
-    const canFitLabelContent = labelY > fontSize && labelY < yScale(y2);
+    const lastLabelY =
+      labelY + (labelLayout.lines.length - 1) * labelLayout.lineHeight;
+    const canFitLabelContent = labelY > fontSize && lastLabelY < yScale(y2);
 
     return (
       <React.Fragment key={`y-tick-${tick}`}>
@@ -154,15 +161,20 @@ export const CartesianAxis = <
         ) : null}
         {font
           ? canFitLabelContent && (
-              <Text
-                color={
-                  typeof labelColor === "string" ? labelColor : labelColor.y
-                }
-                text={contentY}
-                font={font}
-                y={labelY}
-                x={labelX}
-              />
+              <>
+                {labelLayout.lines.map((line, index) => (
+                  <Text
+                    key={`y-tick-${tick}-label-line-${index}`}
+                    color={
+                      typeof labelColor === "string" ? labelColor : labelColor.y
+                    }
+                    text={line}
+                    font={font}
+                    y={labelY + index * labelLayout.lineHeight}
+                    x={labelX}
+                  />
+                ))}
+              </>
             )
           : null}
       </React.Fragment>
@@ -171,24 +183,27 @@ export const CartesianAxis = <
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
     const val = isNumericalData ? tick : ix[tick];
-    const contentX = formatXLabel(val as never);
-    const labelWidth = getFontGlyphWidth(contentX, font);
+    const contentX = String(formatXLabel(val as never));
+    const labelLayout = getTextLayout(contentX, font);
+    const labelWidth = labelLayout.width;
     const labelX = xScale(tick) - (labelWidth ?? 0) / 2;
     const canFitLabelContent =
       yAxisPosition === "left" ? labelX + labelWidth < x2r : x1r < labelX;
 
     const labelY = (() => {
+      const multilineOffset = Math.max(0, labelLayout.height - fontSize);
+
       // bottom, outset
       if (xAxisPosition === "bottom" && xLabelPosition === "outset") {
         return yScale(y2) + xLabelOffset + fontSize;
       }
       // bottom, inset
       if (xAxisPosition === "bottom" && xLabelPosition === "inset") {
-        return yScale(y2) - xLabelOffset;
+        return yScale(y2) - xLabelOffset - multilineOffset;
       }
       // top, outset
       if (xAxisPosition === "top" && xLabelPosition === "outset") {
-        return yScale(y1) - xLabelOffset;
+        return yScale(y1) - xLabelOffset - multilineOffset;
       }
       // top, inset
       return yScale(y1) + fontSize + xLabelOffset;
@@ -205,22 +220,27 @@ export const CartesianAxis = <
           />
         ) : null}
         {font && labelWidth && canFitLabelContent ? (
-          <Text
-            color={typeof labelColor === "string" ? labelColor : labelColor.x}
-            text={contentX}
-            font={font}
-            y={labelY}
-            x={labelX}
-          />
+          <>
+            {labelLayout.lines.map((line, index) => (
+              <Text
+                key={`x-tick-${tick}-label-line-${index}`}
+                color={
+                  typeof labelColor === "string" ? labelColor : labelColor.x
+                }
+                text={line}
+                font={font}
+                y={labelY + index * labelLayout.lineHeight}
+                x={labelX}
+              />
+            ))}
+          </>
         ) : null}
       </React.Fragment>
     );
   });
 
   const boundingFrame = React.useMemo(() => {
-    const framePath = Skia.Path.Make();
-
-    framePath.addRect(
+    return Skia.Path.Rect(
       Skia.XYWHRect(
         xScale(x1),
         yScale(y1),
@@ -228,7 +248,6 @@ export const CartesianAxis = <
         yScale(y2) - yScale(y1),
       ),
     );
-    return framePath;
   }, [x1, x2, xScale, y1, y2, yScale]);
 
   return (
@@ -244,18 +263,3 @@ export const CartesianAxis = <
     </>
   );
 };
-
-export const CartesianAxisDefaultProps = {
-  lineColor: "hsla(0, 0%, 0%, 0.25)",
-  lineWidth: StyleSheet.hairlineWidth,
-  tickCount: 5,
-  labelOffset: { x: 2, y: 4 },
-  axisSide: { x: "bottom", y: "left" },
-  axisScales: { xAxisScale: "linear", yAxisScale: "linear" },
-  labelPosition: "outset",
-  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
-  formatYLabel: (label: ValueOf<InputDatum>) => String(label),
-  labelColor: "#000000",
-  ix: [],
-  domain: null,
-} satisfies Partial<AxisProps<never, never, never>>;

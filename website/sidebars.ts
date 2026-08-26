@@ -17,6 +17,7 @@ const sidebars = {
           label: "Guides",
           items: [
             "cartesian/guides/basic-bar-chart",
+            "cartesian/guides/horizontal-bar-chart",
             "cartesian/guides/multi-press",
             "cartesian/guides/custom-bars",
           ],
@@ -42,8 +43,12 @@ const sidebars = {
           type: "category",
           label: "Bar Paths",
           items: [
+            "cartesian/bar/overview",
             "cartesian/bar/bar",
             "cartesian/bar/use-bar-path",
+            "cartesian/bar/horizontal-bar",
+            "cartesian/bar/horizontal-bar-group",
+            "cartesian/bar/horizontal-stacked-bar",
             "cartesian/bar/bar-group",
             "cartesian/bar/use-bar-group-paths",
             "cartesian/bar/stacked-bar",
@@ -54,6 +59,14 @@ const sidebars = {
           type: "category",
           label: "Scatter Paths",
           items: ["cartesian/scatter/scatter"],
+        },
+        {
+          type: "category",
+          label: "Candlestick Paths",
+          items: [
+            "cartesian/candlestick/candlestick",
+            "cartesian/candlestick/use-candlestick-paths",
+          ],
         },
       ],
     },

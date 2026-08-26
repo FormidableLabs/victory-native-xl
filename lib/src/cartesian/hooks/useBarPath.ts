@@ -7,6 +7,7 @@ import {
 import type { ChartBounds, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
 import { useBarWidth } from "./useBarWidth";
+import { getVerticalBarRect } from "../utils/getVerticalBarRect";
 
 export const useBarPath = (
   points: PointsArray,
@@ -26,29 +27,31 @@ export const useBarPath = (
   });
 
   const path = React.useMemo(() => {
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
-    points.forEach(({ x, y, yValue }) => {
-      if (typeof y !== "number") return;
+    const baselineY = yScale(0);
 
-      const barHeight = yScale(0) - y;
+    points.forEach((point) => {
+      const rect = getVerticalBarRect(point, baselineY, barWidth);
+      if (!rect) return;
 
+      const yValue = point.yValue;
       if (roundedCorners) {
         const nonUniformRoundedRect = createRoundedRectPath(
-          x - barWidth / 2,
-          y,
-          barWidth,
-          barHeight,
+          rect.x,
+          rect.y,
+          rect.width,
+          rect.height,
           roundedCorners,
           Number(yValue),
         );
-        path.addRRect(nonUniformRoundedRect);
+        builder.addRRect(nonUniformRoundedRect);
       } else {
-        path.addRect(Skia.XYWHRect(x - barWidth / 2, y, barWidth, barHeight));
+        builder.addRect(Skia.XYWHRect(rect.x, rect.y, rect.width, rect.height));
       }
     });
 
-    return path;
+    return builder.build();
   }, [barWidth, points, roundedCorners, yScale]);
 
   return { path, barWidth };

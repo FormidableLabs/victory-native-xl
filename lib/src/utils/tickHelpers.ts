@@ -16,16 +16,23 @@ export const downsampleTicks = (tickValues: number[], tickCount: number) => {
     throw new Error("TickValues array must only contain numbers.");
   }
 
-  if (
-    !tickCount ||
-    !Array.isArray(tickValues) ||
-    tickValues.length <= tickCount
-  ) {
+  if (tickCount <= 0) {
+    return [];
+  }
+
+  if (!Array.isArray(tickValues) || tickValues.length <= tickCount) {
     return tickValues;
   }
-  const k = Math.floor(tickValues.length / tickCount);
 
-  return tickValues.filter((_, i) => i % k === 0);
+  if (tickCount === 1) {
+    return [tickValues[0]!];
+  }
+
+  const lastIndex = tickValues.length - 1;
+  return Array.from({ length: tickCount }, (_, i) => {
+    const tickIndex = Math.round((i * lastIndex) / (tickCount - 1));
+    return tickValues[tickIndex]!;
+  });
 };
 
 const getMinValue = (arr: Array<number>): number => {
@@ -40,7 +47,7 @@ export const getDomainFromTicks = (
   tickValues: number[] | undefined,
 ): [number, number] | undefined => {
   // Check if undefined OR if its not an array of numbers
-  if (!tickValues) return;
+  if (!tickValues || tickValues.length === 0) return;
 
   let numTicksArr;
   if (containsNonNumbers(tickValues)) {

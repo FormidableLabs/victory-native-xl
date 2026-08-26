@@ -18,13 +18,8 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  type TextStyle,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, type TextStyle, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { format } from "date-fns";
 import {
   type SharedValue,
@@ -217,12 +212,17 @@ export default function StockPriceScreen(props: { segment: string }) {
           <>
             <AnimatedText
               text={activeDate}
+              defaultValue="Single or multi-touch the chart"
               style={{
                 fontSize: 16,
                 color: textColor,
               }}
             />
-            <AnimatedText text={activeHigh} style={activeHighStyle} />
+            <AnimatedText
+              text={activeHigh}
+              defaultValue="—"
+              style={activeHighStyle}
+            />
           </>
         </View>
         <InfoCard style={{ marginBottom: 16 }}>{description}</InfoCard>
@@ -257,28 +257,28 @@ const StockArea = ({
   const { path: linePath } = useLinePath(points);
 
   const backgroundClip = useDerivedValue(() => {
-    const path = Skia.Path.Make();
+    const builder = Skia.PathBuilder.Make();
 
     if (isWindowActive) {
-      path.addRect(Skia.XYWHRect(left, top, startX.value - left, bottom - top));
-      path.addRect(
+      builder.addRect(
+        Skia.XYWHRect(left, top, startX.value - left, bottom - top),
+      );
+      builder.addRect(
         Skia.XYWHRect(endX.value, top, right - endX.value, bottom - top),
       );
     } else {
-      path.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
+      builder.addRect(Skia.XYWHRect(left, top, right - left, bottom - top));
     }
 
-    return path;
+    return builder.build();
   });
 
   const windowClip = useDerivedValue(() => {
-    if (!isWindowActive) return Skia.Path.Make();
+    if (!isWindowActive) return Skia.PathBuilder.Make().build();
 
-    const path = Skia.Path.Make();
-    path.addRect(
+    return Skia.Path.Rect(
       Skia.XYWHRect(startX.value, top, endX.value - startX.value, bottom - top),
     );
-    return path;
   });
 
   const windowLineColor = useDerivedValue(() => {
