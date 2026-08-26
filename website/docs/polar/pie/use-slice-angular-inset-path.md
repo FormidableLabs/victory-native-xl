@@ -13,6 +13,7 @@ The `useSliceAngularInsetPath` hook takes `PieSliceData` and angular inset styli
 ```tsx
 import {
   Pie,
+  PolarChart,
   useSliceAngularInsetPath,
   type PieSliceData,
 } from "victory-native";
@@ -39,10 +40,12 @@ function MyCustomSliceAngularInset({ slice }: { slice: PieSliceData }) {
 
 export function MyChart() {
   return (
-    <Pie.Chart data={DATA} labelKey="title" colorKey="palette" valueKey="high">
-      {/* 👇 pass the PieSliceData to our custom component */}
-      {({ slice }) => <MyCustomSliceAngularInset slice={slice} />}
-    </Pie.Chart>
+    <PolarChart data={DATA} labelKey="title" colorKey="palette" valueKey="high">
+      <Pie.Chart>
+        {/* 👇 pass the PieSliceData to our custom component */}
+        {({ slice }) => <MyCustomSliceAngularInset slice={slice} />}
+      </Pie.Chart>
+    </PolarChart>
   );
 }
 ```
@@ -60,12 +63,12 @@ useSliceAngularInsetPath({
 
 ### `slice`
 
-The `slice` argument is a `PieSliceData` object used to generate the slices's path. Generally, this data comes from render function of the `Pie.Chart`, as illustrated in the example above.
+The `slice` argument is a `PieSliceData` object used to generate the slice's path. Generally, this data comes from the render function of `Pie.Chart`, as illustrated in the example above.
 
 ## Returns
 
 ### [SkPath, SkPaint]
 
-The `SkPath` path object to be used as the `path` argument of a Skia `<Path />` element. The `SkPaint` path object to be used as the `paint` argument of a Skia `<Path />` element.
+The `SkPath` object to be used as the `path` argument of a Skia `<Path />` element. The `SkPaint` object can be used as the `paint` argument of a Skia `<Path />` element.
 
 For consistent rendering across native and web, prefer styling the path with explicit `style`, `color`, and `strokeWidth` props as shown above. The `SkPaint` tuple item remains available for backward compatibility.
