@@ -70,7 +70,7 @@ export const useSliceAngularInsetPath = ({
       builder.lineTo(endPoint.x, endPoint.y);
     }
 
-    return path;
+    return builder.build();
   }, [slice]);
 
   return path;
