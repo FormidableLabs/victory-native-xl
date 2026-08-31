@@ -1,5 +1,11 @@
 # victory-native
 
+## 42.0.1
+
+### Patch Changes
+
+- Fix Pie.SliceAngularInset hiding sibling slices on web while preserving the existing useSliceAngularInsetPath API. ([#685](https://github.com/FormidableLabs/victory-native-xl/pull/685))
+
 ## 42.0.0
 
 ### Major Changes
