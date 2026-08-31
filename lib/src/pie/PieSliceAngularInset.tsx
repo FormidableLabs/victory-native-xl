@@ -21,7 +21,7 @@ type PieSliceAngularInsetProps = {
 export const PieSliceAngularInset = (props: PieSliceAngularInsetProps) => {
   const { angularInset, children, animate, ...rest } = props;
   const { slice } = usePieSliceContext();
-  const [path, insetPaint] = useSliceAngularInsetPath({ slice, angularInset });
+  const [path] = useSliceAngularInsetPath({ slice, angularInset });
 
   // If the path is empty, don't render anything
   if (path.toSVGString() === "M0 0L0 0M0 0L0 0") {
@@ -34,7 +34,14 @@ export const PieSliceAngularInset = (props: PieSliceAngularInsetProps) => {
 
   const Component = animate ? AnimatedPath : Path;
   return (
-    <Component path={path} paint={insetPaint} animate={animate} {...rest}>
+    <Component
+      path={path}
+      animate={animate}
+      {...rest}
+      style="stroke"
+      color={angularInset.angularStrokeColor}
+      strokeWidth={angularInset.angularStrokeWidth}
+    >
       {children}
     </Component>
   );
