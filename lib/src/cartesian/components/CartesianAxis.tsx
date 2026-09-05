@@ -37,11 +37,13 @@ export const CartesianAxis = <
   lineWidth = StyleSheet.hairlineWidth,
   labelColor = "#000000",
   formatYLabel = (label: ValueOf<InputDatum>) => String(label),
-  formatXLabel = (label: ValueOf<InputDatum>) => String(label),
+  formatXLabel = (label: ValueOf<InputDatum>) =>
+    label instanceof Date ? label.toLocaleDateString() : String(label),
   yScale,
   xScale,
   font,
   isNumericalData = false,
+  isDateData = false,
   ix = [],
 }: AxisProps<RawData, XK, YK>) => {
   const axisConfiguration = useMemo(() => {
@@ -182,7 +184,7 @@ export const CartesianAxis = <
   });
 
   const xAxisNodes = xTicksNormalized.map((tick) => {
-    const val = isNumericalData ? tick : ix[tick];
+    const val = isDateData ? new Date(tick) : isNumericalData ? tick : ix[tick];
     const contentX = String(formatXLabel(val as never));
     const labelLayout = getTextLayout(contentX, font);
     const labelWidth = labelLayout.width;

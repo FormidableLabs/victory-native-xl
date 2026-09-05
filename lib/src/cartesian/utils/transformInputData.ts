@@ -24,6 +24,7 @@ import { getXAxisTicks } from "./getXAxisTicks";
 import { getYScaleInputBounds } from "./getYScaleInputBounds";
 import { getYScaleDomain } from "./getYScaleDomain";
 import { makeScale } from "./makeScale";
+import { dateToNumber, isDateArray } from "../../utils/isDateData";
 
 const getYOutputValue = (
   value: MaybeNumber,
@@ -88,6 +89,7 @@ export const transformInputData = <
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
+  isDateData: boolean;
   xTicksNormalized: number[];
   yAxes: NonEmptyArray<{
     yScale: ScaleLinear<number, number>;
@@ -98,13 +100,21 @@ export const transformInputData = <
   const data = [..._data];
   const { xAxisScale = "linear", yAxisScale = "linear" } = axisScales || {};
 
-  // Determine if xKey data is numerical
-  const isNumericalData = data.every(
-    (datum) => typeof datum[xKey as keyof RawData] === "number",
+  // Determine if xKey data is numerical, or all Dates (a time scale).
+  const isDateData = isDateArray(
+    data.map((datum) => datum[xKey as keyof RawData]),
   );
-  // and sort if it is
+  const isNumericalData =
+    isDateData ||
+    data.every((datum) => typeof datum[xKey as keyof RawData] === "number");
+  // and sort if it is. Dates sort by timestamp.
   if (isNumericalData) {
-    data.sort((a, b) => +a[xKey as keyof RawData] - +b[xKey as keyof RawData]);
+    data.sort((a, b) =>
+      isDateData
+        ? dateToNumber(a[xKey as keyof RawData]) -
+          dateToNumber(b[xKey as keyof RawData])
+        : +a[xKey as keyof RawData] - +b[xKey as keyof RawData],
+    );
   }
   // // Set up our y-output data structure
   const y = yKeys.reduce(
@@ -121,7 +131,9 @@ export const transformInputData = <
 
   const tickDomainsX = getDomainFromTicks(xTickValues);
   const ix = data.map((datum) => datum[xKey]) as InputFields<RawData>[XK][];
-  const ixNum = ix.map((val, i) => (isNumericalData ? (val as number) : i));
+  const ixNum = ix.map((val, i) =>
+    isDateData ? dateToNumber(val) : isNumericalData ? (val as number) : i,
+  );
 
   const xInputBounds = getXScaleInputBounds({
     isNumericalData,
@@ -138,6 +150,7 @@ export const transformInputData = <
 
   const xTicksForLabelLayout = getXAxisTicks({
     isNumericalData,
+    isDateData,
     ix,
     tickCount: xTicks,
     tickValues: xTickValues,
@@ -145,7 +158,7 @@ export const transformInputData = <
   });
   const xAxisLabelLayouts = xTicksForLabelLayout.map((xTick, index) => {
     const labelInput = (
-      isNumericalData ? xTick : ix[xTick]
+      isDateData ? new Date(xTick) : isNumericalData ? xTick : ix[xTick]
     ) as InputFields<RawData>[XK];
     const labelValue = xAxis.formatXLabel
       ? xAxis.formatXLabel(
@@ -360,6 +373,7 @@ export const transformInputData = <
   // For consistency we do it here, so we have both y and x ticks to pass to the axis generator
   const finalXTicksNormalized = getXAxisTicks({
     isNumericalData,
+    isDateData,
     ix,
     tickCount: xTicks,
     tickValues: xTickValues,
@@ -372,6 +386,7 @@ export const transformInputData = <
     ix,
     y,
     isNumericalData,
+    isDateData,
     ox,
     xScale,
     xTicksNormalized: finalXTicksNormalized,

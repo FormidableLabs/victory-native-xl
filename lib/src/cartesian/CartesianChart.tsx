@@ -370,6 +370,7 @@ function CartesianChartContent<
     xScale,
     chartBounds,
     isNumericalData,
+    isDateData,
     xTicksNormalized,
     _tData,
   } = React.useMemo(() => {
@@ -419,8 +420,14 @@ function CartesianChartContent<
               YK
             >[],
           });
-    const { xScale, yAxes, isNumericalData, xTicksNormalized, ..._tData } =
-      transformed;
+    const {
+      xScale,
+      yAxes,
+      isNumericalData,
+      isDateData,
+      xTicksNormalized,
+      ..._tData
+    } = transformed;
 
     const primaryYAxis = yAxes[0];
     const primaryYScale = primaryYAxis.yScale;
@@ -438,6 +445,7 @@ function CartesianChartContent<
       xScale,
       chartBounds,
       isNumericalData,
+      isDateData,
       _tData,
     };
   }, [
@@ -954,6 +962,7 @@ function CartesianChartContent<
         yScale={zoomY.rescaleY(primaryYScale)}
         ix={_tData.ix}
         isNumericalData={orientation === "horizontal" ? true : isNumericalData}
+        isDateData={orientation === "horizontal" ? false : isDateData}
         chartBounds={chartBounds}
         orientation={orientation}
         zoom={zoomX}

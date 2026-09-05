@@ -36,9 +36,11 @@ export const XAxis = <
   font,
   title,
   labelRenderer,
-  formatXLabel = (label: ValueOf<InputDatum>) => String(label),
+  formatXLabel = (label: ValueOf<InputDatum>) =>
+    label instanceof Date ? label.toLocaleDateString() : String(label),
   ix = [],
   isNumericalData,
+  isDateData = false,
   linePathEffect,
   chartBounds,
   orientation,
@@ -50,6 +52,7 @@ export const XAxis = <
   const fontSize = font?.getSize() ?? 0;
   const xTicksNormalized = getXAxisTicks({
     isNumericalData,
+    isDateData,
     ix,
     tickCount,
     tickValues,
@@ -57,7 +60,9 @@ export const XAxis = <
   });
   const xTickLabels = xTicksNormalized.map((tick, index) => {
     const tickPosition = xScale(tick);
-    const val = (isNumericalData ? tick : ix[tick]) as Label;
+    const val = (
+      isDateData ? new Date(tick) : isNumericalData ? tick : ix[tick]
+    ) as Label;
     const contentX = String(formatXLabel(val as never));
     const labelLayout = getAxisLabelLayout({
       axis: "x",

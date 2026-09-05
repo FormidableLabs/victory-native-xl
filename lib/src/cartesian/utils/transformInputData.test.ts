@@ -789,3 +789,138 @@ describe("transformInputData", () => {
 
   // TODO: Some day, test the gridOptions code.
 });
+
+describe("transformInputData with Date x values", () => {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const d0 = new Date(Date.UTC(2024, 0, 1));
+  const d1 = new Date(Date.UTC(2024, 0, 2));
+  const d2 = new Date(Date.UTC(2024, 0, 3));
+
+  const DATE_DATA = [
+    { x: d0, y: 3, z: 0 },
+    { x: d1, y: 7, z: 4 },
+    { x: d2, y: 5, z: 10 },
+  ];
+
+  const run = (data: typeof DATE_DATA) =>
+    transformInputData({
+      data,
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes as never,
+    });
+
+  it("detects an all-Date x column as a time scale", () => {
+    const { isDateData, isNumericalData } = run(DATE_DATA);
+
+    expect(isDateData).toBe(true);
+    // Dates position like numbers, so the numerical path stays on.
+    expect(isNumericalData).toBe(true);
+  });
+
+  it("positions dates by timestamp across the output window", () => {
+    const { ox } = run(DATE_DATA);
+
+    expect(ox).toEqual([0, 250, 500]);
+  });
+
+  it("preserves the original Date objects in ix", () => {
+    const { ix } = run(DATE_DATA);
+
+    expect(ix).toEqual([d0, d1, d2]);
+  });
+
+  it("sorts out-of-order dates chronologically", () => {
+    const { ix, ox } = run([
+      { x: d2, y: 5, z: 10 },
+      { x: d0, y: 3, z: 0 },
+      { x: d1, y: 7, z: 4 },
+    ]);
+
+    expect(ix).toEqual([d0, d1, d2]);
+    expect(ox).toEqual([0, 250, 500]);
+  });
+
+  it("reorders y values to match the date sort", () => {
+    const { y } = run([
+      { x: d2, y: 5, z: 10 },
+      { x: d0, y: 3, z: 0 },
+      { x: d1, y: 7, z: 4 },
+    ]);
+
+    expect(y.y.i).toEqual([3, 7, 5]);
+    expect(y.z.i).toEqual([0, 4, 10]);
+  });
+
+  it("produces x ticks within the date domain", () => {
+    const { xTicksNormalized } = run(DATE_DATA);
+
+    expect(xTicksNormalized.length).toBeGreaterThan(0);
+    xTicksNormalized.forEach((tick) => {
+      expect(tick).toBeGreaterThanOrEqual(d0.getTime());
+      expect(tick).toBeLessThanOrEqual(d2.getTime());
+    });
+  });
+
+  it("does not treat date-like strings or timestamps as a time scale", () => {
+    const stringResult = transformInputData({
+      data: [
+        { x: "2024-01-01", y: 3, z: 0 },
+        { x: "2024-01-02", y: 7, z: 4 },
+      ],
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes as never,
+    });
+
+    const numberResult = transformInputData({
+      data: [
+        { x: d0.getTime(), y: 3, z: 0 },
+        { x: d1.getTime(), y: 7, z: 4 },
+      ],
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes as never,
+    });
+
+    expect(stringResult.isDateData).toBe(false);
+    expect(numberResult.isDateData).toBe(false);
+  });
+
+  it("falls back to categorical handling when dates are mixed with other types", () => {
+    const { isDateData, isNumericalData } = transformInputData({
+      data: [
+        { x: d0, y: 3, z: 0 },
+        { x: "not a date", y: 7, z: 4 },
+      ],
+      xKey: "x",
+      yKeys: ["y", "z"],
+      outputWindow: OUTPUT_WINDOW,
+      xAxis: axes.xAxis,
+      yAxes: axes.yAxes as never,
+    });
+
+    expect(isDateData).toBe(false);
+    expect(isNumericalData).toBe(false);
+  });
+
+  it("spaces irregular date gaps proportionally, not evenly", () => {
+    // A categorical axis would place these evenly; a time scale must not.
+    const { ox } = run([
+      { x: d0, y: 3, z: 0 },
+      { x: d1, y: 7, z: 4 },
+      { x: new Date(d0.getTime() + 10 * DAY_MS), y: 5, z: 10 },
+    ]);
+
+    expect(ox[0]).toBe(0);
+    expect(ox[2]).toBe(500);
+    // 1 day into a 10-day span => 10% across, not the categorical 50%.
+    expect(ox[1]).toBeCloseTo(50, 5);
+  });
+});
