@@ -1,11 +1,11 @@
 {
   "name": "victory-native",
-  "version": "42.0.1-skia3.0",
+  "version": "42.0.1",
   "description": "A charting library for React Native with a focus on performance and customization.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marqroldan/victory-native-xl",
+    "url": "https://github.com/FormidableLabs/victory-native-xl",
     "directory": "lib"
   },
   "homepage": "https://commerce.nearform.com/open-source/victory-native",

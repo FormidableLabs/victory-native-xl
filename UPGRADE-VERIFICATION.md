@@ -1,12 +1,12 @@
 # Skia 3 / Gesture Handler 3 upgrade verification
 
-Verified on 2026-10-09 (Asia/Manila). Upstream baseline `de84ff1f3098a2072f8c52ac801ce08141fdb46a`; branch `upgrade/skia3-gesture-handler3`.
+Verified on 2026-10-09 (Asia/Manila). Upstream baseline `de84ff1f3098a2072f8c52ac801ce08141fdb46a`; tested fork branch `upgrade/skia3-gesture-handler3`.
 
 ## Dependencies and migration
 
 | Dependency                   | Resolved version |
 | ---------------------------- | ---------------- |
-| Victory Native fork          | 42.0.1-skia3.0   |
+| Victory Native baseline      | 42.0.1           |
 | react-native-skia            | 3.3.0            |
 | react-native-gesture-handler | 3.3.0            |
 | react-native-reanimated      | 4.5.1            |
@@ -48,11 +48,11 @@ One interpolated long-press automation sequence unexpectedly navigated back. Reo
 
 ## Static checks and limits
 
-- Source-only TypeScript check passed.
+- Source-only TypeScript check passed on the original tested fork branch. The original upstream tsconfig is restored in this proposal; full type checking currently fails in unchanged tests/type-tests importing scoped Skia.
 - ESLint on all changed runtime/example sources passed; the inherited React-version configuration warning remains.
 - Immutable Yarn install and library build passed. Yarn reports inherited transitive peer warnings; no Skia/RNGH/Reanimated version conflict was found in the resolved runtime dependencies.
 - Whitespace/diff checks passed. Existing test and type-test files were left byte-identical; no unit tests or mixed suites were run.
 
-This does not verify every example, web runtime, Android, release-mode performance, long-running GPU/resource limits, every animation/axis combination or an external app consuming the packed package. Upstream tests still contain scoped-Skia imports and need a separately authorized migration before they can be used with this fork. The root source type check excludes those test directories explicitly. The upstream `check:code` and CI test workflow are not claimed green.
+Web landing and the bar-chart route were additionally checked on 2026-10-09: canvas rendering, gradients/axes/labels and Shuffle Data updates worked in the isolated Codex browser. This is limited manual web evidence.
 
-Production CRM adoption is a separate action. Its existing source and dependencies were not changed by this fork work.
+This does not verify every example, full web gesture coverage, Android, release-mode performance, long-running GPU/resource limits, every animation/axis combination or an external app consuming the packed package. Upstream tests still contain scoped-Skia imports and need a separately authorized migration before they can be used with this fork. The successful source-only check was performed on the tested fork branch, which excluded test directories. This upstream proposal restores the original tsconfig; its full type check and unit-test CI remain unresolved. The upstream `check:code` and CI test workflow are not claimed green.

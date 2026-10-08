@@ -2,14 +2,19 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "victory-native": ["./lib/src/index"]
+      "victory-native": [
+        "./lib/src/index"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -26,13 +31,6 @@
     "target": "esnext",
     "verbatimModuleSyntax": true
   },
-  "exclude": [
-    "website",
-    "lib/dist",
-    "lib/test",
-    "lib/src/**/*.test.ts",
-    "lib/src/**/*.test.tsx",
-    "lib/type-tests"
-  ],
+  "exclude": ["website", "lib/dist"],
   "extends": "expo/tsconfig.base"
 }
