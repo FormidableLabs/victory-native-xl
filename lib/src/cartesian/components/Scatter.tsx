@@ -4,7 +4,7 @@ import {
   Skia,
   type PathProps,
   type SkiaDefaultProps,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import type { PointsArray } from "../../types";
 import { AnimatedPath } from "./AnimatedPath";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";

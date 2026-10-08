@@ -45,5 +45,8 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "yarn@4.14.1"
+  "packageManager": "yarn@4.14.1",
+  "resolutions": {
+    "expo-modules-jsi@npm:~57.1.1": "patch:expo-modules-jsi@npm%3A57.1.1#~/.yarn/patches/expo-modules-jsi-npm-57.1.1-3b93696200.patch"
+  }
 }

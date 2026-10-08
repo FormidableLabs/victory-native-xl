@@ -5,7 +5,7 @@ import {
   type Color,
   type PathProps,
   type SkPath,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import { stitchDataArray } from "../../utils/stitchDataArray";
 import type { PointsArray } from "../../types";
 import { CURVES, type CurveType } from "../utils/curves";

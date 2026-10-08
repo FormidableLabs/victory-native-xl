@@ -1,6 +1,6 @@
 import * as React from "react";
 import { area } from "d3-shape";
-import { Skia } from "@shopify/react-native-skia";
+import { Skia } from "react-native-skia";
 import { stitchDataArray } from "../../utils/stitchDataArray";
 import type { PointsArray } from "../../types";
 import type { CurveType } from "../utils/curves";

@@ -3,7 +3,7 @@ import {
   type SharedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import { scale, type Matrix4 } from "@shopify/react-native-skia";
+import { scale, type Matrix4 } from "react-native-skia";
 import { useEffect } from "react";
 import { identity4 } from "../../utils/transform";
 

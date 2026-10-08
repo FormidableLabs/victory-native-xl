@@ -5,9 +5,9 @@ import {
   type DashPathEffect,
   type SkFont,
   type SkPoint,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
-import { type PanGesture } from "react-native-gesture-handler";
+import { type LegacyPanGesture as PanGesture } from "react-native-gesture-handler";
 
 import type {
   UserSelect,

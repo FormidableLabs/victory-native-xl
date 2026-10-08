@@ -1,10 +1,6 @@
 import * as React from "react";
-import type {
-  PathProps,
-  SkPath,
-  SkiaDefaultProps,
-} from "@shopify/react-native-skia";
-import { Path } from "@shopify/react-native-skia";
+import type { PathProps, SkPath, SkiaDefaultProps } from "react-native-skia";
+import { Path } from "react-native-skia";
 import {
   isSharedValue,
   makeMutable,

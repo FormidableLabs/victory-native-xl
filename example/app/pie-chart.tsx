@@ -9,7 +9,7 @@ import {
   setTranslate,
   useChartTransformState,
 } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 import {
   useAnimatedReaction,
   useSharedValue,

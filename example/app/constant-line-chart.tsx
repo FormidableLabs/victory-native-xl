@@ -1,10 +1,4 @@
-import {
-  useFont,
-  Line as SKLine,
-  vec,
-  Skia,
-  Path,
-} from "@shopify/react-native-skia";
+import { useFont, Line as SKLine, vec, Skia, Path } from "react-native-skia";
 import * as React from "react";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";

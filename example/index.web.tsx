@@ -5,7 +5,7 @@ import { renderRootComponent } from "expo-router/build/renderRootComponent";
 // eslint-disable-next-line import/no-unresolved
 import { version } from "canvaskit-wasm/package.json";
 
-import { LoadSkiaWeb } from "@shopify/react-native-skia/lib/module/web";
+import { LoadSkiaWeb } from "react-native-skia/lib/module/web";
 
 // When used on the web, we need to load the CanvasKit WASM file before rendering content
 // For simplicity, we are using a CDN to load the file, but it can be hosted on your own server as well

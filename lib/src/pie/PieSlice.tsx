@@ -4,7 +4,7 @@ import {
   Path,
   type PathProps,
   type SkPoint,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import { useSlicePath } from "./hooks/useSlicePath";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 import type { PieLabelProps } from "./PieLabel";

@@ -17,7 +17,7 @@ import {
   Text as SkiaText,
   useFont,
   vec,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import { ScrollView, StyleSheet, type TextStyle, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { format } from "date-fns";

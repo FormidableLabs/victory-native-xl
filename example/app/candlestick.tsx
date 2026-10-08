@@ -4,7 +4,7 @@ import {
   Line as SkiaLine,
   useFont,
   vec,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDarkMode } from "react-native-dark";

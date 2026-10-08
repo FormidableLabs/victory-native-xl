@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Path, type PathProps, type SkPath } from "@shopify/react-native-skia";
+import { Path, type PathProps, type SkPath } from "react-native-skia";
 import type { ChartBounds, PointsArray } from "../../types";
 import type { PathAnimationConfig } from "../../hooks/useAnimatedPath";
 import { AnimatedPath } from "./AnimatedPath";

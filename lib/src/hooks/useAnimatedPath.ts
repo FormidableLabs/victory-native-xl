@@ -1,4 +1,4 @@
-import { Skia, type SkPath } from "@shopify/react-native-skia";
+import { Skia, type SkPath } from "react-native-skia";
 import * as React from "react";
 import {
   useDerivedValue,

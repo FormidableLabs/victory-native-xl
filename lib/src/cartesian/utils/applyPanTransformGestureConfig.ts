@@ -1,4 +1,4 @@
-import type { PanGesture } from "react-native-gesture-handler";
+import type { LegacyPanGesture as PanGesture } from "react-native-gesture-handler";
 
 type Dimension = "x" | "y";
 type ExtractSingleParam<T> = T extends (arg: infer P) => unknown ? P : never;

@@ -6,8 +6,9 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
+import { Canvas, Group, type CanvasRef } from "react-native-skia";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { styles, sizeStyle } from "./ChartWrapper.styles";
 import { type ChartExplicitSize } from "./ChartExplicitSize";
 import { type ChartCanvasSize } from "./chartCanvasSizeUtils";
 
@@ -51,7 +52,7 @@ export function ChartWrapper({
           !explicitSize && styles.flex1,
           styles.overflowHidden,
           explicitSize
-            ? { width: explicitSize.width, height: explicitSize.height }
+            ? sizeStyle(explicitSize.width, explicitSize.height)
             : null,
           containerStyle,
         ]}
@@ -61,7 +62,7 @@ export function ChartWrapper({
           ref={canvasRef}
           style={StyleSheet.flatten([
             styles.flex1,
-            hasMeasuredLayoutSize ? { width, height } : null,
+            hasMeasuredLayoutSize ? sizeStyle(width, height) : null,
             canvasStyle,
           ])}
         >
@@ -72,12 +73,3 @@ export function ChartWrapper({
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  flex1: {
-    flex: 1,
-  },
-  overflowHidden: {
-    overflow: "hidden",
-  },
-});

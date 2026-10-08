@@ -6,7 +6,7 @@ import {
   useChartPressState,
   useChartTransformState,
 } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../assets/inter-medium.ttf";
 

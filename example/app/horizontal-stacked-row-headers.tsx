@@ -3,7 +3,7 @@ import {
   Text as SkiaText,
   useFont,
   type SkFont,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

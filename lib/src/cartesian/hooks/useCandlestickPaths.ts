@@ -5,7 +5,7 @@ import {
   type PathProps,
   type SkPath,
   type SkPathBuilder,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import type { ChartBounds, PointsArray } from "../../types";
 import { getBarWidth } from "../utils/getBarWidth";
 import {
