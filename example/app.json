@@ -29,7 +29,19 @@
           "resizeMode": "cover",
           "backgroundColor": "#000000"
         }
-      ]
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          },
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "reactCompiler": true

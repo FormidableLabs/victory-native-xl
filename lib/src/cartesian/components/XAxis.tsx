@@ -1,12 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import {
-  Group,
-  Line,
-  Text,
-  vec,
-  type SkPoint,
-} from "@shopify/react-native-skia";
+import { Group, Line, Text, vec, type SkPoint } from "react-native-skia";
 import { getOffsetFromAngle } from "../../utils/getOffsetFromAngle";
 import { boundsToClip } from "../../utils/boundsToClip";
 import { DEFAULT_TICK_COUNT } from "../../utils/tickHelpers";

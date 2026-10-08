@@ -7,7 +7,7 @@ import {
   Line,
   useChartPressState,
 } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
 import { InfoCard } from "example/components/InfoCard";

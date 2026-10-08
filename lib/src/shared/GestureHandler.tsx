@@ -1,10 +1,11 @@
 import {
-  type ComposedGesture,
+  type LegacyComposedGesture as ComposedGesture,
   GestureDetector,
   type GestureType,
 } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import * as React from "react";
+import { useGestureHandlerStyle } from "./GestureHandler.styles";
 import type { GestureHandlerConfig } from "../types";
 
 type GestureHandlerProps = {
@@ -17,16 +18,7 @@ export const GestureHandler = ({
   debug = false,
   config,
 }: GestureHandlerProps) => {
-  const style = useAnimatedStyle(() => {
-    return {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      backgroundColor: debug ? "rgba(100, 200, 255, 0.4)" : "transparent",
-    };
-  });
+  const style = useGestureHandlerStyle(debug);
   return (
     <GestureDetector {...config} gesture={gesture}>
       <Animated.View style={style} />

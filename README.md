@@ -31,15 +31,19 @@ https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-990
 
 </div>
 
+## Skia 3 migration
+
+This breaking upgrade requires `react-native-skia` 3.3.0, Gesture Handler 3.3 or later in the 3.x series, and Reanimated 4. Do not install scoped and unscoped Skia together. Use a native development build instead of Expo Go. See the [Skia migration guide](https://wcandillon.github.io/react-native-skia/docs/getting-started/migration/) and [verification notes](UPGRADE-VERIFICATION.md).
+
 ## Installation
 
 Start by installing the peer dependencies of `victory-native` – React Native Reanimated, Gesture Handler, and Skia:
 
 ```shell
-yarn add react-native-reanimated react-native-gesture-handler @shopify/react-native-skia
+yarn add react-native-reanimated react-native-gesture-handler react-native-skia
 ```
 
-For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
+For Reanimated, you'll need to add `"react-native-worklets/plugin"` to your `plugins` list in your `babel.config.js` config file.
 
 Then install `victory-native`:
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type Color } from "@shopify/react-native-skia";
+import { type Color } from "react-native-skia";
 import { PieSlice, type PieSliceData } from "./PieSlice";
 import { handleTranslateInnerRadius } from "./utils/innerRadius";
 import { getPieLayout } from "./utils/pieLayout";

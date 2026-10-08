@@ -2,7 +2,7 @@ import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BarGroup, CartesianChart } from "victory-native";
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, useFont, vec } from "react-native-skia";
 import { useDarkMode } from "react-native-dark";
 import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";

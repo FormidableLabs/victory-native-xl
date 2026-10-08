@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 import { Bar, CartesianChart } from "victory-native";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";

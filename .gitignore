@@ -40,3 +40,7 @@ lib/test/headless/**/*.diff.png
 *.tsbuildinfo
 .expo/README.md
 .expo/devices.json
+
+!.yarn/
+.yarn/*
+!.yarn/patches/

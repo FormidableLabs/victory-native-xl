@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, vec, type Color, type SkFont } from "@shopify/react-native-skia";
+import { Text, vec, type Color, type SkFont } from "react-native-skia";
 import { getFontGlyphWidth } from "../../utils/getFontGlyphWidth";
 import type { ChartBounds, MaybeNumber, PointsArray } from "../../types";
 import { useCartesianChartContext } from "../contexts/CartesianChartContext";
