@@ -1,4 +1,4 @@
-import { Text, type Color, type SkFont } from "@shopify/react-native-skia";
+import { Text, type Color, type SkFont } from "react-native-skia";
 import React, { type ReactNode } from "react";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 import { getFontGlyphWidth } from "../utils/getFontGlyphWidth";

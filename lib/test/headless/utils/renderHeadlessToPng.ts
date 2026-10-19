@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 
 const require = createRequire(import.meta.url);
 const { drawOffscreen, makeOffscreenSurface } =
-  require("@shopify/react-native-skia/lib/commonjs/headless/index.js") as {
+  require("react-native-skia/lib/commonjs/headless/index.js") as {
     drawOffscreen: (
       surface: { dispose: () => void },
       element: ReactElement,

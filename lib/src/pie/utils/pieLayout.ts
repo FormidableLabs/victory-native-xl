@@ -1,4 +1,4 @@
-import { vec, type SkPoint } from "@shopify/react-native-skia";
+import { vec, type SkPoint } from "react-native-skia";
 import { type ChartCanvasSize } from "../../shared/chartCanvasSizeUtils";
 import { computePieLayout } from "./computePieLayout";
 

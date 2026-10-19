@@ -1,11 +1,6 @@
 import * as React from "react";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import {
-  Circle,
-  LinearGradient,
-  useFont,
-  vec,
-} from "@shopify/react-native-skia";
+import { Circle, LinearGradient, useFont, vec } from "react-native-skia";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {

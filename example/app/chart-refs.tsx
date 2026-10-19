@@ -8,7 +8,7 @@ import {
   useChartPressState,
   type CartesianChartRef,
 } from "victory-native";
-import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
+import { Circle, useFont, ImageFormat } from "react-native-skia";
 import {
   runOnJS,
   type SharedValue,

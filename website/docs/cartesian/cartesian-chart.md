@@ -12,7 +12,7 @@ The example below shows a basic use of the `CartesianChart`.
 ```tsx
 import { View } from "react-native";
 import { CartesianChart, Line } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 // 👇 import a font file you'd like to use for tick labels
 import inter from "../assets/inter-medium.ttf";
 

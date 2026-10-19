@@ -10,7 +10,7 @@ This first example shows how to customize individual bars without any children b
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
 
@@ -63,7 +63,7 @@ This second example shows how to customize individual bars with children
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
 

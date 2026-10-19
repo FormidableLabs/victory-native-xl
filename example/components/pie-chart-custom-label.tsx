@@ -1,4 +1,4 @@
-import { Group, Text, type SkFont } from "@shopify/react-native-skia";
+import { Group, Text, type SkFont } from "react-native-skia";
 
 import React from "react";
 import type { PieSliceData } from "victory-native";

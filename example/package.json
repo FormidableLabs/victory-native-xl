@@ -14,7 +14,6 @@
     "@gorhom/bottom-sheet": "^4",
     "@react-native-community/slider": "5.2.0",
     "@react-native-segmented-control/segmented-control": "2.5.7",
-    "@shopify/react-native-skia": "2.6.9",
     "canvaskit-wasm": "^0.41.0",
     "d3-scale": "^4.0.2",
     "date-fns": "^2.30.0",
@@ -38,6 +37,7 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-skia": "2.15.1",
     "react-native-web": "~0.21.0",
     "react-native-wheel-color-picker": "^1.2.0",
     "react-native-worklets": "0.10.1",
@@ -52,7 +52,7 @@
   "expo": {
     "install": {
       "exclude": [
-        "@shopify/react-native-skia"
+        "react-native-skia"
       ]
     }
   },

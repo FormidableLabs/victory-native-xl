@@ -1,4 +1,4 @@
-import type { Matrix4 } from "@shopify/react-native-skia";
+import type { Matrix4 } from "react-native-skia";
 import { getTransformComponents } from "../../utils/transform";
 
 type TouchPoint = {

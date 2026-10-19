@@ -64,7 +64,7 @@ This guide will show you how to create this bar chart with some customization li
 
   ```tsx
   //👇 Import useFont from React Native Skia
-  import { useFont } from "@shopify/react-native-skia"
+  import { useFont } from "react-native-skia"
   //👇 Also import a ttf file for the font you want to use.
   import inter from "../fonts/inter-medium.ttf"
 
@@ -118,7 +118,7 @@ This guide will show you how to create this bar chart with some customization li
 
   ```tsx
   //👇 Add LinearGradient and vec to our imports React Native Skia
-  import { LinearGradient, useFont, vec } from "@shopify/react-native-skia"
+  import { LinearGradient, useFont, vec } from "react-native-skia"
   ```
 
   The `LinearGradient` component takes a `start` and `end` prop that are vectors that represent the direction of the gradient. It also takes a `colors` prop that is an array of strings that represent the colors of the gradient. The first color in the array will be the start color and the last color in the array will be the end color. You can also add additional colors to the array to create a gradient with more than two colors.
@@ -152,7 +152,7 @@ This guide will show you how to create this bar chart with some customization li
   ```tsx
   import { View } from "react-native"
   import { Bar, CartesianChart } from "victory-native"
-  import { LinearGradient, useFont, vec } from "@shopify/react-native-skia"
+  import { LinearGradient, useFont, vec } from "react-native-skia"
   import inter from "../fonts/inter-medium.ttf"
 
   const MusicChart = () => {

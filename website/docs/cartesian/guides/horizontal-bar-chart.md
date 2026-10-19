@@ -7,7 +7,7 @@ Horizontal bars use the same data shape as vertical bars: `xKey` points at the c
 ## Basic Example
 
 ```tsx
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, useFont, vec } from "react-native-skia";
 import { View } from "react-native";
 import { CartesianChart, HorizontalBar } from "victory-native";
 import inter from "../fonts/inter-medium.ttf";
