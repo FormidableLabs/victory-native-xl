@@ -5,7 +5,7 @@ import {
   useChartPressState,
   type Scale,
 } from "victory-native";
-import { Circle, Shader, Skia, useFont } from "@shopify/react-native-skia";
+import { Circle, Shader, Skia, useFont } from "react-native-skia";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {

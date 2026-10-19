@@ -8,7 +8,7 @@ import {
   type ChartPressPanConfig,
   useChartPressState,
 } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
 import inter from "../assets/inter-medium.ttf";

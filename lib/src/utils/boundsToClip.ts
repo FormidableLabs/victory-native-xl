@@ -1,4 +1,4 @@
-import { rect, type ClipDef } from "@shopify/react-native-skia";
+import { rect, type ClipDef } from "react-native-skia";
 import type { ChartBounds } from "../types";
 
 export const boundsToClip = (bounds: ChartBounds): ClipDef =>

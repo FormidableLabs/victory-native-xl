@@ -9,10 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@shopify/react-native-skia": path.join(
-        stubsDir,
-        "react-native-skia.cjs",
-      ),
+      "react-native-skia": path.join(stubsDir, "react-native-skia.cjs"),
       "react-native": path.join(stubsDir, "react-native.ts"),
       "react-native-reanimated": path.join(
         stubsDir,
@@ -36,7 +33,7 @@ export default defineConfig({
     fileParallelism: false,
     server: {
       deps: {
-        external: ["@shopify/react-native-skia", "canvaskit-wasm"],
+        external: ["react-native-skia", "canvaskit-wasm"],
       },
     },
   },

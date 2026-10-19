@@ -1,4 +1,4 @@
-import { FillType, Skia, type SkPath } from "@shopify/react-native-skia";
+import { FillType, Skia, type SkPath } from "react-native-skia";
 import { useMemo } from "react";
 import type { PieSliceData } from "../PieSlice";
 

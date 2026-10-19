@@ -16,12 +16,7 @@ import {
   setTranslate,
   useChartTransformState,
 } from "victory-native";
-import {
-  multiply4,
-  scale,
-  translate,
-  useFont,
-} from "@shopify/react-native-skia";
+import { multiply4, scale, translate, useFont } from "react-native-skia";
 import { useState } from "react";
 import { appColors } from "../consts/colors";
 import inter from "../assets/inter-medium.ttf";

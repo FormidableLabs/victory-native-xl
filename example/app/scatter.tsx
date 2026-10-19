@@ -1,4 +1,4 @@
-import { LinearGradient, Text, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, Text, useFont, vec } from "react-native-skia";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

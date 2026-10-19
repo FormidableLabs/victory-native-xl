@@ -13,7 +13,7 @@ import {
   useCandlestickPaths,
   type PointsArray,
 } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
+import { Path } from "react-native-skia";
 
 function CustomCandles({
   openPoints,

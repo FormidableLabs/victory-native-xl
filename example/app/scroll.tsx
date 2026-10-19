@@ -10,13 +10,7 @@ import {
   type ChartBounds,
   type Viewport,
 } from "victory-native";
-import {
-  mapPoint3d,
-  Matrix4,
-  Rect,
-  scale,
-  useFont,
-} from "@shopify/react-native-skia";
+import { mapPoint3d, Matrix4, Rect, scale, useFont } from "react-native-skia";
 import {
   interpolate,
   useDerivedValue,

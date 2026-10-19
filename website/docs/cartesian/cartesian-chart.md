@@ -12,7 +12,7 @@ The example below shows a basic use of the `CartesianChart`.
 ```tsx
 import { View } from "react-native";
 import { CartesianChart, Line } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 // 👇 import a font file you'd like to use for tick labels
 import inter from "../assets/inter-medium.ttf";
 
@@ -74,7 +74,7 @@ The `children` prop is a render function whose sole argument is an object that e
 
 **See the [Render Function Fields](#render-function-fields) section for an outline of all of the available fields on the render function argument.**
 
-The `children` function will render its Skia elements inside of [a clipping group](https://shopify.github.io/react-native-skia/docs/group/#clipping-operations) that sit inside of the bounds of the charts axes, so that your charting elements do not overflow outside of your axes.
+The `children` function will render its Skia elements inside of [a clipping group](https://wcandillon.github.io/react-native-skia/v2/docs/group/#clipping-operations) that sit inside of the bounds of the charts axes, so that your charting elements do not overflow outside of your axes.
 
 ### `padding`
 

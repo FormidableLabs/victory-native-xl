@@ -1,5 +1,5 @@
 import React from "react";
-import { type Color, Path, type PathProps } from "@shopify/react-native-skia";
+import { type Color, Path, type PathProps } from "react-native-skia";
 import { useSliceAngularInsetPath } from "./hooks/useSliceAngularInsetPath";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
 import type { PathAnimationConfig } from "../hooks/useAnimatedPath";

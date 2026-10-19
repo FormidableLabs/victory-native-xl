@@ -8,7 +8,7 @@ The final code of the Getting Started guide is shown below:
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
 
@@ -138,7 +138,7 @@ Putting this all together, our code looks something like the following:
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf";
 

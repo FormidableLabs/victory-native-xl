@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getTransformComponents,
@@ -9,7 +14,7 @@ import {
   setTranslate,
   useChartTransformState,
 } from "victory-native";
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 import {
   useAnimatedReaction,
   useSharedValue,
@@ -42,6 +47,9 @@ const DATA = (numberPoints = 5) =>
 
 export default function PieChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
+  const { width, height } = useWindowDimensions();
+  // ScrollView content is unbounded, so use a concrete chart height.
+  const chartHeight = Math.min(width, height * 0.45);
   const font = useFont(inter, 10);
   const [data, setData] = useState(DATA(5));
   const [insetWidth, setInsetWidth] = useState(4);
@@ -85,10 +93,10 @@ export default function PieChart(props: { segment: string }) {
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <ScrollView>
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View
           style={{
-            height: "45%",
+            height: chartHeight,
           }}
         >
           <PolarChart

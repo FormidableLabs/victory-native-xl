@@ -5,13 +5,15 @@ import tooltipMp4 from "./assets/getting-started-tooltip.mp4";
 
 ## Installation
 
-Start by installing the peer dependencies of `victory-native` – [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/), [Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/), and [Skia](https://shopify.github.io/react-native-skia/):
+Requires React 19+, React Native 0.78+ with the New Architecture, [Skia 2.x (2.15.1+)](https://wcandillon.github.io/react-native-skia/v2/), [Reanimated 4](https://docs.swmansion.com/react-native-reanimated/), Worklets, and [Gesture Handler 2](https://docs.swmansion.com/react-native-gesture-handler/). Choose a compatible Reanimated/Worklets pair for your React Native version using the [compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/).
 
 ```shell
-yarn add react-native-reanimated react-native-gesture-handler @shopify/react-native-skia
+yarn add react-native-reanimated@^4 react-native-worklets react-native-gesture-handler@^2 react-native-skia@^2.15.1
 ```
 
-For Reanimated, you'll need to add `"react-native-reanimated/plugin"` to your `plugins` list in your `babel.config.js` config file.
+For a bare React Native app, add `"react-native-worklets/plugin"` last in your `babel.config.js` plugins. Expo's `babel-preset-expo` configures it automatically. Rebuild your native app after installation (run `pod install` for iOS).
+
+This release uses the renamed `react-native-skia` package on **Skia 2.x**. Skia 3 and Gesture Handler 3 are not supported. If you previously installed `@shopify/react-native-skia`, follow the [migration guide](./skia-package-migration.md) before upgrading. The scoped and unscoped packages must not be installed together.
 
 Then install `victory-native`:
 
@@ -225,7 +227,7 @@ Putting this all together, we have something like the following:
 import * as React from "react";
 import { View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 import inter from "../../assets/inter-medium.ttf"; // Wherever your font actually lives
 

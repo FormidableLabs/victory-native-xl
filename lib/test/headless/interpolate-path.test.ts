@@ -1,4 +1,4 @@
-import { Skia } from "@shopify/react-native-skia";
+import { Skia } from "react-native-skia";
 import { describe, expect, it } from "vitest";
 import { interpolatePath } from "../../src/hooks/interpolatePath";
 

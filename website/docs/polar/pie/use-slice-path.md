@@ -12,7 +12,7 @@ The `useSlicePath` hook takes a `PieSliceData` as input, and returns a Skia `SkP
 
 ```tsx
 import { Pie, PolarChart, useSlicePath, type PieSliceData } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
+import { Path } from "react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomSlice({ slice }: { slice: PieSliceData }) {

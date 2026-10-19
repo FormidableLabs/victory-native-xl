@@ -6,7 +6,7 @@ The `useLinePath` hook takes a `PointsArray` input, as well as some options, and
 
 ```tsx
 import { CartesianChart, useLinePath, type PointsArray } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
+import { Path } from "react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomLine({ points }: { points: PointsArray }) {

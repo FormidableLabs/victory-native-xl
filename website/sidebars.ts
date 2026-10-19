@@ -3,6 +3,7 @@ const sidebars = {
   docsSidebar: [
     "introduction",
     "getting-started",
+    "skia-package-migration",
     {
       type: "category",
       label: "Cartesian Charts",

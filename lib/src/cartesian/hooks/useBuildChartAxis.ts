@@ -1,5 +1,5 @@
 import React from "react";
-import type { Color } from "@shopify/react-native-skia";
+import type { Color } from "react-native-skia";
 import type {
   AxisPropWithDefaults,
   AxisProps,

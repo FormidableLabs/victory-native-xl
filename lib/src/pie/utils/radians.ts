@@ -1,4 +1,4 @@
-import type { SkPoint } from "@shopify/react-native-skia";
+import type { SkPoint } from "react-native-skia";
 
 export function degreesToRadians(degrees: number): number {
   return (degrees * Math.PI) / 180;

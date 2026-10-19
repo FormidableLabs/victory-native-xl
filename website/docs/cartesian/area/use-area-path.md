@@ -6,7 +6,7 @@ The `useAreaPath` hook takes a `PointsArray` input, a value for the "bottom" of 
 
 ```tsx
 import { CartesianChart, useAreaPath, type PointsArray } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
+import { Path } from "react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomArea({
