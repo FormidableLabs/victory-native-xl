@@ -34,7 +34,7 @@
     "react-fast-compare": "^3.2.2",
     "react-native": "0.86.2",
     "react-native-dark": "^0.1.4",
-    "react-native-gesture-handler": "~2.32.0",
+    "react-native-gesture-handler": "3.4.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",

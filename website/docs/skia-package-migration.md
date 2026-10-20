@@ -1,6 +1,6 @@
 # Skia package migration
 
-This major release moves Victory Native from `@shopify/react-native-skia` to **`react-native-skia` 2.x**. The chart components, hooks, and render arguments keep their existing APIs. Skia 3 and Gesture Handler 3 are a separate upgrade and are not supported by this release.
+This major release moves Victory Native from `@shopify/react-native-skia` to **`react-native-skia` 2.x**. The chart components, hooks, and render arguments keep their existing APIs. Skia 3 is a separate upgrade and is not supported by this release.
 
 ## Supported dependencies
 
@@ -11,7 +11,7 @@ This major release moves Victory Native from `@shopify/react-native-skia` to **`
 | `react-native-skia` | 2.15.1 or later in the 2.x series |
 | `react-native-reanimated` | 4.1.7 or later in the 4.x series |
 | `react-native-worklets` | 0.7 or later, compatible with your Reanimated version |
-| `react-native-gesture-handler` | 2.x |
+| `react-native-gesture-handler` | 2.x or 3.x |
 
 These are minimum peer requirements, not a guarantee that every combination works. Use the [Reanimated compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/) to choose Reanimated and Worklets versions compatible with your React Native version. Reanimated 4 requires the New Architecture. If you need Reanimated 3 or the old architecture, stay on the previous Victory Native major and its scoped Skia dependency.
 
@@ -19,7 +19,7 @@ These are minimum peer requirements, not a guarantee that every combination work
 
 ```sh
 yarn remove @shopify/react-native-skia
-yarn add react-native-skia@^2.15.1 react-native-reanimated@^4.1.7 react-native-worklets react-native-gesture-handler@^2
+yarn add react-native-skia@^2.15.1 react-native-reanimated@^4.1.7 react-native-worklets "react-native-gesture-handler@^2 || ^3"
 yarn add victory-native@latest
 ```
 
