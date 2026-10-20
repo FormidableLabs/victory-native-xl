@@ -37,13 +37,13 @@ const canvaskitRoot = path.dirname(
 );
 
 const { LoadSkiaWeb } =
-  require("@shopify/react-native-skia/lib/commonjs/web/LoadSkiaWeb.js") as {
+  require("react-native-skia/lib/commonjs/web/LoadSkiaWeb.js") as {
     LoadSkiaWeb: (opts: {
       locateFile: (file: string) => string;
     }) => Promise<void>;
   };
 const { JsiSkApi } =
-  require("@shopify/react-native-skia/lib/commonjs/skia/web/JsiSkia.js") as {
+  require("react-native-skia/lib/commonjs/skia/web/JsiSkia.js") as {
     JsiSkApi: (
       canvasKit: import("canvaskit-wasm").CanvasKit,
     ) => typeof globalThis.SkiaApi;

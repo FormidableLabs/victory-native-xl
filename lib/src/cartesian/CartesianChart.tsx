@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Group, type CanvasRef } from "@shopify/react-native-skia";
+import { Group, type CanvasRef } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import {

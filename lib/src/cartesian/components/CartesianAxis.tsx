@@ -1,12 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  Line,
-  Path,
-  Skia,
-  Text,
-  vec,
-  type Color,
-} from "@shopify/react-native-skia";
+import { Line, Path, Skia, Text, vec, type Color } from "react-native-skia";
 import { StyleSheet } from "react-native";
 import { getTextLayout } from "../../utils/textLayout";
 import type {

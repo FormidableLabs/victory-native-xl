@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { Color } from "@shopify/react-native-skia";
+import type { Color } from "react-native-skia";
 import { Pie, PolarChart } from "victory-native";
 import { Button } from "../components/Button";
 import { InfoCard } from "../components/InfoCard";

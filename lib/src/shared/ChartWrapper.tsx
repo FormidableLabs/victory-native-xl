@@ -6,7 +6,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { Canvas, Group, type CanvasRef } from "@shopify/react-native-skia";
+import { Canvas, Group, type CanvasRef } from "react-native-skia";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { type ChartExplicitSize } from "./ChartExplicitSize";
 import { type ChartCanvasSize } from "./chartCanvasSizeUtils";

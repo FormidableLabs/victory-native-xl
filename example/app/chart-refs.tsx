@@ -8,7 +8,7 @@ import {
   useChartPressState,
   type CartesianChartRef,
 } from "victory-native";
-import { Circle, useFont, ImageFormat } from "@shopify/react-native-skia";
+import { Circle, useFont, ImageFormat } from "react-native-skia";
 import {
   runOnJS,
   type SharedValue,
@@ -124,8 +124,12 @@ export default function ChartRefsExample() {
       try {
         setSnapshotUri(null);
         const sKImage = await chartRef.current.canvas.makeImageSnapshot();
-        const skData = sKImage.encodeToBase64(ImageFormat.PNG, 100);
-        setSnapshotUri(`data:image/png;base64,${skData}`);
+        try {
+          const skData = sKImage.encodeToBase64(ImageFormat.PNG, 100);
+          setSnapshotUri(`data:image/png;base64,${skData}`);
+        } finally {
+          sKImage.dispose();
+        }
       } catch (err) {
         console.error("Failed to take snapshot:", err);
       }
@@ -138,8 +142,12 @@ export default function ChartRefsExample() {
       chartRef.current.canvas
         .makeImageSnapshotAsync()
         .then((sKImage) => {
-          const skData = sKImage.encodeToBase64(ImageFormat.PNG, 100);
-          setSnapshotUri(`data:image/png;base64,${skData}`);
+          try {
+            const skData = sKImage.encodeToBase64(ImageFormat.PNG, 100);
+            setSnapshotUri(`data:image/png;base64,${skData}`);
+          } finally {
+            sKImage.dispose();
+          }
         })
         .catch((err) => {
           console.error("Failed to take async snapshot:", err);
@@ -229,6 +237,7 @@ export default function ChartRefsExample() {
         {snapshotUri && (
           <View style={styles.snapshotContainer}>
             <Image
+              accessibilityLabel="Chart snapshot"
               source={{ uri: snapshotUri }}
               style={styles.snapshot}
               resizeMode="contain"

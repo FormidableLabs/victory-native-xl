@@ -1,4 +1,4 @@
-import { useFont } from "@shopify/react-native-skia";
+import { useFont } from "react-native-skia";
 import * as React from "react";
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";

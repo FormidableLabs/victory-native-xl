@@ -12,7 +12,7 @@ import {
   type PointsArray,
   type ChartBounds,
 } from "victory-native";
-import { Path } from "@shopify/react-native-skia";
+import { Path } from "react-native-skia";
 import DATA from "./my-data";
 
 function MyCustomBars({

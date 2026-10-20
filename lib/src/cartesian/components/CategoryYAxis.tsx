@@ -6,7 +6,7 @@ import {
   vec,
   type Color,
   type SkFont,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import { boundsToClip } from "../../utils/boundsToClip";
 import type {
   AxisLabelPosition,

@@ -5,7 +5,7 @@ import {
   type SkParagraphStyle,
   type SkTextStyle,
   type SkTypefaceFontProvider,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import type {
   AxisLabelMeasureArgs,
   AxisLabelRenderer,

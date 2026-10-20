@@ -1,5 +1,5 @@
 import React from "react";
-import { Path, type SkPaint, type SkPath } from "@shopify/react-native-skia";
+import { Path, type SkPaint, type SkPath } from "react-native-skia";
 import { useSliceAngularInsetPath, type PieSliceData } from "victory-native";
 
 declare const slice: PieSliceData;

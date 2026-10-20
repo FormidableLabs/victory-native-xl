@@ -1,4 +1,4 @@
-import { Skia, PaintStyle } from "@shopify/react-native-skia";
+import { Skia, PaintStyle } from "react-native-skia";
 import { useMemo } from "react";
 import {
   calculatePointOnCircumference,

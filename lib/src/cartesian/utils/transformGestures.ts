@@ -3,7 +3,7 @@ import {
   type PanGesture,
   type PinchGesture,
 } from "react-native-gesture-handler";
-import { multiply4, scale, translate } from "@shopify/react-native-skia";
+import { multiply4, scale, translate } from "react-native-skia";
 import { type ChartTransformState } from "../hooks/useChartTransformState";
 import {
   applyPanTransformGestureConfig,

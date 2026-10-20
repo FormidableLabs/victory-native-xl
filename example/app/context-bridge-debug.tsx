@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { Circle, useFont } from "react-native-skia";
 import {
   CartesianChart,
   Line,

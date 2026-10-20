@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Group } from "@shopify/react-native-skia";
+import { Group } from "react-native-skia";
 import {
   type ViewStyle,
   type StyleProp,

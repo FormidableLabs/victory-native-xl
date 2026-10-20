@@ -18,7 +18,7 @@ The [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/
 
 ```tsx
 import { CartesianChart, StackedArea } from "victory-native";
-import { DashPathEffect, LinearGradient } from "@shopify/react-native-skia";
+import { DashPathEffect, LinearGradient } from "react-native-skia";
 
 const generateData = () =>
   Array.from({ length: 12 }, (_, index) => {

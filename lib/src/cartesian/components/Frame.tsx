@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Group, Line, Path, Skia, vec } from "@shopify/react-native-skia";
+import { Group, Line, Path, Skia, vec } from "react-native-skia";
 import type { FrameProps } from "../../types";
 export { FrameDefaults } from "../utils/axisDefaults";
 

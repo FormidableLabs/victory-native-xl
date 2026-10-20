@@ -84,7 +84,7 @@ A `children` pass-thru that will be rendered inside of the Skia `Path` element, 
 
 ### Paint properties
 
-The `AreaRange` component will also pass the following [painting props](https://shopify.github.io/react-native-skia/docs/paint/overview) down to the underlying `Path` component:
+The `AreaRange` component will also pass the following [painting props](https://wcandillon.github.io/react-native-skia/v2/docs/paint/overview) down to the underlying `Path` component:
 
 - `color`
 - `blendMode`

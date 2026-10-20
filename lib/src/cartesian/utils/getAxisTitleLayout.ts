@@ -1,4 +1,4 @@
-import type { SkFont } from "@shopify/react-native-skia";
+import type { SkFont } from "react-native-skia";
 import type { AxisTitle, AxisTitlePosition } from "../../types";
 import { getTextLayout, type TextLayout } from "../../utils/textLayout";
 

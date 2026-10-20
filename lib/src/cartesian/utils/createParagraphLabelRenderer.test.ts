@@ -62,7 +62,7 @@ const paragraphMock = vi.hoisted(() => {
   };
 });
 
-vi.mock("@shopify/react-native-skia", () => ({
+vi.mock("react-native-skia", () => ({
   Paragraph: () => null,
   Skia: {
     Color: paragraphMock.color,

@@ -7,13 +7,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  Canvas,
-  Circle,
-  LinearGradient,
-  Rect,
-  vec,
-} from "@shopify/react-native-skia";
+import { Canvas, Circle, LinearGradient, Rect, vec } from "react-native-skia";
 import { Pie, PolarChart } from "victory-native";
 import { InfoCard } from "example/components/InfoCard";
 import { Text } from "example/components/Text";
