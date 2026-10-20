@@ -33,10 +33,10 @@ https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-990
 
 ## Installation
 
-Requires React 19+, React Native 0.79+ with the New Architecture, Skia 2.x (2.15.1+), Reanimated 4.x (4.1.7+), Worklets 0.7+, and Gesture Handler 2. Choose compatible Reanimated and Worklets versions for your React Native version using the [Reanimated compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/).
+Requires React 19+, React Native 0.79+ with the New Architecture, Skia 2.x (2.15.1+), Reanimated 4.x (4.1.7+), Worklets 0.7+, and Gesture Handler 2 or 3. Choose compatible Reanimated and Worklets versions for your React Native version using the [Reanimated compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/).
 
 ```shell
-yarn add react-native-reanimated@^4.1.7 react-native-worklets react-native-gesture-handler@^2 react-native-skia@^2.15.1
+yarn add react-native-reanimated@^4.1.7 react-native-worklets "react-native-gesture-handler@^2 || ^3" react-native-skia@^2.15.1
 ```
 
 For a bare React Native app, add `"react-native-worklets/plugin"` last in the `plugins` list in `babel.config.js`. Expo's `babel-preset-expo` configures it automatically. Rebuild your native app after installing the dependencies.
@@ -51,7 +51,7 @@ To get started and read more about the API, view the [docs here](https://formida
 
 ### Upgrading from the scoped Skia package
 
-Remove `@shopify/react-native-skia`, install `react-native-skia@^2.15.1`, and update all Skia imports (including web/headless deep imports and test mocks) to `react-native-skia`. Do not install both packages: they contain the same native module. Reanimated 3 users must also migrate to Reanimated 4 and Worklets. Chart APIs are unchanged; Skia 3 and Gesture Handler 3 are not supported by this release.
+Remove `@shopify/react-native-skia`, install `react-native-skia@^2.15.1`, and update all Skia imports (including web/headless deep imports and test mocks) to `react-native-skia`. Do not install both packages: they contain the same native module. Reanimated 3 users must also migrate to Reanimated 4 and Worklets. Chart APIs are unchanged; Skia 3 is not supported by this release.
 
 See the [migration guide](https://commerce.nearform.com/open-source/victory-native/docs/skia-package-migration) for the full upgrade steps, Babel configuration, and platform notes.
 

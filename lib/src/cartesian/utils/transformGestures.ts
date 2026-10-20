@@ -1,9 +1,6 @@
-import {
-  Gesture,
-  type PanGesture,
-  type PinchGesture,
-} from "react-native-gesture-handler";
+import { Gesture } from "react-native-gesture-handler";
 import { multiply4, scale, translate } from "react-native-skia";
+import type { PanGesture, PinchGesture } from "../../shared/gestureTypes";
 import { type ChartTransformState } from "../hooks/useChartTransformState";
 import {
   applyPanTransformGestureConfig,

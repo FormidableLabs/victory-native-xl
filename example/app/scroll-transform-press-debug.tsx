@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Stack } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Circle, useFont } from "react-native-skia";
 import {
   CartesianChart,
@@ -51,8 +51,11 @@ const initialReadout: Readout = {
 
 export default function ScrollTransformPressDebugScreen() {
   const font = useFont(inter, 12);
-  const scrollViewRef = React.useRef<ScrollView>(null);
-  const externalGesture = scrollViewRef as ExternalGesture;
+  // Keep the scroll recognizer stable while gesture readouts update.
+  const externalGesture = React.useMemo(
+    () => Gesture.Native(),
+    [],
+  ) satisfies ExternalGesture;
   const press = useChartPressState<{ x: number; y: { reading: number } }>({
     x: 0,
     y: { reading: 0 },
@@ -63,72 +66,77 @@ export default function ScrollTransformPressDebugScreen() {
   return (
     <SafeAreaView style={styles.safeView}>
       <Stack.Screen options={{ title: "Scroll Transform Press" }} />
-      <ScrollView
-        ref={scrollViewRef}
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={styles.content}
-      >
-        <InfoCard>
-          Verify vertical page scroll, horizontal chart pan, and long-press
-          chart scrub can coexist on the same chart.
-        </InfoCard>
+      <GestureDetector gesture={externalGesture}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={styles.content}
+        >
+          <InfoCard>
+            Verify vertical page scroll, horizontal chart pan, and long-press
+            chart scrub can coexist on the same chart.
+          </InfoCard>
 
-        <ScrollMarker label="Top scroll content" />
+          <ScrollMarker label="Top scroll content" />
 
-        <View style={styles.chartSection}>
-          <Text style={styles.heading}>Gesture Interop Chart</Text>
-          <View style={styles.chartFrame}>
-            <CartesianChart
-              data={DATA}
-              xKey="day"
-              yKeys={["reading"]}
-              viewport={{ x: [18, 42], y: [25, 75] }}
-              padding={{ left: 28, right: 18, top: 18, bottom: 28 }}
-              axisOptions={{ font }}
-              chartPressState={press.state}
-              chartPressConfig={{
-                pan: {
-                  activateAfterLongPress: 120,
-                  simultaneousWithExternalGesture: externalGesture,
-                },
-              }}
-              transformState={transformState}
-              transformConfig={{
-                pan: {
-                  enabled: true,
-                  dimensions: "x",
-                  activeOffsetX: [-20, 20],
-                  failOffsetY: [-12, 12],
-                },
-                pinch: { enabled: false },
-              }}
-            >
-              {({ points }) => (
-                <>
-                  <Line
-                    points={points.reading}
-                    color="#2563eb"
-                    strokeWidth={3}
-                  />
-                  <Scatter points={points.reading} color="#93c5fd" radius={3} />
-                  {press.isActive && (
-                    <Circle
-                      cx={press.state.x.position}
-                      cy={press.state.y.reading.position}
-                      r={8}
-                      color="#111827"
+          <View style={styles.chartSection}>
+            <Text style={styles.heading}>Gesture Interop Chart</Text>
+            <View testID="gesture-interop-chart" style={styles.chartFrame}>
+              <CartesianChart
+                data={DATA}
+                xKey="day"
+                yKeys={["reading"]}
+                viewport={{ x: [18, 42], y: [25, 75] }}
+                padding={{ left: 28, right: 18, top: 18, bottom: 28 }}
+                axisOptions={{ font }}
+                chartPressState={press.state}
+                chartPressConfig={{
+                  pan: {
+                    activateAfterLongPress: 120,
+                    simultaneousWithExternalGesture: externalGesture,
+                  },
+                }}
+                transformState={transformState}
+                transformConfig={{
+                  pan: {
+                    enabled: true,
+                    dimensions: "x",
+                    activeOffsetX: [-20, 20],
+                    failOffsetY: [-12, 12],
+                  },
+                  pinch: { enabled: false },
+                }}
+              >
+                {({ points }) => (
+                  <>
+                    <Line
+                      points={points.reading}
+                      color="#2563eb"
+                      strokeWidth={3}
                     />
-                  )}
-                </>
-              )}
-            </CartesianChart>
+                    <Scatter
+                      points={points.reading}
+                      color="#93c5fd"
+                      radius={3}
+                    />
+                    {press.isActive && (
+                      <Circle
+                        cx={press.state.x.position}
+                        cy={press.state.y.reading.position}
+                        r={8}
+                        color="#111827"
+                      />
+                    )}
+                  </>
+                )}
+              </CartesianChart>
+            </View>
+            <ReadoutPanel readout={readout} />
           </View>
-          <ReadoutPanel readout={readout} />
-        </View>
 
-        <ScrollMarker label="Bottom scroll content" />
-        <ScrollMarker label="More scroll content" />
-      </ScrollView>
+          <ScrollMarker label="Bottom scroll content" />
+          <ScrollMarker label="More scroll content" />
+        </ScrollView>
+      </GestureDetector>
     </SafeAreaView>
   );
 }

@@ -7,12 +7,11 @@ import {
   type SkPoint,
 } from "react-native-skia";
 import type { ZoomTransform } from "d3-zoom";
-import { type PanGesture } from "react-native-gesture-handler";
-
 import type {
   UserSelect,
   TouchAction,
 } from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
+import type { PanGesture } from "./shared/gestureTypes";
 
 export type PrimitiveViewWindow = {
   xMin: number;

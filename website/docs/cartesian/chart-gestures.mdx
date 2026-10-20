@@ -3,6 +3,8 @@ import stocksMp4 from "../assets/stocks-gesture.mp4";
 
 # Chart Gestures
 
+Victory supports Gesture Handler 2 and 3 through the `Gesture` builder API, which is retained as the legacy API in v3. Use builder gestures for `customGestures` and external gesture relations; Gesture Handler 3's hook-based gestures cannot be composed with them.
+
 The `CartesianChart` component has opt-in support for "press" gestures, including multi-press support. At this point in time, the "press" gesture support is limited to tracking the user's fingers' x-coordinate on the chart and exposing the _closest_ (in terms of x-coordinate) point to the user's gesture.
 
 The goal for this press support is to allow the user to press/pan across the chart and track what x-value they're pressing/panning over.
@@ -54,33 +56,37 @@ As outlined in [the Cartesian Chart page](./cartesian-chart.md#chartpressstate),
 
 Use `chartPressConfig.pan` to pass configuration through to the underlying React Native Gesture Handler pan gesture. Explicit `0` values are applied, so values such as `activateAfterLongPress: 0` are valid.
 
-When a chart is inside another gesture-aware container, such as a Gesture Handler `ScrollView`, pass the external gesture ref through `simultaneousWithExternalGesture` so scrolling and chart pressing can both be recognized.
+When a chart is inside a scroll container, wrap React Native's `ScrollView` with a `Gesture.Native()` detector and pass that gesture through `simultaneousWithExternalGesture`. This works with Gesture Handler 2 and 3.
 
 ```tsx
-import { useRef } from "react";
-import { ScrollView } from "react-native-gesture-handler";
+import { useMemo } from "react";
+import { ScrollView } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { CartesianChart, useChartPressState } from "victory-native";
 
 function ScrollableChart() {
-  const scrollRef = useRef<ScrollView>(null);
+  // Preserve the scroll recognizer across chart updates.
+  const scrollGesture = useMemo(() => Gesture.Native(), []);
   const { state } = useChartPressState({ x: 0, y: { value: 0 } });
 
   return (
-    <ScrollView ref={scrollRef}>
-      <CartesianChart
-        data={data}
-        xKey="x"
-        yKeys={["value"]}
-        chartPressState={state}
-        chartPressConfig={{
-          pan: {
-            simultaneousWithExternalGesture: scrollRef,
-          },
-        }}
-      >
-        {/* ... */}
-      </CartesianChart>
-    </ScrollView>
+    <GestureDetector gesture={scrollGesture}>
+      <ScrollView>
+        <CartesianChart
+          data={data}
+          xKey="x"
+          yKeys={["value"]}
+          chartPressState={state}
+          chartPressConfig={{
+            pan: {
+              simultaneousWithExternalGesture: scrollGesture,
+            },
+          }}
+        >
+          {/* ... */}
+        </CartesianChart>
+      </ScrollView>
+    </GestureDetector>
   );
 }
 ```

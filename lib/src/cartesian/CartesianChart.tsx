@@ -2,11 +2,7 @@ import * as React from "react";
 import { Group, type CanvasRef } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
-import {
-  type ComposedGesture,
-  Gesture,
-  type TouchData,
-} from "react-native-gesture-handler";
+import { Gesture, type TouchData } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
@@ -58,6 +54,7 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+import type { ComposedGesture } from "../shared/gestureTypes";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
 import { useChartCanvasSize } from "../shared/useChartCanvasSize";

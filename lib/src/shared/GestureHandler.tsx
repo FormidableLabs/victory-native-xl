@@ -1,11 +1,11 @@
 import {
-  type ComposedGesture,
   GestureDetector,
   type GestureType,
 } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import * as React from "react";
 import type { GestureHandlerConfig } from "../types";
+import type { ComposedGesture } from "./gestureTypes";
 
 type GestureHandlerProps = {
   gesture: ComposedGesture | GestureType;
