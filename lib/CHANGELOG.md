@@ -1,5 +1,11 @@
 # victory-native
 
+## 43.0.1
+
+### Patch Changes
+
+- Support React Native Gesture Handler 3 alongside 2 using its retained Gesture builder API. Derive gesture types from the builders so custom gestures, press configuration, and pan/zoom declarations remain compatible with both versions. ([#692](https://github.com/FormidableLabs/victory-native-xl/pull/692))
+
 ## 43.0.0
 
 ### Major Changes
