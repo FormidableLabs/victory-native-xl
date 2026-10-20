@@ -7,9 +7,9 @@ This major release moves Victory Native from `@shopify/react-native-skia` to **`
 | Dependency | Requirement |
 | --- | --- |
 | React | 19 or later |
-| React Native | 0.78 or later, with the New Architecture |
+| React Native | 0.79 or later, with the New Architecture |
 | `react-native-skia` | 2.15.1 or later in the 2.x series |
-| `react-native-reanimated` | 4.x |
+| `react-native-reanimated` | 4.1.7 or later in the 4.x series |
 | `react-native-worklets` | 0.7 or later, compatible with your Reanimated version |
 | `react-native-gesture-handler` | 2.x |
 
@@ -19,7 +19,7 @@ These are minimum peer requirements, not a guarantee that every combination work
 
 ```sh
 yarn remove @shopify/react-native-skia
-yarn add react-native-skia@^2.15.1 react-native-reanimated@^4 react-native-worklets react-native-gesture-handler@^2
+yarn add react-native-skia@^2.15.1 react-native-reanimated@^4.1.7 react-native-worklets react-native-gesture-handler@^2
 yarn add victory-native@latest
 ```
 

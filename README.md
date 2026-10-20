@@ -33,10 +33,10 @@ https://github.com/FormidableLabs/victory-native-xl/assets/12721310/20bada2d-990
 
 ## Installation
 
-Requires React 19+, React Native 0.78+ with the New Architecture, Skia 2.x (2.15.1+), Reanimated 4, Worklets, and Gesture Handler 2. Choose compatible Reanimated and Worklets versions for your React Native version using the [Reanimated compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/).
+Requires React 19+, React Native 0.79+ with the New Architecture, Skia 2.x (2.15.1+), Reanimated 4.x (4.1.7+), Worklets 0.7+, and Gesture Handler 2. Choose compatible Reanimated and Worklets versions for your React Native version using the [Reanimated compatibility table](https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/).
 
 ```shell
-yarn add react-native-reanimated@^4 react-native-worklets react-native-gesture-handler@^2 react-native-skia@^2.15.1
+yarn add react-native-reanimated@^4.1.7 react-native-worklets react-native-gesture-handler@^2 react-native-skia@^2.15.1
 ```
 
 For a bare React Native app, add `"react-native-worklets/plugin"` last in the `plugins` list in `babel.config.js`. Expo's `babel-preset-expo` configures it automatically. Rebuild your native app after installing the dependencies.
