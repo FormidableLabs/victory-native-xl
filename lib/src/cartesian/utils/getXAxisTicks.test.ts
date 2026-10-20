@@ -78,3 +78,69 @@ describe("getXAxisTicks", () => {
     expect(ticks).toEqual([0, 2, 4]);
   });
 });
+
+describe("getXAxisTicks with date data", () => {
+  const dayMs = 24 * 60 * 60 * 1000;
+  const jan1 = Date.UTC(2024, 0, 1);
+
+  it("returns calendar-aligned ticks rather than round numbers", () => {
+    const scale = scaleLinear([jan1, jan1 + 4 * dayMs], [0, 400]);
+
+    const dateTicks = getXAxisTicks({
+      isNumericalData: true,
+      isDateData: true,
+      ix: [],
+      tickCount: 5,
+      xScale: scale,
+    });
+
+    // Every tick lands on a real date boundary, not an arbitrary timestamp.
+    expect(dateTicks.length).toBeGreaterThan(0);
+    dateTicks.forEach((tick) => {
+      expect(Number.isInteger(tick)).toBe(true);
+      expect(new Date(tick).getTime()).toBe(tick);
+    });
+  });
+
+  it("keeps ticks inside the scale domain", () => {
+    const min = jan1;
+    const max = jan1 + 30 * dayMs;
+    const ticks = getXAxisTicks({
+      isNumericalData: true,
+      isDateData: true,
+      ix: [],
+      tickCount: 4,
+      xScale: scaleLinear([min, max], [0, 400]),
+    });
+
+    ticks.forEach((tick) => {
+      expect(tick).toBeGreaterThanOrEqual(min);
+      expect(tick).toBeLessThanOrEqual(max);
+    });
+  });
+
+  it("returns timestamps, not Date objects, so downstream consumers stay numeric", () => {
+    const ticks = getXAxisTicks({
+      isNumericalData: true,
+      isDateData: true,
+      ix: [],
+      tickCount: 3,
+      xScale: scaleLinear([jan1, jan1 + 2 * dayMs], [0, 200]),
+    });
+
+    ticks.forEach((tick) => expect(typeof tick).toBe("number"));
+  });
+
+  it("still honors explicit tickValues over date ticks", () => {
+    const ticks = getXAxisTicks({
+      isNumericalData: true,
+      isDateData: true,
+      ix: [],
+      tickCount: 2,
+      tickValues: [jan1, jan1 + dayMs],
+      xScale: scaleLinear([jan1, jan1 + dayMs], [0, 100]),
+    });
+
+    expect(ticks).toEqual([jan1, jan1 + dayMs]);
+  });
+});

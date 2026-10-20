@@ -15,7 +15,8 @@ export const CartesianAxisDefaultProps = {
   axisSide: { x: "bottom", y: "left" },
   axisScales: { xAxisScale: "linear", yAxisScale: "linear" },
   labelPosition: "outset",
-  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+  formatXLabel: (label: ValueOf<InputDatum>) =>
+    label instanceof Date ? label.toLocaleDateString() : String(label),
   formatYLabel: (label: ValueOf<InputDatum>) => String(label),
   labelColor: "#000000",
   ix: [],
@@ -30,7 +31,8 @@ export const XAxisDefaults = {
   axisSide: "bottom",
   yAxisSide: "left",
   labelPosition: "outset",
-  formatXLabel: (label: ValueOf<InputDatum>) => String(label),
+  formatXLabel: (label: ValueOf<InputDatum>) =>
+    label instanceof Date ? label.toLocaleDateString() : String(label),
   labelColor: "#000000",
   labelRotate: 0,
 } satisfies XAxisPropsWithDefaults<never, never>;
