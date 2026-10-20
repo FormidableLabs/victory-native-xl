@@ -1,7 +1,7 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
   CartesianChart,
   Line,
@@ -60,32 +60,30 @@ const LineChart = ({
 };
 
 export default function GettingStartedScreen() {
-  const scrollViewRef = React.useRef(null);
-  const simultaneousWithExternalGesture = scrollViewRef as ExternalGesture;
+  // Keep the scroll recognizer stable across chart updates.
+  const externalGesture = React.useMemo(
+    () => Gesture.Native(),
+    [],
+  ) satisfies ExternalGesture;
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <ScrollView
-        ref={scrollViewRef}
-        contentContainerStyle={styles.optionsScrollView}
-      >
-        {Array.from({ length: 5 }, (_, i) => (
-          <React.Fragment key={i}>
-            <View style={styles.chart}>
-              <LineChart
-                simultaneousWithExternalGesture={
-                  simultaneousWithExternalGesture
-                }
-              />
-            </View>
-            <InfoCard style={styles.card}>
-              Just a page with a number of charts nested within a ScrollView
-              from RNGH to test that scrolling and gestures still work as
-              intended.
-            </InfoCard>
-          </React.Fragment>
-        ))}
-      </ScrollView>
+      <GestureDetector gesture={externalGesture}>
+        <ScrollView contentContainerStyle={styles.optionsScrollView}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <React.Fragment key={i}>
+              <View style={styles.chart}>
+                <LineChart simultaneousWithExternalGesture={externalGesture} />
+              </View>
+              <InfoCard style={styles.card}>
+                Charts inside a React Native ScrollView wrapped with
+                Gesture.Native() to test simultaneous scrolling and chart
+                pressing.
+              </InfoCard>
+            </React.Fragment>
+          ))}
+        </ScrollView>
+      </GestureDetector>
     </SafeAreaView>
   );
 }
