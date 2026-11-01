@@ -93,9 +93,11 @@ function ScrollableChart() {
 
 ## Hover gesture support
 
-The `CartesianChart` component (as well as `PolarChart` for pie/donut charts) supports tracking the user's mouse as it _hovers_ over the chart. On web, or on desktop builds, this lets readers explore a chart — e.g. read out values via a tooltip — without pressing anything. The hover gesture is built with the [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) API from React Native Gesture Handler and is composed simultaneously with the press/transform gestures, so it never takes precedence over them. Touch-only behavior is unchanged.
+The `CartesianChart` component (as well as `PolarChart` for pie/donut charts) supports tracking the user's mouse as it _hovers_ over the chart. On web, or on desktop builds, this lets readers explore a chart — e.g. read out values via a tooltip — without pressing anything. The hover gesture is built with the [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) API from React Native Gesture Handler and is composed simultaneously with the press/transform gestures, so it never takes precedence over them.
 
-Press/click and hover interoperate: while the pointer is over the chart, pressing or clicking does not deactivate the hover-driven state — releasing the mouse button simply hands the tooltip back to the ongoing hover gesture — and moving the pointer out of the chart deactivates it as usual. On touch devices (where hover never activates), press behavior is exactly the same as it would be without `enableHover`.
+Hover is aimed at pointer devices, so it is **enabled by default on web** — `enableHover` opts in on other platforms (and `enableHover={false}` opts out on web). Touch-only behavior is unchanged either way.
+
+Press/click and hover interoperate: while the pointer is over the chart, pressing or clicking does not deactivate the hover-driven state — releasing the mouse button simply hands the tooltip back to the ongoing hover gesture — and moving the pointer out of the chart deactivates it as usual. On touch devices (where hover never activates), press behavior is exactly the same as it would be without hover.
 
 ### Hovering cartesian charts
 
@@ -201,7 +203,9 @@ const hover = useChartPressState({ x: 0, y: { highTmp: 0 } });
 >
 ```
 
-Each state (and its `isActive` shared value) is updated independently, so a "hover is active" readout and a "press is active" indicator can coexist. Pie/donut charts (`PolarChart`) use the same `chartHoverState` prop.
+Each state (and its `isActive` shared value) is updated independently, so a "hover is active" readout and a "press is active" indicator can coexist.
+
+Pie/donut charts (`PolarChart`) work differently: they always maintain a hovered-slice-index state, consumable inside chart content with the [`usePieHoverState`](/docs/polar/polar-chart#charthoverstate) hook; the [`chartHoverState`](/docs/polar/polar-chart#charthoverstate) prop only overrides it when the index needs to be read outside the chart.
 
 ## Multi-press support
 

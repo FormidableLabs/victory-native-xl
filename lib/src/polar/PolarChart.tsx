@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Group } from "react-native-skia";
 import {
+  Platform,
   type ViewStyle,
   type StyleProp,
   type LayoutChangeEvent,
@@ -60,10 +61,14 @@ const PolarChartBase = (
     transformState,
     isHeadless,
     explicitSize,
-    enableHover,
+    enableHover: enableHoverProp,
     hoverPointer,
     chartHoverConfig,
   } = props;
+  // Hover is aimed at pointer devices; it's enabled by default on web, where
+  // a mouse or trackpad is the norm. Elsewhere (and when explicitly set to
+  // `false` on web) it stays opt-in.
+  const enableHover = enableHoverProp ?? Platform.OS === "web";
   const Bridge: ContextBridge = useContextBridge();
 
   let composed = Gesture.Race();
@@ -175,7 +180,14 @@ export const PolarChart = <
   });
 
   const hoverPointer = useSharedValue<PolarHoverPointer>(null);
-  const chartHoverState = props.chartHoverState;
+  // Pie/donut charts always have a hover state to drive; the `chartHoverState`
+  // prop only overrides it for consumers that need the value off-thread, e.g.
+  // readouts rendered outside the chart. Other consumers read the default
+  // through `usePieHoverState()`.
+  const defaultHoverIndex = useSharedValue(-1);
+  const chartHoverState = props.chartHoverState ?? {
+    index: defaultHoverIndex,
+  };
 
   return (
     <FiberProvider>

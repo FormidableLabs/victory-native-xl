@@ -11,7 +11,7 @@ The [example app](https://github.com/FormidableLabs/victory-native-xl/tree/main/
 
 :::info
 
-Hover interactions for `Pie` and `Donut` charts are configured on the `PolarChart` component — see the [`enableHover`](/docs/polar/polar-chart#enablehover) and [`chartHoverState`](/docs/polar/polar-chart#charthoverstate) props, which report the hovered slice index while a mouse hovers over the chart.
+Hover interactions for `Pie` and `Donut` charts are configured on the `PolarChart` component — see [`enableHover`](/docs/polar/polar-chart#enablehover) (on by default on web) and [`chartHoverState`](/docs/polar/polar-chart#charthoverstate). `PolarChart` maintains the hovered slice index for you; read it inside your pie content with [`usePieHoverState`](/docs/polar/polar-chart#charthoverstate), and pass `chartHoverState` only to consume the index outside the chart.
 
 :::
 

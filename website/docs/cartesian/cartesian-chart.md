@@ -321,6 +321,8 @@ Explicit `0` values are honored for these options. For example, `activateAfterLo
 
 When `true`, the chart builds a [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) that updates the values the hover gesture drives: a [`chartHoverState`](#charthoverstate) when one is provided, otherwise the `chartPressState` values — so hover behaves exactly like a press. Moving the pointer — e.g. a mouse on web or desktop — over the chart updates the active x/y values and positions and sets `isActive` to `true`, and leaving the chart deactivates the state again. This makes it easy to show tooltips, cursors, or readouts while the pointer is over the chart, without requiring a press.
 
+Hover is aimed at pointer devices, so `enableHover` **defaults to `true` on web** (pass `enableHover={false}` there to opt out); on other platforms it stays opt-in.
+
 The hover gesture is composed simultaneously with the press and transform gestures, so it does not compete with (or break) existing interactions. On touch-only devices the regular press behavior is unaffected.
 
 ```tsx
@@ -345,9 +347,10 @@ function HoveredChart() {
 
 ### `chartHoverConfig`
 
-Optional configuration for the hover gesture created by `enableHover`. It accepts an object with a single optional property:
+Optional configuration for the hover gesture created by `enableHover`. It accepts an object with the following optional properties:
 
 - `activeCursor`: the cursor to use while the pointer is over the chart. Supports all CSS cursor values (e.g. `"pointer"`, `"crosshair"`). Web/desktop only.
+- `simultaneousWithExternalGesture`: one or more external Gesture Handler gesture refs that the hover gesture composes with simultaneously — useful when custom gestures are built outside the chart.
 
 ```tsx
 <CartesianChart

@@ -15,6 +15,7 @@ const chainableGesture = (): ChainableGesture => {
 
 export const Gesture = {
   Race: (..._gestures: unknown[]) => chainableGesture(),
+  Simultaneous: (..._gestures: unknown[]) => chainableGesture(),
   Pinch: () => chainableGesture(),
   Pan: () => chainableGesture(),
   Hover: () => chainableGesture(),

@@ -158,7 +158,7 @@ export const ChartRoutes: ChartRoute[] = [
   {
     title: "Donut Chart",
     description:
-      "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop. Hovering with the mouse (enableHover + chartHoverState) reports the hovered slice.",
+      "This is how to make a Donut chart in Victory. It is built off of the Pie chart using the `innerRadius` prop. Hovering with the mouse reports the hovered slice — `PolarChart` tracks it for you, read out inside the chart via `usePieHoverState()`.",
     path: "/donut-chart",
   },
   {

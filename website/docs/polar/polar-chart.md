@@ -100,13 +100,49 @@ When `true` (and `explicitSize` is set), renders a Skia-only subtree with no `Vi
 
 ### `enableHover`
 
-When `true`, the chart builds a [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) to track the pointer — e.g. a mouse on web or desktop — as it moves over the chart. The pointer position is written into the chart context (inverted through the active `transformState`, when provided), and consumed through the [`chartHoverState`](#charthoverstate) prop below. This enables hover interactions for `Pie` and `Donut` charts without any extra gesture code.
+When `true`, the chart builds a [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) to track the pointer — e.g. a mouse on web or desktop — as it moves over the chart. The pointer position is written into the chart context (inverted through the active `transformState`, when provided), and consumed through the [`chartHoverState`](#charthoverstate) behavior below. This enables hover interactions for `Pie` and `Donut` charts without any extra gesture code.
+
+Hover is aimed at pointer devices, so `enableHover` **defaults to `true` on web** (pass `enableHover={false}` there to opt out); on other platforms it stays opt-in.
 
 The hover gesture is composed simultaneously with the transform gestures, so it does not compete with (or break) existing interactions.
 
 ### `chartHoverState`
 
-A Reanimated shared value object which receives the index of the data point (slice) currently under the pointer, or `-1` when the pointer is over the donut hole, outside the pie, or off the chart entirely. Requires `enableHover`.
+Optional. A Reanimated shared value object which receives the index of the data point (slice) currently under the pointer, or `-1` when the pointer is over the donut hole, outside the pie, or off the chart entirely.
+
+When omitted, `PolarChart` maintains a built-in hover state, which chart content reads with the [`usePieHoverState`](#charthoverstate) hook — so hover highlighting inside `Pie.Chart` needs no extra setup:
+
+```tsx
+import * as React from "react";
+import { Text } from "react-native-skia";
+import { Pie, PolarChart, usePieHoverState } from "victory-native";
+import { useDerivedValue } from "react-native-reanimated";
+
+function HoverReadout() {
+  // 👈 the built-in hover state; no `chartHoverState` prop needed
+  const hover = usePieHoverState();
+  const text = useDerivedValue(() =>
+    hover.index.value >= 0 ? "Slice hovered!" : "Hover the pie!",
+  );
+
+  return (
+    <View style={{ height: 300 }}>
+      <PolarChart
+        data={data}
+        valueKey={"value"}
+        labelKey={"label"}
+        colorKey={"color"}
+      >
+        <Pie.Chart />
+        {/* 👇 drawn on the chart */}
+        <Text text={text} x={16} y={24} font={font} />
+      </PolarChart>
+    </View>
+  );
+}
+```
+
+Pass your own `chartHoverState` only when the hovered index must be consumed *outside* the chart — e.g. a readout rendered above the `Canvas`, where the shared value needs to live in your component:
 
 ```tsx
 import * as React from "react";
@@ -138,8 +174,7 @@ function HoveredPie() {
         valueKey={"value"}
         labelKey={"label"}
         colorKey={"color"}
-        enableHover // 👈 track mouse hovers
-        chartHoverState={{ index: hoverIndex }}
+        chartHoverState={{ index: hoverIndex }} // 👈 your own hover state
       >
         <Pie.Chart />
       </PolarChart>
@@ -156,6 +191,7 @@ The slice geometry (including each slice's `innerRadius`, start/end angles, valu
 
 ### `chartHoverConfig`
 
-Optional configuration for the hover gesture created by `enableHover`. It accepts an object with a single optional property:
+Optional configuration for the hover gesture created by `enableHover`. It accepts an object with the following optional properties:
 
 - `activeCursor`: the cursor to use while the pointer is over the chart. Supports all CSS cursor values (e.g. `"pointer"`, `"crosshair"`). Web/desktop only.
+- `simultaneousWithExternalGesture`: one or more external Gesture Handler gesture refs that the hover gesture composes with simultaneously — useful when custom gestures are built outside the chart.

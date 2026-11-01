@@ -4,6 +4,8 @@
 
 Add hover gesture support.
 
-- `CartesianChart`: pass `enableHover` (optionally along with `chartHoverConfig`) together with `chartPressState` to keep the pressed values updated — and `isActive` true — while the pointer, e.g. a mouse on web or desktop, hovers over the chart. Hover drives the `chartPressState` values exactly like a press, or a separate `chartHoverState` prop (`ChartPressState | ChartPressState[]`) to track hover and press independently. Hover is implemented with the `Gesture.Hover()` API from React Native Gesture Handler and is composed simultaneously with the press and transform gestures.
-- `PolarChart`: pass `enableHover` (and optionally `chartHoverConfig`) together with `chartHoverState={{ index }}` — a Reanimated shared value — to receive the index of the hovered data point (slice), or `-1` when the pointer is over the donut hole, outside the pie, or off the chart entirely.
+Hover is aimed at pointer devices (mouse/trackpad on web or desktop) and is **enabled by default on web**; `enableHover` opts in on other platforms and `enableHover={false}` opts out on web. The hover gesture is composed simultaneously with the press and transform gestures, so touch-only behavior is unchanged.
+
+- `CartesianChart`: hover drives the `chartPressState` values exactly like a press (values and `isActive`), or a separate `chartHoverState` prop (`ChartPressState | ChartPressState[]`) to track hover and press independently.
+- `PolarChart`: the hovered-slice index is tracked for you — read it in chart content with the new `usePieHoverState()` hook (`index` is the hovered slice, or `-1` over the donut hole, outside the pie, or off the chart). Pass `chartHoverState={{ index }}` — a Reanimated shared value — only to consume the index outside the chart.
 - `chartHoverConfig` (both charts): supports `activeCursor` for cursor styling and `simultaneousWithExternalGesture` to compose the hover gesture with custom gestures built outside the chart.

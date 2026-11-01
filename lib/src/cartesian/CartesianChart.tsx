@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Platform } from "react-native";
 import { Group, type CanvasRef } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
@@ -303,7 +304,7 @@ function CartesianChartContent<
   chartPressState,
   chartHoverState,
   chartPressConfig,
-  enableHover,
+  enableHover: enableHoverProp,
   chartHoverConfig,
   gestureHandlerConfig,
   onChartBoundsChange,
@@ -321,6 +322,10 @@ function CartesianChartContent<
   explicitSize,
   headless,
 }: CartesianChartProps<RawData, XK, YK>) {
+  // Hover is aimed at pointer devices; it's enabled by default on web, where a
+  // mouse or trackpad is the norm. Elsewhere (and when explicitly set to
+  // `false` on web) it stays opt-in.
+  const enableHover = enableHoverProp ?? Platform.OS === "web";
   const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
     useChartCanvasSize({ explicitSize, headless });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
@@ -338,10 +343,12 @@ function CartesianChartContent<
   chartHoverStateRef.current = chartHoverState;
   // `enableHover` drives either an explicit `chartHoverState` or the given
   // `chartPressState` (so hover matches press without extra setup); with
-  // neither it has nothing to write to and silently does nothing.
+  // neither it has nothing to write to and silently does nothing. Only warn
+  // about that when `enableHover` was passed explicitly — on web it resolves
+  // to `true` by default and plain charts are common.
   React.useEffect(() => {
     if (
-      enableHover &&
+      enableHoverProp === true &&
       !chartPressState &&
       !chartHoverState &&
       process.env.NODE_ENV !== "production"
@@ -350,7 +357,7 @@ function CartesianChartContent<
         "CartesianChart: `enableHover` has no effect without `chartPressState` or `chartHoverState`.",
       );
     }
-  }, [enableHover, chartPressState, chartHoverState]);
+  }, [enableHoverProp, chartPressState, chartHoverState]);
   const yKeysKey = yKeys.join("\u0000");
   const normalizedAxisProps = useBuildChartAxis<RawData, XK, YK, never, never>({
     xAxis: xAxis as XAxisInputProps<RawData, XK, never> | undefined,

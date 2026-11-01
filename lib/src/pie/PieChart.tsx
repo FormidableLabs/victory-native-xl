@@ -88,19 +88,15 @@ export const PieChart = (props: PieChartProps) => {
   // The pointer may stay stationary over a stale geometry while data changes;
   // clear the hover index so it doesn't point at outdated slices.
   React.useEffect(() => {
-    if (chartHoverState) {
-      chartHoverState.index.value = -1;
-    }
-    // Intentionally keyed only on data: `chartHoverState` is commonly passed inline
-    // (`{{ index }}`), so keying on it would reset hover on every render.
+    chartHoverState.index.value = -1;
+    // Intentionally keyed only on data: `chartHoverState` is commonly passed
+    // inline (`{{ index }}`), so keying on it would reset hover on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_data]);
   useAnimatedReaction(
     () => hoverPointer?.value ?? null,
     (pointer) => {
       "worklet";
-      if (!chartHoverState) return;
-
       chartHoverState.index.value = getHoveredPieSliceIndex({
         pointer,
         center,

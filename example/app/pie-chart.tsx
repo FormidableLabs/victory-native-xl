@@ -13,8 +13,9 @@ import {
   setScale,
   setTranslate,
   useChartTransformState,
+  usePieHoverState,
 } from "victory-native";
-import { useFont } from "react-native-skia";
+import { Text as SkiaText, useFont } from "react-native-skia";
 import { useDarkMode } from "react-native-dark";
 import {
   useAnimatedReaction,
@@ -27,7 +28,6 @@ import { Button } from "example/components/Button";
 import { InputSlider } from "example/components/InputSlider";
 import { InputColor } from "example/components/InputColor";
 import { InputSegment } from "example/components/InputSegment";
-import { AnimatedText } from "../components/AnimatedText";
 import { appColors } from "../consts/colors";
 import { descriptionForRoute } from "../consts/routes";
 import inter from "../assets/inter-medium.ttf";
@@ -48,6 +48,37 @@ const DATA = (numberPoints = 5) =>
     label: `Label ${index + 1}`,
   }));
 
+/**
+ * Reads the hover index that `PolarChart` maintains internally — no
+ * `chartHoverState` prop needed — via the `usePieHoverState` hook.
+ */
+function HoverReadout({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[];
+}) {
+  const isDark = useDarkMode();
+  const font = useFont(inter, 14);
+  const hover = usePieHoverState();
+  const text = useDerivedValue(() => {
+    const i = hover.index.value;
+    const d = i >= 0 && i < data.length ? data[i] : undefined;
+    return d
+      ? `Slice ${i + 1}: ${d.label} — value ${d.value}`
+      : "Hover the pie!";
+  });
+
+  return (
+    <SkiaText
+      x={20}
+      y={30}
+      text={text}
+      font={font}
+      color={isDark ? appColors.text.dark : appColors.text.light}
+    />
+  );
+}
+
 export default function PieChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const { width, height } = useWindowDimensions();
@@ -61,19 +92,6 @@ export default function PieChart(props: { segment: string }) {
     "simple" | "custom" | "none"
   >("none");
   const { state } = useChartTransformState();
-
-  const hoverIndex = useSharedValue(-1);
-  const isDark = useDarkMode();
-  const hoveredLabel = useDerivedValue(() => {
-    const i = hoverIndex.value;
-    const d = i >= 0 && i < data.length ? data[i] : undefined;
-    return d ? d.label : "Hover the chart!";
-  });
-  const hoveredValue = useDerivedValue(() => {
-    const i = hoverIndex.value;
-    const d = i >= 0 && i < data.length ? data[i] : undefined;
-    return d ? `${d.value} (slice ${i + 1})` : "";
-  });
 
   const k = useSharedValue(1);
   const tx = useSharedValue(0);
@@ -110,29 +128,6 @@ export default function PieChart(props: { segment: string }) {
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <AnimatedText
-          text={hoveredLabel}
-          defaultValue="Hover the chart!"
-          style={[
-            styles.readout,
-            {
-              color: isDark ? appColors.text.dark : appColors.text.light,
-              alignSelf: "center",
-              fontSize: 18,
-            },
-          ]}
-        />
-        <AnimatedText
-          text={hoveredValue}
-          defaultValue=""
-          style={[
-            styles.readoutValue,
-            {
-              color: isDark ? appColors.text.dark : appColors.text.light,
-              alignSelf: "center",
-            },
-          ]}
-        />
         <View
           style={{
             height: chartHeight,
@@ -145,11 +140,11 @@ export default function PieChart(props: { segment: string }) {
             valueKey={"value"}
             labelKey={"label"}
             enableHover
-            chartHoverState={{ index: hoverIndex }}
             chartHoverConfig={{
               activeCursor: "pointer",
             }}
           >
+            <HoverReadout data={data} />
             <Pie.Chart>
               {({ slice }) => {
                 return (
@@ -235,12 +230,5 @@ const styles = StyleSheet.create({
     $dark: {
       backgroundColor: appColors.viewBackground.dark,
     },
-  },
-  readout: {
-    fontWeight: "bold",
-    paddingTop: 10,
-  },
-  readoutValue: {
-    opacity: 0.75,
   },
 });

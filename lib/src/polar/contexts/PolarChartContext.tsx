@@ -16,7 +16,7 @@ interface PolarChartContext {
   valueKey: string;
   colorKey: string;
   hoverPointer?: SharedValue<PolarHoverPointer>;
-  chartHoverState?: PieHoverState;
+  chartHoverState: PieHoverState;
 }
 
 const PolarChartContext = createContext<PolarChartContext | undefined>(
@@ -30,7 +30,7 @@ interface PolarChartProviderProps {
   valueKey: string;
   colorKey: string;
   hoverPointer?: SharedValue<PolarHoverPointer>;
-  chartHoverState?: PieHoverState;
+  chartHoverState: PieHoverState;
 }
 
 export const PolarChartProvider = (
@@ -74,4 +74,16 @@ export const usePolarChartContext = () => {
   }
 
   return context;
+};
+
+/**
+ * Hover state for pie and donut charts: `index` is the hovered slice, or `-1`
+ * while the pointer is over the donut hole, outside the pie, or off the chart.
+ * `PolarChart` maintains this value; the `chartHoverState` prop only overrides
+ * it, so this hook works even without passing the prop.
+ */
+export const usePieHoverState = (): PieHoverState => {
+  const { chartHoverState } = usePolarChartContext();
+
+  return chartHoverState;
 };
