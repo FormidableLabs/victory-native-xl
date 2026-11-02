@@ -32,6 +32,7 @@ const IndividualTouchableBarChart = () => {
     <View style={{ flex: 1 }}>
       <CartesianChart
         chartPressState={state}
+        enableHover
         xKey="month"
         padding={5}
         yKeys={["favouriteCount", "listenCount", "sales"]}
@@ -99,6 +100,7 @@ const TouchableRowsChart = () => {
     <View style={{ flex: 1 }}>
       <CartesianChart
         chartPressState={state}
+        enableHover
         xKey="month"
         padding={5}
         yKeys={["favouriteCount", "listenCount", "sales"]}

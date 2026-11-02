@@ -11,7 +11,7 @@ import type {
   UserSelect,
   TouchAction,
 } from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
-import type { PanGesture } from "./shared/gestureTypes";
+import type { PanGesture, HoverGesture } from "./shared/gestureTypes";
 
 export type PrimitiveViewWindow = {
   xMin: number;
@@ -133,6 +133,8 @@ export type CartesianChartRenderArg<
   points: {
     [K in YK]: PointsArray;
   };
+  /** The chart's built-in hover state; only present when neither `chartPressState` nor `chartHoverState` was passed. */
+  hoverState?: ChartBuiltInHoverState<Extract<YK, string>>;
 };
 
 export type Scale = ScaleLinear<number, number>;
@@ -389,6 +391,30 @@ export type ChartPressPanConfig = {
   failOffsetX?: ExtractParams<PanGesture["failOffsetX"]>;
   failOffsetY?: ExtractParams<PanGesture["failOffsetY"]>;
   simultaneousWithExternalGesture?: ExternalGesture | ExternalGesture[];
+};
+
+export type ChartHoverConfig = {
+  /** Cursor shown while the pointer hovers over the chart. */
+  activeCursor?: Parameters<HoverGesture["activeCursor"]>[number];
+  /** Gestures the hover gesture composes with simultaneously, e.g. custom gestures built outside the chart. */
+  simultaneousWithExternalGesture?: ExternalGesture | ExternalGesture[];
+};
+
+/** Hover state for pie charts; `index` is the hovered slice, or `-1`. */
+export type PieHoverState = {
+  index: SharedValue<number>;
+};
+
+/**
+ * The built-in, hover-only state `CartesianChart` maintains when neither
+ * `chartPressState` nor `chartHoverState` is passed; exposed via the render arg's `hoverState`.
+ */
+export type ChartBuiltInHoverState<YK extends string> = {
+  isActive: SharedValue<boolean>;
+  matchedIndex: SharedValue<number>;
+  x: { value: SharedValue<InputFieldType>; position: SharedValue<number> };
+  y: Record<YK, { value: SharedValue<number>; position: SharedValue<number> }>;
+  yIndex: SharedValue<number>;
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

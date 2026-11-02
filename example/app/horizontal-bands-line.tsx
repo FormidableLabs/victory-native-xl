@@ -9,11 +9,12 @@ import { Circle, Shader, Skia, useFont } from "react-native-skia";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+  useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
   withSpring,
+  type SharedValue,
 } from "react-native-reanimated";
-import { useEffect } from "react";
 import { useDarkMode } from "react-native-dark";
 import inter from "../assets/inter-medium.ttf";
 import { appColors } from "../consts/colors";
@@ -96,6 +97,7 @@ export default function OrdinalDataScreen(props: { segment: string }) {
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
           chartPressState={state}
+          enableHover
         >
           {({ points, yScale }) => {
             return (
@@ -124,7 +126,7 @@ export default function OrdinalDataScreen(props: { segment: string }) {
                     key={`circle-${x}-${y}`}
                     x={x}
                     y={y ?? 0}
-                    radius={state.x.position.value === x ? 12 : 0}
+                    activeXPosition={state.x.position}
                     color={"#f00"}
                   />
                 ))}
@@ -150,18 +152,23 @@ export default function OrdinalDataScreen(props: { segment: string }) {
 const AnimatedCircle = ({
   x,
   y,
-  radius,
+  activeXPosition,
   color,
 }: {
   x: number;
   y: number;
-  radius: number;
+  activeXPosition: SharedValue<number>;
   color: string;
 }) => {
   const animatedRadius = useSharedValue(0);
-  useEffect(() => {
-    animatedRadius.value = withSpring(radius);
-  }, [animatedRadius, radius]);
+  useAnimatedReaction(
+    () => activeXPosition.value === x,
+    (isActive, wasActive) => {
+      if (isActive === wasActive) return;
+      animatedRadius.value = withSpring(isActive ? 12 : 0);
+    },
+    [x],
+  );
   return <Circle r={animatedRadius} cx={x} cy={y} color={color} style="fill" />;
 };
 

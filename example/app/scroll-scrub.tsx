@@ -35,6 +35,7 @@ export default function ScrollAndScrub() {
           y: [40, 85],
         }}
         chartPressState={state}
+        enableHover
         transformState={transformState}
       >
         {({ points }) => (

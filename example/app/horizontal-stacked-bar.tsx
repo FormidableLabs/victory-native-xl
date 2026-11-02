@@ -76,7 +76,6 @@ const NON_UNIFORM_DATA: OptionalChannelDatum[] = [
 
 export default function HorizontalStackedBarPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
-  const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [data, setData] = React.useState(MIXED_DATA);
   const [innerPadding, setInnerPadding] = React.useState(0.4);
@@ -100,7 +99,6 @@ export default function HorizontalStackedBarPage(props: { segment: string }) {
           <View style={styles.largeChart}>
             <HorizontalStackedChart
               data={data}
-              font={font}
               axisLabelColor={axisLabelColor}
               innerPadding={innerPadding}
               roundedCorner={roundedCorner}
@@ -152,10 +150,7 @@ export default function HorizontalStackedBarPage(props: { segment: string }) {
           description="Press a segment to verify horizontal stacked segment lookup and selection styling."
         >
           <View style={styles.mediumChart}>
-            <TouchableSegmentsChart
-              font={font}
-              axisLabelColor={axisLabelColor}
-            />
+            <TouchableSegmentsChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
 
@@ -164,7 +159,7 @@ export default function HorizontalStackedBarPage(props: { segment: string }) {
           description="Segments can provide Skia children such as gradients through barOptions."
         >
           <View style={styles.mediumChart}>
-            <CustomChildrenChart font={font} axisLabelColor={axisLabelColor} />
+            <CustomChildrenChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
 
@@ -173,7 +168,7 @@ export default function HorizontalStackedBarPage(props: { segment: string }) {
           description="Missing values are skipped, zero values stay zero-width, and outer corners remain on visible stack ends."
         >
           <View style={styles.tallChart}>
-            <NonUniformChart font={font} axisLabelColor={axisLabelColor} />
+            <NonUniformChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
       </ScrollView>
@@ -203,19 +198,18 @@ function ChartSection({
 
 function HorizontalStackedChart({
   data,
-  font,
   axisLabelColor,
   innerPadding,
   roundedCorner,
   domain,
 }: {
   data: ChannelDatum[];
-  font: ReturnType<typeof useFont>;
   axisLabelColor: string;
   innerPadding: number;
   roundedCorner: number;
   domain: [number, number];
 }) {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"
@@ -266,12 +260,11 @@ function HorizontalStackedChart({
 }
 
 function TouchableSegmentsChart({
-  font,
   axisLabelColor,
 }: {
-  font: ReturnType<typeof useFont>;
   axisLabelColor: string;
 }) {
+  const font = useFont(inter, 12);
   const { state, isActive } = useChartPressState({
     x: "Alpha",
     y: { product: 0, services: 0, support: 0 },
@@ -315,6 +308,7 @@ function TouchableSegmentsChart({
         <CartesianChart
           orientation="horizontal"
           chartPressState={state}
+          enableHover
           chartPressConfig={{ pan: { activateAfterLongPress: 0 } }}
           data={TOUCHABLE_DATA}
           xKey="category"
@@ -372,13 +366,8 @@ function TouchableSegmentsChart({
   );
 }
 
-function CustomChildrenChart({
-  font,
-  axisLabelColor,
-}: {
-  font: ReturnType<typeof useFont>;
-  axisLabelColor: string;
-}) {
+function CustomChildrenChart({ axisLabelColor }: { axisLabelColor: string }) {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"
@@ -441,13 +430,8 @@ function CustomChildrenChart({
   );
 }
 
-function NonUniformChart({
-  font,
-  axisLabelColor,
-}: {
-  font: ReturnType<typeof useFont>;
-  axisLabelColor: string;
-}) {
+function NonUniformChart({ axisLabelColor }: { axisLabelColor: string }) {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"

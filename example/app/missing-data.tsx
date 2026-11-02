@@ -32,6 +32,7 @@ export default function MissingDataScreen() {
           domain={{ y: [0, 100] }}
           axisOptions={{ font }}
           chartPressState={state}
+          enableHover
         >
           {({ points, chartBounds }) => (
             <>

@@ -135,6 +135,7 @@ export default function StockPriceScreen(props: { segment: string }) {
           xKey="date"
           yKeys={["high"]}
           chartPressState={[firstTouch, secondTouch]}
+          enableHover
           axisOptions={{
             font,
             tickCount: 5,

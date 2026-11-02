@@ -107,6 +107,7 @@ export default function BarGroupWithTooltipPage(props: { segment: string }) {
             labelColor: isDark ? appColors.text.dark : appColors.text.light,
           }}
           chartPressState={state}
+          enableHover
           onChartBoundsChange={({ bottom, left }) => {
             setChartBottom(bottom);
             setChartLeft(left);

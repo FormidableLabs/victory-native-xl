@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Platform } from "react-native";
 import { Group, type CanvasRef } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
@@ -7,6 +8,7 @@ import { type MutableRefObject } from "react";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
 import type {
+  ChartBuiltInHoverState,
   AxisProps,
   CartesianChartRenderArg,
   InputFields,
@@ -20,6 +22,7 @@ import type {
   YAxisPropsWithDefaults,
   FrameInputProps,
   ChartPressPanConfig,
+  ChartHoverConfig,
   Viewport,
   GestureHandlerConfig,
   CartesianChartOrientation,
@@ -33,6 +36,7 @@ import type {
   ChartPressState,
   ChartPressStateInit,
 } from "./hooks/useChartPressState";
+import { makeChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { XAxis } from "./components/XAxis";
@@ -54,6 +58,7 @@ import {
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
+import { applyChartHoverConfig } from "../shared/applyChartHoverConfig";
 import type { ComposedGesture } from "../shared/gestureTypes";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
@@ -124,9 +129,14 @@ type CartesianChartBaseProps<
   chartPressState?:
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
     | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
+  chartHoverState?:
+    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>
+    | ChartPressState<{ x: InputFields<RawData>[XK]; y: Record<YK, number> }>[];
   chartPressConfig?: {
     pan?: ChartPressPanConfig;
   };
+  enableHover?: boolean;
+  chartHoverConfig?: ChartHoverConfig;
   gestureHandlerConfig?: GestureHandlerConfig;
   children: (args: CartesianChartRenderArg<RawData, YK>) => React.ReactNode;
   renderOutside?: (
@@ -294,7 +304,10 @@ function CartesianChartContent<
   axisOptions,
   domain,
   chartPressState,
+  chartHoverState,
   chartPressConfig,
+  enableHover: enableHoverProp,
+  chartHoverConfig,
   gestureHandlerConfig,
   onChartBoundsChange,
   onScaleChange,
@@ -311,6 +324,8 @@ function CartesianChartContent<
   explicitSize,
   headless,
 }: CartesianChartProps<RawData, XK, YK>) {
+  // Hover is aimed at pointer devices, so it's on by default on web.
+  const enableHover = enableHoverProp ?? Platform.OS === "web";
   const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
     useChartCanvasSize({ explicitSize, headless });
   const chartBoundsRef = React.useRef<ChartBounds | undefined>(undefined);
@@ -324,6 +339,8 @@ function CartesianChartContent<
   const canvasRef = React.useRef<CanvasRef | null>(null);
   const chartPressStateRef = React.useRef(chartPressState);
   chartPressStateRef.current = chartPressState;
+  const chartHoverStateRef = React.useRef(chartHoverState);
+  chartHoverStateRef.current = chartHoverState;
   const yKeysKey = yKeys.join("\u0000");
   const normalizedAxisProps = useBuildChartAxis<RawData, XK, YK, never, never>({
     xAxis: xAxis as XAxisInputProps<RawData, XK, never> | undefined,
@@ -633,6 +650,32 @@ function CartesianChartContent<
   const activePressSharedValues = Array.isArray(chartPressState)
     ? chartPressState
     : [chartPressState];
+  const usesBuiltInHoverState = !chartPressState && !chartHoverState;
+  const builtInHoverState = React.useMemo(
+    () =>
+      makeChartPressState({
+        x: 0 as InputFields<RawData>[XK],
+        y: Object.fromEntries(yKeys.map((key) => [key, 0])) as Record<
+          YK,
+          number
+        >,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [yKeysKey],
+  );
+  /** Hover drives `chartHoverState` if given, else the press states, else the built-in state. */
+  const activeHoverSharedValues =
+    chartHoverState === undefined
+      ? chartPressState
+        ? activePressSharedValues
+        : [builtInHoverState]
+      : Array.isArray(chartHoverState)
+        ? chartHoverState
+        : [chartHoverState];
+  /** Whether hover writes to the press states directly (no separate hover state, or the same object for both). */
+  const hoverDrivesPressValues = activePressSharedValues.some(
+    (state) => state && activeHoverSharedValues.includes(state),
+  );
   const gestureState = useSharedValue({
     isGestureActive: false,
     bootstrap: [] as ChartPressBootstrapEntry<
@@ -640,14 +683,19 @@ function CartesianChartContent<
       TouchData
     >[],
   });
+  /** Pan-press cleanup defers deactivation while the pointer hovers, so a press/click doesn't reset a hover-driven state. */
+  const isPointerHovering = useSharedValue(false);
 
   React.useEffect(() => {
-    const vals = chartPressStateRef.current;
-    const states = Array.isArray(vals) ? vals : [vals];
+    const pressVals = chartPressStateRef.current;
+    const pressStates = Array.isArray(pressVals) ? pressVals : [pressVals];
+    const hoverVals = chartHoverStateRef.current;
+    const hoverStates = Array.isArray(hoverVals) ? hoverVals : [hoverVals];
 
-    for (const state of states) {
+    for (const state of [...pressStates, ...hoverStates]) {
       if (state) resetChartPressState(state);
     }
+    resetChartPressState(builtInHoverState);
 
     touchMap.value = {};
     gestureState.value = {
@@ -655,7 +703,15 @@ function CartesianChartContent<
       bootstrap: [],
     };
     lastIdx.value = null;
-  }, [data, gestureState, lastIdx, touchMap, xKey, yKeysKey]);
+  }, [
+    builtInHoverState,
+    data,
+    gestureState,
+    lastIdx,
+    touchMap,
+    xKey,
+    yKeysKey,
+  ]);
 
   const panGesture = Gesture.Pan()
     /**
@@ -721,9 +777,11 @@ function CartesianChartContent<
      */
     .onFinalize(() => {
       const vals = activePressSharedValues || [];
-      for (const val of vals) {
-        if (val) {
-          val.isActive.value = false;
+      if (!(hoverDrivesPressValues && isPointerHovering.value)) {
+        for (const val of vals) {
+          if (val) {
+            val.isActive.value = false;
+          }
         }
       }
 
@@ -770,11 +828,10 @@ function CartesianChartContent<
       for (const touch of e.changedTouches) {
         const vals = activePressSharedValues || [];
 
-        // Set active state to false
         const touchId = touch?.id;
         const idx = typeof touchId === "number" && touchMap.value[touchId];
         const val = typeof idx === "number" && vals[idx];
-        if (val) {
+        if (val && !(hoverDrivesPressValues && isPointerHovering.value)) {
           val.isActive.value = false;
         }
 
@@ -789,7 +846,7 @@ function CartesianChartContent<
       const vals = activePressSharedValues || [];
       // Set active state to false for all vals
       for (const val of vals) {
-        if (val) {
+        if (val && !(hoverDrivesPressValues && isPointerHovering.value)) {
           val.isActive.value = false;
         }
       }
@@ -799,6 +856,58 @@ function CartesianChartContent<
     panGesture,
     panConfig: chartPressConfig?.pan,
     gestureLongPressDelay,
+  });
+
+  const hoverGesture = Gesture.Hover()
+    .onStart((e) => {
+      isPointerHovering.value = true;
+      const pointer = getCartesianTouchCoordinates({
+        touch: e,
+        transform: transformState?.matrix.value,
+      });
+
+      for (const v of activeHoverSharedValues) {
+        if (!v) continue;
+        v.isActive.value = true;
+        handleTouch(v, pointer.x, pointer.y);
+      }
+    })
+    .onUpdate((e) => {
+      const pointer = getCartesianTouchCoordinates({
+        touch: e,
+        transform: transformState?.matrix.value,
+      });
+
+      for (const v of activeHoverSharedValues) {
+        if (!v) continue;
+        if (!v.isActive.value) v.isActive.value = true;
+        handleTouch(v, pointer.x, pointer.y);
+      }
+    })
+    /** Hover may stop receiving move events while pan owns the stream
+     * (e.g. web); stay active so a plain click doesn't flicker the tooltip. */
+    .onTouchesDown(() => {
+      isPointerHovering.value = true;
+      for (const v of activeHoverSharedValues) {
+        if (v && !v.isActive.value) v.isActive.value = true;
+      }
+    })
+    .onEnd(() => {
+      isPointerHovering.value = false;
+      for (const v of activeHoverSharedValues) {
+        if (v) v.isActive.value = false;
+      }
+    })
+    .onFinalize(() => {
+      isPointerHovering.value = false;
+      for (const v of activeHoverSharedValues) {
+        if (v) v.isActive.value = false;
+      }
+    });
+
+  applyChartHoverConfig({
+    gesture: hoverGesture,
+    hoverConfig: chartHoverConfig,
   });
 
   /**
@@ -868,6 +977,12 @@ function CartesianChartContent<
     chartBounds,
     canvasSize: size,
     points,
+    // `SharedValue`'s contravariant setter blocks direct assignment to the render-arg type.
+    hoverState: usesBuiltInHoverState
+      ? (builtInHoverState as unknown as ChartBuiltInHoverState<
+          Extract<YK, string>
+        >)
+      : undefined,
   };
 
   const clipRect = boundsToClip(chartBounds);
@@ -1004,6 +1119,9 @@ function CartesianChartContent<
     }
     if (chartPressState) {
       composed = Gesture.Race(composed, panGesture);
+    }
+    if (enableHover) {
+      composed = Gesture.Simultaneous(composed, hoverGesture);
     }
 
     gestureOverlay = (

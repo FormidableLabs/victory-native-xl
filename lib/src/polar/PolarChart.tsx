@@ -1,25 +1,34 @@
 import * as React from "react";
 import { Group } from "react-native-skia";
 import {
+  Platform,
   type ViewStyle,
   type StyleProp,
   type LayoutChangeEvent,
 } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
+import { useSharedValue, type SharedValue } from "react-native-reanimated";
 import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
-import { PolarChartProvider } from "./contexts/PolarChartContext";
+import {
+  PolarChartProvider,
+  type PolarHoverPointer,
+} from "./contexts/PolarChartContext";
 import type {
   ColorFields,
   InputFields,
   NumericalFields,
   StringKeyOf,
+  ChartHoverConfig,
+  PieHoverState,
 } from "../types";
 import { type ChartTransformState } from "../cartesian/hooks/useChartTransformState";
 import {
   panTransformGesture,
   pinchTransformGesture,
 } from "../cartesian/utils/transformGestures";
+import { getCartesianTouchCoordinates } from "../cartesian/utils/getCartesianTouchCoordinates";
 import { GestureHandler } from "../shared/GestureHandler";
+import { applyChartHoverConfig } from "../shared/applyChartHoverConfig";
 import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
@@ -34,6 +43,9 @@ type PolarChartBaseProps = {
   transformState?: ChartTransformState;
   isHeadless: boolean;
   explicitSize?: ChartExplicitSize;
+  enableHover?: boolean;
+  hoverPointer: SharedValue<PolarHoverPointer>;
+  chartHoverConfig?: ChartHoverConfig;
 };
 
 const PolarChartBase = (
@@ -49,7 +61,12 @@ const PolarChartBase = (
     transformState,
     isHeadless,
     explicitSize,
+    enableHover: enableHoverProp,
+    hoverPointer,
+    chartHoverConfig,
   } = props;
+  // Hover is aimed at pointer devices, so it's on by default on web.
+  const enableHover = enableHoverProp ?? Platform.OS === "web";
   const Bridge: ContextBridge = useContextBridge();
 
   let composed = Gesture.Race();
@@ -59,6 +76,35 @@ const PolarChartBase = (
       pinchTransformGesture(transformState),
       panTransformGesture(transformState),
     );
+  }
+
+  const hoverGesture = Gesture.Hover()
+    .onStart((e) => {
+      hoverPointer.value = getCartesianTouchCoordinates({
+        touch: e,
+        transform: transformState?.matrix.value,
+      });
+    })
+    .onUpdate((e) => {
+      hoverPointer.value = getCartesianTouchCoordinates({
+        touch: e,
+        transform: transformState?.matrix.value,
+      });
+    })
+    .onEnd(() => {
+      hoverPointer.value = null;
+    })
+    .onFinalize(() => {
+      hoverPointer.value = null;
+    });
+
+  applyChartHoverConfig({
+    gesture: hoverGesture,
+    hoverConfig: chartHoverConfig,
+  });
+
+  if (enableHover) {
+    composed = Gesture.Simultaneous(composed, hoverGesture);
   }
 
   const chartContent = (
@@ -97,10 +143,17 @@ type PolarChartProps<
   colorKey: ColorKey;
   labelKey: LabelKey;
   valueKey: ValueKey;
+  enableHover?: boolean;
+  chartHoverState?: PieHoverState;
+  chartHoverConfig?: ChartHoverConfig;
 } & ChartLayoutModeProps &
   Omit<
     PolarChartBaseProps,
-    "canvasSize" | "onLayout" | "hasMeasuredLayoutSize" | "isHeadless"
+    | "canvasSize"
+    | "onLayout"
+    | "hasMeasuredLayoutSize"
+    | "isHeadless"
+    | "hoverPointer"
   >;
 export const PolarChart = <
   RawData extends Record<string, unknown>,
@@ -124,6 +177,14 @@ export const PolarChart = <
     headless: props.headless,
   });
 
+  const hoverPointer = useSharedValue<PolarHoverPointer>(null);
+  // The `chartHoverState` prop only overrides this default for consumers that
+  // need the index outside the chart; other content reads it via `usePieHoverState()`.
+  const defaultHoverIndex = useSharedValue(-1);
+  const chartHoverState = props.chartHoverState ?? {
+    index: defaultHoverIndex,
+  };
+
   return (
     <FiberProvider>
       <PolarChartProvider
@@ -132,6 +193,8 @@ export const PolarChart = <
         colorKey={colorKey.toString()}
         valueKey={valueKey.toString()}
         canvasSize={canvasSize}
+        hoverPointer={hoverPointer}
+        chartHoverState={chartHoverState}
       >
         <PolarChartBase
           {...props}
@@ -139,6 +202,7 @@ export const PolarChart = <
           hasMeasuredLayoutSize={hasMeasuredLayoutSize}
           canvasSize={canvasSize}
           isHeadless={isHeadless}
+          hoverPointer={hoverPointer}
         />
       </PolarChartProvider>
     </FiberProvider>

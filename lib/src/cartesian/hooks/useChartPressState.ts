@@ -13,25 +13,7 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
   const keys = Object.keys(initialValues.y).join(",");
 
   const state = React.useMemo(() => {
-    return {
-      isActive: makeMutable(false),
-      matchedIndex: makeMutable(-1),
-      x: { value: makeMutable(initialValues.x), position: makeMutable(0) },
-      y: Object.entries(initialValues.y).reduce(
-        (acc, [key, initVal]) => {
-          acc[key as keyof Init["y"]] = {
-            value: makeMutable(initVal),
-            position: makeMutable(0),
-          };
-          return acc;
-        },
-        {} as Record<
-          keyof Init["y"],
-          { value: SharedValue<number>; position: SharedValue<number> }
-        >,
-      ),
-      yIndex: makeMutable(-1), // used for stacked bar charts
-    };
+    return makeChartPressState(initialValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keys]);
 
@@ -39,6 +21,29 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
 
   return { state, isActive };
 };
+
+/** Builds a `ChartPressState` outside of hooks (e.g. the chart's built-in hover state); memoize the result. */
+export const makeChartPressState = <Init extends ChartPressStateInit>(
+  initialValues: Init,
+): ChartPressState<Init> => ({
+  isActive: makeMutable(false),
+  matchedIndex: makeMutable(-1),
+  x: { value: makeMutable(initialValues.x), position: makeMutable(0) },
+  y: Object.entries(initialValues.y).reduce(
+    (acc, [key, initVal]) => {
+      acc[key as keyof Init["y"]] = {
+        value: makeMutable(initVal),
+        position: makeMutable(0),
+      };
+      return acc;
+    },
+    {} as Record<
+      keyof Init["y"],
+      { value: SharedValue<number>; position: SharedValue<number> }
+    >,
+  ),
+  yIndex: makeMutable(-1), // used for stacked bar charts
+});
 
 export type ChartPressStateInit = {
   x: InputFieldType;

@@ -88,6 +88,7 @@ export default function BarChartCustomBarsPage() {
             </Text>
             <CartesianChart
               chartPressState={state}
+              enableHover
               xKey="month"
               padding={5}
               yKeys={["listenCount"]}

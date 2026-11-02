@@ -14,11 +14,13 @@ import {
   getTransformComponents,
   setScale,
   setTranslate,
+  useChartPressState,
   useChartTransformState,
 } from "victory-native";
 import { useDarkMode } from "react-native-dark";
 import {
   useAnimatedReaction,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -31,6 +33,7 @@ import { InfoCard } from "../components/InfoCard";
 import { descriptionForRoute } from "../consts/routes";
 import { InputSegment } from "../components/InputSegment";
 import { InputColor } from "../components/InputColor";
+import { AnimatedText } from "../components/AnimatedText";
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -84,9 +87,43 @@ export default function BarChartPage(props: { segment: string }) {
     },
   );
 
+  const { state: pressState, isActive: pressIsActive } = useChartPressState({
+    x: 0,
+    y: { listenCount: 0 },
+  });
+
+  const hoveredLabel = useDerivedValue(() => {
+    if (!pressIsActive) return "Hover the chart!";
+    const month = pressState.x.value.value;
+    const date = new Date(2023, month - 1);
+    return date.toLocaleString("default", { month: "short" });
+  });
+  const hoveredValue = useDerivedValue(() => {
+    if (!pressIsActive) return "";
+    return `${pressState.y.listenCount.value.value} plays`;
+  });
+
   return (
     <>
       <SafeAreaView style={styles.safeView}>
+        <View style={{ paddingHorizontal: 20, paddingTop: 12, gap: 4 }}>
+          <AnimatedText
+            text={hoveredLabel}
+            defaultValue="Hover the chart!"
+            style={[
+              styles.readout,
+              { color: isDark ? appColors.text.dark : appColors.text.light },
+            ]}
+          />
+          <AnimatedText
+            text={hoveredValue}
+            defaultValue=""
+            style={[
+              styles.readoutValue,
+              { color: isDark ? appColors.text.dark : appColors.text.light },
+            ]}
+          />
+        </View>
         <View style={styles.chart}>
           <CartesianChart
             transformState={state}
@@ -95,6 +132,11 @@ export default function BarChartPage(props: { segment: string }) {
             yKeys={["listenCount"]}
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
+            chartPressState={pressState}
+            enableHover
+            chartHoverConfig={{
+              activeCursor: "pointer",
+            }}
             xAxis={{
               font,
               tickCount: 5,
@@ -227,6 +269,15 @@ const styles = StyleSheet.create({
   },
   chart: {
     flex: 1.5,
+  },
+  readout: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  readoutValue: {
+    fontSize: 16,
+    fontWeight: "400",
+    opacity: 0.75,
   },
   optionsScrollView: {
     flex: 1,

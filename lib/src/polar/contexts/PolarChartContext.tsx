@@ -3,6 +3,11 @@ import React, {
   createContext,
   type PropsWithChildren,
 } from "react";
+import type { SharedValue } from "react-native-reanimated";
+import type { PieHoverState } from "../../types";
+
+/** Chart-space pointer position while hovering (`null` otherwise). */
+export type PolarHoverPointer = { x: number; y: number } | null;
 
 interface PolarChartContext {
   data: Record<string, unknown>[];
@@ -10,6 +15,8 @@ interface PolarChartContext {
   labelKey: string;
   valueKey: string;
   colorKey: string;
+  hoverPointer?: SharedValue<PolarHoverPointer>;
+  chartHoverState: PieHoverState;
 }
 
 const PolarChartContext = createContext<PolarChartContext | undefined>(
@@ -22,12 +29,23 @@ interface PolarChartProviderProps {
   labelKey: string;
   valueKey: string;
   colorKey: string;
+  hoverPointer?: SharedValue<PolarHoverPointer>;
+  chartHoverState: PieHoverState;
 }
 
 export const PolarChartProvider = (
   props: PropsWithChildren<PolarChartProviderProps>,
 ) => {
-  const { children, data, canvasSize, labelKey, valueKey, colorKey } = props;
+  const {
+    children,
+    data,
+    canvasSize,
+    labelKey,
+    valueKey,
+    colorKey,
+    hoverPointer,
+    chartHoverState,
+  } = props;
 
   return (
     <PolarChartContext.Provider
@@ -37,6 +55,8 @@ export const PolarChartProvider = (
         labelKey,
         valueKey,
         colorKey,
+        hoverPointer,
+        chartHoverState,
       }}
     >
       {children}
@@ -54,4 +74,15 @@ export const usePolarChartContext = () => {
   }
 
   return context;
+};
+
+/**
+ * Hover state for pie and donut charts; `index` is the hovered slice, or `-1`
+ * when none is hovered. `PolarChart` maintains this value (`chartHoverState`
+ * only overrides it), so this hook works without passing the prop.
+ */
+export const usePieHoverState = (): PieHoverState => {
+  const { chartHoverState } = usePolarChartContext();
+
+  return chartHoverState;
 };
