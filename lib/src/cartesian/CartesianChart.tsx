@@ -8,6 +8,7 @@ import { type MutableRefObject } from "react";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
 import isEqual from "react-fast-compare";
 import type {
+  ChartBuiltInHoverState,
   AxisProps,
   CartesianChartRenderArg,
   InputFields,
@@ -35,6 +36,7 @@ import type {
   ChartPressState,
   ChartPressStateInit,
 } from "./hooks/useChartPressState";
+import { makeChartPressState } from "./hooks/useChartPressState";
 import { useFunctionRef } from "../hooks/useFunctionRef";
 import { CartesianChartProvider } from "./contexts/CartesianChartContext";
 import { XAxis } from "./components/XAxis";
@@ -341,23 +343,6 @@ function CartesianChartContent<
   chartPressStateRef.current = chartPressState;
   const chartHoverStateRef = React.useRef(chartHoverState);
   chartHoverStateRef.current = chartHoverState;
-  // `enableHover` drives either an explicit `chartHoverState` or the given
-  // `chartPressState` (so hover matches press without extra setup); with
-  // neither it has nothing to write to and silently does nothing. Only warn
-  // about that when `enableHover` was passed explicitly — on web it resolves
-  // to `true` by default and plain charts are common.
-  React.useEffect(() => {
-    if (
-      enableHoverProp === true &&
-      !chartPressState &&
-      !chartHoverState &&
-      process.env.NODE_ENV !== "production"
-    ) {
-      console.warn(
-        "CartesianChart: `enableHover` has no effect without `chartPressState` or `chartHoverState`.",
-      );
-    }
-  }, [enableHoverProp, chartPressState, chartHoverState]);
   const yKeysKey = yKeys.join("\u0000");
   const normalizedAxisProps = useBuildChartAxis<RawData, XK, YK, never, never>({
     xAxis: xAxis as XAxisInputProps<RawData, XK, never> | undefined,
@@ -667,12 +652,31 @@ function CartesianChartContent<
   const activePressSharedValues = Array.isArray(chartPressState)
     ? chartPressState
     : [chartPressState];
+  /** True when neither `chartPressState` nor `chartHoverState` was passed:
+   * hover then drives a chart-owned built-in state (mirroring `PolarChart`),
+   * exposed to chart content through the render arg. */
+  const usesBuiltInHoverState = !chartPressState && !chartHoverState;
+  const builtInHoverState = React.useMemo(
+    () =>
+      makeChartPressState({
+        x: 0 as InputFields<RawData>[XK],
+        y: Object.fromEntries(yKeys.map((key) => [key, 0])) as Record<
+          YK,
+          number
+        >,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [yKeysKey],
+  );
   /** Values the hover gesture drives: the explicit `chartHoverState` when given
-   * (keeping hover and press interactions distinct), otherwise the press
-   * states so hover matches press with no extra setup. */
+   * (keeping hover and press interactions distinct), the press states so hover
+   * matches press with no extra setup, or the built-in hover state when no
+   * states exist at all. */
   const activeHoverSharedValues =
     chartHoverState === undefined
-      ? activePressSharedValues
+      ? chartPressState
+        ? activePressSharedValues
+        : [builtInHoverState]
       : Array.isArray(chartHoverState)
         ? chartHoverState
         : [chartHoverState];
@@ -703,6 +707,7 @@ function CartesianChartContent<
     for (const state of [...pressStates, ...hoverStates]) {
       if (state) resetChartPressState(state);
     }
+    resetChartPressState(builtInHoverState);
 
     touchMap.value = {};
     gestureState.value = {
@@ -710,7 +715,15 @@ function CartesianChartContent<
       bootstrap: [],
     };
     lastIdx.value = null;
-  }, [data, gestureState, lastIdx, touchMap, xKey, yKeysKey]);
+  }, [
+    builtInHoverState,
+    data,
+    gestureState,
+    lastIdx,
+    touchMap,
+    xKey,
+    yKeysKey,
+  ]);
 
   const panGesture = Gesture.Pan()
     /**
@@ -976,6 +989,14 @@ function CartesianChartContent<
     chartBounds,
     canvasSize: size,
     points,
+    // Cast is a type-variance workaround: the built-in state IS a
+    // `ChartPressState` keyed by this chart's y keys, but `SharedValue`'s
+    // contravariant setter blocks direct assignment to the render-arg type.
+    hoverState: usesBuiltInHoverState
+      ? (builtInHoverState as unknown as ChartBuiltInHoverState<
+          Extract<YK, string>
+        >)
+      : undefined,
   };
 
   const clipRect = boundsToClip(chartBounds);
@@ -1113,7 +1134,9 @@ function CartesianChartContent<
     if (chartPressState) {
       composed = Gesture.Race(composed, panGesture);
     }
-    if (enableHover && (chartPressState || chartHoverState)) {
+    // The hover gesture always has a state to drive (an explicit
+    // `chartHoverState`, the press states, or the built-in one).
+    if (enableHover) {
       composed = Gesture.Simultaneous(composed, hoverGesture);
     }
 

@@ -133,6 +133,10 @@ export type CartesianChartRenderArg<
   points: {
     [K in YK]: PointsArray;
   };
+  /** The built-in hover state the chart maintains when neither
+   * `chartPressState` nor `chartHoverState` is provided; `undefined`
+   * otherwise (explicit-state users read their own state objects). */
+  hoverState?: ChartBuiltInHoverState<Extract<YK, string>>;
 };
 
 export type Scale = ScaleLinear<number, number>;
@@ -401,6 +405,20 @@ export type ChartHoverConfig = {
 /** Hover state for pie charts; `index` is the hovered slice, or `-1`. */
 export type PieHoverState = {
   index: SharedValue<number>;
+};
+
+/**
+ * Built-in hover state `CartesianChart` maintains when neither
+ * `chartPressState` nor `chartHoverState` is provided — hover-only (press
+ * stays opt-in), mirroring `PolarChart`'s built-in pie hover state. Exposed
+ * through the render arg's `hoverState` field.
+ */
+export type ChartBuiltInHoverState<YK extends string> = {
+  isActive: SharedValue<boolean>;
+  matchedIndex: SharedValue<number>;
+  x: { value: SharedValue<InputFieldType>; position: SharedValue<number> };
+  y: Record<YK, { value: SharedValue<number>; position: SharedValue<number> }>;
+  yIndex: SharedValue<number>;
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

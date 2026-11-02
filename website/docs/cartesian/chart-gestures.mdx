@@ -187,6 +187,30 @@ The example app uses this API in several places — [`example/app/candlestick.ts
 
 :::
 
+### Zero-setup hover (no state required)
+
+You don't need any state at all: when neither `chartPressState` nor `chartHoverState` is passed, `CartesianChart` maintains a built-in hover state (mirroring `PolarChart`'s built-in pie state) and hands it to your render functions via `hoverState`:
+
+```tsx
+<CartesianChart data={DATA} xKey="day" yKeys={["highTmp"]}>
+  {({ points, hoverState }) => (
+    <>
+      <Line points={points.highTmp} color="hotpink" strokeWidth={3} />
+      {hoverState?.isActive.value && (
+        <Circle
+          cx={hoverState.x.position}
+          cy={hoverState.y.highTmp.position}
+          r={9}
+          color="hotpink"
+        />
+      )}
+    </>
+  )}
+</CartesianChart>
+```
+
+This state is hover-only — press interactions stay opt-in via [`chartPressState`](#the-chartpressstate-prop-of-cartesianchart). When you do pass a state, `hoverState` is `undefined` and you read your own object instead.
+
 ### Distinct hover and press states
 
 Sharing the press state keeps things simple, but hovering and pressing may need to be tracked independently — e.g. a hover tooltip that follows the mouse while a pressed tooltip stays pinned where the mouse last clicked. Pass a separate `chartHoverState` (a `ChartPressState` value created with `useChartPressState`, just like `chartPressState`) and the hover gesture will drive it instead of the press states:
@@ -205,7 +229,7 @@ const hover = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
 Each state (and its `isActive` shared value) is updated independently, so a "hover is active" readout and a "press is active" indicator can coexist.
 
-Pie/donut charts (`PolarChart`) work differently: they always maintain a hovered-slice-index state, consumable inside chart content with the [`usePieHoverState`](/docs/polar/polar-chart#charthoverstate) hook; the [`chartHoverState`](/docs/polar/polar-chart#charthoverstate) prop only overrides it when the index needs to be read outside the chart.
+Pie/donut charts (`PolarChart`) work the same way — they always maintain a hovered-slice-index state, consumable inside chart content with the [`usePieHoverState`](/docs/polar/polar-chart#charthoverstate) hook; the [`chartHoverState`](/docs/polar/polar-chart#charthoverstate) prop only overrides it when the index needs to be read outside the chart.
 
 ## Multi-press support
 

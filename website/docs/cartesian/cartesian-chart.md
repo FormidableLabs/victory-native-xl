@@ -256,9 +256,11 @@ When no point is "active" (no press/hover), the gesture state will return `NaN` 
 
 ### `chartHoverState`
 
-A `ChartPressState` value (or array of them) generated from the `useChartPressState` hook — same type as `chartPressState` — that the hover gesture writes to instead of the press values. Requires [`enableHover`](#enablehover).
+Optional. A `ChartPressState` value (or array of them) generated from the `useChartPressState` hook — same type as `chartPressState` — that the hover gesture writes to instead of the press values. Requires [`enableHover`](#enablehover) on non-web platforms (hover is on by default on web).
 
-Without a `chartHoverState`, hovering updates the `chartPressState` values themselves, which makes the hover gesture behave exactly like the press gesture with no extra setup. With a `chartHoverState`, hover and press are tracked independently — e.g. a hover tooltip that follows the mouse while a pressed tooltip stays pinned.
+Hover always has some state to write to, in this priority order:
+
+1. **`chartHoverState`** when provided — hover and press are tracked independently, e.g. a hover tooltip that follows the mouse while a pressed tooltip stays pinned:
 
 ```tsx
 import { CartesianChart, useChartPressState } from "victory-native";
@@ -273,11 +275,41 @@ return (
     yKeys={["highTmp"]}
     chartPressState={press.state}
     chartHoverState={hover.state} // 👈 hover and press tracked independently
-    enableHover={true}
   >
     {/* ... */}
   </CartesianChart>
 );
+```
+
+2. **`chartPressState`** when `chartHoverState` is omitted — hovering updates the press values themselves, so the hover gesture behaves exactly like the press gesture with no extra setup.
+
+3. **A built-in hover state** (mirroring `PolarChart`) when neither prop is passed. The chart owns this state and exposes it via the render function's [`hoverState`](#hoverstate) field, so simple hover readouts need no state setup at all:
+
+```tsx
+import * as React from "react";
+import { Circle } from "react-native-skia";
+import { CartesianChart, Line } from "victory-native";
+
+function Chart({ data }: { data: { day: number; highTmp: number }[] }) {
+  return (
+    <CartesianChart data={data} xKey="day" yKeys={["highTmp"]}>
+      {({ points, hoverState }) => (
+        <>
+          <Line points={points.highTmp} />
+          {/* hoverState is the chart's built-in hover state; undefined when
+              you pass chartPressState or chartHoverState yourself */}
+          {hoverState && hoverState.isActive.value && (
+            <Circle
+              cx={hoverState.x.position.value}
+              cy={hoverState.y.highTmp.position.value}
+              r={6}
+            />
+          )}
+        </>
+      )}
+    </CartesianChart>
+  );
+}
 ```
 
 ### `renderOutside`
@@ -319,7 +351,7 @@ Explicit `0` values are honored for these options. For example, `activateAfterLo
 
 ### `enableHover`
 
-When `true`, the chart builds a [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) that updates the values the hover gesture drives: a [`chartHoverState`](#charthoverstate) when one is provided, otherwise the `chartPressState` values — so hover behaves exactly like a press. Moving the pointer — e.g. a mouse on web or desktop — over the chart updates the active x/y values and positions and sets `isActive` to `true`, and leaving the chart deactivates the state again. This makes it easy to show tooltips, cursors, or readouts while the pointer is over the chart, without requiring a press.
+When `true`, the chart builds a [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) that updates the values the hover gesture drives: a [`chartHoverState`](#charthoverstate) when one is provided, otherwise the `chartPressState` values — so hover behaves exactly like a press — or the chart's built-in hover state when neither prop is passed (exposed via the render function's [`hoverState`](#hoverstate) field). Moving the pointer — e.g. a mouse on web or desktop — over the chart updates the active x/y values and positions and sets `isActive` to `true`, and leaving the chart deactivates the state again. This makes it easy to show tooltips, cursors, or readouts while the pointer is over the chart, without requiring a press.
 
 Hover is aimed at pointer devices, so `enableHover` **defaults to `true` on web** (pass `enableHover={false}` there to opt out); on other platforms it stays opt-in.
 
@@ -690,3 +722,14 @@ a `number[]` which holds the normalized values of the canvas's horizontal axis. 
 ### `yTicks`
 
 a `number[]` which holds the normalized values of the canvas's vertical axis. To map into canvas position values, use `yScale` (i.e. `yScale(yTicks[0])`)
+
+### `hoverState`
+
+Available **only when neither `chartPressState` nor `chartHoverState` is provided**; `undefined` otherwise (in that case, read your own state objects). This is the built-in hover state `CartesianChart` maintains so that hover works with zero setup — shaped like a `ChartPressState` and driven by the hover gesture only (press stays opt-in via [`chartPressState`](#chartpressstate)):
+
+- `isActive` — `true` while the pointer is over the chart
+- `x.value` / `x.position` — the hovered x data value and its canvas position
+- `y.<yKey>.value` / `y.<yKey>.position` — hovered y values and canvas positions for each key in `yKeys`
+- `matchedIndex` / `yIndex` — index bookkeeping used by the bundled marks
+
+See the [`chartHoverState`](#charthoverstate) section for the full list of hover-driven state shapes.
