@@ -324,9 +324,7 @@ function CartesianChartContent<
   explicitSize,
   headless,
 }: CartesianChartProps<RawData, XK, YK>) {
-  // Hover is aimed at pointer devices; it's enabled by default on web, where a
-  // mouse or trackpad is the norm. Elsewhere (and when explicitly set to
-  // `false` on web) it stays opt-in.
+  // Hover is aimed at pointer devices, so it's on by default on web.
   const enableHover = enableHoverProp ?? Platform.OS === "web";
   const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
     useChartCanvasSize({ explicitSize, headless });
@@ -652,9 +650,6 @@ function CartesianChartContent<
   const activePressSharedValues = Array.isArray(chartPressState)
     ? chartPressState
     : [chartPressState];
-  /** True when neither `chartPressState` nor `chartHoverState` was passed:
-   * hover then drives a chart-owned built-in state (mirroring `PolarChart`),
-   * exposed to chart content through the render arg. */
   const usesBuiltInHoverState = !chartPressState && !chartHoverState;
   const builtInHoverState = React.useMemo(
     () =>
@@ -668,10 +663,7 @@ function CartesianChartContent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [yKeysKey],
   );
-  /** Values the hover gesture drives: the explicit `chartHoverState` when given
-   * (keeping hover and press interactions distinct), the press states so hover
-   * matches press with no extra setup, or the built-in hover state when no
-   * states exist at all. */
+  /** Hover drives `chartHoverState` if given, else the press states, else the built-in state. */
   const activeHoverSharedValues =
     chartHoverState === undefined
       ? chartPressState
@@ -680,9 +672,7 @@ function CartesianChartContent<
       : Array.isArray(chartHoverState)
         ? chartHoverState
         : [chartHoverState];
-  /** True when the hover gesture writes to the press states directly —
-   * either because there is no explicit `chartHoverState` (hover mirrors press)
-   * or because the caller passed the same state object to both props. */
+  /** Whether hover writes to the press states directly (no separate hover state, or the same object for both). */
   const hoverDrivesPressValues = activePressSharedValues.some(
     (state) => state && activeHoverSharedValues.includes(state),
   );
@@ -693,9 +683,7 @@ function CartesianChartContent<
       TouchData
     >[],
   });
-  /** Pan-press cleanup defers deactivation while the pointer hovers over
-   * values the hover gesture drives, so a press/click doesn't reset a
-   * hover-driven state. */
+  /** Pan-press cleanup defers deactivation while the pointer hovers, so a press/click doesn't reset a hover-driven state. */
   const isPointerHovering = useSharedValue(false);
 
   React.useEffect(() => {
@@ -989,9 +977,7 @@ function CartesianChartContent<
     chartBounds,
     canvasSize: size,
     points,
-    // Cast is a type-variance workaround: the built-in state IS a
-    // `ChartPressState` keyed by this chart's y keys, but `SharedValue`'s
-    // contravariant setter blocks direct assignment to the render-arg type.
+    // `SharedValue`'s contravariant setter blocks direct assignment to the render-arg type.
     hoverState: usesBuiltInHoverState
       ? (builtInHoverState as unknown as ChartBuiltInHoverState<
           Extract<YK, string>
@@ -1134,8 +1120,6 @@ function CartesianChartContent<
     if (chartPressState) {
       composed = Gesture.Race(composed, panGesture);
     }
-    // The hover gesture always has a state to drive (an explicit
-    // `chartHoverState`, the press states, or the built-in one).
     if (enableHover) {
       composed = Gesture.Simultaneous(composed, hoverGesture);
     }

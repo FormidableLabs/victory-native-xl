@@ -22,9 +22,7 @@ export const useChartPressState = <Init extends ChartPressStateInit>(
   return { state, isActive };
 };
 
-/** Builds a `ChartPressState`-shaped object with fully independent shared
- * values — usable outside of hooks (e.g. for the chart's built-in hover
- * state) as long as it is memoized by the caller. */
+/** Builds a `ChartPressState` outside of hooks (e.g. the chart's built-in hover state); memoize the result. */
 export const makeChartPressState = <Init extends ChartPressStateInit>(
   initialValues: Init,
 ): ChartPressState<Init> => ({

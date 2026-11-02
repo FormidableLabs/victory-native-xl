@@ -60,7 +60,6 @@ describe("makeChartPressState", () => {
     expect(state.isActive.value).toBe(false);
     expect(state.matchedIndex.value).toBe(-1);
     expect(state.yIndex.value).toBe(-1);
-    // reset clears positions but keeps the x/y values
     expect(state.x.position.value).toBe(0);
     expect(state.x.value.value).toBe(5);
     expect(state.y.high.position.value).toBe(0);

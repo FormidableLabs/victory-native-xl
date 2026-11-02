@@ -85,12 +85,11 @@ export const PieChart = (props: PieChartProps) => {
   ]);
 
   const { hoverPointer, chartHoverState } = usePolarChartContext();
-  // The pointer may stay stationary over a stale geometry while data changes;
-  // clear the hover index so it doesn't point at outdated slices.
+  // The pointer may sit over stale geometry after a data change; reset the hover index.
   React.useEffect(() => {
     chartHoverState.index.value = -1;
-    // Intentionally keyed only on data: `chartHoverState` is commonly passed
-    // inline (`{{ index }}`), so keying on it would reset hover on every render.
+    // Keyed only on data: `chartHoverState` is commonly inline (`{{ index }}`)
+    // and would reset hover on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_data]);
   useAnimatedReaction(

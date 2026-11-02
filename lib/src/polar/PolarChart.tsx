@@ -65,9 +65,7 @@ const PolarChartBase = (
     hoverPointer,
     chartHoverConfig,
   } = props;
-  // Hover is aimed at pointer devices; it's enabled by default on web, where
-  // a mouse or trackpad is the norm. Elsewhere (and when explicitly set to
-  // `false` on web) it stays opt-in.
+  // Hover is aimed at pointer devices, so it's on by default on web.
   const enableHover = enableHoverProp ?? Platform.OS === "web";
   const Bridge: ContextBridge = useContextBridge();
 
@@ -180,10 +178,8 @@ export const PolarChart = <
   });
 
   const hoverPointer = useSharedValue<PolarHoverPointer>(null);
-  // Pie/donut charts always have a hover state to drive; the `chartHoverState`
-  // prop only overrides it for consumers that need the value off-thread, e.g.
-  // readouts rendered outside the chart. Other consumers read the default
-  // through `usePieHoverState()`.
+  // The `chartHoverState` prop only overrides this default for consumers that
+  // need the index outside the chart; other content reads it via `usePieHoverState()`.
   const defaultHoverIndex = useSharedValue(-1);
   const chartHoverState = props.chartHoverState ?? {
     index: defaultHoverIndex,

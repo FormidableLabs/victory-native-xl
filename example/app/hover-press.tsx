@@ -42,7 +42,6 @@ export default function HoverPress(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const isDark = useDarkMode();
 
-  // Two independent states: press drives `chartPressState`, hover drives `chartHoverState`.
   const { state: press, isActive: pressIsActive } = useChartPressState({
     x: 0,
     y: { highTmp: 0 },

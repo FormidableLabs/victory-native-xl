@@ -56,10 +56,7 @@ const DATA = (numberPoints = 5) =>
     label: `Label ${index + 1}`,
   }));
 
-/**
- * Reads the hover index that `PolarChart` maintains internally — no
- * `chartHoverState` prop needed — via the `usePieHoverState` hook.
- */
+/** Reads the hovered-slice index `PolarChart` maintains internally; no `chartHoverState` prop needed. */
 function HoverReadout({
   data,
 }: {
