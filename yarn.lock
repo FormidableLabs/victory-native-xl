@@ -5327,16 +5327,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"canvaskit-wasm@npm:0.41.0":
-  version: 0.41.0
-  resolution: "canvaskit-wasm@npm:0.41.0"
-  dependencies:
-    "@webgpu/types": "npm:0.1.21"
-  checksum: 10c0/a55eb2cb627f2cdf017e05dba794c35225725af13c223c573ffb04f9f783d16e6c80fa0eb21a712c7b0a56f29dc0a693aee1eee61fe75e2b74e821a10236d8ef
-  languageName: node
-  linkType: hard
-
-"canvaskit-wasm@npm:^0.41.0":
+"canvaskit-wasm@npm:0.41.1, canvaskit-wasm@npm:^0.41.0":
   version: 0.41.1
   resolution: "canvaskit-wasm@npm:0.41.1"
   dependencies:
@@ -6720,7 +6711,7 @@ __metadata:
     react-native-reanimated: "npm:4.5.1"
     react-native-safe-area-context: "npm:~5.7.0"
     react-native-screens: "npm:~4.26.0"
-    react-native-skia: "npm:2.15.1"
+    react-native-skia: "npm:2.15.3"
     react-native-web: "npm:~0.21.0"
     react-native-wheel-color-picker: "npm:^1.2.0"
     react-native-worklets: "npm:0.10.1"
@@ -10233,11 +10224,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-skia@npm:2.15.1":
-  version: 2.15.1
-  resolution: "react-native-skia@npm:2.15.1"
+"react-native-skia@npm:2.15.3":
+  version: 2.15.3
+  resolution: "react-native-skia@npm:2.15.3"
   dependencies:
-    canvaskit-wasm: "npm:0.41.0"
+    canvaskit-wasm: "npm:0.41.1"
     react-native-skia-android: "npm:154.0.0"
     react-native-skia-apple-ios: "npm:154.0.0"
     react-native-skia-apple-macos: "npm:154.0.0"
@@ -10257,7 +10248,7 @@ __metadata:
       optional: true
   bin:
     setup-skia-web: scripts/setup-canvaskit.js
-  checksum: 10c0/4529f8b7d7eee4a084ff6de861bbb14fba3fa3f1559642af5b95ccf35ab4bf83f15b1ab1f233e60b512bea89d63e7eb906ed1bad5f4381f13c9b1abbc6dd484c
+  checksum: 10c0/a7998b29ec621ffc91d713ab3388aa5f6993f2109af49ffca7544da8c07787d11f13f7183e14886e58f268d1427038d34bcf072ca2efdaefd431f6e5cd05d5dd
   languageName: node
   linkType: hard
 
@@ -12095,7 +12086,7 @@ __metadata:
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     react-fast-compare: "npm:^3.2.2"
-    react-native-skia: "npm:2.15.1"
+    react-native-skia: "npm:2.15.3"
     typescript: "npm:^5.1.6"
     vite: "npm:^7.0.0"
     vitest: "npm:^4.1.7"
@@ -12104,7 +12095,7 @@ __metadata:
     react-native: ">=0.79"
     react-native-gesture-handler: ">=2.0.0 <4.0.0"
     react-native-reanimated: ">=4.1.7 <5.0.0"
-    react-native-skia: ">=2.15.1 <3.0.0"
+    react-native-skia: ">=2.15.3 <3.0.0"
     react-native-worklets: ">=0.7.0"
   languageName: unknown
   linkType: soft
