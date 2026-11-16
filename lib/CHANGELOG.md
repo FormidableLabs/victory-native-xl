@@ -1,5 +1,11 @@
 # victory-native
 
+## 43.1.0
+
+### Minor Changes
+
+- Raise the `react-native-skia` peer dependency floor from 2.15.1 to 2.15.5 (the latest 2.x release). 2.15.3–2.15.5 bring React Native Web improvements (one shared WebGL context for all canvases, and fixes for canvases in `<Activity>` and StrictMode) and an Android fix for canvases inside a `Modal`. If your app pins `react-native-skia` below 2.15.5, upgrade it with `yarn add react-native-skia@^2.15.5`. Skia 3 is still not supported. ([#697](https://github.com/FormidableLabs/victory-native-xl/pull/697))
+
 ## 43.0.1
 
 ### Patch Changes
