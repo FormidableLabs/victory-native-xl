@@ -1,7 +1,9 @@
 import * as React from "react";
 import { type Color } from "react-native-skia";
+import { useAnimatedReaction } from "react-native-reanimated";
 import { PieSlice, type PieSliceData } from "./PieSlice";
 import { handleTranslateInnerRadius } from "./utils/innerRadius";
+import { getHoveredPieSliceIndex } from "./utils/getHoveredPieSliceIndex";
 import { getPieLayout } from "./utils/pieLayout";
 import { PieSliceProvider } from "./contexts/PieSliceContext";
 import { usePolarChartContext } from "../polar/contexts/PolarChartContext";
@@ -81,6 +83,29 @@ export const PieChart = (props: PieChartProps) => {
     circleSweepDegrees,
     _startAngle,
   ]);
+
+  const { hoverPointer, chartHoverState } = usePolarChartContext();
+  // The pointer may sit over stale geometry after a data change; reset the hover index.
+  React.useEffect(() => {
+    chartHoverState.index.value = -1;
+    // Keyed only on data: `chartHoverState` is commonly inline (`{{ index }}`)
+    // and would reset hover on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_data]);
+  useAnimatedReaction(
+    () => hoverPointer?.value ?? null,
+    (pointer) => {
+      "worklet";
+      chartHoverState.index.value = getHoveredPieSliceIndex({
+        pointer,
+        center,
+        radius,
+        circleSweepDegrees,
+        startAngle: _startAngle,
+        slices: data,
+      });
+    },
+  );
 
   return (
     <>

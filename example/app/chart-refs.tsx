@@ -176,6 +176,7 @@ export default function ChartRefsExample() {
             },
           }}
           chartPressState={state}
+          enableHover
         >
           {({ points }) => (
             <>

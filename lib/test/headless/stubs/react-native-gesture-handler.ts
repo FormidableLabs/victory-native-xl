@@ -15,14 +15,17 @@ const chainableGesture = (): ChainableGesture => {
 
 export const Gesture = {
   Race: (..._gestures: unknown[]) => chainableGesture(),
+  Simultaneous: (..._gestures: unknown[]) => chainableGesture(),
   Pinch: () => chainableGesture(),
   Pan: () => chainableGesture(),
+  Hover: () => chainableGesture(),
   LongPress: () => chainableGesture(),
   Tap: () => chainableGesture(),
 };
 
 export type PanGesture = ReturnType<typeof Gesture.Pan>;
 export type PinchGesture = ReturnType<typeof Gesture.Pinch>;
+export type HoverGesture = ReturnType<typeof Gesture.Hover>;
 export type ComposedGesture = ReturnType<typeof Gesture.Race>;
 export type GestureType = PanGesture | PinchGesture | ComposedGesture;
 export type TouchData = { x: number; y: number };

@@ -32,6 +32,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
             font,
           }}
           chartPressState={state}
+          enableHover
         >
           {({ points }) => (
             <>

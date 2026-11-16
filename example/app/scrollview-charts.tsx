@@ -40,6 +40,7 @@ const LineChart = ({
         font,
       }}
       chartPressState={state}
+      enableHover
       chartPressConfig={{
         pan: {
           activateAfterLongPress: 100,

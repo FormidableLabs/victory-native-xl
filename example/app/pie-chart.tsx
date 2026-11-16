@@ -13,10 +13,13 @@ import {
   setScale,
   setTranslate,
   useChartTransformState,
+  usePieHoverState,
 } from "victory-native";
-import { useFont } from "react-native-skia";
+import { Text as SkiaText, useFont } from "react-native-skia";
+import { useDarkMode } from "react-native-dark";
 import {
   useAnimatedReaction,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -44,6 +47,34 @@ const DATA = (numberPoints = 5) =>
     color: generateRandomColor(),
     label: `Label ${index + 1}`,
   }));
+
+/** Reads the hovered-slice index `PolarChart` maintains internally; no `chartHoverState` prop needed. */
+function HoverReadout({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[];
+}) {
+  const isDark = useDarkMode();
+  const font = useFont(inter, 14);
+  const hover = usePieHoverState();
+  const text = useDerivedValue(() => {
+    const i = hover.index.value;
+    const d = i >= 0 && i < data.length ? data[i] : undefined;
+    return d
+      ? `Slice ${i + 1}: ${d.label} — value ${d.value}`
+      : "Hover the pie!";
+  });
+
+  return (
+    <SkiaText
+      x={20}
+      y={30}
+      text={text}
+      font={font}
+      color={isDark ? appColors.text.dark : appColors.text.light}
+    />
+  );
+}
 
 export default function PieChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
@@ -105,7 +136,12 @@ export default function PieChart(props: { segment: string }) {
             colorKey={"color"}
             valueKey={"value"}
             labelKey={"label"}
+            enableHover
+            chartHoverConfig={{
+              activeCursor: "pointer",
+            }}
           >
+            <HoverReadout data={data} />
             <Pie.Chart>
               {({ slice }) => {
                 return (

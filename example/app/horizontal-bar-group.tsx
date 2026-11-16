@@ -173,6 +173,7 @@ export default function HorizontalBarGroupPage(props: { segment: string }) {
               ]}
               frame={{ lineWidth: 0 }}
               chartPressState={press.state}
+              enableHover
               chartPressConfig={{ pan: { activateAfterLongPress: 0 } }}
             >
               {({ points, chartBounds }) => (
@@ -299,7 +300,7 @@ export default function HorizontalBarGroupPage(props: { segment: string }) {
           description="A horizontal version of the grouped bar tooltip example."
         >
           <View style={styles.mediumChart}>
-            <TooltipPairChart font={font} axisLabelColor={axisLabelColor} />
+            <TooltipPairChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
 
@@ -308,7 +309,7 @@ export default function HorizontalBarGroupPage(props: { segment: string }) {
           description="Two grouped series with fixed bar thickness and plain colors."
         >
           <View style={styles.compactChart}>
-            <CompactPairChart font={font} axisLabelColor={axisLabelColor} />
+            <CompactPairChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
 
@@ -317,7 +318,7 @@ export default function HorizontalBarGroupPage(props: { segment: string }) {
           description="Many categories with three narrow bars per group."
         >
           <View style={styles.denseChart}>
-            <DenseFixedWidthChart font={font} axisLabelColor={axisLabelColor} />
+            <DenseFixedWidthChart axisLabelColor={axisLabelColor} />
           </View>
         </ChartSection>
       </ScrollView>
@@ -341,13 +342,8 @@ function ChartSection({
   );
 }
 
-function TooltipPairChart({
-  font,
-  axisLabelColor,
-}: {
-  font: ReturnType<typeof useFont>;
-  axisLabelColor: string;
-}) {
+function TooltipPairChart({ axisLabelColor }: { axisLabelColor: string }) {
+  const font = useFont(inter, 12);
   const [barSize, setBarSize] = React.useState({
     barWidth: 0,
     groupWidth: 0,
@@ -406,6 +402,7 @@ function TooltipPairChart({
           ]}
           frame={{ lineWidth: 0 }}
           chartPressState={state}
+          enableHover
           chartPressConfig={{ pan: { activateAfterLongPress: 0 } }}
         >
           {({ points, chartBounds }) => (
@@ -479,13 +476,8 @@ function TooltipPairChart({
   );
 }
 
-function CompactPairChart({
-  font,
-  axisLabelColor,
-}: {
-  font: ReturnType<typeof useFont>;
-  axisLabelColor: string;
-}) {
+function CompactPairChart({ axisLabelColor }: { axisLabelColor: string }) {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"
@@ -530,13 +522,8 @@ function CompactPairChart({
   );
 }
 
-function DenseFixedWidthChart({
-  font,
-  axisLabelColor,
-}: {
-  font: ReturnType<typeof useFont>;
-  axisLabelColor: string;
-}) {
+function DenseFixedWidthChart({ axisLabelColor }: { axisLabelColor: string }) {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"

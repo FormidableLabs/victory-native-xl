@@ -4,7 +4,6 @@ import {
   useFont,
   vec,
   type Color,
-  type SkFont,
 } from "react-native-skia";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -82,7 +81,6 @@ const LABEL_POSITION_DATA: HorizontalDatum[] = [
 
 export default function HorizontalBarPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
-  const font = useFont(inter, 12);
   const isDark = useDarkMode();
   const [data, setData] = useState(MIXED_DATA);
   const [barWidth, setBarWidth] = useState(26);
@@ -111,7 +109,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
           <View style={styles.largeChart}>
             <HorizontalBarExample
               data={data}
-              font={font}
               axisLabelColor={axisLabelColor}
               domain={[-80, 160]}
               barWidth={barWidth}
@@ -182,7 +179,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
           <View style={styles.mediumChart}>
             <HorizontalBarExample
               data={LEADERBOARD_DATA}
-              font={font}
               axisLabelColor={axisLabelColor}
               domain={[0, 100]}
               barWidth={30}
@@ -202,7 +198,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
           <View style={styles.mediumChart}>
             <HorizontalBarExample
               data={DIVERGING_DATA}
-              font={font}
               axisLabelColor={axisLabelColor}
               domain={[-60, 60]}
               barWidth={24}
@@ -222,7 +217,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
           <View style={styles.mediumChart}>
             <HorizontalBarExample
               data={LONG_LABEL_DATA}
-              font={font}
               axisLabelColor={axisLabelColor}
               domain={[0, 150]}
               barWidth={28}
@@ -242,7 +236,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
           <View style={styles.tallChart}>
             <HorizontalBarExample
               data={COMPACT_DATA}
-              font={font}
               axisLabelColor={axisLabelColor}
               domain={[0, 100]}
               barWidth={14}
@@ -266,7 +259,6 @@ export default function HorizontalBarPage(props: { segment: string }) {
                 <View style={styles.labelChartBody}>
                   <HorizontalBarExample
                     data={LABEL_POSITION_DATA.slice(0, 1)}
-                    font={font}
                     axisLabelColor={axisLabelColor}
                     domain={[0, 100]}
                     domainPadding={{
@@ -316,7 +308,6 @@ function ChartSection({
 
 function HorizontalBarExample({
   data,
-  font,
   axisLabelColor,
   domain,
   barWidth,
@@ -331,7 +322,6 @@ function HorizontalBarExample({
   showAxisTitles,
 }: {
   data: HorizontalDatum[];
-  font: SkFont | null;
   axisLabelColor: string;
   domain: [number, number];
   barWidth: number;
@@ -350,6 +340,10 @@ function HorizontalBarExample({
   hideYAxis?: boolean;
   showAxisTitles?: boolean;
 }) {
+  // Load the font here rather than receiving it as a prop: under the React
+  // Compiler, an SkFont passed as a prop into this chart wrapper triggers an
+  // infinite render loop on web that crashes the renderer.
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"

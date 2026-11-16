@@ -48,6 +48,10 @@ export default function ScatterPage(props: { segment: string }) {
             domainPadding={{ left: 50, right: 50, top: 30 }}
             domain={{ y: [0, 100] }}
             chartPressState={state}
+            enableHover
+            chartHoverConfig={{
+              activeCursor: "crosshair",
+            }}
             axisOptions={{
               font,
               tickCount: 5,

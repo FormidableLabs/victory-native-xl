@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient, vec } from "react-native-skia";
-import { Pie, PolarChart } from "victory-native";
+import {
+  LinearGradient,
+  Text as SkiaText,
+  useFont,
+  vec,
+} from "react-native-skia";
+import { Pie, PolarChart, usePieHoverState } from "victory-native";
+import { useDarkMode } from "react-native-dark";
+import { useDerivedValue } from "react-native-reanimated";
 import { InfoCard } from "example/components/InfoCard";
 import { Button } from "example/components/Button";
 import { appColors } from "../consts/colors";
 import { descriptionForRoute } from "../consts/routes";
+import inter from "../assets/inter-medium.ttf";
 
 function calculateGradientPoints(
   radius: number,
@@ -48,6 +56,34 @@ const DATA = (numberPoints = 5) =>
     label: `Label ${index + 1}`,
   }));
 
+/** Reads the hovered-slice index `PolarChart` maintains internally; no `chartHoverState` prop needed. */
+function HoverReadout({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[];
+}) {
+  const isDark = useDarkMode();
+  const font = useFont(inter, 14);
+  const hover = usePieHoverState();
+  const text = useDerivedValue(() => {
+    const i = hover.index.value;
+    const d = i >= 0 && i < data.length ? data[i] : undefined;
+    return d
+      ? `Label ${i + 1}: ${d.label} — value ${d.value}`
+      : "Hover the donut!";
+  });
+
+  return (
+    <SkiaText
+      x={20}
+      y={30}
+      text={text}
+      font={font}
+      color={isDark ? appColors.text.dark : appColors.text.light}
+    />
+  );
+}
+
 export default function DonutChart(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
   const [data, setData] = useState(DATA(5));
@@ -61,7 +97,12 @@ export default function DonutChart(props: { segment: string }) {
             colorKey={"color"}
             valueKey={"value"}
             labelKey={"label"}
+            enableHover
+            chartHoverConfig={{
+              activeCursor: "pointer",
+            }}
           >
+            <HoverReadout data={data} />
             <Pie.Chart innerRadius={"50%"}>
               {({ slice }) => {
                 const { startX, startY, endX, endY } = calculateGradientPoints(

@@ -16,6 +16,8 @@ export {
   type Viewport,
   type ChartBounds,
   type ChartPressPanConfig,
+  type ChartHoverConfig,
+  type PieHoverState,
   type CartesianChartOrientation,
   type YAxisSide,
   type XAxisSide,
@@ -157,3 +159,4 @@ export { Pie, type PieSliceData } from "./pie";
 
 export { useSlicePath } from "./pie/hooks/useSlicePath";
 export { useSliceAngularInsetPath } from "./pie/hooks/useSliceAngularInsetPath";
+export { usePieHoverState } from "./polar/contexts/PolarChartContext";

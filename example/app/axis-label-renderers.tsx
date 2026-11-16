@@ -103,8 +103,6 @@ const createBadgeLabelRenderer = (
 
 export default function AxisLabelRenderersPage(props: { segment: string }) {
   const description = descriptionForRoute(props.segment);
-  const font = useFont(inter, 12);
-  const badgeLabelRenderer = createBadgeLabelRenderer(font);
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -120,7 +118,7 @@ export default function AxisLabelRenderersPage(props: { segment: string }) {
           description="Paragraph labels reserve space for mixed scripts and explicit line breaks on a horizontal category axis."
         >
           <View style={styles.horizontalChart}>
-            <MultilingualHorizontalChart font={font} />
+            <MultilingualHorizontalChart />
           </View>
         </ChartSection>
 
@@ -129,7 +127,7 @@ export default function AxisLabelRenderersPage(props: { segment: string }) {
           description="Paragraph labels can constrain width while newline labels keep the numeric axis compact."
         >
           <View style={styles.verticalChart}>
-            <ParagraphXAxisChart font={font} />
+            <ParagraphXAxisChart />
           </View>
         </ChartSection>
 
@@ -138,7 +136,7 @@ export default function AxisLabelRenderersPage(props: { segment: string }) {
           description="Custom renderers measure their own label boxes before the chart reserves axis space."
         >
           <View style={styles.verticalChart}>
-            <BadgeAxisChart font={font} labelRenderer={badgeLabelRenderer} />
+            <BadgeAxisChart />
           </View>
         </ChartSection>
       </ScrollView>
@@ -166,7 +164,8 @@ function ChartSection({
   );
 }
 
-function MultilingualHorizontalChart({ font }: { font: SkFont | null }) {
+function MultilingualHorizontalChart() {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       orientation="horizontal"
@@ -231,7 +230,8 @@ function MultilingualHorizontalChart({ font }: { font: SkFont | null }) {
   );
 }
 
-function ParagraphXAxisChart({ font }: { font: SkFont | null }) {
+function ParagraphXAxisChart() {
+  const font = useFont(inter, 12);
   return (
     <CartesianChart
       data={LOCALIZED_PERIODS}
@@ -293,13 +293,9 @@ function ParagraphXAxisChart({ font }: { font: SkFont | null }) {
   );
 }
 
-function BadgeAxisChart({
-  font,
-  labelRenderer,
-}: {
-  font: SkFont | null;
-  labelRenderer: AxisLabelRenderer<string>;
-}) {
+function BadgeAxisChart() {
+  const font = useFont(inter, 12);
+  const badgeLabelRenderer = createBadgeLabelRenderer(font);
   return (
     <CartesianChart
       data={BADGE_DATA}
@@ -312,7 +308,7 @@ function BadgeAxisChart({
         tickCount: BADGE_DATA.length,
         labelColor: "#155e75",
         labelOffset: 8,
-        labelRenderer,
+        labelRenderer: badgeLabelRenderer,
         title: {
           text: "Release phase",
           font,

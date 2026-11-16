@@ -91,6 +91,146 @@ function ScrollableChart() {
 }
 ```
 
+## Hover gesture support
+
+The `CartesianChart` component (as well as `PolarChart` for pie/donut charts) supports tracking the user's mouse as it _hovers_ over the chart. On web, or on desktop builds, this lets readers explore a chart — e.g. read out values via a tooltip — without pressing anything. The hover gesture is built with the [`Gesture.Hover()`](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/hover-gesture) API from React Native Gesture Handler and is composed simultaneously with the press/transform gestures, so it never takes precedence over them.
+
+Hover is aimed at pointer devices, so it is **enabled by default on web** — `enableHover` opts in on other platforms (and `enableHover={false}` opts out on web). Touch-only behavior is unchanged either way.
+
+Press/click and hover interoperate: while the pointer is over the chart, pressing or clicking does not deactivate the hover-driven state — releasing the mouse button simply hands the tooltip back to the ongoing hover gesture — and moving the pointer out of the chart deactivates it as usual. On touch devices (where hover never activates), press behavior is exactly the same as it would be without hover.
+
+### Hovering cartesian charts
+
+Pass `enableHover` along with a `chartPressState` value: while the pointer is over the chart, the press state values are updated (and their `isActive` flags are set) exactly as if the user was pressing; when the pointer leaves the chart, the states are deactivated again. Because hover drives the press states themselves, no extra setup is needed to make hover match press.
+
+```tsx
+import * as React from "react";
+import { View } from "react-native";
+import { Line, CartesianChart, useChartPressState } from "victory-native";
+import {
+  Circle,
+  DashPathEffect,
+  Line as SkiaLine,
+  vec,
+} from "react-native-skia";
+import { useDerivedValue, type SharedValue } from "react-native-reanimated";
+import { AnimatedText } from "./components/AnimatedText";
+
+const DATA = Array.from({ length: 31 }, (_, i) => ({
+  day: i,
+  highTmp: 40 + 30 * Math.random(),
+}));
+
+function HoverGestureScreen() {
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
+
+  const hoveredDay = useDerivedValue(() =>
+    isActive ? `Day ${state.x.value.value}` : "Hover the chart!",
+  );
+
+  return (
+    <View>
+      <AnimatedText text={hoveredDay} defaultValue="Hover the chart!" />
+
+      <CartesianChart
+        data={DATA}
+        xKey="day"
+        yKeys={["highTmp"]}
+        chartPressState={state}
+        enableHover // 👈 activates the press state on mouse hover
+        chartHoverConfig={{ activeCursor: "pointer" }}
+        renderOutside={({ chartBounds }) =>
+          isActive ? (
+            <Cursor xPosition={state.x.position} chartBounds={chartBounds} />
+          ) : null
+        }
+      >
+        {({ points }) => (
+          <>
+            <Line points={points.highTmp} color="hotpink" strokeWidth={3} />
+            {isActive && (
+              <Circle
+                cx={state.x.position}
+                cy={state.y.highTmp.position}
+                r={9}
+                color="hotpink"
+              />
+            )}
+          </>
+        )}
+      </CartesianChart>
+    </View>
+  );
+}
+
+function Cursor({
+  xPosition,
+  chartBounds,
+}: {
+  xPosition: SharedValue<number>;
+  chartBounds: { top: number; bottom: number };
+}) {
+  const start = useDerivedValue(() => vec(xPosition.value, chartBounds.top));
+  const end = useDerivedValue(() => vec(xPosition.value, chartBounds.bottom));
+
+  return (
+    <SkiaLine p1={start} p2={end} color="hotpink" strokeWidth={1}>
+      <DashPathEffect intervals={[6, 4]} />
+    </SkiaLine>
+  );
+}
+```
+
+:::info
+
+The example app uses this API in several places — [`example/app/candlestick.tsx`](https://github.com/FormidableLabs/victory-native-xl/tree/main/example/app/candlestick.tsx) scrubs its tooltip on hover, and [`example/app/bar-chart.tsx`](https://github.com/FormidableLabs/victory-native-xl/tree/main/example/app/bar-chart.tsx) additionally shows a hover readout above the chart. Check the "Candlestick Chart" and "Bar Chart" routes of the example.
+
+:::
+
+### Zero-setup hover (no state required)
+
+You don't need any state at all: when neither `chartPressState` nor `chartHoverState` is passed, `CartesianChart` maintains a built-in hover state (mirroring `PolarChart`'s built-in pie state) and hands it to your render functions via `hoverState`:
+
+```tsx
+<CartesianChart data={DATA} xKey="day" yKeys={["highTmp"]}>
+  {({ points, hoverState }) => (
+    <>
+      <Line points={points.highTmp} color="hotpink" strokeWidth={3} />
+      {hoverState?.isActive.value && (
+        <Circle
+          cx={hoverState.x.position}
+          cy={hoverState.y.highTmp.position}
+          r={9}
+          color="hotpink"
+        />
+      )}
+    </>
+  )}
+</CartesianChart>
+```
+
+This state is hover-only — press interactions stay opt-in via [`chartPressState`](#the-chartpressstate-prop-of-cartesianchart). When you do pass a state, `hoverState` is `undefined` and you read your own object instead.
+
+### Distinct hover and press states
+
+Sharing the press state keeps things simple, but hovering and pressing may need to be tracked independently — e.g. a hover tooltip that follows the mouse while a pressed tooltip stays pinned where the mouse last clicked. Pass a separate `chartHoverState` (a `ChartPressState` value created with `useChartPressState`, just like `chartPressState`) and the hover gesture will drive it instead of the press states:
+
+```tsx
+const press = useChartPressState({ x: 0, y: { highTmp: 0 } });
+const hover = useChartPressState({ x: 0, y: { highTmp: 0 } });
+
+<CartesianChart
+  // ...
+  chartPressState={press.state}
+  chartHoverState={hover.state}
+  enableHover // 👈 hovering now updates `hover`, pressing updates `press`
+>
+```
+
+Each state (and its `isActive` shared value) is updated independently, so a "hover is active" readout and a "press is active" indicator can coexist.
+
+Pie/donut charts (`PolarChart`) work the same way — they always maintain a hovered-slice-index state, consumable inside chart content with the [`usePieHoverState`](/docs/polar/polar-chart#charthoverstate) hook; the [`chartHoverState`](/docs/polar/polar-chart#charthoverstate) prop only overrides it when the index needs to be read outside the chart.
+
 ## Multi-press support
 
 The `CartesianChart` component can track as many fingers as you want, but two will likely be the max you'd reasonably want to use. See [the multi-press guide](./guides/multi-press.md) to see an example of multi-press in action.

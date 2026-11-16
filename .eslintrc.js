@@ -28,6 +28,16 @@ module.exports = {
         sourceType: "script",
       },
     },
+    {
+      env: {
+        node: true,
+        browser: false,
+      },
+      files: ["**/metro.config.js"],
+      parserOptions: {
+        sourceType: "script",
+      },
+    },
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
