@@ -56,6 +56,7 @@ export const transformHorizontalInputData = <
 }): TransformedData<RawData, XK, YK> & {
   xScale: ScaleLinear<number, number>;
   isNumericalData: boolean;
+  isDateData: boolean;
   xTicksNormalized: number[];
   yAxes: NonEmptyArray<{
     yScale: ScaleLinear<number, number>;
@@ -310,6 +311,9 @@ export const transformHorizontalInputData = <
     ix,
     y,
     isNumericalData,
+    // Horizontal charts render xKey as the category axis; date x values are not
+    // treated as a time scale there.
+    isDateData: false,
     ox,
     xScale,
     xTicksNormalized,

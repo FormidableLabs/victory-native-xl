@@ -146,7 +146,7 @@ export type PointsArray = {
   yValue: MaybeNumber;
 }[];
 
-export type InputFieldType = number | string;
+export type InputFieldType = number | string | Date;
 export type InputFields<T> = {
   [K in keyof T as T[K] extends InputFieldType
     ? K
@@ -194,6 +194,7 @@ export type AxisProps<
   formatYLabel?: (label: YLabel) => string;
   domain?: YAxisDomain;
   isNumericalData?: boolean;
+  isDateData?: boolean;
   ix?: InputFields<RawData>[XK][];
 };
 
@@ -213,6 +214,7 @@ export type AxisPropWithDefaults<
   | "font"
   | "tickValues"
   | "isNumericalData"
+  | "isDateData"
 >;
 // The optional remaining props afterwards
 export type OptionalAxisProps<
@@ -291,6 +293,7 @@ export type XAxisProps<
   xScale: Scale;
   yScale: Scale;
   isNumericalData: boolean;
+  isDateData?: boolean;
   ix: InputFields<RawData>[XK][];
   chartBounds: ChartBounds;
   orientation: CartesianChartOrientation;
