@@ -42,4 +42,6 @@ export const Animated = {
   View: ({ children }: { children?: ReactNode }) => children,
 };
 
+export default Animated;
+
 export type SharedValue<T> = { value: T };

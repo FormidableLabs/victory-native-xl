@@ -6,7 +6,6 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
-import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import { PolarChartProvider } from "./contexts/PolarChartContext";
 import type {
   ColorFields,
@@ -24,6 +23,10 @@ import { type ChartExplicitSize } from "../shared/ChartExplicitSize";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
 import { useChartCanvasSize } from "../shared/useChartCanvasSize";
+import {
+  type BridgedContext,
+  useContextBridge,
+} from "../shared/useContextBridge";
 
 type PolarChartBaseProps = {
   onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => void;
@@ -32,6 +35,13 @@ type PolarChartBaseProps = {
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
   transformState?: ChartTransformState;
+  /**
+   * React contexts to make available to the components rendered inside the
+   * chart. The canvas is rendered by a separate React renderer, so the
+   * contexts of your app are not visible inside the chart unless they are
+   * listed here.
+   */
+  contexts?: readonly BridgedContext[];
   isHeadless: boolean;
   explicitSize?: ChartExplicitSize;
 };
@@ -47,10 +57,11 @@ const PolarChartBase = (
     hasMeasuredLayoutSize,
     canvasSize,
     transformState,
+    contexts,
     isHeadless,
     explicitSize,
   } = props;
-  const Bridge: ContextBridge = useContextBridge();
+  const bridge = useContextBridge(contexts);
 
   let composed = Gesture.Race();
   if (transformState) {
@@ -76,10 +87,7 @@ const PolarChartBase = (
       canvasSize={canvasSize}
       containerStyle={containerStyle}
       canvasStyle={canvasStyle}
-      chartContent={chartContent}
-      wrapCanvasContent={
-        isHeadless ? undefined : (content) => <Bridge>{content}</Bridge>
-      }
+      chartContent={bridge(chartContent)}
       gestureOverlay={
         isHeadless ? undefined : <GestureHandler gesture={composed} />
       }
@@ -124,8 +132,16 @@ export const PolarChart = <
     headless: props.headless,
   });
 
+  // The chart's own context is provided inside the canvas, where it is read:
+  // context does not cross from the app's renderer into the canvas.
   return (
-    <FiberProvider>
+    <PolarChartBase
+      {...props}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={canvasSize}
+      isHeadless={isHeadless}
+    >
       <PolarChartProvider
         data={data}
         labelKey={labelKey.toString()}
@@ -133,14 +149,8 @@ export const PolarChart = <
         valueKey={valueKey.toString()}
         canvasSize={canvasSize}
       >
-        <PolarChartBase
-          {...props}
-          onLayout={onLayout}
-          hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-          canvasSize={canvasSize}
-          isHeadless={isHeadless}
-        />
+        {props.children}
       </PolarChartProvider>
-    </FiberProvider>
+    </PolarChartBase>
   );
 };

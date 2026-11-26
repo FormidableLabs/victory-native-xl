@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Group, type CanvasRef } from "react-native-skia";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
-import { type ContextBridge, FiberProvider, useContextBridge } from "its-fine";
 import { Gesture, type TouchData } from "react-native-gesture-handler";
 import { type MutableRefObject } from "react";
 import type { ScaleLinear, ScaleLogarithmic } from "d3-scale";
@@ -48,9 +47,8 @@ import {
   type PinchTransformGestureConfig,
 } from "./utils/transformGestures";
 import {
-  CartesianTransformProvider,
   CartesianTransformValueProvider,
-  useCartesianTransformContext,
+  useCartesianTransform,
 } from "./contexts/CartesianTransformContext";
 import { downsampleTicks } from "../utils/tickHelpers";
 import { GestureHandler } from "../shared/GestureHandler";
@@ -58,6 +56,10 @@ import type { ComposedGesture } from "../shared/gestureTypes";
 import { type ChartLayoutModeProps } from "../shared/ChartLayoutModeProps";
 import { ChartWrapper } from "../shared/ChartWrapper";
 import { useChartCanvasSize } from "../shared/useChartCanvasSize";
+import {
+  type BridgedContext,
+  useContextBridge,
+} from "../shared/useContextBridge";
 import { boundsToClip } from "../utils/boundsToClip";
 import { normalizeYAxisTicks } from "../utils/normalizeYAxisTicks";
 import { applyChartPressPanConfig } from "./utils/applyChartPressPanConfig";
@@ -148,6 +150,13 @@ type CartesianChartBaseProps<
     pinch?: PinchTransformGestureConfig;
   };
   customGestures?: ComposedGesture;
+  /**
+   * React contexts to make available to the components rendered inside the
+   * chart. The canvas is rendered by a separate React renderer, so the
+   * contexts of your app are not visible inside the chart unless they are
+   * listed here.
+   */
+  contexts?: readonly BridgedContext[];
   actionsRef?: CartesianActionsRef<
     | ChartPressState<{
         x: InputFields<RawData>[XK];
@@ -235,25 +244,18 @@ export function CartesianChart<
   RawData extends Record<string, unknown>,
   XK extends keyof InputFields<RawData>,
   YK extends keyof NumericalFields<RawData>,
->({
-  transformState,
-  children,
-  ref,
-  ...rest
-}: CartesianChartProps<RawData, XK, YK>) {
-  return (
-    <FiberProvider>
-      <CartesianTransformProvider transformState={transformState}>
-        <CartesianChartContent {...{ ...rest, transformState }} ref={ref}>
-          {children}
-        </CartesianChartContent>
-      </CartesianTransformProvider>
-    </FiberProvider>
-  );
+>(props: CartesianChartProps<RawData, XK, YK>) {
+  return <CartesianChartContent {...props} />;
 }
 
+/**
+ * Only this component subscribes to the bridged contexts: when one of them
+ * changes, the canvas gets the new value without the chart itself having to
+ * render again.
+ */
 function CartesianCanvas({
   children,
+  contexts,
   ...props
 }: React.PropsWithChildren<
   Pick<
@@ -265,17 +267,11 @@ function CartesianCanvas({
     | "canvasSize"
     | "canvasRef"
     | "gestureOverlay"
-  >
+  > & { contexts?: readonly BridgedContext[] }
 >) {
-  const Bridge: ContextBridge = useContextBridge();
+  const bridge = useContextBridge(contexts);
 
-  return (
-    <ChartWrapper
-      {...props}
-      chartContent={children}
-      wrapCanvasContent={(content) => <Bridge>{content}</Bridge>}
-    />
-  );
+  return <ChartWrapper {...props} chartContent={bridge(children)} />;
 }
 
 function CartesianChartContent<
@@ -310,6 +306,7 @@ function CartesianChartContent<
   ref,
   explicitSize,
   headless,
+  contexts,
 }: CartesianChartProps<RawData, XK, YK>) {
   const { size, hasMeasuredLayoutSize, onLayout, isHeadless } =
     useChartCanvasSize({ explicitSize, headless });
@@ -340,7 +337,7 @@ function CartesianChartContent<
 
   // create a d3-zoom transform object based on the current transform state. This
   // is used for rescaling the X and Y axes.
-  const transform = useCartesianTransformContext();
+  const transform = useCartesianTransform(transformState);
   const zoomX = React.useMemo(
     () => createSafeZoomTransform(transform.k, transform.tx, transform.ty),
     [transform.k, transform.tx, transform.ty],
@@ -966,18 +963,26 @@ function CartesianChartContent<
       />
     ) : null;
 
+  // The chart's own contexts are provided inside the canvas, where they are
+  // read: context does not cross from the app's renderer into the canvas.
   const chartContent = (
-    <>
-      {YAxisComponents}
-      {XAxisComponents}
-      {FrameComponent}
-      <Group clip={clipRect}>
-        <Group matrix={transformState?.matrix}>
-          {hasMeasuredLayoutSize && children(renderArg)}
+    <CartesianTransformValueProvider value={transform}>
+      <CartesianChartProvider
+        yScale={primaryYScale}
+        xScale={xScale}
+        orientation={orientation}
+      >
+        {YAxisComponents}
+        {XAxisComponents}
+        {FrameComponent}
+        <Group clip={clipRect}>
+          <Group matrix={transformState?.matrix}>
+            {hasMeasuredLayoutSize && children(renderArg)}
+          </Group>
         </Group>
-      </Group>
-      {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
-    </>
+        {hasMeasuredLayoutSize && renderOutside?.(renderArg)}
+      </CartesianChartProvider>
+    </CartesianTransformValueProvider>
   );
 
   let gestureOverlay: React.ReactNode;
@@ -1012,24 +1017,17 @@ function CartesianChartContent<
   }
 
   return (
-    <CartesianTransformValueProvider value={transform}>
-      <CartesianChartProvider
-        yScale={primaryYScale}
-        xScale={xScale}
-        orientation={orientation}
-      >
-        <CartesianCanvas
-          isHeadless={isHeadless}
-          explicitSize={explicitSize}
-          onLayout={onLayout}
-          hasMeasuredLayoutSize={hasMeasuredLayoutSize}
-          canvasSize={size}
-          canvasRef={canvasRef}
-          gestureOverlay={gestureOverlay}
-        >
-          {chartContent}
-        </CartesianCanvas>
-      </CartesianChartProvider>
-    </CartesianTransformValueProvider>
+    <CartesianCanvas
+      isHeadless={isHeadless}
+      explicitSize={explicitSize}
+      onLayout={onLayout}
+      hasMeasuredLayoutSize={hasMeasuredLayoutSize}
+      canvasSize={size}
+      canvasRef={canvasRef}
+      gestureOverlay={gestureOverlay}
+      contexts={contexts}
+    >
+      {chartContent}
+    </CartesianCanvas>
   );
 }

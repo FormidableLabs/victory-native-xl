@@ -22,7 +22,6 @@ type ChartWrapperProps = {
   gestureOverlay?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
   canvasStyle?: StyleProp<ViewStyle>;
-  wrapCanvasContent?: (content: React.ReactNode) => React.ReactNode;
 };
 
 export function ChartWrapper({
@@ -36,7 +35,6 @@ export function ChartWrapper({
   gestureOverlay,
   containerStyle,
   canvasStyle,
-  wrapCanvasContent,
 }: ChartWrapperProps) {
   if (isHeadless) {
     return <Group>{chartContent}</Group>;
@@ -65,7 +63,7 @@ export function ChartWrapper({
             canvasStyle,
           ])}
         >
-          {wrapCanvasContent ? wrapCanvasContent(chartContent) : chartContent}
+          {chartContent}
         </Canvas>
         {gestureOverlay}
       </View>

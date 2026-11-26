@@ -64,7 +64,7 @@ You can pass **`explicitSize`** alone to skip layout measurement while still ren
 | --- | --- |
 | Gestures | Disabled in headless mode (no `GestureHandlerRootView` or press overlays). |
 | `CartesianChartRef.canvas` | `null` in headless mode; use your host surface instead of the chart ref. |
-| Polar context | Headless polar charts omit the `its-fine` `Bridge`; context is provided by `PolarChartProvider` wrapping the Skia subtree. |
+| React context | A headless chart is part of the Skia tree that hosts it, so the contexts of that tree are visible to chart children without the `contexts` prop. |
 | Layout gating | Chart children render only after dimensions are known (`explicitSize` or first `onLayout`). |
 
 See also: [`CartesianChart` props](./cartesian/cartesian-chart.md), [`PolarChart` props](./polar/polar-chart.md).

@@ -1,5 +1,6 @@
 import React, {
   useContext,
+  useMemo,
   createContext,
   type PropsWithChildren,
 } from "react";
@@ -28,17 +29,13 @@ export const PolarChartProvider = (
   props: PropsWithChildren<PolarChartProviderProps>,
 ) => {
   const { children, data, canvasSize, labelKey, valueKey, colorKey } = props;
+  const value = useMemo(
+    () => ({ data, canvasSize, labelKey, valueKey, colorKey }),
+    [data, canvasSize, labelKey, valueKey, colorKey],
+  );
 
   return (
-    <PolarChartContext.Provider
-      value={{
-        data,
-        canvasSize,
-        labelKey,
-        valueKey,
-        colorKey,
-      }}
-    >
+    <PolarChartContext.Provider value={value}>
       {children}
     </PolarChartContext.Provider>
   );

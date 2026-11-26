@@ -90,6 +90,10 @@ A `StyleProp<ViewStyle>` that styles the `View` which wraps the `Canvas` of the 
 
 A `StyleProp<ViewStyle>` that styles the `Canvas` upon which the `Polar` chart is drawn.
 
+### `contexts`
+
+An array of React contexts to make available to the components you render inside the chart. The chart is drawn on a Skia canvas, which React renders separately from the rest of your app, so your own contexts are only visible to chart children when they are listed here. See [`CartesianChart`'s `contexts` prop](../cartesian/cartesian-chart.md#contexts) for an example.
+
 ### `explicitSize`
 
 An object `{ width: number; height: number }` that seeds chart dimensions without waiting for React Native `onLayout`. **Required when using `headless`.** See [Headless rendering](../headless-rendering.md).

@@ -1,6 +1,7 @@
 import type { ScaleLinear } from "d3-scale";
 import React, {
   useContext,
+  useMemo,
   createContext,
   type PropsWithChildren,
 } from "react";
@@ -26,15 +27,13 @@ export const CartesianChartProvider = (
   props: PropsWithChildren<CartesianChartProviderProps>,
 ) => {
   const { children, xScale, yScale, orientation = "vertical" } = props;
+  const value = useMemo(
+    () => ({ xScale, yScale, orientation }),
+    [xScale, yScale, orientation],
+  );
 
   return (
-    <CartesianChartContext.Provider
-      value={{
-        xScale,
-        yScale,
-        orientation,
-      }}
-    >
+    <CartesianChartContext.Provider value={value}>
       {children}
     </CartesianChartContext.Provider>
   );

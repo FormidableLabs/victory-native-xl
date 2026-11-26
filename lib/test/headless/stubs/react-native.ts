@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 export const StyleSheet = {
   create: <T extends Record<string, unknown>>(styles: T) => styles,
+  flatten: <T>(style: T) => style,
   hairlineWidth: 1,
   absoluteFillObject: {},
 };
