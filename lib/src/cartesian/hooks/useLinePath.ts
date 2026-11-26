@@ -1,9 +1,8 @@
 import * as React from "react";
-import { line } from "d3-shape";
 import { Skia } from "react-native-skia";
 import type { PointsArray } from "../../types";
-import { stitchDataArray } from "../../utils/stitchDataArray";
-import { CURVES, type CurveType } from "../utils/curves";
+import { type CurveType } from "../utils/curves";
+import { addLineToPathBuilder, type DefinedPoint } from "../utils/chartPaths";
 import { groupPointsArray } from "../../utils/groupPointsArray";
 import { cleanPointsArray } from "../../utils/cleanPointsArray";
 
@@ -17,22 +16,17 @@ export const useLinePath = (
   { curveType = "linear", connectMissingData = false }: LinePathOptions = {},
 ) => {
   const path = React.useMemo(() => {
-    const groups = connectMissingData
-      ? [cleanPointsArray(points)]
-      : groupPointsArray(points);
+    // Both helpers only keep the points that have a y value.
+    const groups = (
+      connectMissingData ? [cleanPointsArray(points)] : groupPointsArray(points)
+    ) as DefinedPoint[][];
     const builder = Skia.PathBuilder.Make();
 
     groups.forEach((group) => {
-      const svgPath = line().curve(CURVES[curveType])(stitchDataArray(group));
-      if (!svgPath) return;
-
-      const subPath = Skia.Path.MakeFromSVGString(svgPath);
-      if (subPath) {
-        builder.addPath(subPath);
-      }
+      addLineToPathBuilder(builder, group, curveType);
     });
 
-    return builder.build();
+    return builder.detach();
   }, [connectMissingData, points, curveType]);
 
   return { path };

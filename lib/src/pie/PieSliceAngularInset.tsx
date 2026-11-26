@@ -1,7 +1,8 @@
 import React from "react";
 import { type Color, Path, type PathProps } from "react-native-skia";
-import { useSliceAngularInsetPath } from "./hooks/useSliceAngularInsetPath";
+import { useSliceAngularInsetPathOnly } from "./hooks/useSliceAngularInsetPath";
 import { usePieSliceContext } from "./contexts/PieSliceContext";
+import type { PieSliceData } from "./PieSlice";
 import type { PathAnimationConfig } from "../hooks/useAnimatedPath";
 import { AnimatedPath } from "../cartesian/components/AnimatedPath";
 
@@ -18,13 +19,17 @@ type PieSliceAngularInsetProps = {
   angularInset: PieSliceAngularInsetData;
 } & AdditionalPathProps;
 
+const isCollapsedOnOrigin = ({ center, radius, innerRadius }: PieSliceData) =>
+  !(innerRadius > 0) && radius === 0 && center.x === 0 && center.y === 0;
+
 export const PieSliceAngularInset = (props: PieSliceAngularInsetProps) => {
   const { angularInset, children, animate, ...rest } = props;
   const { slice } = usePieSliceContext();
-  const [path] = useSliceAngularInsetPath({ slice, angularInset });
+  const path = useSliceAngularInsetPathOnly(slice);
 
-  // If the path is empty, don't render anything
-  if (path.toSVGString() === "M0 0L0 0M0 0L0 0") {
+  // Before the chart has a size, the slice has no radius and both lines of the
+  // inset collapse onto the origin: don't render anything.
+  if (isCollapsedOnOrigin(slice)) {
     return null;
   }
 

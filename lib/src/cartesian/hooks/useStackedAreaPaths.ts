@@ -1,14 +1,13 @@
 import * as React from "react";
-import { area } from "d3-shape";
 import {
   Skia,
   type Color,
   type PathProps,
   type SkPath,
 } from "react-native-skia";
-import { stitchDataArray } from "../../utils/stitchDataArray";
 import type { PointsArray } from "../../types";
-import { CURVES, type CurveType } from "../utils/curves";
+import { type CurveType } from "../utils/curves";
+import { addAreaToPathBuilder, type DefinedPoint } from "../utils/chartPaths";
 import { groupPointsArray } from "../../utils/groupPointsArray";
 
 // Utility to calculate cumulative offsets, subtracting each layer from the previous one
@@ -78,56 +77,53 @@ export type StackedAreaPath = {
     children?: React.ReactNode;
   };
 
+// A stable default, so that omitting `areaOptions` does not rebuild the paths
+// on every render.
+const defaultAreaOptions: NonNullable<
+  UseStackedAreaPathArgs["areaOptions"]
+> = () => ({});
+
 // Main hook to generate the stacked area paths for an inverted coordinate system
 export const useStackedAreaPaths = ({
   pointsArray,
   colors,
   y0,
   curveType = "linear",
-  areaOptions = () => ({}),
+  areaOptions = defaultAreaOptions,
 }: UseStackedAreaPathArgs): StackedAreaPath[] => {
   const paths = React.useMemo(() => {
     const offsets = calculateOffsets(pointsArray, y0);
 
     return pointsArray.map((points, layerIndex) => {
       const builder = Skia.PathBuilder.Make();
-      const groups = groupPointsArray(points);
+      // Only the points that have a y value are kept in a group.
+      const groups = groupPointsArray(points) as DefinedPoint[][];
+      const layerOffsets = offsets[layerIndex];
 
       let lowestPointOfLayer: number = y0;
       let highestPointOfLayer: number = 0;
 
       groups.forEach((group) => {
-        // Stitch the data into [x, y] tuples and adjust for stacking
-        const stitchedData: [number, number][] = stitchDataArray(group).map(
-          ([x, y], i) => {
-            const offset = offsets[layerIndex]?.[i] ?? 0;
-            const newY = y - offset;
-            return [x, newY];
-          },
-        );
+        // Adjust the points for stacking
+        const stackedPoints: DefinedPoint[] = group.map(({ x, y }, i) => ({
+          x,
+          y: y - (layerOffsets?.[i] ?? 0),
+        }));
 
         lowestPointOfLayer = Math.max(
-          ...(offsets[layerIndex] ?? []).map((num) => y0 - num),
+          ...(layerOffsets ?? []).map((num) => y0 - num),
         );
         highestPointOfLayer = Math.max(
-          ...stitchedData.map((tuple) => tuple[1]),
+          ...stackedPoints.map((point) => point.y),
         );
 
-        // Generate the area path using d3-shape
-        const svgPath = area()
-          .y0((_, i) => {
-            const offset = offsets[layerIndex]?.[i] ?? 0;
-            return y0 - offset; // The bottom of the current area
-          })
-
-          .curve(CURVES[curveType])(stitchedData);
-
-        if (svgPath) {
-          const subPath = Skia.Path.MakeFromSVGString(svgPath);
-          if (subPath) {
-            builder.addPath(subPath);
-          }
-        }
+        // The bottom of the current area is the top of the layers below it
+        addAreaToPathBuilder(
+          builder,
+          stackedPoints,
+          (i) => y0 - (layerOffsets?.[i] ?? 0),
+          curveType,
+        );
       });
 
       const options = areaOptions({
@@ -137,7 +133,7 @@ export const useStackedAreaPaths = ({
       });
 
       return {
-        path: builder.build(),
+        path: builder.detach(),
         key: `area-${layerIndex}`,
         color: colors[layerIndex],
         ...options,
