@@ -1,10 +1,8 @@
 import * as React from "react";
-import { area } from "d3-shape";
 import { Skia } from "react-native-skia";
-import { stitchDataArray } from "../../utils/stitchDataArray";
 import type { PointsArray } from "../../types";
 import type { CurveType } from "../utils/curves";
-import { CURVES } from "../utils/curves";
+import { addAreaToPathBuilder, type DefinedPoint } from "../utils/chartPaths";
 import { groupPointsArray } from "../../utils/groupPointsArray";
 import { cleanPointsArray } from "../../utils/cleanPointsArray";
 
@@ -19,25 +17,18 @@ export const useAreaPath = (
   { curveType = "linear", connectMissingData = false }: AreaPathOptions = {},
 ) => {
   const path = React.useMemo(() => {
-    const groups = connectMissingData
-      ? [cleanPointsArray(points)]
-      : groupPointsArray(points);
-
+    // Both helpers only keep the points that have a y value.
+    const groups = (
+      connectMissingData ? [cleanPointsArray(points)] : groupPointsArray(points)
+    ) as DefinedPoint[][];
     const builder = Skia.PathBuilder.Make();
+    const baseline = () => y0;
 
     groups.forEach((group) => {
-      const svgPath = area().y0(y0)?.curve(CURVES[curveType])(
-        stitchDataArray(group),
-      );
-      if (!svgPath) return;
-
-      const subPath = Skia.Path.MakeFromSVGString(svgPath);
-      if (subPath) {
-        builder.addPath(subPath);
-      }
+      addAreaToPathBuilder(builder, group, baseline, curveType);
     });
 
-    return builder.build();
+    return builder.detach();
   }, [connectMissingData, points, y0, curveType]);
 
   return { path };

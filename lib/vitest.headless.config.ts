@@ -28,6 +28,9 @@ export default defineConfig({
   },
   test: {
     include: ["test/headless/**/*.test.ts"],
+    benchmark: {
+      include: ["test/bench/**/*.bench.ts"],
+    },
     environment: "node",
     setupFiles: ["test/headless/setup.ts"],
     fileParallelism: false,
