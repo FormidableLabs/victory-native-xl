@@ -21,10 +21,6 @@ const CartesianTransformContext = createContext<
   CartesianTransformContextValue | undefined
 >(undefined);
 
-type CartesianTransformProviderProps = PropsWithChildren<{
-  transformState?: ChartTransformState;
-}>;
-
 type CartesianTransformValueProviderProps = PropsWithChildren<{
   value: CartesianTransformContextValue;
 }>;
@@ -40,26 +36,26 @@ export const CartesianTransformValueProvider = ({
   );
 };
 
-export const CartesianTransformProvider = ({
-  transformState,
-  children,
-}: CartesianTransformProviderProps) => {
-  const [transform, setTransform] = useState<{
-    k: number;
-    kx: number;
-    ky: number;
-    tx: number;
-    ty: number;
-  }>(() => {
-    const components = getTransformComponents(undefined);
-    return {
-      k: components.scaleX,
-      kx: components.scaleX,
-      ky: components.scaleY,
-      tx: components.translateX,
-      ty: components.translateY,
-    };
-  });
+/**
+ * Tracks the scale and translation of the chart's transform state on the JS
+ * thread. The result is what `CartesianTransformValueProvider` provides to the
+ * content of the chart.
+ */
+export const useCartesianTransform = (
+  transformState?: ChartTransformState,
+): CartesianTransformContextValue => {
+  const [transform, setTransform] = useState<CartesianTransformContextValue>(
+    () => {
+      const components = getTransformComponents(undefined);
+      return {
+        k: components.scaleX,
+        kx: components.scaleX,
+        ky: components.scaleY,
+        tx: components.translateX,
+        ty: components.translateY,
+      };
+    },
+  );
 
   // This is done in a useEffect to prevent Reanimated warning
   // about setting shared value in the render phase
@@ -100,11 +96,7 @@ export const CartesianTransformProvider = ({
     },
   );
 
-  return (
-    <CartesianTransformValueProvider value={transform}>
-      {children}
-    </CartesianTransformValueProvider>
-  );
+  return transform;
 };
 
 export const useCartesianTransformContext = () => {

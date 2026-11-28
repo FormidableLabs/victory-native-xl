@@ -493,6 +493,37 @@ An object `{ width: number; height: number }` that seeds chart dimensions withou
 
 When `true` (and `explicitSize` is set), renders a Skia-only subtree with no `View`, `Canvas`, or gesture handlers—intended for offscreen render hosts. See [Headless rendering](../headless-rendering.md).
 
+### `contexts`
+
+An array of React contexts to make available to the components you render inside the chart.
+
+The chart is drawn on a Skia canvas, which React renders separately from the rest of your app, so React context does not flow into it. The chart's own contexts (`useCartesianChartContext`, `useCartesianTransformContext`) always work. For your own contexts, such as a theme, list the ones your chart children read:
+
+```tsx
+const ThemeContext = React.createContext(lightTheme);
+
+function ThemedLine({ points }: { points: PointsArray }) {
+  // Without `contexts`, this would be the default value of `ThemeContext`.
+  const theme = React.useContext(ThemeContext);
+  return <Line points={points} color={theme.lineColor} strokeWidth={3} />;
+}
+
+function MyChart() {
+  return (
+    <CartesianChart
+      data={DATA}
+      xKey="day"
+      yKeys={["highTmp"]}
+      contexts={[ThemeContext]}
+    >
+      {({ points }) => <ThemedLine points={points.highTmp} />}
+    </CartesianChart>
+  );
+}
+```
+
+The canvas only updates when one of the listed contexts changes, so list the contexts your chart children actually read rather than every context in your app. Hooks that are built on context, like a theme or navigation hook from another library, need the context they read to be listed too; when a library does not export its context, read the value outside of the chart and pass it down as a prop instead.
+
 ### `onScaleChange`
 
 A callback function that is called whenever the chart's scales change, either due to data updates or zoom/pan transformations. The function receives two parameters:

@@ -33,9 +33,9 @@ export default function ContextBridgeDebugScreen() {
     <SafeAreaView style={styles.safeView}>
       <ScrollView contentContainerStyle={styles.content}>
         <InfoCard>
-          Issue #626 fixture. The chart child reads external React context,
-          Cartesian chart context, and Cartesian transform context from inside
-          the Skia canvas.
+          Issue #626 fixture. The chart child reads external React context
+          (bridged with the contexts prop), Cartesian chart context, and
+          Cartesian transform context from inside the Skia canvas.
         </InfoCard>
 
         <DebugThemeContext.Provider
@@ -50,6 +50,7 @@ export default function ContextBridgeDebugScreen() {
               xAxis={{ font, tickCount: 4 }}
               yAxis={[{ font, tickCount: 4 }]}
               transformState={state}
+              contexts={[DebugThemeContext]}
               transformConfig={{
                 pan: { enabled: true, dimensions: "x" },
                 pinch: { enabled: true },
